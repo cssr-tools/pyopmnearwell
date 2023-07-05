@@ -1,0 +1,8 @@
+include README.md
+include LICENSE
+include src/pyopmnearwell/core/*
+include src/pyopmnearwell/templates/common/*
+include src/pyopmnearwell/templates/co2store/*
+include src/pyopmnearwell/templates/h2store/*
+include src/pyopmnearwell/utils/*
+include src/pyopmnearwell/visualization/*
