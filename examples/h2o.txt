@@ -3,7 +3,7 @@ flow --linear-solver-reduction=1e-5 --relaxed-max-pv-fraction=0 --ecl-enable-dri
 
 """Set the model parameters"""
 co2store     #Model (co2store/h2store)
-radial 36    #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
+radial 36    #Grid type (radial/cake/cartesian2d/cartesian/cave) and size (theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
 100  1       #Reservoir dimensions [m] (Lenght and height)
 50 1 0       #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)
 0.1 0        #Well diameter [m] and well transmiscibility (0 to use the computed one internally in Flow)
