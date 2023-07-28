@@ -294,14 +294,16 @@ def create_arrays_ecl(dic, study):
                 dic[f"{study}_{quantity}_array"].append(
                     np.array(dic[f"{study}_saturation"][i])
                 )
-                dic[f"{study}_viscn_array"].append(np.array(dic[f"{study}_viscl"][i]))
+                dic[f"{study}_viscn_array"].append(np.array(dic[f"{study}_viscg"][i]))
                 dic[f"{study}_denn_array"].append(np.array(dic[f"{study}_deng"][i]))
-                # dic[f"{study}_concentration_array"].append(
-                #    dic[f"{study}_rhor"] * np.array(dic[f"{study}_rs"][i])
-                # )
-                dic[f"{study}_concentration_array"].append(
-                    0 * np.array(dic[f"{study}_deng"][i])
-                )
+                if f"{study}_rs" in dic:
+                    dic[f"{study}_concentration_array"].append(
+                        dic[f"{study}_rhor"] * np.array(dic[f"{study}_rs"][i])
+                    )
+                else:
+                    dic[f"{study}_concentration_array"].append(
+                        0 * np.array(dic[f"{study}_deng"][i])
+                    )
             if quantity == "pressure":
                 dic[f"{study}_{quantity}_array"].append(
                     np.array(dic[f"{study}_{quantity}"][i])

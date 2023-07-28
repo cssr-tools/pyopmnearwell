@@ -236,13 +236,15 @@ IMBNUM  ${2*dic['satnum']+2} ${round(dic["noCells"][1] / 2)-sum(dic['x_centers']
 ----------------------------------------------------------------------------
 SOLUTION
 ---------------------------------------------------------------------------
-PRESSURE
-% for i in range(dic['noCells'][2]):
-	${dic['noCells'][0]*dic['noCells'][1]}*${dic['pressure']+1e-5*i*0.6785064*9.81*dic['dims'][2]/dic['noCells'][2]}
-% endfor
-/
-SGAS
-	${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*0.0 /
+EQUIL
+ 0 ${dic['pressure']} ${dic['dims'][2]} 0 0 0 1 1 0 /
+--PRESSURE
+--% for i in range(dic['noCells'][2]):
+--	${dic['noCells'][0]*dic['noCells'][1]}*${dic['pressure']+1e-5*i*0.6785064*9.81*dic['dims'][2]/dic['noCells'][2]}
+--% endfor
+--/
+--SGAS
+--	${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*0.0 /
 RTEMPVD
 0   ${dic['temperature']}
 ${dic['dims'][2]} ${dic['temperature']} /
@@ -342,11 +344,13 @@ WELSPECS
 'INJ0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'GAS' /
 'PRO0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'GAS' /
 % if dic["pvMult"] == 0:
-% if dic['grid'] == 'cartesian':
-'PRO0'	'G1'	1	1	1*	'OIL' /
-'PRO1'	'G1'	${dic['noCells'][0]}	1	1*	'OIL' /
-'PRO2'	'G1'	1	${dic['noCells'][0]}	1*	'OIL' /
-'PRO3'	'G1'	${dic['noCells'][0]}	${dic['noCells'][0]}	1*	'OIL' /
+% if dic['grid'] != 'cartesian' and dic['grid'] != 'cave':
+'PRO1'	'G1'	${dic['noCells'][0]}	1	1*	'GAS' /
+%else:
+'PRO1'	'G1'	1	1	1*	'OIL' /
+'PRO2'	'G1'	${dic['noCells'][0]}	1	1*	'OIL' /
+'PRO3'	'G1'	1	${dic['noCells'][0]}	1*	'OIL' /
+'PRO4'	'G1'	${dic['noCells'][0]}	${dic['noCells'][0]}	1*	'OIL' /
 % endif
 % endif
 /
@@ -356,13 +360,15 @@ COMPDAT
 % else:
 'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	1	${dic['noCells'][2]}	'OPEN'	1*	${dic["jfactor"]}	 /
 %endif
-'PRO0 '	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1	${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
+'PRO0'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1	${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
 % if dic["pvMult"] == 0:
-% if dic['grid'] == 'cartesian':
-'PRO0'	1	1	1	${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
-'PRO1'	${dic['noCells'][0]}	1	 1 ${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
-'PRO2'	1	${dic['noCells'][0]} 1 ${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
-'PRO3'	${dic['noCells'][0]}	${dic['noCells'][0]}	1	${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
+% if dic['grid'] != 'cartesian':
+'PRO1'	${dic['noCells'][0]}	1	1	${0*dic['noCells'][2]+1}	'OPEN' 1*	1*	${dic['diameter']} /
+%else:
+'PRO1'	1	1	1	${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
+'PRO2'	${dic['noCells'][0]}	1	 1 ${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
+'PRO3'	1	${dic['noCells'][0]} 1 ${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
+'PRO4'	${dic['noCells'][0]}	${dic['noCells'][0]}	1	${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
 % endif
 % endif
 /
@@ -385,10 +391,10 @@ WCONPROD
 /
 % if dic["pvMult"] == 0:
 % if dic['grid'] == 'cartesian':
-'PRO0' 'OPEN' 'BHP' 5* ${dic['pressure']}/
 'PRO1' 'OPEN' 'BHP' 5* ${dic['pressure']}/
 'PRO2' 'OPEN' 'BHP' 5* ${dic['pressure']}/
 'PRO3' 'OPEN' 'BHP' 5* ${dic['pressure']}/
+'PRO4' 'OPEN' 'BHP' 5* ${dic['pressure']}/
 %endif
 /
 %endif

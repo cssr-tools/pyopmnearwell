@@ -66,6 +66,9 @@ TOPS
 % elif dic['grid']== 'cake':
 INCLUDE
   '${dic['exe']}/${dic['fol']}/preprocessing/CAKE.INC' /
+% elif dic['grid']== 'cave':
+INCLUDE
+  '${dic['exe']}/${dic['fol']}/preprocessing/CAVE.INC' /
 % else:
 INCLUDE
 '${dic['exe']}/${dic['fol']}/preprocessing/DX.INC' /
@@ -130,7 +133,7 @@ PORO  ${dic['rock'][dic['satnum']][2]} ${round(dic["noCells"][1] / 2)-sum(dic['x
 ----------------------------------------------------------------------------
 EDIT
 ----------------------------------------------------------------------------
-% if dic['grid'] != 'cartesian':
+% if dic['grid'] != 'cartesian' and dic['grid'] != 'cave':
 BOX
 ${dic['noCells'][0]} ${dic['noCells'][0]} 1 1 1* 1* / 
 MULTPV
@@ -236,13 +239,16 @@ IMBNUM  ${2*dic['satnum']+2} ${round(dic["noCells"][1] / 2)-sum(dic['x_centers']
 SOLUTION
 ---------------------------------------------------------------------------
 
-PRESSURE
-% for i in range(dic['noCells'][2]):
-	${dic['noCells'][0]*dic['noCells'][1]}*${dic['pressure']+1e-5*i*998.108*9.81*dic['dims'][2]/dic['noCells'][2]}
-% endfor
-/
-SWAT
-	${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*1.0 /
+EQUIL
+ 0 ${dic['pressure']} ${dic['dims'][2]} 0 0 0 1 1 0 /
+
+--PRESSURE
+--% for i in range(dic['noCells'][2]):
+--	${dic['noCells'][0]*dic['noCells'][1]}*${dic['pressure']+1e-5*i*998.108*9.81*dic['dims'][2]/dic['noCells'][2]}
+--% endfor
+--/
+--SWAT
+--	${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*1.0 /
 RTEMPVD
 0   ${dic['temperature']}
 ${dic['dims'][2]} ${dic['temperature']} /
@@ -344,7 +350,7 @@ COMPDAT
 %endif
 % if dic["pvMult"] == 0:
 % if dic['grid'] != 'cartesian':
-'PRO0 '	${dic['noCells'][0]}	1	1	${0*dic['noCells'][2]+1}	'OPEN' 1*	1*	${dic['diameter']} /
+'PRO0'	${dic['noCells'][0]}	1	1	${0*dic['noCells'][2]+1}	'OPEN' 1*	1*	${dic['diameter']} /
 %else:
 'PRO0'	1	1	1	${0*dic['noCells'][2]+1}	'OPEN' 1*	1*	${dic['diameter']} /
 'PRO1'	${dic['noCells'][0]}	1	 1 ${0*dic['noCells'][2]+1}	'OPEN' 1*	1*	${dic['diameter']} /
