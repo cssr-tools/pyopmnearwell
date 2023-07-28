@@ -134,30 +134,42 @@ def manage_grid(dic):
         ]
         dic["noCells"][0] = 2 * dic["noCells"][0] - 1
         dic["noCells"][1] = dic["noCells"][0]
-        dyarray = []
-        for i in range(dic["noCells"][1] - 1):
+        if dic["grid"] == "cave":
+            dic["slope"] = mt.tan(0.5 * dic["dims"][1] * mt.pi / 180)
+            mytemplate = Template(filename=f"{dic['pat']}/templates/common/cave.mako")
+            var = {"dic": dic}
+            filledtemplate = mytemplate.render(**var)
+            with open(
+                f"{dic['exe']}/{dic['fol']}/preprocessing/CAVE.INC",
+                "w",
+                encoding="utf8",
+            ) as file:
+                file.write(filledtemplate)
+        else:
+            dyarray = []
+            for i in range(dic["noCells"][1] - 1):
+                for _ in range(dic["noCells"][1]):
+                    dyarray.append(dxarray[i])
+                dxarray.extend(dxarray[-dic["noCells"][0] :])
             for _ in range(dic["noCells"][1]):
-                dyarray.append(dxarray[i])
-            dxarray.extend(dxarray[-dic["noCells"][0] :])
-        for _ in range(dic["noCells"][1]):
-            dyarray.append(dxarray[dic["noCells"][1] - 1])
-        for _ in range(dic["noCells"][2] - 1):
-            dxarray.extend(dxarray[-dic["noCells"][0] * dic["noCells"][1] :])
-            dyarray.extend(dyarray[-dic["noCells"][0] * dic["noCells"][1] :])
-        dxarray.insert(0, "DX")
-        dxarray.append("/")
-        with open(
-            f"{dic['exe']}/{dic['fol']}/preprocessing/DX.INC",
-            "w",
-            encoding="utf8",
-        ) as file:
-            file.write("\n".join(dxarray))
-        dyarray.insert(0, "DY")
-        dyarray.append("/")
-        with open(
-            f"{dic['exe']}/{dic['fol']}/preprocessing/DY.INC",
-            "w",
-            encoding="utf8",
-        ) as file:
-            file.write("\n".join(dyarray))
+                dyarray.append(dxarray[dic["noCells"][1] - 1])
+            for _ in range(dic["noCells"][2] - 1):
+                dxarray.extend(dxarray[-dic["noCells"][0] * dic["noCells"][1] :])
+                dyarray.extend(dyarray[-dic["noCells"][0] * dic["noCells"][1] :])
+            dxarray.insert(0, "DX")
+            dxarray.append("/")
+            with open(
+                f"{dic['exe']}/{dic['fol']}/preprocessing/DX.INC",
+                "w",
+                encoding="utf8",
+            ) as file:
+                file.write("\n".join(dxarray))
+            dyarray.insert(0, "DY")
+            dyarray.append("/")
+            with open(
+                f"{dic['exe']}/{dic['fol']}/preprocessing/DY.INC",
+                "w",
+                encoding="utf8",
+            ) as file:
+                file.write("\n".join(dyarray))
     return dic

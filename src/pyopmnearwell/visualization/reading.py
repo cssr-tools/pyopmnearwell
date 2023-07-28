@@ -234,9 +234,10 @@ def read_ecl(dic):
         else:
             dic[f"{study}_viscl"] = dic[f"{study}_rst"].iget_kw("OIL_VISC")
             dic[f"{study}_denl"] = dic[f"{study}_rst"].iget_kw("OIL_DEN")
-            dic[f"{study}_rs"] = dic[f"{study}_rst"].iget_kw("RV")
+            #dic[f"{study}_rs"] = dic[f"{study}_rst"].iget_kw("RV")
             dic[f"{study}_rhon_ref"] = 0.0850397  # H2 reference density
-            dic[f"{study}_rhow_ref"] = 0.6785064  # CH4 reference density
+            dic[f"{study}_rhow_ref"] = 998.108  # Water reference density
+            #dic[f"{study}_rhow_ref"] = 0.6785064  # CH4 reference density
             dic[f"{study}_rhor"] = dic[f"{study}_rhow_ref"]
             dic[f"{study}_injection_ratew"] = dic[f"{study}_smsp"]["FOIR"].values
         dic[f"{study}_indicator_array"] = []
@@ -295,8 +296,11 @@ def create_arrays_ecl(dic, study):
                 )
                 dic[f"{study}_viscn_array"].append(np.array(dic[f"{study}_viscl"][i]))
                 dic[f"{study}_denn_array"].append(np.array(dic[f"{study}_deng"][i]))
+                #dic[f"{study}_concentration_array"].append(
+                #    dic[f"{study}_rhor"] * np.array(dic[f"{study}_rs"][i])
+                #)
                 dic[f"{study}_concentration_array"].append(
-                    dic[f"{study}_rhor"] * np.array(dic[f"{study}_rs"][i])
+                    0 * np.array(dic[f"{study}_deng"][i])
                 )
             if quantity == "pressure":
                 dic[f"{study}_{quantity}_array"].append(

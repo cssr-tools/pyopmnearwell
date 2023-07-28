@@ -18,7 +18,8 @@ ${(dic["hysteresis"]+1)*(dic['satnum']+dic['perforations'][0])} 1* 100000 /
 
 OIL
 GAS
-H2STORE
+VAPOIL
+DIFFUSE
 
 METRIC
 
@@ -64,9 +65,6 @@ TOPS
 % elif dic['grid']== 'cake':
 INCLUDE
   '${dic['exe']}/${dic['fol']}/preprocessing/CAKE.INC' /
-% elif dic['grid']== 'cave':
-INCLUDE
-  '${dic['exe']}/${dic['fol']}/preprocessing/CAVE.INC' /
 % else:
 INCLUDE
 '${dic['exe']}/${dic['fol']}/preprocessing/DX.INC' /
@@ -131,7 +129,7 @@ PORO  ${dic['rock'][dic['satnum']][2]} ${round(dic["noCells"][1] / 2)-sum(dic['x
 ----------------------------------------------------------------------------
 EDIT
 ----------------------------------------------------------------------------
-% if dic['grid'] != 'cartesian' and dic['grid'] != 'cave':
+% if dic['grid'] != 'cartesian':
 BOX
 ${dic['noCells'][0]} ${dic['noCells'][0]} 1 1 1* 1* / 
 MULTPV
@@ -188,6 +186,56 @@ ENDBOX
 ----------------------------------------------------------------------------
 PROPS
 ----------------------------------------------------------------------------
+
+-- Diffusion coefficients for H2 and CH4 are 7.25995e-5 m2/s = 6.2726 m2/d
+-- 1. The oil molecular weight
+-- 2. The gas molecular weight
+-- 3. The gas-in-gas diffusion coefficient
+-- 4. The oil-in-gas diffusion coefficient
+
+-- 1.     2.    3.   4.
+DIFFC
+  16.043 2.016 6.2726 6.2726  /
+
+-- Standard temperature: 288.71 K, 15.56 °C
+-- Standard pressure: 1.013250 bar
+
+-- Fluid properties from CoolProp, doi/abs/10.1021/ie4033999
+-- CH4 WATER H2
+DENSITY
+  0.6785064 999.70 0.0850397  /
+
+ROCK
+  40 4.3e-5  /
+
+-- Methane as dead oil fluid type
+-- Pressure[bar] FVF[-] Viscosity[cP]
+PVDO
+  39.95  0.0270783155  0.0126098701
+  40.00  0.0270428829  0.01261087
+  40.05  0.0270075391  0.0126118705
+  40.10  0.0269722838  0.0126128714
+/ 
+--  Hydrogen as a wet gas fluid type
+--  Pressure[bar] RV[-] FVF[-]  Viscosity[cP] 
+PVTG
+  39.95    1.0  0.029007223  0.0094358857
+           0.5  0.029007223  0.0094358857
+           0.0  0.029007223  0.0094358857
+ / 
+  40.0     1.010  0.0289717643  0.0094359307
+           0.501  0.0289717643  0.0094359307
+           0.000  0.0289717643  0.0094359307
+ / 
+  40.05    1.0  0.0289363942  0.0094359758
+           0.5  0.0289363942  0.0094359758
+           0.0  0.0289363942  0.0094359758
+ / 
+  40.1     1.0  0.0289011123  0.0094360209
+           0.5  0.0289011123  0.0094360209
+           0.0  0.0289011123  0.0094360209
+ /
+ /
 
 INCLUDE
 '${dic['exe']}/${dic['fol']}/preprocessing/TABLES.INC' /
@@ -262,35 +310,29 @@ SUMMARY
 
 CGIR
  INJ0 /
- PRO0 /
 /
 
 CGIRL
  INJ0 /
- PRO0 /
 /
 
 WGIRL
 % for j in range(dic['noCells'][2]):
  'INJ0'  ${j+1}  /
- 'PRO0'  ${j+1}  /
 % endfor
 /
 
 CGIT
  INJ0 /
- PRO0 /
 /
 
 CGITL
  INJ0 /
- PRO0 /
 /
 
 WGITL
 % for j in range(dic['noCells'][2]):
  'INJ0'  ${j+1}  /
- 'PRO0'  ${j+1}  /
 % endfor
 /
 
@@ -311,13 +353,7 @@ FOIT
 WGIR
 /
 
-WGPR
-/
-
 WGIT
-/
-
-WGPT
 /
 
 WBHP
@@ -340,9 +376,10 @@ RPTRST
 
 WELSPECS
 'INJ0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'GAS' /
-'PRO0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'GAS' /
 % if dic["pvMult"] == 0:
-% if dic['grid'] == 'cartesian':
+% if dic['grid'] != 'cartesian':
+'PRO0'	'G1'	${dic['noCells'][0]}	1	1*	'OIL' /
+%else:
 'PRO0'	'G1'	1	1	1*	'OIL' /
 'PRO1'	'G1'	${dic['noCells'][0]}	1	1*	'OIL' /
 'PRO2'	'G1'	1	${dic['noCells'][0]}	1*	'OIL' /
@@ -356,9 +393,10 @@ COMPDAT
 % else:
 'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	1	${dic['noCells'][2]}	'OPEN'	1*	${dic["jfactor"]}	 /
 %endif
-'PRO0 '	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1	${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
 % if dic["pvMult"] == 0:
-% if dic['grid'] == 'cartesian':
+% if dic['grid'] != 'cartesian':
+'PRO0 '	${dic['noCells'][0]}	1	1	${0*dic['noCells'][2]+1}	'OPEN' 1*	1*	${dic['diameter']} /
+%else:
 'PRO0'	1	1	1	${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
 'PRO1'	${dic['noCells'][0]}	1	 1 ${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
 'PRO2'	1	${dic['noCells'][0]} 1 ${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
@@ -380,11 +418,11 @@ WCONINJE
 'RATE' ${f"{dic['inj'][j][4] / 0.6785064 : E}"}  1* 400/
 %endif
 /
-WCONPROD
-'PRO0' ${'OPEN' if dic['inj'][j][4] < 0 else 'SHUT'} 'BHP' 3* ${f"{abs(dic['inj'][j][4]) / 0.0850397 : E}"}/
-/
 % if dic["pvMult"] == 0:
-% if dic['grid'] == 'cartesian':
+WCONPROD
+% if dic['grid'] != 'cartesian':
+'PRO0' 'OPEN' 'BHP' 5* ${dic['pressure']}/
+%else:
 'PRO0' 'OPEN' 'BHP' 5* ${dic['pressure']}/
 'PRO1' 'OPEN' 'BHP' 5* ${dic['pressure']}/
 'PRO2' 'OPEN' 'BHP' 5* ${dic['pressure']}/

@@ -16,21 +16,21 @@ ${f"{dic['xcor'][i] : E}"} ${f"{0.5*dic['xcor'][1]+dic['xcor'][i]*dic['slope'] :
 ZCORN
 % for j in range(2*dic['noCells'][1]):
 % for i in range(dic['noCells'][0]):
- ${f"{0  : E}"} ${f"{0  : E}"}
+ ${f"{0 + dic['xcor'][i] ** 2 / dic['xcor'][-1]: E}"} ${f"{0 + dic['xcor'][i + 1] ** 2 / dic['xcor'][-1]: E}"}
 % endfor
 % endfor
 % for k in range(dic['noCells'][2] - 1):
 % for h in range(2):
 % for j in range(2*dic['noCells'][1]):
 % for i in range(dic['noCells'][0]):
- ${f"{(k+1)*dic['dims'][2]/dic['noCells'][2]  : E}"} ${f"{(k+1)*dic['dims'][2]/dic['noCells'][2]  : E}"}
+ ${f"{(k+1)*dic['dims'][2]/dic['noCells'][2] + dic['xcor'][i] ** 2 / dic['xcor'][-1]: E}"} ${f"{(k+1)*dic['dims'][2]/dic['noCells'][2] + dic['xcor'][i + 1] ** 2 / dic['xcor'][-1]: E}"}
 % endfor
 % endfor
 % endfor
 % endfor
 % for j in range(2*dic['noCells'][1]):
 % for i in range(dic['noCells'][0]):
- ${f"{dic['dims'][2]  : E}"} ${f"{dic['dims'][2]  : E}"}
+ ${f"{dic['dims'][2] + dic['xcor'][i] ** 2 / dic['xcor'][-1]: E}"} ${f"{dic['dims'][2] + dic['xcor'][i + 1] ** 2 / dic['xcor'][-1]: E}"}
 % endfor
 % endfor
 /
