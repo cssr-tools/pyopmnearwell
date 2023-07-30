@@ -61,7 +61,8 @@ def readtheinputfile(lol, dic):
     dic["perforations"] = [int((lol[11][0].strip()).split()[j]) for j in range(3)]
     dic["satnum"] = int((lol[12][0].strip()).split()[0])  # No. saturation regions
     dic["hysteresis"] = int((lol[12][0].strip()).split()[1])  # Hysteresis
-    index = 15  # Increase this if more rows are added to the model parameters part
+    dic["z_xy"] = str(lol[13][0])  # The function for the reservoir surface
+    index = 16  # Increase this if more rows are added to the model parameters part
     dic["krwf"] = str(lol[index][0])  # Wetting rel perm saturation function [-]
     dic["krnf"] = str(lol[index + 1][0])  # Non-wetting rel perm saturation function [-]
     dic["pcwcf"] = str(lol[index + 2][0])  # Capillary pressure saturation function [Pa]

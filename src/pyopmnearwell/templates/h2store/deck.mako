@@ -14,7 +14,7 @@ EQLDIMS
 /
 
 TABDIMS
-${(dic["hysteresis"]+1)*(dic['satnum']+dic['perforations'][0])} 1* 100000 /
+${(dic["hysteresis"]+1)*(dic['satnum']+dic['perforations'][0])} 1* 10000 /
 
 OIL
 GAS
@@ -31,7 +31,7 @@ SATOPTS
 % endif
 
 WELLDIMS
-5 ${dic['noCells'][2]} 5 5 /
+6 ${dic['noCells'][2]} 6 6 /
 
 UNIFIN
 UNIFOUT
@@ -273,7 +273,7 @@ CGIRL
 /
 
 WGIRL
-% for j in range(dic['noCells'][2]):
+% for j in range(0*dic['noCells'][2]+1):
  'INJ0'  ${j+1}  /
  'PRO0'  ${j+1}  /
 % endfor
@@ -290,7 +290,7 @@ CGITL
 /
 
 WGITL
-% for j in range(dic['noCells'][2]):
+% for j in range(0*dic['noCells'][2]+1):
  'INJ0'  ${j+1}  /
  'PRO0'  ${j+1}  /
 % endfor
@@ -307,6 +307,8 @@ FGIR
 FOIR
 
 FGIT
+
+FGPT
 
 FOIT
 
@@ -334,6 +336,10 @@ ROIP
 RGIP
 /
 
+WOPR
+/
+
+
 ----------------------------------------------------------------------------
 SCHEDULE
 ----------------------------------------------------------------------------
@@ -341,8 +347,8 @@ RPTRST
  'BASIC=2' FLOWS FLORES DEN VISC /
 
 WELSPECS
-'INJ0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'GAS' /
-'PRO0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'GAS' /
+'INJ0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'GAS' 2* 'STOP' /
+'PRO0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'GAS' 2* 'STOP' /
 % if dic["pvMult"] == 0:
 % if dic['grid'] != 'cartesian' and dic['grid'] != 'cave':
 'PRO1'	'G1'	${dic['noCells'][0]}	1	1*	'GAS' /
@@ -356,11 +362,11 @@ WELSPECS
 /
 COMPDAT
 % if dic["jfactor"] == 0:
-'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	1	${dic['noCells'][2]}	'OPEN'	1*	1*	${dic['diameter']} /
+'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	1	${0*dic['noCells'][2]+1}	'OPEN'	1*	1*	${dic['diameter']} /
 % else:
-'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	1	${dic['noCells'][2]}	'OPEN'	1*	${dic["jfactor"]}	 /
+'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	1	${0*dic['noCells'][2]+1}	'OPEN'	1*	${dic["jfactor"]}	 /
 %endif
-'PRO0'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1	${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
+'PRO0'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1	${0*dic['noCells'][2]+1}	'OPEN' 1*	1*	${dic['diameter']} /
 % if dic["pvMult"] == 0:
 % if dic['grid'] != 'cartesian':
 'PRO1'	${dic['noCells'][0]}	1	1	${0*dic['noCells'][2]+1}	'OPEN' 1*	1*	${dic['diameter']} /
@@ -383,11 +389,14 @@ WCONINJE
 'RATE' ${f"{dic['inj'][j][4] / 0.0850397 : E}"}  1* 400/
 % else:
 'INJ0' 'OIL' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'}
-'RATE' ${f"{dic['inj'][j][4] / 0.6785064 : E}"}  1* 400/
+'RATE' ${f"{dic['inj'][j][4] / 998.108 : E}"}  1* 400/ 998.108
 %endif
 /
 WCONPROD
-'PRO0' ${'OPEN' if dic['inj'][j][4] < 0 else 'SHUT'} 'BHP' 3* ${f"{abs(dic['inj'][j][4]) / 0.0850397 : E}"}/
+'PRO0' ${'OPEN' if dic['inj'][j][4] < 0 else 'SHUT'} 'GRAT' 2* ${f"{abs(dic['inj'][j][4]) / 0.0850397 : E}"} 2* /
+/
+WECON
+'PRO0' 1* ${f"{.95*abs(dic['inj'][j][4]) / 0.0850397 : E}"} /
 /
 % if dic["pvMult"] == 0:
 % if dic['grid'] == 'cartesian':

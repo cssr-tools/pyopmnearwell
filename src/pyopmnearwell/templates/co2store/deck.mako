@@ -14,7 +14,7 @@ EQLDIMS
 /
 
 TABDIMS
-${(dic["hysteresis"]+1)*(dic['satnum']+dic['perforations'][0])} 1* 100000 /
+${(dic["hysteresis"]+1)*(dic['satnum']+dic['perforations'][0])} 1* 10000 /
 
 WATER
 GAS
@@ -33,7 +33,7 @@ SATOPTS
 % endif
 
 WELLDIMS
-5 ${dic['noCells'][2]} 5 5 /
+6 ${dic['noCells'][2]} 6 6 /
 
 UNIFIN
 UNIFOUT

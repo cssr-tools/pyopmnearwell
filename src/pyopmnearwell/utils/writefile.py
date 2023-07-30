@@ -6,6 +6,7 @@ Utiliy functions for necessary files and variables to run OPM Flow.
 """
 
 import os
+import csv
 import subprocess
 import math as mt
 import numpy as np
@@ -105,7 +106,26 @@ def manage_grid(dic):
             file.write("\n".join(dxarray))
     elif dic["grid"] == "cake":
         dic["slope"] = mt.tan(0.5 * dic["dims"][1] * mt.pi / 180)
-        mytemplate = Template(filename=f"{dic['pat']}/templates/common/grid.mako")
+        lol = []
+        with open(
+            f"{dic['pat']}/templates/common/grid.mako", "r", encoding="utf8"
+        ) as file:
+            for i, row in enumerate(csv.reader(file, delimiter="#")):
+                if i == 3:
+                    lol.append(f"    return {dic['z_xy']}")
+                elif len(row) == 0:
+                    lol.append("")
+                else:
+                    lol.append(row[0])
+        with open(
+            f"{dic['exe']}/{dic['fol']}/preprocessing/cpg.mako",
+            "w",
+            encoding="utf8",
+        ) as file:
+            file.write("\n".join(lol))
+        mytemplate = Template(
+            filename=f"{dic['exe']}/{dic['fol']}/preprocessing/cpg.mako"
+        )
         var = {"dic": dic}
         filledtemplate = mytemplate.render(**var)
         with open(
@@ -115,41 +135,62 @@ def manage_grid(dic):
         ) as file:
             file.write(filledtemplate)
     else:
-        dic = d3_grids(dic)
+        if dic["x_fac"] != 0:
+            dic["xcorc"] = np.flip(
+                (dic["dims"][0])
+                * (np.exp(np.flip(np.linspace(0, dic["x_fac"], dic["noCells"][0]))) - 1)
+                / (np.exp(dic["x_fac"]) - 1)
+            )
+        else:
+            dic["xcorc"] = np.linspace(0, dic["dims"][0], dic["noCells"][0])
+        dic["xcorc"] = dic["xcorc"][
+            (dic["diameter"] < dic["xcorc"]) | (0 == dic["xcorc"])
+        ]
+        dic["xcorc"][0] = 0.25 * dic["xcorc"][1]
+        for cord in dic["xcorc"]:
+            dic["xcorc"] = np.insert(dic["xcorc"], 0, -cord)
+        dxarray = [
+            f'{dic["xcorc"][i+1]-dic["xcorc"][i]}' for i in range(len(dic["xcorc"]) - 1)
+        ]
+        dic["noCells"][0] = 2 * dic["noCells"][0] - 1
+        dic["noCells"][1] = dic["noCells"][0]
+        dic = d3_grids(dic, dxarray)
     return dic
 
 
-def d3_grids(dic):
+def d3_grids(dic, dxarray):
     """
     Function to handle the 3d cartesian grid or cave
 
     Args:
         dic (dict): Global dictionary with required parameters
+        dxarray (list): String with the size of the grid cells
 
     Returns:
         dic (dict): Global dictionary with new added parameters
 
     """
-    if dic["x_fac"] != 0:
-        dic["xcorc"] = np.flip(
-            (dic["dims"][0])
-            * (np.exp(np.flip(np.linspace(0, dic["x_fac"], dic["noCells"][0]))) - 1)
-            / (np.exp(dic["x_fac"]) - 1)
-        )
-    else:
-        dic["xcorc"] = np.linspace(0, dic["dims"][0], dic["noCells"][0])
-    dic["xcorc"] = dic["xcorc"][(dic["diameter"] < dic["xcorc"]) | (0 == dic["xcorc"])]
-    dic["xcorc"][0] = 0.25 * dic["xcorc"][1]
-    for cord in dic["xcorc"]:
-        dic["xcorc"] = np.insert(dic["xcorc"], 0, -cord)
-    dxarray = [
-        f'{dic["xcorc"][i+1]-dic["xcorc"][i]}' for i in range(len(dic["xcorc"]) - 1)
-    ]
-    dic["noCells"][0] = 2 * dic["noCells"][0] - 1
-    dic["noCells"][1] = dic["noCells"][0]
     if dic["grid"] == "cave":
-        dic["slope"] = mt.tan(0.5 * dic["dims"][1] * mt.pi / 180)
-        mytemplate = Template(filename=f"{dic['pat']}/templates/common/cave.mako")
+        lol = []
+        with open(
+            f"{dic['pat']}/templates/common/cave.mako", "r", encoding="utf8"
+        ) as file:
+            for i, row in enumerate(csv.reader(file, delimiter="#")):
+                if i == 3:
+                    lol.append(f"    return {dic['z_xy']}")
+                elif len(row) == 0:
+                    lol.append("")
+                else:
+                    lol.append(row[0])
+        with open(
+            f"{dic['exe']}/{dic['fol']}/preprocessing/cpg.mako",
+            "w",
+            encoding="utf8",
+        ) as file:
+            file.write("\n".join(lol))
+        mytemplate = Template(
+            filename=f"{dic['exe']}/{dic['fol']}/preprocessing/cpg.mako"
+        )
         var = {"dic": dic}
         filledtemplate = mytemplate.render(**var)
         with open(

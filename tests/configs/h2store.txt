@@ -11,6 +11,7 @@ cartesian 1  #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in d
 1e5          #Pore volume multiplier on the boundary [-] (0 to use well producers instead)[-]
 0 5 15       #Activate perforations [-], number of well perforations [-], and lenght [m]
 1 0          #Number of layers [-] and hysteresis (1 to activate)
+0            #The function for the reservoir surface
 
 """Set the saturation functions"""
 krw * ((sw - swi) / (1.0 - sni -swi)) ** nkr             #Wetting rel perm saturation function [-]
