@@ -15,7 +15,7 @@ npoints, npruns = 20, 5
 tmin, tmax = 0, 30
 times = np.random.uniform(tmin, tmax, npoints)
 
-FLOW = "{FLOW}"
+FLOW = "/Users/dmar/Github/opm/build/opm-simulators/bin/flow"
 FLAGS = (
     " --linear-solver-reduction=1e-5 --relaxed-max-pv-fraction=0"
     + " --ecl-enable-drift-compensation=0 --newton-max-iterations=50"
