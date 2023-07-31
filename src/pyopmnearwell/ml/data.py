@@ -208,11 +208,10 @@ class EclDataSet:
             Using this method might give an error atm.
 
         """
-        shuffle_idx = random.sample(
-            population=list(range(self.__len__())), k=self.__len__()
-        )
-        self.inputs = self.inputs[shuffle_idx]
-        self.targets = self.targets[shuffle_idx]
+        indices = tf.range(start=0, limit=self.inputs.shape[0], dtype=tf.int32)
+        shuffled_indices = tf.random.shuffle(indices)
+        self.inputs = tf.gather(self.inputs, shuffled_indices, axis=0)
+        self.targets = tf.gather(self.targets, shuffled_indices, axis=0)
 
 
 def main(args):
