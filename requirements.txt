@@ -3,3 +3,5 @@ ecl
 mako
 matplotlib
 scipy
+tensorflow
+tensorflow-datasets
