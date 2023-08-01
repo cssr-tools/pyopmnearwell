@@ -95,3 +95,29 @@ def test_ECLDataSet_on_epoch_end(
     """
     Ecl_data_set.read_data()
     Ecl_data_set.on_epoch_end()
+
+
+def test_ECLDataSet_len(
+    Ecl_data_set: EclDataSet,
+) -> None:
+    """Test that ``EclDataSet.__len__`` is greater than zero."""
+    Ecl_data_set.read_data()
+    assert len(Ecl_data_set) > 0
+
+
+def test_tfDataset_from_ECLDataSet_len(
+    Ecl_data_set: EclDataSet,
+) -> None:
+    """Test that a ``tf.data.Dataset`` generated from ``EclDataSet`` has length greater
+    than zero."""
+    Ecl_data_set.read_data()
+    ds = tf.data.Dataset.from_generator(
+        Ecl_data_set,
+        output_signature=(
+            tf.TensorSpec.from_tensor(Ecl_data_set[0][0]),
+            tf.TensorSpec.from_tensor(Ecl_data_set[0][1]),
+        ),
+    )
+
+    ds = ds.apply(tf.data.experimental.assert_cardinality(len(Ecl_data_set)))
+    assert tf.data.experimental.cardinality(ds).numpy() == len(Ecl_data_set)

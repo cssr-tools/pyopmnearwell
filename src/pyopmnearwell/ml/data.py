@@ -18,8 +18,8 @@ import numpy as np
 import tensorflow as tf
 from ecl.eclfile.ecl_file import EclFile, open_ecl_file
 
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 
 class EclDataSet:
@@ -119,6 +119,8 @@ class EclDataSet:
             # ``shape=(num_files, num_report_steps, num_cells, len(input_kws))``
             self.targets = tf.stack(_targets_lst, axis=0)
             # ``shape=(num_files, num_report_steps, num_cells, len(target_kws))``
+            self.inputs = tf.reshape(self.inputs, [-1, 1])
+            self.targets = tf.reshape(self.targets, [-1, 1])
         else:
             self.inputs = tf.zeros((1, 1))
             self.targets = tf.zeros((1, 1))
@@ -225,6 +227,8 @@ def main(args):
             tf.TensorSpec.from_tensor(data[0][1]),
         ),
     )
+    # Manually set the dataset cardinality.
+    ds = ds.apply(tf.data.experimental.assert_cardinality(len(data)))
     ds.save(args.save_path)
 
 
