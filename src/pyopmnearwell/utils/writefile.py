@@ -51,7 +51,7 @@ def reservoir_files(dic):
         )
     else:
         dic["xcor"] = np.linspace(0, dic["dims"][0], dic["noCells"][0] + 1)
-    dic["xcor"] = dic["xcor"][(dic["diameter"] < dic["xcor"]) | (0 == dic["xcor"])]
+    #dic["xcor"] = dic["xcor"][(dic["diameter"] < dic["xcor"]) | (0 == dic["xcor"])]
     dic["noCells"][0] = len(dic["xcor"]) - 1
     dic = manage_grid(dic)
     dic["zcor"] = np.linspace(0, dic["dims"][2], dic["noCells"][2] + 1)

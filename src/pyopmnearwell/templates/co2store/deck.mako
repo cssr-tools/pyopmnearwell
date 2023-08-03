@@ -240,7 +240,7 @@ SOLUTION
 ---------------------------------------------------------------------------
 
 EQUIL
- 0 ${dic['pressure']} ${dic['dims'][2]} 0 0 0 1 1 0 /
+ 0 ${dic['pressure']} 0 0 0 0 1 1 0 /
 
 --PRESSURE
 --% for i in range(dic['noCells'][2]):
@@ -272,7 +272,7 @@ CGIRL
 /
 
 WGIRL
-% for j in range(dic['noCells'][2]):
+% for j in range(0*dic['noCells'][2]+1):
  'INJ0'  ${j+1}  /
 % endfor
 /
@@ -286,7 +286,7 @@ CGITL
 /
 
 WGITL
-% for j in range(dic['noCells'][2]):
+% for j in range(0*dic['noCells'][2]+1):
  'INJ0'  ${j+1}  /
 % endfor
 /
@@ -330,7 +330,11 @@ RPTRST
  'BASIC=2' DEN VISC /
 
 WELSPECS
+% if dic['inj'][0][3] > 0:
 'INJ0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'GAS' /
+%else:
+'INJ0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'WATER' /
+%endif
 % if dic["pvMult"] == 0:
 % if dic['grid'] != 'cartesian':
 'PRO0'	'G1'	${dic['noCells'][0]}	1	1*	'GAS' /
@@ -344,9 +348,9 @@ WELSPECS
 /
 COMPDAT
 % if dic["jfactor"] == 0:
-'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	1	${dic['noCells'][2]}	'OPEN'	1*	1*	${dic['diameter']} /
+'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	1	${0*dic['noCells'][2]+1}	'OPEN'	1*	1*	${dic['diameter']} /
 % else:
-'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	1	${dic['noCells'][2]}	'OPEN'	1*	${dic["jfactor"]}	 /
+'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	1	${0*dic['noCells'][2]+1}	'OPEN'	1*	${dic["jfactor"]}	 /
 %endif
 % if dic["pvMult"] == 0:
 % if dic['grid'] != 'cartesian':
