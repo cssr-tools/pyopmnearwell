@@ -5,10 +5,11 @@
 Utiliy functions for necessary files and variables to run OPM Flow.
 """
 
-import os
 import csv
-import subprocess
 import math as mt
+import os
+import subprocess
+
 import numpy as np
 from mako.template import Template
 
@@ -30,14 +31,19 @@ def reservoir_files(dic):
     var = {"dic": dic}
     filledtemplate = mytemplate.render(**var)
     with open(
-        f"{dic['exe']}/{dic['fol']}/jobs/saturation_functions.py",
+        os.path.join(dic["exe"], dic["fol"], "jobs", "saturation_functions.py"),
         "w",
         encoding="utf8",
     ) as file:
         file.write(filledtemplate)
-    os.system(f"chmod u+x {dic['exe']}/{dic['fol']}/jobs/saturation_functions.py")
+    os.system(
+        f"chmod u+x {os.path.join(dic['exe'], dic['fol'], 'jobs', 'saturation_functions.py')}"
+    )
     prosc = subprocess.run(
-        ["python", f"{dic['exe']}/{dic['fol']}/jobs/saturation_functions.py"],
+        [
+            "python",
+            os.path.join(dic["exe"], dic["fol"], "jobs", "saturation_functions.py"),
+        ],
         check=True,
     )
     if prosc.returncode != 0:
@@ -51,16 +57,18 @@ def reservoir_files(dic):
         )
     else:
         dic["xcor"] = np.linspace(0, dic["dims"][0], dic["noCells"][0] + 1)
-    #dic["xcor"] = dic["xcor"][(dic["diameter"] < dic["xcor"]) | (0 == dic["xcor"])]
+    # dic["xcor"] = dic["xcor"][(dic["diameter"] < dic["xcor"]) | (0 == dic["xcor"])]
     dic["noCells"][0] = len(dic["xcor"]) - 1
     dic = manage_grid(dic)
     dic["zcor"] = np.linspace(0, dic["dims"][2], dic["noCells"][2] + 1)
     dic["x_centers"] = 0.5 * (dic["xcor"][:-1] + dic["xcor"][1:])
-    mytemplate = Template(filename=f"{dic['pat']}/templates/{dic['model']}/deck.mako")
+    mytemplate = Template(
+        filename=os.path.join(dic["pat"], "templates", dic["model"], "deck.mako")
+    )
     var = {"dic": dic}
     filledtemplate = mytemplate.render(**var)
     with open(
-        f"{dic['exe']}/{dic['fol']}/preprocessing/RESERVOIR.DATA",
+        os.path.join(dic["exe"], dic["fol"], "preprocessing", "RESERVOIR.DATA"),
         "w",
         encoding="utf8",
     ) as file:
