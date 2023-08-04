@@ -27,8 +27,8 @@ python3 -m venv vpyopmnearwell
 source vpyopmnearwell/bin/activate
 # Upgrade pip, setuptools, and wheel
 pip install --upgrade pip setuptools wheel
-# Install the pyopmnearwell package (in editable mode for contributions/modifications, i.e., pip install -e .)
-pip install .
+# Install the pyopmnearwell package (in editable mode for contributions/modifications; otherwise, pip install .)
+pip install -e .
 # For contributions/testing/linting, install the dev-requirements
 pip install -r dev-requirements.txt
 ``` 
@@ -38,6 +38,12 @@ before installation, comment the first two lines in the requierements.txt file, 
 after build opm-common from source inside the virtual environment with the flag -DOPM_ENABLE_PYTHON=ON and, finally,
 add to the python path the folder where you have built it, e.g., by running in the terminal
 `export PYTHONPATH=$PYTHONPATH:/Users/dmar/Github/opm-common/build/python` .
+
+To use the machine-learning approach, you need to run the `build_dune_and_opm-flow.bash` script. Then, after you
+have created your virtual environment, open the `vpyopmnearwell/bin/activate` script and add to the last line the
+path to the ml_tools folder in opm-common, i.e., `export PYTHONPATH=$PYTHONPATH:/Users/dmar/Github/pyopmnearwell/opm-common/opm/ml/ml_tools`.
+To test this, run `python3 example.py` in the examples/ml_peaceman_water folder after given the path to flow (or flow_gaswater_dissolution_diffuse)
+in line 38 in the `example.py` script.
 
 ## Running pyopmnearwell
 You can run _pyopmnearwell_ as a single command line:
