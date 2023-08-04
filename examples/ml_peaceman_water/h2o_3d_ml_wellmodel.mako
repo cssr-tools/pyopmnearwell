@@ -1,12 +1,12 @@
 """Set the full path to the flow executable and flags"""
-flow --linear-solver-reduction=1e-5 --relaxed-max-pv-fraction=0 --ecl-enable-drift-compensation=0 --newton-max-iterations=50 --newton-min-iterations=5 --tolerance-mb=1e-7 --tolerance-wells=1e-5 --relaxed-well-flow-tol=1e-5 --use-multisegment-well=false --enable-tuning=true --enable-opm-rst-file=true --linear-solver=cprw --enable-well-operability-check=false --min-time-step-before-shutting-problematic-wells-in-days=1e-99
+${flow} --ml-wi-filename="${pwd}/water_re.modelPeaceman" --linear-solver-reduction=1e-5 --relaxed-max-pv-fraction=0 --ecl-enable-drift-compensation=0 --newton-max-iterations=50 --newton-min-iterations=5 --tolerance-mb=1e-7 --tolerance-wells=1e-5 --relaxed-well-flow-tol=1e-5 --use-multisegment-well=false --enable-tuning=true --enable-opm-rst-file=true --linear-solver=cprw --enable-well-operability-check=false --min-time-step-before-shutting-problematic-wells-in-days=1e-99
 
 """Set the model parameters"""
 co2store     #Model (co2store/h2store)
-cake 60    #Grid type (radial/cake/cartesian2d/cartesian/cave) and size (theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
+cartesian 60 #Grid type (radial/cake/cartesian2d/cartesian/cave) and size (theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
 100  1       #Reservoir dimensions [m] (Lenght and height)
-2000 1 0       #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)
-0.1 1        #Well diameter [m] and well transmiscibility (0 to use the computed one internally in Flow)
+5 1 0        #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)
+0.1 0        #Well diameter [m] and well transmiscibility (0 to use the computed one internally in Flow)
 1e7 40       #Pressure [Pa] on the top and uniform temperature [°]
 1e10         #Pore volume multiplier on the boundary [-] (0 to use well producers instead)[-]
 0 5 10       #Activate perforations [-], number of well perforations [-], and lenght [m]
@@ -28,4 +28,4 @@ PERMXY5 1013.25 PERMZ5 1013.25 PORO5 0.25
 
 """Define the injection values""" 
 """injection time [d], time step size to write results [d], maximum time step [d], injected fluid (0 wetting, 1 non-wetting), injection rates [kg/day]"""
-3 1e-1 5e-2 0 10000
+3 1e-1 5e-2 0 60000
