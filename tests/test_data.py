@@ -1,11 +1,16 @@
+"""Test the data module.
+
+We disable quite a lot of pylint errors, as it struggles with the pytest fictures and so
+on.
+
+"""
+
 import os
 
 import numpy as np
 import pytest
 import tensorflow as tf
-from ecl import EclFileFlagEnum
-from ecl.ecl_type import EclDataType
-from ecl.eclfile.ecl_file import EclFile, EclKW, open_ecl_file
+from ecl.eclfile.ecl_file import EclFile, open_ecl_file
 
 from pyopmnearwell.ml.data import EclDataSet
 
@@ -13,7 +18,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
 @pytest.fixture
-def EclKW_saturation() -> np.ndarray:
+def EclKW_saturation() -> np.ndarray:  # pylint: disable=C0116, C0103
     with open_ecl_file(os.path.join(dir_path, "DUMMY.UNRST")) as ecl_file:
         saturation_array = np.array(ecl_file.iget_kw("SGAS"))
         # Transform to model input shape (no batch).
@@ -21,7 +26,7 @@ def EclKW_saturation() -> np.ndarray:
 
 
 @pytest.fixture
-def EclKW_pressure() -> np.ndarray:
+def EclKW_pressure() -> np.ndarray:  # pylint: disable=C0116, C0103
     with open_ecl_file(os.path.join(dir_path, "DUMMY.UNRST")) as ecl_file:
         pressure_array = np.array(ecl_file.iget_kw("PRESSURE"))
         # Transform to model output shape (no batch).
@@ -29,21 +34,21 @@ def EclKW_pressure() -> np.ndarray:
 
 
 @pytest.fixture
-def Ecl_dummy_file(EclKW_saturation: EclKW, EclKW_pressure: EclKW) -> EclFile:
+def Ecl_dummy_file() -> EclFile:  # pylint: disable=C0116, C0103
     """Return a dummy ``EclFile``."""
     ecl_file = EclFile(os.path.join(dir_path, "DUMMY.UNRST"))
     return ecl_file
 
 
 @pytest.fixture
-def Ecl_data_set() -> EclDataSet:
-    ds = EclDataSet(
+def Ecl_data_set() -> EclDataSet:  # pylint: disable=C0116, C0103
+    dataset = EclDataSet(
         path=dir_path,
         input_kws=["PRESSURE"],
         target_kws=["SGAS"],
         read_data_on_init=False,
     )
-    return ds
+    return dataset
 
 
 # def test_ECLDataSet(Ecl_dummy_file: EclFile, Ecl_data_set: EclDataSet) -> None:
@@ -55,11 +60,11 @@ def Ecl_data_set() -> EclDataSet:
 #     pass
 
 
-def test_EclFile_to_datapoint(
-    Ecl_data_set: EclDataSet,
-    Ecl_dummy_file: EclFile,
-    EclKW_pressure: np.ndarray,
-    EclKW_saturation: np.ndarray,
+def test_EclFile_to_datapoint(  # pylint: disable=C0116, C0103
+    Ecl_data_set: EclDataSet,  # pylint: disable=W0621
+    Ecl_dummy_file: EclFile,  # pylint: disable=W0621
+    EclKW_pressure: np.ndarray,  # pylint: disable=W0621
+    EclKW_saturation: np.ndarray,  # pylint: disable=W0621
 ) -> None:
     """Test the ``EclFile_to_datapoint`` method.
 
@@ -67,13 +72,13 @@ def test_EclFile_to_datapoint(
         ECL_dummmy_file: _description_
         Ecl_data_set: _description_
     """
-    input, target = Ecl_data_set.EclFile_to_datapoint(Ecl_dummy_file)
-    assert np.allclose(input, EclKW_pressure)
+    feature, target = Ecl_data_set.EclFile_to_datapoint(Ecl_dummy_file)
+    assert np.allclose(feature, EclKW_pressure)
     assert np.allclose(target, EclKW_saturation)
 
 
-def test_ECLDataSet_read_data(
-    Ecl_data_set: EclDataSet,
+def test_ECLDataSet_read_data(  # pylint: disable=C0116, C0103
+    Ecl_data_set: EclDataSet,  # pylint: disable=W0621
 ) -> None:
     """Test that ``EclDataSet.read_data`` runs without any error.
 
@@ -84,8 +89,8 @@ def test_ECLDataSet_read_data(
     Ecl_data_set.read_data()
 
 
-def test_ECLDataSet_on_epoch_end(
-    Ecl_data_set: EclDataSet,
+def test_ECLDataSet_on_epoch_end(  # pylint: disable=C0116, C0103
+    Ecl_data_set: EclDataSet,  # pylint: disable=W0621
 ) -> None:
     """Test that ``EclDataSet.on_epoch_end`` runs without any error.
 
@@ -97,16 +102,16 @@ def test_ECLDataSet_on_epoch_end(
     Ecl_data_set.on_epoch_end()
 
 
-def test_ECLDataSet_len(
-    Ecl_data_set: EclDataSet,
+def test_ECLDataSet_len(  # pylint: disable=C0116, C0103
+    Ecl_data_set: EclDataSet,  # pylint: disable=W0621
 ) -> None:
     """Test that ``EclDataSet.__len__`` is greater than zero."""
     Ecl_data_set.read_data()
     assert len(Ecl_data_set) > 0
 
 
-def test_tfDataset_from_ECLDataSet_len(
-    Ecl_data_set: EclDataSet,
+def test_tfDataset_from_ECLDataSet_len(  # pylint: disable=C0116, C0103
+    Ecl_data_set: EclDataSet,  # pylint: disable=W0621
 ) -> None:
     """Test that a ``tf.data.Dataset`` generated from ``EclDataSet`` has length greater
     than zero."""

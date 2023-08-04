@@ -11,8 +11,7 @@ from __future__ import annotations
 import argparse
 import logging
 import os
-import random
-from typing import Literal, Optional
+from typing import Literal
 
 import numpy as np
 import tensorflow as tf
@@ -22,7 +21,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-class EclDataSet:
+class EclDataSet:  # pylint: disable=R0902
     """Generate samples for a ``tf.data.Dataset`` from a folder of ``*.UNRST`` files.
 
     Example:
@@ -42,7 +41,7 @@ class EclDataSet:
 
     """
 
-    inputs: tf.Tensor
+    features: tf.Tensor
     """Stores all inputs of the dataset.
 
     ``shape=(num_files, num_report_steps, num_cells, len(input_kws))``
@@ -55,7 +54,7 @@ class EclDataSet:
 
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=R0913
         self,
         path: str,
         input_kws: list[str],
@@ -93,36 +92,41 @@ class EclDataSet:
         if read_data_on_init:
             self.read_data()
         self.shuffle_on_epoch_end: bool = shuffle_on_epoch_end
+        self.file_format: Literal["ecl", "opm"] = file_format
 
     def read_data(self):
         """Create a ``tensorflow`` dataset from a folder of ``ecl`` or ``opm`` files."""
         logger.info("Generating datapoints...")
-        _inputs_lst: list[tf.Tensor] = []
+        _features_lst: list[tf.Tensor] = []
         _targets_lst: list[tf.Tensor] = []
         for filename in os.listdir(self.path):
             if filename.endswith("UNRST"):
                 with open_ecl_file(os.path.join(self.path, filename)) as ecl_file:
                     try:
-                        input, target = self.EclFile_to_datapoint(ecl_file)
-                        _inputs_lst.append(input)
+                        feature, target = self.EclFile_to_datapoint(ecl_file)
+                        _features_lst.append(feature)
                         _targets_lst.append(target)
-                        logger.info(f"Generated a datapoint from {filename}.")
-                    except KeyError as e:
-                        logger.info(f"{filename} has no keyword {e}.")
+                        logger.info(  # pylint: disable=W1203
+                            f"Generated a datapoint from {filename}."
+                        )
+                    except KeyError as keyerror:
+                        logger.info(  # pylint: disable=W1203
+                            f"{filename} has no keyword {keyerror}."
+                        )
                         continue
-        if len(_inputs_lst) > 0 and len(_targets_lst) > 0:
+        if len(_features_lst) > 0 and len(_targets_lst) > 0:
             # Transform the lists into a tensor
 
             # MANUAL CHANGES: Change the lines below to change what becomes part of the
             # batch dimension and what becomes part of the input dimension.
-            self.inputs = tf.stack(_inputs_lst, axis=0)
+            self.features = tf.stack(_features_lst, axis=0)
             # ``shape=(num_files, num_report_steps, num_cells, len(input_kws))``
             self.targets = tf.stack(_targets_lst, axis=0)
             # ``shape=(num_files, num_report_steps, num_cells, len(target_kws))``
-            self.inputs = tf.reshape(self.inputs, [-1, 1])
+            self.features = tf.reshape(self.features, [-1, 1])
             self.targets = tf.reshape(self.targets, [-1, 1])
         else:
-            self.inputs = tf.zeros((1, 1))
+            self.features = tf.zeros((1, 1))
             self.targets = tf.zeros((1, 1))
             logger.info(
                 """Not able to extract keywords from input files. Check if there are
@@ -131,7 +135,9 @@ class EclDataSet:
                 Generated an empty dataset for now."""
             )
 
-    def EclFile_to_datapoint(self, ecl_file: EclFile) -> tuple[tf.Tensor, tf.Tensor]:
+    def EclFile_to_datapoint(  # pylint: disable= C0103
+        self, ecl_file: EclFile
+    ) -> tuple[tf.Tensor, tf.Tensor]:
         """Extract values from an ``EclFile`` to form an (input, target) tuple of
         tensors.
 
@@ -152,18 +158,14 @@ class EclDataSet:
         """
         # Only add the datapoint if all input features and targets are
         # available.
-        input: dict[str, np.ndarray] = {}
+        feature: dict[str, np.ndarray] = {}
         target: dict[str, np.ndarray] = {}
-        # The dic values are  ``np.ndarray`` of the property values
+        # The dic values can be converted to an ``np.ndarray`` containing the values
         # corresponding to the keyword, with shape
         # ``(ecl_file.num_report_steps(), num_cells)``.
-        # TODO: Check that this is right!
         for input_kw in self.input_kws:
             if ecl_file.has_kw(input_kw):
-                input[input_kw] = np.array(ecl_file.iget_kw(input_kw))
-                # print(
-                #     f"report step {0} input_kw {input_kw} shape {input[input_kw].shape}"
-                # )
+                feature[input_kw] = np.array(ecl_file.iget_kw(input_kw))
             else:
                 raise KeyError(input_kw)
         for target_kw in self.target_kws:
@@ -178,7 +180,7 @@ class EclDataSet:
         # MANUAL CHANGES: Change the lines below to change the shape of the input and
         # target tensors.
         return tf.stack(
-            [tf.convert_to_tensor(val, dtype=self.dtype) for val in input.values()],
+            [tf.convert_to_tensor(val, dtype=self.dtype) for val in feature.values()],
             axis=-1,
         ), tf.stack(
             [tf.convert_to_tensor(val, dtype=self.dtype) for val in target.values()],
@@ -186,20 +188,17 @@ class EclDataSet:
         )
 
     def __len__(self):
-        return self.inputs.shape[0]
+        return self.features.shape[0]
 
     def __getitem__(self, idx) -> tuple[tf.Tensor, tf.Tensor]:
-        x = self.inputs[idx]
-        y = self.targets[idx]
-        # TODO: Implement some functionality to make sure that x and y have the same
-        # datatype.
-        return x, y
+        feature = self.features[idx]
+        target = self.targets[idx]
+        return feature, target
 
     def __call__(self):
         for i in range(self.__len__()):
             yield self.__getitem__(i)
 
-            # TODO: Fix ``on_epoch_end`` and reenable this call.
             if i == self.__len__() - 1 and self.shuffle_on_epoch_end:
                 self.on_epoch_end()
 
@@ -210,17 +209,17 @@ class EclDataSet:
             Using this method might give an error atm.
 
         """
-        indices = tf.range(start=0, limit=self.inputs.shape[0], dtype=tf.int32)
+        indices = tf.range(start=0, limit=self.features.shape[0], dtype=tf.int32)
         shuffled_indices = tf.random.shuffle(indices)
-        self.inputs = tf.gather(self.inputs, shuffled_indices, axis=0)
+        self.features = tf.gather(self.features, shuffled_indices, axis=0)
         self.targets = tf.gather(self.targets, shuffled_indices, axis=0)
 
 
-def main(args):
+def main(args):  # pylint: disable=W0621
     """Create a dataset from the given arguments and store it"""
     data = EclDataSet(args.path, args.input_kws, args.target_kws, args.file_format)
     assert len(data) > 0
-    ds = tf.data.Dataset.from_generator(
+    dataset = tf.data.Dataset.from_generator(
         data,
         output_signature=(
             tf.TensorSpec.from_tensor(data[0][0]),
@@ -228,8 +227,8 @@ def main(args):
         ),
     )
     # Manually set the dataset cardinality.
-    ds = ds.apply(tf.data.experimental.assert_cardinality(len(data)))
-    ds.save(args.save_path)
+    dataset = dataset.apply(tf.data.experimental.assert_cardinality(len(data)))
+    dataset.save(args.save_path)
 
 
 if __name__ == "__main__":
