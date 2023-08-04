@@ -18,6 +18,7 @@ ${(dic["hysteresis"]+1)*(dic['satnum']+dic['perforations'][0])} 1* 10000 /
 
 OIL
 GAS
+DISGAS
 H2STORE
 
 METRIC
@@ -248,10 +249,10 @@ EQUIL
 RTEMPVD
 0   ${dic['temperature']}
 ${dic['dims'][2]} ${dic['temperature']} /
-RVVD
+RSVD
 0   0.0
 ${dic['dims'][2]} 0.0 /
-RV
+RS
 ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*0.0 /
 
 
@@ -393,7 +394,7 @@ WCONINJE
 %endif
 /
 WCONPROD
-'PRO0' ${'OPEN' if dic['inj'][j][4] < 0 else 'SHUT'} 'GRAT' 2* ${f"{abs(dic['inj'][j][4]) / 0.0850397 : E}"} 2* /
+'PRO0' ${'OPEN' if dic['inj'][j][4] < 0 else 'SHUT'} 'GRAT' 2* ${f"{abs(dic['inj'][j][4]) / 0.0850397 : E}"} 2* ${.9*dic['pressure']}/
 /
 WECON
 'PRO0' 1* ${f"{.95*abs(dic['inj'][j][4]) / 0.0850397 : E}"} /

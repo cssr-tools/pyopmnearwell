@@ -12,10 +12,10 @@ ${dic['noCells'][0]} ${dic['noCells'][1]} ${dic['noCells'][2]} 1 F
 
 COORD
 % for i in range(dic['noCells'][0] + 1):
-${f"{dic['xcor'][i] : E}"} ${f"{-0.5*dic['xcor'][1]-dic['xcor'][i]*dic['slope'] : E}"} 0 ${f"{dic['xcor'][i] : E}"} ${f"{-0.5*dic['xcor'][1]-dic['xcor'][i]*dic['slope'] : E}"} ${f"{dic['dims'][2]  : E}"}
+${f"{dic['xcor'][i] : E}"} ${f"{-0*0.5*dic['xcor'][1]-dic['xcor'][i]*dic['slope'] : E}"} 0 ${f"{dic['xcor'][i] : E}"} ${f"{-0*0.5*dic['xcor'][1]-dic['xcor'][i]*dic['slope'] : E}"} ${f"{dic['dims'][2]  : E}"}
 % endfor
 % for i in range(dic['noCells'][0] + 1):
-${f"{dic['xcor'][i] : E}"} ${f"{0.5*dic['xcor'][1]+dic['xcor'][i]*dic['slope'] : E}"} 0 ${f"{dic['xcor'][i] : E}"} ${f"{0.5*dic['xcor'][1]+dic['xcor'][i]*dic['slope'] : E}"} ${f"{dic['dims'][2]  : E}"}
+${f"{dic['xcor'][i] : E}"} ${f"{0*0.5*dic['xcor'][1]+dic['xcor'][i]*dic['slope'] : E}"} 0 ${f"{dic['xcor'][i] : E}"} ${f"{0*0.5*dic['xcor'][1]+dic['xcor'][i]*dic['slope'] : E}"} ${f"{dic['dims'][2]  : E}"}
 % endfor
 /
 
