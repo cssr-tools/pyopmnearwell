@@ -47,7 +47,6 @@ def pyopmnearwell():
     dic["compare"] = cmdargs[
         "compare"
     ]  # If not empty, then the name of the compare plot (compare).
-
     # If the compare plot is generated, then we exit right afterwards
     if dic["compare"]:
         plot_results(dic)
@@ -72,7 +71,8 @@ def pyopmnearwell():
     simulations(dic)
 
     # Make some useful plots after the studies
-    plotting(dic)
+    if cmdargs["plotting"] != "":
+        plotting(dic)
 
 
 def main():

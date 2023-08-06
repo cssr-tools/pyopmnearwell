@@ -42,8 +42,8 @@ add to the python path the folder where you have built it, e.g., by running in t
 To use the machine-learning approach, you need to run the `build_dune_and_opm-flow.bash` script. Then, after you
 have created your virtual environment, open the `vpyopmnearwell/bin/activate` script and add to the last line the
 path to the ml_tools folder in opm-common, i.e., `export PYTHONPATH=$PYTHONPATH:/Users/dmar/Github/pyopmnearwell/opm-common/opm/ml/ml_tools`.
-To test this, run `python3 example.py` in the examples/ml_peaceman_water folder after given the path to flow (or flow_gaswater_dissolution_diffuse)
-in line 38 in the `example.py` script.
+To test this, run `python3 example.py` in the examples/ml_peaceman_water folder after given the path to the pyopmnearwell package
+in line 37 in the `example.py` script.
 
 ## Running pyopmnearwell
 You can run _pyopmnearwell_ as a single command line:

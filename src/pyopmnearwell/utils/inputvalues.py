@@ -55,8 +55,10 @@ def readtheinputfile(lol, dic):
     dic["jfactor"] = float(
         (lol[8][0].strip()).split()[1]
     )  # Well connection transmissibility factor [mD m]
+    dic["removecells"] = int((lol[8][0].strip()).split()[2])  # Remove small cells
     dic["pressure"] = float((lol[9][0].strip()).split()[0]) / 1.0e5  # Convert to bar
     dic["temperature"] = float((lol[9][0].strip()).split()[1])
+    dic["initialphase"] = int((lol[9][0].strip()).split()[2])
     dic["pvMult"] = float(lol[10][0])  # Pore volume multiplier [-]
     dic["perforations"] = [int((lol[11][0].strip()).split()[j]) for j in range(3)]
     dic["satnum"] = int((lol[12][0].strip()).split()[0])  # No. saturation regions
