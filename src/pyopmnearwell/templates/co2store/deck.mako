@@ -240,7 +240,7 @@ SOLUTION
 ---------------------------------------------------------------------------
 
 EQUIL
- 0 ${dic['pressure']} 0 0 0 0 1 1 0 /
+ 0 ${dic['pressure']} ${round(dic["initialphase"]*dic['dims'][2])} 0 0 0 1 1 0 /
 
 --PRESSURE
 --% for i in range(dic['noCells'][2]):

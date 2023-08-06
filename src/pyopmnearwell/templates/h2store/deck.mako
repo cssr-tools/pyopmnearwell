@@ -238,7 +238,7 @@ IMBNUM  ${2*dic['satnum']+2} ${round(dic["noCells"][1] / 2)-sum(dic['x_centers']
 SOLUTION
 ---------------------------------------------------------------------------
 EQUIL
- 0 ${dic['pressure']} ${dic['dims'][2]} 0 0 0 1 1 0 /
+ 0 ${dic['pressure']} ${round((1-dic["initialphase"])*dic['dims'][2])} 0 0 0 1 1 0 /
 --PRESSURE
 --% for i in range(dic['noCells'][2]):
 --	${dic['noCells'][0]*dic['noCells'][1]}*${dic['pressure']+1e-5*i*0.6785064*9.81*dic['dims'][2]/dic['noCells'][2]}
