@@ -18,25 +18,17 @@ tmin, tmax = 0, 365
 times = np.random.uniform(tmin, tmax, npoints)
 
 FLOW = "/Users/dmar/Github/opm/build/opm-simulators/bin/flow"
-FLAGS = (
-    " --linear-solver-reduction=1e-5 --relaxed-max-pv-fraction=0"
-    + " --ecl-enable-drift-compensation=0 --newton-max-iterations=50"
-    + " --newton-min-iterations=5 --tolerance-mb=1e-7 --tolerance-wells=1e-5"
-    + " --relaxed-well-flow-tol=1e-5 --use-multisegment-well=false --enable-tuning=true"
-    + " --enable-opm-rst-file=true --linear-solver=cprw --enable-well-operability-check=false"
-    + " --min-time-step-before-shutting-problematic-wells-in-days=1e-99"
-)
 
-mytemplate = Template(filename="RESERVOIR.mako")
+mytemplate = Template(filename="h2.mako")
 time = []
 ratio_fgpt_to_fgit = []
 fgit = []
 wbhp = []
 for i, time in enumerate(times):
-    var = {"time": time}
+    var = {"flow": FLOW, "time": time}
     filledtemplate = mytemplate.render(**var)
     with open(
-        f"RESERVOIR{i}.DATA",
+        f"h2_{i}.txt",
         "w",
         encoding="utf8",
     ) as file:
@@ -44,23 +36,18 @@ for i, time in enumerate(times):
 
 for i in range(round(npoints / npruns)):
     os.system(
-        f"{FLOW}"
-        + f" RESERVOIR{npruns*i}.DATA --output-dir=results{npruns*i} {FLAGS} & "
-        f"{FLOW}"
-        + f" RESERVOIR{npruns*i+1}.DATA --output-dir=results{npruns*i+1} {FLAGS} & "
-        f"{FLOW}"
-        + f" RESERVOIR{npruns*i+2}.DATA --output-dir=results{npruns*i+2} {FLAGS} & "
-        f"{FLOW}"
-        + f" RESERVOIR{npruns*i+3}.DATA --output-dir=results{npruns*i+3} {FLAGS} & "
-        f"{FLOW}"
-        + f" RESERVOIR{npruns*i+4}.DATA --output-dir=results{npruns*i+4} {FLAGS} & wait"
+        f"pyopmnearwell -i h2_{npruns*i}.txt -o h2_{npruns*i} -p '' & "
+        + f"pyopmnearwell -i h2_{npruns*i+1}.txt -o h2_{npruns*i+1} -p '' & "
+        + f"pyopmnearwell -i h2_{npruns*i+2}.txt -o h2_{npruns*i+2} -p '' & "
+        + f"pyopmnearwell -i h2_{npruns*i+3}.txt -o h2_{npruns*i+3} -p '' & "
+        + f"pyopmnearwell -i h2_{npruns*i+4}.txt -o h2_{npruns*i+4} -p '' & wait"
     )
     for j in range(npruns):
-        smspec = EclSum(f"results{npruns*i+j}/RESERVOIR{npruns*i+j}.SMSPEC")
+        smspec = EclSum(f"./h2_{npruns*i+j}/output/RESERVOIR.SMSPEC")
         ratio_fgpt_to_fgit.append(smspec["FGPT"].values[-1]/smspec["FGIT"].values[-1])
         wbhp.append(max(smspec["WBHP:PRO0"].values))
         fgit.append(smspec["FGIT"].values[-1])
-        os.system(f"rm -rf results{npruns*i+j} RESERVOIR{npruns*i+j}.DATA")
+        os.system(f"rm -rf h2_{npruns*i+j} h2_{npruns*i+j}.txt")
 
 np.save('times', times)
 np.save('ratio_fgpt_to_fgit', ratio_fgpt_to_fgit)

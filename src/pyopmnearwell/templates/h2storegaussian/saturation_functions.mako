@@ -9,12 +9,12 @@ Script to write the saturation functions
 import numpy as np
 
 
-def krwe(sw, swi, sni, krw, nkr):
+def krwe(sw, swi, sni, krw, nkrw):
     # Wetting relative permeability
     return ${dic['krwf'].strip()}
 
 
-def krne(sw, swi, sni, krn, nkr):
+def krne(sw, swi, sni, krn, nkrn):
     # CO2 relative permeability
     return ${dic['krnf'].strip()}
 
@@ -28,7 +28,7 @@ def safu_evaluation():
     # Saturation function assignation
 
     # Properties: swi, sni, krw, krn, pe
-    safu = [[0.0] * 8 for _ in range(${len(dic['safu'])})]
+    safu = [[0.0] * 9 for _ in range(${len(dic['safu'])})]
     % for i, _ in enumerate(dic['safu']):
     % for j, _ in enumerate(dic['safu'][i]):
     safu[${i}][${j}] = ${dic['safu'][i][j]}
@@ -48,7 +48,7 @@ def safu_evaluation():
                     f"{0:.6f}"
                     f" 0.00000"
                     f" 1.00000"
-                    f" {pcwce(1-para[1]+para[7],para[0], para[1], para[4], para[6]):E} \n"
+                    f" {pcwce(1-para[1]+para[8],para[0], para[1], para[4], para[7]):E} \n"
                 )
             for i, value in enumerate(snatc):
                 if i==0:
@@ -56,14 +56,14 @@ def safu_evaluation():
                         f"{value:.6f}"
                         f" 0.00000"
                         f" 1.00000"
-                        f" {pcwce(1-value+para[7],para[0], para[1], para[4], para[6]):E} \n"
+                        f" {pcwce(1-value+para[8],para[0], para[1], para[4], para[7]):E} \n"
                     )
                 else:
                     file.write(
                         f"{value:.6f}"
-                        f" {krne(1-value,para[0], para[1] , para[2], para[5]) :.6f}"
+                        f" {krne(1-value,para[0], para[1] , para[2], para[6]) :.6f}"
                         f" {krwe(1-value,para[0], para[1] , para[2], para[5]) :.6f}"
-                        f" {pcwce(1-value+para[7],para[0], para[1], para[4], para[6]):E} \n"
+                        f" {pcwce(1-value+para[8],para[0], para[1], para[4], para[7]):E} \n"
                     )
             file.write("/\n")
 

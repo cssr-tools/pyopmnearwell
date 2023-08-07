@@ -80,8 +80,8 @@ TOPS
 %endif  
 
 EQUALS
-% for i in range(dic['satnum']):
-PERMX  ${dic['rock'][i][0]} 1* 1* 1* 1* ${1+i*round(dic['noCells'][2]/dic['satnum'])} ${(i+1)*round(dic['noCells'][2]/dic['satnum'])} /
+% for i in range(dic['noCells'][2]):
+PERMX  ${dic['rock'][int(dic["layers"][i])][0]} 1* 1* 1* 1* ${i+1} ${i+1} /
 % endfor
 % if dic['perforations'][0] == 1:
 % for i in range(dic['perforations'][1]):
@@ -95,8 +95,8 @@ PERMX  ${dic['rock'][dic['satnum']][0]} ${round(dic["noCells"][1] / 2)-sum(dic['
 /
 
 EQUALS
-% for i in range(dic['satnum']):
-PERMZ  ${dic['rock'][i][1]} 1* 1* 1* 1* ${1+i*round(dic['noCells'][2]/dic['satnum'])} ${(i+1)*round(dic['noCells'][2]/dic['satnum'])} /
+% for i in range(dic['noCells'][2]):
+PERMZ  ${dic['rock'][int(dic["layers"][i])][1]} 1* 1* 1* 1* ${i+1} ${i+1} /
 % endfor
 % if dic['perforations'][0] == 1:
 % for i in range(dic['perforations'][1]):
@@ -114,8 +114,8 @@ PERMX PERMY /
 /
 
 EQUALS
-% for i in range(dic['satnum']):
-PORO  ${dic['rock'][i][2]} 1* 1* 1* 1* ${1+i*round(dic['noCells'][2]/dic['satnum'])} ${(i+1)*round(dic['noCells'][2]/dic['satnum'])} /
+% for i in range(dic['noCells'][2]):
+PORO  ${dic['rock'][int(dic["layers"][i])][2]} 1* 1* 1* 1* ${i+1} ${i+1} /
 % endfor
 % if dic['perforations'][0] == 1:
 % for i in range(dic['perforations'][1]):
@@ -203,8 +203,8 @@ REGIONS
 ----------------------------------------------------------------------------
 
 EQUALS
-% for i in range(dic['satnum']):
-SATNUM  ${i+1} 1* 1* 1* 1* ${1+i*round(dic['noCells'][2]/dic['satnum'])} ${(i+1)*round(dic['noCells'][2]/dic['satnum'])} /
+% for i in range(dic['noCells'][2]):
+SATNUM  ${round(dic["layers"][i]+1)} 1* 1* 1* 1* ${i+1} ${i+1} /
 % endfor
 % if dic['perforations'][0] == 1:
 % for i in range(dic['perforations'][1]):
@@ -219,8 +219,8 @@ SATNUM  ${dic['satnum']+1} ${round(dic["noCells"][1] / 2)-sum(dic['x_centers']<d
 
 % if dic["hysteresis"] ==1:
 EQUALS
-% for i in range(dic['satnum']):
-IMBNUM  ${dic['satnum']+dic['perforations'][0]+1+i} 1* 1* 1* 1* ${1+i*round(dic['noCells'][2]/dic['satnum'])} ${(i+1)*round(dic['noCells'][2]/dic['satnum'])} /
+% for i in range(dic['noCells'][2]):
+IMBNUM  ${dic['satnum']+dic['perforations'][0]+round(dic["layers"][i]+1)} 1* 1* 1* 1* ${i+1} ${i+1} /
 % endfor
 % if dic['perforations'][0] == 1:
 % for i in range(dic['perforations'][1]):
@@ -349,7 +349,7 @@ RPTRST
 
 WELSPECS
 'INJ0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'GAS' 2* 'STOP' /
-'PRO0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'GAS' 2* 'STOP' /
+'PRO0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'GAS' 2* 'STOP'  /
 % if dic["pvMult"] == 0:
 % if dic['grid'] != 'cartesian' and dic['grid'] != 'cave':
 'PRO1'	'G1'	${dic['noCells'][0]}	1	1*	'GAS' /
@@ -363,11 +363,11 @@ WELSPECS
 /
 COMPDAT
 % if dic["jfactor"] == 0:
-'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	1	${dic['noCells'][2]}	'OPEN'	1*	1*	${dic['diameter']} /
+'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	${round(sum(dic["layers"]<2)+1)} ${dic['noCells'][2]}	'OPEN'	1*	1*	${dic['diameter']} /
 % else:
-'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	1	${dic['noCells'][2]}	'OPEN'	1*	${dic["jfactor"]}	 /
+'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	${round(sum(dic["layers"]<2)+1)} ${dic['noCells'][2]}	'OPEN'	1*	${dic["jfactor"]}	 /
 %endif
-'PRO0'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1	${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
+'PRO0'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	${round(sum(dic["layers"]<2)+1)} ${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
 % if dic["pvMult"] == 0:
 % if dic['grid'] != 'cartesian':
 'PRO1'	${dic['noCells'][0]}	1	1	${0*dic['noCells'][2]+1}	'OPEN' 1*	1*	${dic['diameter']} /
@@ -396,9 +396,9 @@ WCONINJE
 WCONPROD
 'PRO0' ${'OPEN' if dic['inj'][j][4] < 0 else 'SHUT'} 'GRAT' 2* ${f"{abs(dic['inj'][j][4]) / 0.0850397 : E}"} 2* ${.9*dic['pressure']}/
 /
-WECON
-'PRO0' 1* ${f"{.95*abs(dic['inj'][j][4]) / 0.0850397 : E}"} /
-/
+--WECON
+--'PRO0' 1* ${f"{.95*abs(dic['inj'][j][4]) / 0.0850397 : E}"} /
+--/
 % if dic["pvMult"] == 0:
 % if dic['grid'] == 'cartesian':
 'PRO1' 'OPEN' 'BHP' 5* ${dic['pressure']}/
