@@ -89,9 +89,11 @@ def readtheinputfile(lol, dic):
                 float(row[11]),
                 float(row[13]),
                 float(row[15]),
+                float(row[17]),
             ]
         )
     index += 3 + dic["imbnum"] * (dic["satnum"] + dic["perforations"][0])
+    dic["thickness"] = []
     for i in range(dic["satnum"] + dic["perforations"][0]):  # Rock values
         row = list((lol[index + i][0].strip()).split())
         dic["rock"].append(
@@ -101,6 +103,8 @@ def readtheinputfile(lol, dic):
                 float(row[5]),
             ]
         )
+        if i < dic["satnum"]:
+            dic["thickness"].append(float(row[7]))
     index += 3 + dic["satnum"] + dic["perforations"][0]
     column = []
     for i in range(len(lol) - index):

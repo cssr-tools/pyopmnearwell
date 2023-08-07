@@ -81,8 +81,8 @@ TOPS
 %endif  
 
 EQUALS
-% for i in range(dic['satnum']):
-PERMX  ${dic['rock'][i][0]} 1* 1* 1* 1* ${1+i*round(dic['noCells'][2]/dic['satnum'])} ${(i+1)*round(dic['noCells'][2]/dic['satnum'])} /
+% for i in range(dic['noCells'][2]):
+PERMX  ${dic['rock'][int(dic["layers"][i])][0]} 1* 1* 1* 1* ${i+1} ${i+1} /
 % endfor
 % if dic['perforations'][0] == 1:
 % for i in range(dic['perforations'][1]):
@@ -96,8 +96,8 @@ PERMX  ${dic['rock'][dic['satnum']][0]} ${round(dic["noCells"][1] / 2)-sum(dic['
 /
 
 EQUALS
-% for i in range(dic['satnum']):
-PERMZ  ${dic['rock'][i][1]} 1* 1* 1* 1* ${1+i*round(dic['noCells'][2]/dic['satnum'])} ${(i+1)*round(dic['noCells'][2]/dic['satnum'])} /
+% for i in range(dic['noCells'][2]):
+PERMZ  ${dic['rock'][int(dic["layers"][i])][1]} 1* 1* 1* 1* ${i+1} ${i+1} /
 % endfor
 % if dic['perforations'][0] == 1:
 % for i in range(dic['perforations'][1]):
@@ -115,8 +115,8 @@ PERMX PERMY /
 /
 
 EQUALS
-% for i in range(dic['satnum']):
-PORO  ${dic['rock'][i][2]} 1* 1* 1* 1* ${1+i*round(dic['noCells'][2]/dic['satnum'])} ${(i+1)*round(dic['noCells'][2]/dic['satnum'])} /
+% for i in range(dic['noCells'][2]):
+PORO  ${dic['rock'][int(dic["layers"][i])][2]} 1* 1* 1* 1* ${i+1} ${i+1} /
 % endfor
 % if dic['perforations'][0] == 1:
 % for i in range(dic['perforations'][1]):
@@ -204,8 +204,8 @@ REGIONS
 ----------------------------------------------------------------------------
 
 EQUALS
-% for i in range(dic['satnum']):
-SATNUM  ${i+1} 1* 1* 1* 1* ${1+i*round(dic['noCells'][2]/dic['satnum'])} ${(i+1)*round(dic['noCells'][2]/dic['satnum'])} /
+% for i in range(dic['noCells'][2]):
+SATNUM  ${round(dic["layers"][i]+1)} 1* 1* 1* 1* ${i+1} ${i+1} /
 % endfor
 % if dic['perforations'][0] == 1:
 % for i in range(dic['perforations'][1]):
@@ -220,8 +220,8 @@ SATNUM  ${dic['satnum']+1} ${round(dic["noCells"][1] / 2)-sum(dic['x_centers']<d
 
 % if dic["hysteresis"] ==1:
 EQUALS
-% for i in range(dic['satnum']):
-IMBNUM  ${dic['satnum']+dic['perforations'][0]+1+i} 1* 1* 1* 1* ${1+i*round(dic['noCells'][2]/dic['satnum'])} ${(i+1)*round(dic['noCells'][2]/dic['satnum'])} /
+% for i in range(dic['noCells'][2]):
+IMBNUM  ${dic['satnum']+dic['perforations'][0]+round(dic["layers"][i]+1)} 1* 1* 1* 1* ${i+1} ${i+1} /
 % endfor
 % if dic['perforations'][0] == 1:
 % for i in range(dic['perforations'][1]):

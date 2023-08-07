@@ -65,7 +65,11 @@ def reservoir_files(dic):
     dic["noCells"][0] = len(dic["xcor"]) - 1
     dic = manage_grid(dic)
     dic["zcor"] = np.linspace(0, dic["dims"][2], dic["noCells"][2] + 1)
+    dic["z_centers"] = 0.5 * (dic["zcor"][:-1] + dic["zcor"][1:])
     dic["x_centers"] = 0.5 * (dic["xcor"][:-1] + dic["xcor"][1:])
+    dic["layers"] = np.zeros(dic["noCells"][2])
+    for i, _ in enumerate(dic["thickness"]):
+        dic["layers"] += dic["z_centers"] > sum(dic["thickness"][: i + 1])
     mytemplate = Template(
         filename=os.path.join(dic["pat"], "templates", dic["model"], "deck.mako")
     )
