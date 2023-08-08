@@ -1,7 +1,7 @@
 """Provide MinMax scaler layers for tensorflow.keras"""
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, Optional
 
 import numpy as np
 import tensorflow as tf
@@ -17,7 +17,7 @@ class ScalerLayer:
         data_max: Optional[float | np.ndarray] = None,
         feature_range: tuple[float, float] = (0, 1),
         **kwargs,  # pylint: disable=W0613
-    ):
+    ) -> None:
         super().__init__()
         self.feature_range = feature_range
         if data_min is not None and data_max is not None:
@@ -25,7 +25,7 @@ class ScalerLayer:
             self.data_max = data_max
             self._adapt()
 
-    def adapt(self, data):
+    def adapt(self, data) -> None:
         """Fit the layer to the min and max of the data. This is done individually for
         each input feature.
 
@@ -37,7 +37,7 @@ class ScalerLayer:
         self.data_max = tf.math.reduce_max(data, axis=0)
         self._adapt()
 
-    def _adapt(self):
+    def _adapt(self) -> None:
         if np.any(self.data_min > self.data_max):
             raise RuntimeError(
                 f"""self.data_min {self.data_min} cannot be larger than self.data_max
@@ -56,7 +56,7 @@ class ScalerLayer:
         self._is_adapted = True
 
     # Ignore pylint complaining about a missing docstring.
-    def set_params(self, params: dict[str, float]):  # pylint: disable=C0116
+    def set_params(self, params: dict[str, float]) -> None:  # pylint: disable=C0116
         for key, value in params.items():
             try:
                 setattr(self, key, value)
@@ -66,8 +66,10 @@ class ScalerLayer:
                 )
 
     # Ignore pylint complaining about a missing docstring.
-    def get_config(self):  # pylint: disable=C0116
-        config = super().get_config()  # pylint: disable=E1101
+    def get_config(self) -> dict[str, Any]:  # pylint: disable=C0116
+        config = super().get_config()  # type: ignore # pylint: disable=E1101
+        # Note: This returns the dict, but raises a warning that the layers is not JSON
+        # serializable. Fix this!
         config.update(
             {
                 "feature_range": self.feature_range,
@@ -90,7 +92,7 @@ class MinMaxScalerLayer(
     """
 
     # Ignore pylint complaining about a missing docstring.
-    def call(self, inputs):  # pylint: disable=C0116
+    def call(self, inputs: tf.Tensor) -> tf.Tensor:  # pylint: disable=C0116
         if not self.is_adapted:
             print(np.greater_equal(self.data_min, self.data_max))
             raise RuntimeError(
@@ -116,7 +118,7 @@ class MinMaxUNScalerLayer(ScalerLayer, tf.keras.layers.Layer):
     """
 
     # Ignore pylint complaining about a missing docstring and something else.
-    def call(self, inputs):  # pylint: disable=W0221
+    def call(self, inputs: tf.Tensor) -> tf.Tensor:  # pylint: disable=W0221
         if not self._is_adapted:
             raise RuntimeError(
                 """The layer has not been adapted correctly. Call ``adapt`` before using
