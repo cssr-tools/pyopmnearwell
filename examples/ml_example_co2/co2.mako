@@ -8,9 +8,9 @@ cake 36      #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in d
 100 40 0     #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)
 0.3 0 0      #Well diameter [m], well transmiscibility (0 to use the computed one internally in Flow), and remove the smaller cells than the well diameter
 4e6 50  0    #Pressure [Pa] on the top, uniform temperature [°], and initial phase in the reservoir (0 wetting, 1 non-wetting)
-1e3         #Pore volume multiplier on the boundary [-] (0 to use well producers instead)[-]
+1e3          #Pore volume multiplier on the boundary [-] (0 to use well producers instead)[-]
 0 5 15       #Activate perforations [-], number of well perforations [-], and lenght [m]
-4 0          #Number of layers [-] and hysteresis (1 to activate)
+4 0 0        #Number of layers [-], hysteresis (1 to activate), and econ for the producer (for h2 models)
 10-10*mt.cos((2*mt.pi*x/100)) + 100*(x/500)**2 #The function for the reservoir surface
 
 """Set the saturation functions"""

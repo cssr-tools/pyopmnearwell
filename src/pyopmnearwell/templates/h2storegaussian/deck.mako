@@ -367,7 +367,7 @@ COMPDAT
 % else:
 'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	${round(sum(dic["layers"]<2)+1)} ${dic['noCells'][2]}	'OPEN'	1*	${dic["jfactor"]}	 /
 %endif
-'PRO0'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	${round(sum(dic["layers"]<2)+1)} ${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
+'PRO0'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	${round(sum(dic["layers"]<2)+1)} ${round(sum(dic["layers"]<2)+1)}	'OPEN' 1*	1*	${dic['diameter']} /
 % if dic["pvMult"] == 0:
 % if dic['grid'] != 'cartesian':
 'PRO1'	${dic['noCells'][0]}	1	1	${0*dic['noCells'][2]+1}	'OPEN' 1*	1*	${dic['diameter']} /
@@ -396,9 +396,9 @@ WCONINJE
 WCONPROD
 'PRO0' ${'OPEN' if dic['inj'][j][4] < 0 else 'SHUT'} 'GRAT' 2* ${f"{abs(dic['inj'][j][4]) / 0.0850397 : E}"} 2* ${.9*dic['pressure']}/
 /
---WECON
---'PRO0' 1* ${f"{.95*abs(dic['inj'][j][4]) / 0.0850397 : E}"} /
---/
+WECON
+'PRO0' 1* ${f"{dic['econ']*abs(dic['inj'][j][4]) / 0.0850397 : E}"} /
+/
 % if dic["pvMult"] == 0:
 % if dic['grid'] == 'cartesian':
 'PRO1' 'OPEN' 'BHP' 5* ${dic['pressure']}/

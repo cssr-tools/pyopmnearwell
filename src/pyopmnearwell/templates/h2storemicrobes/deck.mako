@@ -16,11 +16,12 @@ EQLDIMS
 TABDIMS
 ${(dic["hysteresis"]+1)*(dic['satnum']+dic['perforations'][0])} 1* 10000 /
 
-WATER
+OIL
 GAS
-CO2STORE
-DIFFUSE
-DISGASW
+DISGAS
+H2STORE
+
+MICROBES
 
 METRIC
 
@@ -191,6 +192,11 @@ ENDBOX
 PROPS
 ----------------------------------------------------------------------------
 
+-- Microbe parameters
+BACTPARA
+--max. growth rate  half. vel. gas  yield coeff.  stoic. coeff.  decay coeff.
+  2.246e-5          5.018e-8        5.6542255     -4             0.0 /
+
 INCLUDE
 '${dic['exe']}/${dic['fol']}/preprocessing/TABLES.INC' /
 
@@ -238,26 +244,39 @@ IMBNUM  ${2*dic['satnum']+2} ${round(dic["noCells"][1] / 2)-sum(dic['x_centers']
 ----------------------------------------------------------------------------
 SOLUTION
 ---------------------------------------------------------------------------
-
-EQUIL
- 0 ${dic['pressure']} ${round(dic["initialphase"]*dic['dims'][2])} 0 0 0 1 1 0 /
-
+--EQUIL
+-- 0 ${dic['pressure']} ${round((1-dic["initialphase"])*dic['dims'][2])} 0 0 0 1 1 0 /
 --PRESSURE
 --% for i in range(dic['noCells'][2]):
---  ${dic['noCells'][0]*dic['noCells'][1]}*${dic['pressure']+1e-5*i*998.108*9.81*dic['dims'][2]/dic['noCells'][2]}
+--	${dic['noCells'][0]*dic['noCells'][1]}*${dic['pressure']+1e-5*i*0.6785064*9.81*dic['dims'][2]/dic['noCells'][2]}
 --% endfor
 --/
---SWAT
---  ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*1.0 /
+--SGAS
+--	${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*0.0 /
 RTEMPVD
 0   ${dic['temperature']}
 ${dic['dims'][2]} ${dic['temperature']} /
-RVW
-  ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*.0 /
+RSVD
+0   0.0
+${dic['dims'][2]} 0.0 /
+RS
+${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*0.0 /
 
+PRESSURE
+  ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*${dic['pressure']} /
+
+SOIL
+  ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*${1. - dic["initialphase"]} /
+
+SGAS
+  ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*${dic["initialphase"]} /
+
+-- Initial microbe distribution
+SBACT
+  ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*0.01 /
 
 RPTRST 
- 'BASIC=2' DEN VISC/
+ 'BASIC=2' FLOWS FLORES DEN VISC /
 
 ----------------------------------------------------------------------------
 SUMMARY
@@ -265,29 +284,35 @@ SUMMARY
 
 CGIR
  INJ0 /
+ PRO0 /
 /
 
 CGIRL
  INJ0 /
+ PRO0 /
 /
 
 WGIRL
 % for j in range(0*dic['noCells'][2]+1):
  'INJ0'  ${j+1}  /
+ 'PRO0'  ${j+1}  /
 % endfor
 /
 
 CGIT
  INJ0 /
+ PRO0 /
 /
 
 CGITL
  INJ0 /
+ PRO0 /
 /
 
 WGITL
 % for j in range(0*dic['noCells'][2]+1):
  'INJ0'  ${j+1}  /
+ 'PRO0'  ${j+1}  /
 % endfor
 /
 
@@ -295,22 +320,28 @@ FPR
 
 FGIP
 
-FWIP
+FOIP
 
 FGIR
 
-FWIR
+FOIR
 
 FGIT
 
-FWIT
+FGPT
 
-FWCD
+FOIT
 
 WGIR
 /
 
+WGPR
+/
+
 WGIT
+/
+
+WGPT
 /
 
 WBHP
@@ -319,49 +350,51 @@ WBHP
 RPR
 /
 
-RWIP
+ROIP
 /
 
 RGIP
 /
 
+WOPR
+/
+
+
 ----------------------------------------------------------------------------
 SCHEDULE
 ----------------------------------------------------------------------------
 RPTRST
- 'BASIC=2' DEN VISC /
+ 'BASIC=2' FLOWS FLORES DEN VISC /
 
 WELSPECS
-% if dic['inj'][0][3] > 0:
-'INJ0'  'G1'  ${max(1, 1+round(dic['noCells'][1]/2))} ${max(1, 1+round(dic['noCells'][1]/2))} 1*  'GAS' 3* NO /
-%else:
-'INJ0'  'G1'  ${max(1, 1+round(dic['noCells'][1]/2))} ${max(1, 1+round(dic['noCells'][1]/2))} 1*  'WATER' 3* NO /
-%endif
+'INJ0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'GAS' 2* 'STOP' /
+'PRO0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'GAS' 2* 'STOP'  /
 % if dic["pvMult"] == 0:
-% if dic['grid'] != 'cartesian':
-'PRO0'  'G1'  ${dic['noCells'][0]}  1 1*  'GAS' /
+% if dic['grid'] != 'cartesian' and dic['grid'] != 'cave':
+'PRO1'	'G1'	${dic['noCells'][0]}	1	1*	'GAS' /
 %else:
-'PRO0'  'G1'  1 1 1*  'GAS' /
-'PRO1'  'G1'  ${dic['noCells'][0]}  1 1*  'GAS' /
-'PRO2'  'G1'  1 ${dic['noCells'][0]}  1*  'GAS' /
-'PRO3'  'G1'  ${dic['noCells'][0]}  ${dic['noCells'][0]}  1*  'GAS' /
+'PRO1'	'G1'	1	1	1*	'OIL' /
+'PRO2'	'G1'	${dic['noCells'][0]}	1	1*	'OIL' /
+'PRO3'	'G1'	1	${dic['noCells'][0]}	1*	'OIL' /
+'PRO4'	'G1'	${dic['noCells'][0]}	${dic['noCells'][0]}	1*	'OIL' /
 % endif
 % endif
 /
 COMPDAT
 % if dic["jfactor"] == 0:
-'INJ0'  ${max(1, 1+round(dic['noCells'][1]/2))} ${max(1, 1+round(dic['noCells'][1]/2))} 1 ${0*dic['noCells'][2]+1}  'OPEN'  1*  1*  ${dic['diameter']}  /
+'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	${1} ${1}	'OPEN'	1*	1*	${dic['diameter']} /
 % else:
-'INJ0'  ${max(1, 1+round(dic['noCells'][1]/2))} ${max(1, 1+round(dic['noCells'][1]/2))} 1 ${0*dic['noCells'][2]+1}  'OPEN'  1*  ${dic["jfactor"]}  /
+'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	${1} ${1}	'OPEN'	1*	${dic["jfactor"]}	 /
 %endif
+'PRO0'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	${1} ${1}	'OPEN' 1*	1*	${dic['diameter']} /
 % if dic["pvMult"] == 0:
 % if dic['grid'] != 'cartesian':
-'PRO0'  ${dic['noCells'][0]}  1 1 ${0*dic['noCells'][2]+1}  'OPEN' 1* 1*  ${dic['diameter']} /
+'PRO1'	${dic['noCells'][0]}	1	1	${0*dic['noCells'][2]+1}	'OPEN' 1*	1*	${dic['diameter']} /
 %else:
-'PRO0'  1 1 1 ${0*dic['noCells'][2]+1}  'OPEN' 1* 1*  ${dic['diameter']} /
-'PRO1'  ${dic['noCells'][0]}  1  1 ${0*dic['noCells'][2]+1} 'OPEN' 1* 1*  ${dic['diameter']} /
-'PRO2'  1 ${dic['noCells'][0]} 1 ${0*dic['noCells'][2]+1} 'OPEN' 1* 1*  ${dic['diameter']} /
-'PRO3'  ${dic['noCells'][0]}  ${dic['noCells'][0]}  1 ${0*dic['noCells'][2]+1}  'OPEN' 1* 1*  ${dic['diameter']} /
+'PRO1'	1	1	1	${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
+'PRO2'	${dic['noCells'][0]}	1	 1 ${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
+'PRO3'	1	${dic['noCells'][0]} 1 ${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
+'PRO4'	${dic['noCells'][0]}	${dic['noCells'][0]}	1	${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
 % endif
 % endif
 /
@@ -373,21 +406,24 @@ TUNING
 WCONINJE
 % if dic['inj'][j][3] > 0:
 'INJ0' 'GAS' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'}
-'RATE' ${f"{dic['inj'][j][4] / 1.86843 : E}"}  1* 400/
+'RATE' ${f"{dic['inj'][j][4] / 0.0850397 : E}"}  1* 400/
 % else:
-'INJ0' 'WATER' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'}
-'RATE' ${f"{dic['inj'][j][4] / 998.108 : E}"}  1* 400/
+'INJ0' 'OIL' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'}
+'RATE' ${f"{dic['inj'][j][4] / 998.108 : E}"}  1* 400/ 998.108
 %endif
 /
-% if dic["pvMult"] == 0:
 WCONPROD
-% if dic['grid'] != 'cartesian':
-'PRO0' 'OPEN' 'BHP' 5* ${dic['pressure']}/
-%else:
-'PRO0' 'OPEN' 'BHP' 5* ${dic['pressure']}/
+'PRO0' ${'OPEN' if dic['inj'][j][4] < 0 else 'SHUT'} 'GRAT' 2* ${f"{abs(dic['inj'][j][4]) / 0.0850397 : E}"} 2* ${.9*dic['pressure']}/
+/
+--WECON
+--'PRO0' 1* ${f"{.95*abs(dic['inj'][j][4]) / 0.0850397 : E}"} /
+--/
+% if dic["pvMult"] == 0:
+% if dic['grid'] == 'cartesian':
 'PRO1' 'OPEN' 'BHP' 5* ${dic['pressure']}/
 'PRO2' 'OPEN' 'BHP' 5* ${dic['pressure']}/
 'PRO3' 'OPEN' 'BHP' 5* ${dic['pressure']}/
+'PRO4' 'OPEN' 'BHP' 5* ${dic['pressure']}/
 %endif
 /
 %endif
