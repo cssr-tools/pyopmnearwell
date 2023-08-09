@@ -10,7 +10,7 @@ ${radius*2} 0 0 #Well diameter [m], well transmiscibility (0 to use the computed
 1e7 40 0     #Pressure [Pa] on the top, uniform temperature [°], and initial phase in the reservoir (0 wetting, 1 non-wetting)
 1e10         #Pore volume multiplier on the boundary [-] (0 to use well producers instead)[-]
 0 5 10       #Activate perforations [-], number of well perforations [-], and lenght [m]
-1 0          #Number of layers [-] and hysteresis (1 to activate)
+1 0 0        #Number of layers [-], hysteresis (1 to activate), and econ for the producer (for h2 models)
 0            #The function for the reservoir surface
 
 """Set the saturation functions"""

@@ -10,7 +10,7 @@ cake 36  #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in degre
 4e6 50 0     #Pressure [Pa] on the top and uniform temperature [°] (!!!!!!!Currently only for these pressure and temperature values, it is in the TODO list to extend this)
 1e6          #Pore volume multiplier on the boundary [-] (0 to use well producers instead)[-]
 0 5 15       #Activate perforations [-], number of well perforations [-], and lenght [m]
-4 0 .95      #Number of layers [-], hysteresis (1 to activate), and econ for the producer (for h2 models)
+4 0 ${econ}  #Number of layers [-], hysteresis (1 to activate), and econ for the producer (for h2 models)
 300-300*mt.exp(-(x**2)/(2*500**2)) - 0*100*mt.exp(-((x-500)**2)/(2*100**2)) #The function for the reservoir surface
 
 """Set the saturation functions"""
@@ -34,8 +34,72 @@ PERMXY5 0.01 PERMZ5 0.01 PORO5 0.1 THIC2 25
 
 """Define the injection values""" 
 """injection time [d], time step size to write results [d], maximum time step [d], fluid (0 wetting, 1 non-wetting), injection rates [kg/day]"""
-${time} ${time} 10 1 20000
+365 365 10 1 20000
 90 10 10 1 0
+% if time <= 7:
+${time} ${time} 7 1 -40000
+365 365 7 1 -40000
+% elif time <= 14:
+7 7 7 1 -40000
+${time-7} ${time-7} 7 1 40000
+365 365 7 1 -40000
+% elif time <= 21:
+7 7 7 1 -40000
+7 7 7 1 40000
+${time-14} ${time-14} 7 1 -40000
+365 365 7 1 -40000
+% elif time <= 28:
+7 7 7 1 -40000
+7 7 7 1 40000
+7 7 7 1 -40000
+${time-21} ${time-21} 7 1 40000
+365 365 7 1 -40000
+% elif time <= 35:
+7 7 7 1 -40000
+7 7 7 1 40000
+7 7 7 1 -40000
+7 7 7 1 40000
+${time-28} ${time-28} 7 1 -40000
+365 365 7 1 -40000
+% elif time <= 42:
+7 7 7 1 -40000
+7 7 7 1 40000
+7 7 7 1 -40000
+7 7 7 1 40000
+7 7 7 1 -40000
+${time-35} ${time-35} 7 1 40000
+365 365 7 1 -40000
+% elif time <= 49:
+7 7 7 1 -40000
+7 7 7 1 40000
+7 7 7 1 -40000
+7 7 7 1 40000
+7 7 7 1 -40000
+7 7 7 1 40000
+${time-42} ${time-42} 7 1 -40000
+365 365 7 1 -40000
+% elif time <= 56:
+7 7 7 1 -40000
+7 7 7 1 40000
+7 7 7 1 -40000
+7 7 7 1 40000
+7 7 7 1 -40000
+7 7 7 1 40000
+7 7 7 1 -40000
+${time-49} ${time-49} 7 1 40000
+365 365 7 1 -40000
+% elif time <= 63:
+7 7 7 1 -40000
+7 7 7 1 40000
+7 7 7 1 -40000
+7 7 7 1 40000
+7 7 7 1 -40000
+7 7 7 1 40000
+7 7 7 1 -40000
+7 7 7 1 40000
+${time-56} ${time-56} 7 1 -40000
+365 365 7 1 -40000
+%else:
 7 7 7 1 -40000
 7 7 7 1 40000
 7 7 7 1 -40000
@@ -45,4 +109,6 @@ ${time} ${time} 10 1 20000
 7 7 7 1 -40000
 7 7 7 1 40000
 7 7 7 1 -40000
-7 7 7 1 40000
+${time-63} ${time-63} 7 1 40000
+365 365 7 1 -40000
+% endif

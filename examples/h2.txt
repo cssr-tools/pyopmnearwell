@@ -10,7 +10,7 @@ cake 36  #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in degre
 4e6 50  0    #Pressure [Pa] on the top, uniform temperature [°], and initial phase in the reservoir (0 wetting, 1 non-wetting)
 1e10         #Pore volume multiplier on the boundary [-] (0 to use well producers instead)[-]
 0 5 15       #Activate perforations [-], number of well perforations [-], and lenght [m]
-1 0          #Number of layers [-] and hysteresis (1 to activate)
+1 0 .95      #Number of layers [-], hysteresis (1 to activate), and econ for the producer (for h2 models)
 10-10*mt.cos((2*mt.pi*x/100)) + 100*(x/500)**2 #The function for the reservoir surface
 
 """Set the saturation functions"""
