@@ -348,8 +348,8 @@ RPTRST
  'BASIC=2' FLOWS FLORES DEN VISC /
 
 WELSPECS
-'INJ0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'GAS' 2* 'STOP' /
-'PRO0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'GAS' 2* 'STOP'  /
+'INJ0'	'G1'	${max(1, 1+round(dic['noCells'][1]/2))} ${max(1, 1+round(dic['noCells'][1]/2))}	1*	'GAS' 2* 'STOP' /
+'PRO0'	'G1'	${max(1, 1+round(dic['noCells'][1]/2))} ${max(1, 1+round(dic['noCells'][1]/2))}	1*	'GAS' 2* 'STOP'  /
 % if dic["pvMult"] == 0:
 % if dic['grid'] != 'cartesian' and dic['grid'] != 'cave':
 'PRO1'	'G1'	${dic['noCells'][0]}	1	1*	'GAS' /
@@ -363,11 +363,11 @@ WELSPECS
 /
 COMPDAT
 % if dic["jfactor"] == 0:
-'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	${round(sum(dic["layers"]<2)+1)} ${dic['noCells'][2]}	'OPEN'	1*	1*	${dic['diameter']} /
+'INJ0'	${max(1, 1+round(dic['noCells'][1]/2))}	${max(1, 1+round(dic['noCells'][1]/2))}	${round(sum(dic["layers"]<2)+1)} ${dic['noCells'][2]}	'OPEN'	1*	1*	${dic['diameter']} /
 % else:
-'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	${round(sum(dic["layers"]<2)+1)} ${dic['noCells'][2]}	'OPEN'	1*	${dic["jfactor"]}	 /
+'INJ0'	${max(1, 1+round(dic['noCells'][1]/2))}	${max(1, 1+round(dic['noCells'][1]/2))}	${round(sum(dic["layers"]<2)+1)} ${dic['noCells'][2]}	'OPEN'	1*	${dic["jfactor"]}	 /
 %endif
-'PRO0'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	${round(sum(dic["layers"]<2)+1)} ${round(sum(dic["layers"]<2)+1)}	'OPEN' 1*	1*	${dic['diameter']} /
+'PRO0'	${max(1, 1+round(dic['noCells'][1]/2))} ${max(1, 1+round(dic['noCells'][1]/2))}	${round(sum(dic["layers"]<2)+1)} ${round(sum(dic["layers"]<2)+1)}	'OPEN' 1*	1*	${dic['diameter']} /
 % if dic["pvMult"] == 0:
 % if dic['grid'] != 'cartesian':
 'PRO1'	${dic['noCells'][0]}	1	1	${0*dic['noCells'][2]+1}	'OPEN' 1*	1*	${dic['diameter']} /
