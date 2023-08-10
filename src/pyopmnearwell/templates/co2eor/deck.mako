@@ -269,6 +269,12 @@ FGPT
 FWPT
 
 FOPT
+
+FNIT
+
+FNPT
+
+FNIP
  
 WBHP
   'INJW'
