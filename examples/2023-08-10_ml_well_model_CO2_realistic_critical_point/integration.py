@@ -22,42 +22,41 @@ PATH: str = os.path.dirname(os.path.realpath(__file__))
 OPM_ML: str = "/home/peter/Documents/2023_CEMRACS/opm_ml"
 FLOW: str = f"{OPM_ML}/build/opm-simulators/bin/flow_gaswater_dissolution_diffuse"
 
-# # Get the scaling and write it to the c++ mako.
-# feature_min: list[float] = []
-# feature_max: list[float] = []
-# with open(os.path.join(PATH, "model_permeability_radius_WI", "scales.csv")) as csvfile:
-#     reader = csv.DictReader(csvfile, fieldnames=["variable", "min", "max"])
-#     for row in reader:
-#         match row["variable"]:
-#             case "permeability":
-#                 feature_min.append(float(row["min"]))
-#                 feature_max.append(float(row["max"]))
-#             case "init_pressure":
-#                 feature_min.append(float(row["min"]))
-#                 feature_max.append(float(row["max"]))
-#             case "radius":
-#                 feature_min.append(float(row["min"]))
-#                 feature_max.append(float(row["max"]))
-#             case "WI":
-#                 target_min: float = float(row["min"])
-#                 target_max: float = float(row["max"])
+# Get the scaling and write it to the C++ mako that integrates nn into OPM.
+feature_min: list[float] = []
+feature_max: list[float] = []
+with open(os.path.join(PATH, "model_pressure_radius_WI", "scales.csv")) as csvfile:
+    reader = csv.DictReader(csvfile, fieldnames=["variable", "min", "max"])
+    for row in reader:
+        match row["variable"]:
+            case "init_pressure":
+                feature_min.append(float(row["min"]))
+                feature_max.append(float(row["max"]))
+            case "radius":
+                feature_min.append(float(row["min"]))
+                feature_max.append(float(row["max"]))
+            case "WI":
+                target_min: float = float(row["min"])
+                target_max: float = float(row["max"])
 
-# var: dict[str, Any] = {
-#     "xmin": feature_min,
-#     "xmax": feature_max,
-#     "ymin": target_min,
-#     "ymax": target_max,
-# }
-# mytemplate = Template(filename=os.path.join(PATH, "StandardWell_impl.mako"))
-# filledtemplate = mytemplate.render(**var)
-# with open(
-#     f"{OPM_ML}/opm-simulators/opm/simulators/wells/StandardWell_impl.hpp",
-#     "w",
-#     encoding="utf8",
-# ) as file:
-#     file.write(filledtemplate)
-# os.chdir(f"{OPM_ML}/build/opm-simulators")
-# os.system("make -j5 flow_gaswater_dissolution_diffuse")
+var: dict[str, Any] = {
+    "xmin": feature_min,
+    "xmax": feature_max,
+    "ymin": target_min,
+    "ymax": target_max,
+}
+mytemplate = Template(filename=os.path.join(PATH, "StandardWell_impl.mako"))
+filledtemplate = mytemplate.render(**var)
+with open(
+    f"{OPM_ML}/opm-simulators/opm/simulators/wells/StandardWell_impl.hpp",
+    "w",
+    encoding="utf8",
+) as file:
+    file.write(filledtemplate)
+
+# Recompile flow.
+os.chdir(f"{OPM_ML}/build/opm-simulators")
+os.system("make -j5 flow_gaswater_dissolution_diffuse")
 
 
 PERMEABILITY: float = 1e-12  # unit: [m^2] Fixed during training.
@@ -83,8 +82,14 @@ var = {
 
 # Use our pyopmnearwell friend to run the 3D simulations and compare the results
 os.chdir(PATH)
-# for name in ["3d_flow_wellmodel", "3d_ml_wellmodel", "3d_finescale_wellmodel"]:
-for name in ["3d_ml_wellmodel"]:
+for name in [
+    "3d_flow_wellmodel",
+    "3d_ml_wellmodel",
+    "3d_finescale_wellmodel",
+    "3d_flow_wellmodel_large_reservoir",
+    "3d_ml_wellmodel_large_reservoir",
+    "3d_finescale_wellmodel_large_reservoir",
+]:
     mytemplate = Template(filename=os.path.join(f"co2_{name}.mako"))
     filledtemplate = mytemplate.render(**var)
     with open(

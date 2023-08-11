@@ -1,11 +1,10 @@
 """"Run nearwell CO2 storage simulations in OPM-Flow for an ensemble of varying initial
-pressures and construct a dataset containing permeabilities, initial reservoir pressures and radii as
+pressures and construct a dataset containing initial reservoir pressures and radii as
 features and well indices as targets.
 
 Features:
-    1. permeability [mD]
-    2. pressure [bar]
-    3. radius [m]
+    1. pressure [bar]
+    2. radius [m]
 
 Targets:
     1. WI [m*s]
@@ -176,7 +175,7 @@ WI_t: np.ndarray = (
     / (bhp_t[..., None] - pressures_t[:, 4:-1])
 )  # unit: m*s; ``shape=(npoints, 395, 1)``
 
-# Store the features: permeabilities, pressures, radii, and targets: WI as a dataset.
+# Store the features: pressures, radii, and targets: WI as a dataset.
 # Features are in the following order
 # 1. initial reservoir pressure [bar]
 # 2. cell radius [m]

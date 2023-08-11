@@ -2541,19 +2541,20 @@ namespace Opm
         // Run prediction.
 
         // give number of input paramters
-        Tensor<Value> in{3};
+        Tensor<Value> in{2};
         //const auto rw = Value(scaleFunction(connection.rw(), ${xmin[0]}, ${xmax[0]}));
 
         const auto PASCAL_TO_BAR = 0.00001;
-        const auto Kh = Value(scaleFunction(connection.Kh(), ${xmin[0]}, ${xmax[0]}));
-        const auto p = scaleFunction(pressure * PASCAL_TO_BAR, ${xmin[1]}, ${xmax[1]});
-        const auto re = Value(scaleFunction(connection.r0(), ${xmin[2]}, ${xmax[2]}));
+        // const auto Kh = Value(scaleFunction(connection.Kh(), ${xmin[0]}, ${xmax[0]}));
+        const auto p = scaleFunction(pressure * PASCAL_TO_BAR, ${xmin[0]}, ${xmax[0]});
+        const auto re = Value(scaleFunction(connection.r0(), ${xmin[1]}, ${xmax[1]}));
         // std::cout << p << std::endl;
 
         // note order need to be the same as under training
         // in.data_ = {{rw, K, re}};
         // permeability, pressure, radius
-        in.data_ = {{Kh, p, re}};
+        // in.data_ = {{Kh, p, re}};
+        in.data_ = {{p ,re}};
         Tensor<Value> out;
         model.Apply(&in, &out);
         // std::cout << connection.r0() << std::endl;

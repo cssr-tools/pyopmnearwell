@@ -47,7 +47,7 @@ with open(os.path.join(savepath, "scales.csv"), "w", newline="") as csvfile:
     data_min = feature_scaler.data_min_
     data_max = feature_scaler.data_max_
     for feature_name, feature_min, feature_max in zip(
-        ["permeability", "init_pressure", "radius"], data_min, data_max
+        ["init_pressure", "radius"], data_min, data_max
     ):
         writer.writerow(
             {"variable": feature_name, "min": feature_min, "max": feature_max}
