@@ -55,6 +55,15 @@ def reservoir_files(dic):
             * (np.exp(np.flip(np.linspace(0, dic["x_fac"], dic["noCells"][0] + 1))) - 1)
             / (np.exp(dic["x_fac"]) - 1)
         )
+    elif dic["grid"] == "tensor2d":
+        for i, (name, arr) in enumerate(zip(["xcor"], ["x_n"])):
+            dic[f"{name}"] = [0.0]
+            for j, num in enumerate(dic[f"{arr}"]):
+                for k in range(num):
+                    dic[f"{name}"].append(
+                        (j + (k + 1.0) / num) * dic["dims"][i] / len(dic[f"{arr}"])
+                    )
+            dic[f"{name}"] = np.array(dic[f"{name}"])
     else:
         dic["xcor"] = np.linspace(0, dic["dims"][0], dic["noCells"][0] + 1)
     if dic["removecells"] == 1:
@@ -120,7 +129,7 @@ def manage_grid(dic):
             encoding="utf8",
         ) as file:
             file.write("\n".join(dxarray))
-    elif dic["grid"] == "cake":
+    elif dic["grid"] == "cake" or dic["grid"] == "tensor2d":
         dic["slope"] = mt.tan(0.5 * dic["dims"][1] * mt.pi / 180)
         lol = []
         with open(
@@ -151,24 +160,13 @@ def manage_grid(dic):
         ) as file:
             file.write(filledtemplate)
     else:
-        if dic["x_fac"] != 0:
-            dic["xcorc"] = np.flip(
-                (dic["dims"][0])
-                * (np.exp(np.flip(np.linspace(0, dic["x_fac"], dic["noCells"][0]))) - 1)
-                / (np.exp(dic["x_fac"]) - 1)
-            )
-        else:
-            dic["xcorc"] = np.linspace(0, dic["dims"][0], dic["noCells"][0])
-        dic["xcorc"] = dic["xcorc"][
-            (dic["diameter"] < dic["xcorc"]) | (0 == dic["xcorc"])
-        ]
-        dic["xcorc"][0] = 0.25 * dic["xcorc"][1]
+        dic = crete_3dgrid(dic)
         for cord in dic["xcorc"]:
             dic["xcorc"] = np.insert(dic["xcorc"], 0, -cord)
         dxarray = [
             f'{dic["xcorc"][i+1]-dic["xcorc"][i]}' for i in range(len(dic["xcorc"]) - 1)
         ]
-        dic["noCells"][0] = 2 * dic["noCells"][0] - 1
+        dic["noCells"][0] = len(dic["xcorc"]) - 1
         dic["noCells"][1] = dic["noCells"][0]
         dic = d3_grids(dic, dxarray)
     return dic
@@ -176,7 +174,7 @@ def manage_grid(dic):
 
 def d3_grids(dic, dxarray):
     """
-    Function to handle the 3d cartesian grid or cave
+    Function to handle the second part of th3 3d grids
 
     Args:
         dic (dict): Global dictionary with required parameters
@@ -242,4 +240,54 @@ def d3_grids(dic, dxarray):
             encoding="utf8",
         ) as file:
             file.write("\n".join(dyarray))
+    return dic
+
+
+def crete_3dgrid(dic):
+    """
+    Function to handle the first part of the 3d grids
+
+    Args:
+        dic (dict): Global dictionary with required parameters
+
+    Returns:
+        dic (dict): Global dictionary with new added parameters
+
+    """
+    if dic["x_fac"] != 0:
+        dic["xcorc"] = np.flip(
+            (dic["dims"][0])
+            * (np.exp(np.flip(np.linspace(0, dic["x_fac"], dic["noCells"][0]))) - 1)
+            / (np.exp(dic["x_fac"]) - 1)
+        )
+        if dic["removecells"] == 1:
+            dic["xcorc"] = dic["xcorc"][
+                (dic["diameter"] < dic["xcorc"]) | (0 == dic["xcorc"])
+            ]
+        dic["xcorc"][0] = 0.25 * dic["xcorc"][1]
+    elif dic["grid"] == "tensor3d":
+        for i, (name, arr) in enumerate(zip(["xcorc"], ["x_n"])):
+            dic[f"{name}"] = [0.0]
+            for j, num in enumerate(dic[f"{arr}"]):
+                if j == 0:
+                    for k in range(num + 1):
+                        dic[f"{name}"].append(
+                            ((k + 1 + num) / (2 * num + 1))
+                            * (2 * dic["dims"][i] / len(2 * dic[f"{arr}"]))
+                            - (dic["dims"][i] / len(2 * dic[f"{arr}"]))
+                        )
+                else:
+                    for k in range(num):
+                        dic[f"{name}"].append(
+                            (j + (k + 1.0) / num) * dic["dims"][i] / len(dic[f"{arr}"])
+                        )
+            dic[f"{name}"] = np.array(dic[f"{name}"])
+        dic["xcorc"] = np.delete(dic["xcorc"], 0)
+    else:
+        dic["xcorc"] = np.linspace(0, dic["dims"][0], dic["noCells"][0])
+        if dic["removecells"] == 1:
+            dic["xcorc"] = dic["xcorc"][
+                (dic["diameter"] < dic["xcorc"]) | (0 == dic["xcorc"])
+            ]
+        dic["xcorc"][0] = 0.25 * dic["xcorc"][1]
     return dic

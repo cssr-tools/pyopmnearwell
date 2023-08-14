@@ -11,6 +11,7 @@ cake 36      #Grid type (radial/cake/cartesian2d/cartesian) and size (theta/thet
 1e10         #Pore volume multiplier on the boundary [-] (0 to use well producers instead)[-]
 1 5 6        #Activate perforation [-], number of well perforations [-], and lenght [m]
 4 1 0        #Number of layers [-], hysteresis (1 to activate), and econ for the producer (for h2 models)
+0 0 0        #Initial salt concentrationn [kg/m3], salt solubility limit [kg/m3], and precipitated salt density [kg/m3] (for saltprec)
 0            #The function for the reservoir surface
 
 """Set the saturation functions"""
@@ -19,17 +20,17 @@ krn * ((1.0 - sw - sni) / (1.0 - sni - swi)) ** nkrn      #Non-wetting rel perm 
 pec * ((sw - swi) / (1.0 - sni - swi)) ** (-(1.0 / npe)) #Capillary pressure saturation function [Pa]
 
 """Properties saturation functions"""
-"""swi [-], sni [-], krn [-], krw [-], pec [Pa], nkrw [-], nkrn [-], npe [-], threshold cP evaluation"""
-SWI2  0.14 SNI2  0.05 KRW2  1 KRN2  1 PRE2  8655 NNKRW2 2 NNKRN2 2 HNPE2 2 THRE2  1e-4
-SWI3  0.12 SNI3  0.05 KRW3  1 KRN3  1 PRE3  6120 NNKRW3 2 NNKRN3 2 HNPE3 2 THRE2  1e-4
-SWI4  0.12 SNI4  0.05 KRW4  1 KRN4  1 PRE4  3871 NNKRW4 2 NNKRN4 2 HNPE4 2 THRE2  1e-4
-SWI5  0.12 SNI5  0.05 KRW5  1 KRN5  1 PRE5  3060 NNKRW5 2 NNKRN5 2 HNPE5 2 THRE2  1e-4
-SWIP  0.50 SNIP     0 KRWP  1 KRNP  1 PECP     0 NNKRWP 1 NNKRNP 1 HNPEP 1 THREP  1e-4
-HSWI2 0.24 HSNI2 0.10 HKRW2 1 HKRN2 1 HPRE2 8655 HNKRW2 3 HNKRN2 3 HNPE2 2 HTHRE2 1e-4
-HSWI3 0.24 HSNI3 0.10 HKRW3 1 HKRN3 1 HPRE3 6120 HNKRW3 3 HNKRN3 3 HNPE3 2 HTHRE2 1e-4
-HSWI4 0.24 HSNI4 0.10 HKRW4 1 HKRN4 1 HPRE4 3871 HNKRW4 3 HNKRN4 3 HNPE4 2 HTHRE2 1e-4
-HSWI5 0.24 HSNI5 0.10 HKRW5 1 HKRN5 1 HPRE5 3060 HNKRW4 3 HNKRN5 3 HNPE5 2 HTHRE2 1e-4
-HSWIP    0 HSNIP    0 HKRWP 1 HKRNP 1 HPECP    0 HNKRWP 1 HNKRNP 1 HNPEP 1 HTHREP 1e-4
+"""swi [-], sni [-], krn [-], krw [-], pec [Pa], nkrw [-], nkrn [-], npe [-], threshold cP evaluation, ignore swi for cP"""
+SWI2  0.14 SNI2  0.05 KRW2  1 KRN2  1 PRE2  8655 NNKRW2 2 NNKRN2 2 HNPE2 2 THRE2  1e-4 IGN1 0
+SWI3  0.12 SNI3  0.05 KRW3  1 KRN3  1 PRE3  6120 NNKRW3 2 NNKRN3 2 HNPE3 2 THRE2  1e-4 IGN1 0
+SWI4  0.12 SNI4  0.05 KRW4  1 KRN4  1 PRE4  3871 NNKRW4 2 NNKRN4 2 HNPE4 2 THRE2  1e-4 IGN1 0
+SWI5  0.12 SNI5  0.05 KRW5  1 KRN5  1 PRE5  3060 NNKRW5 2 NNKRN5 2 HNPE5 2 THRE2  1e-4 IGN1 0
+SWIP  0.50 SNIP     0 KRWP  1 KRNP  1 PECP     0 NNKRWP 1 NNKRNP 1 HNPEP 1 THREP  1e-4 IGN1 0
+HSWI2 0.24 HSNI2 0.10 HKRW2 1 HKRN2 1 HPRE2 8655 HNKRW2 3 HNKRN2 3 HNPE2 2 HTHRE2 1e-4 IGN1 0
+HSWI3 0.24 HSNI3 0.10 HKRW3 1 HKRN3 1 HPRE3 6120 HNKRW3 3 HNKRN3 3 HNPE3 2 HTHRE2 1e-4 IGN1 0
+HSWI4 0.24 HSNI4 0.10 HKRW4 1 HKRN4 1 HPRE4 3871 HNKRW4 3 HNKRN4 3 HNPE4 2 HTHRE2 1e-4 IGN1 0
+HSWI5 0.24 HSNI5 0.10 HKRW5 1 HKRN5 1 HPRE5 3060 HNKRW4 3 HNKRN5 3 HNPE5 2 HTHRE2 1e-4 IGN1 0
+HSWIP    0 HSNIP    0 HKRWP 1 HKRNP 1 HPECP    0 HNKRWP 1 HNKRNP 1 HNPEP 1 HTHREP 1e-4 IGN1 0
 
 """Properties rock"""
 """K [mD], phi [-], thickness [m]"""

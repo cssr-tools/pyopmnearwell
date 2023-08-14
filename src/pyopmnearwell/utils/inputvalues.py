@@ -6,6 +6,8 @@ Utiliy functions to set the requiried input values by pynearwell.
 """
 
 import csv
+from io import StringIO
+import numpy as np
 
 
 def process_input(dic, in_file):
@@ -23,13 +25,14 @@ def process_input(dic, in_file):
     with open(in_file, "r", encoding="utf8") as file:
         for row in csv.reader(file, delimiter="#"):
             lol.append(row)
-    dic = readtheinputfile(lol, dic)
+    dic, index = readthefirstpart(lol, dic)
+    dic = readthesecondpart(lol, dic, index)
     return dic
 
 
-def readtheinputfile(lol, dic):
+def readthefirstpart(lol, dic):
     """
-    Function to process the lines from the configuration file
+    Function to process the first lines from the configuration file
 
     Args:
         lol (list): List of lines read from the input file
@@ -37,7 +40,7 @@ def readtheinputfile(lol, dic):
 
     Returns:
         dic (dict): Global dictionary with new added parameters
-        inc (int): Number of line in the input file before the first injection value
+        inc (int): Number of line in the input file
     """
     dic["flow"] = str(lol[1])[2:-2]  # Path to the flow executable
     dic["model"] = (
@@ -47,10 +50,22 @@ def readtheinputfile(lol, dic):
         lol[5][0].strip().split()[0]
     )  # Grid type (radial/cake/cartesian2d/cartesian)
     dic["dims"] = [float((lol[6][0].strip()).split()[j]) for j in range(2)]
-    dic["noCells"] = [int((lol[7][0].strip()).split()[j]) for j in range(2)]
     dic["dims"].insert(1, float(lol[5][0].strip().split()[1]))
-    dic["noCells"].insert(1, 1)
-    dic["x_fac"] = float((lol[7][0].strip()).split()[2])  # x-gridding coeff.
+    if dic["grid"] == "tensor2d" or dic["grid"] == "tensor3d":
+        dic["x_n"] = np.genfromtxt(
+            StringIO((lol[7][0].strip()).split()[0]), delimiter=",", dtype=int
+        )
+        dic["y_n"] = np.array(1)
+        dic["z_n"] = np.array(int((lol[7][0].strip()).split()[1]))
+        for ent in ["x_n", "y_n", "z_n"]:
+            if dic[f"{ent}"].size == 1:
+                dic[f"{ent}"] = [dic[f"{ent}"]]
+        dic["noCells"] = [sum(dic["x_n"]), sum(dic["y_n"]), sum(dic["z_n"])]
+        dic["x_fac"] = 0
+    else:
+        dic["noCells"] = [int((lol[7][0].strip()).split()[j]) for j in range(2)]
+        dic["noCells"].insert(1, 1)
+        dic["x_fac"] = float((lol[7][0].strip()).split()[2])  # x-gridding coeff.
     dic["diameter"] = float((lol[8][0].strip()).split()[0])  # Well diameter [m]
     dic["jfactor"] = float(
         (lol[8][0].strip()).split()[1]
@@ -64,12 +79,28 @@ def readtheinputfile(lol, dic):
     dic["satnum"] = int((lol[12][0].strip()).split()[0])  # No. saturation regions
     dic["hysteresis"] = int((lol[12][0].strip()).split()[1])  # Hysteresis
     dic["econ"] = float((lol[12][0].strip()).split()[2])  # Econ
-    dic["z_xy"] = str(lol[13][0])  # The function for the reservoir surface
-    index = 16  # Increase this if more rows are added to the model parameters part
+    dic["salt_props"] = [float((lol[13][0].strip()).split()[j]) for j in range(3)]
+    dic["z_xy"] = str(lol[14][0])  # The function for the reservoir surface
+    index = 17  # Increase this if more rows are added to the model parameters part
     dic["krwf"] = str(lol[index][0])  # Wetting rel perm saturation function [-]
     dic["krnf"] = str(lol[index + 1][0])  # Non-wetting rel perm saturation function [-]
     dic["pcwcf"] = str(lol[index + 2][0])  # Capillary pressure saturation function [Pa]
     index += 6
+    return dic, index
+
+
+def readthesecondpart(lol, dic, index):
+    """
+    Function to process the remaining lines in the configuration file
+
+    Args:
+        lol (list): List of lines read from the input file
+        dic (dict): Global dictionary with required parameters
+        inc (int): Number of line in the input file
+
+    Returns:
+        dic (dict): Global dictionary with new added parameters
+    """
     for name in ["rock", "safu"]:
         dic[name] = []
     if dic["hysteresis"] == 1:
@@ -91,6 +122,7 @@ def readtheinputfile(lol, dic):
                 float(row[13]),
                 float(row[15]),
                 float(row[17]),
+                float(row[19]),
             ]
         )
     index += 3 + dic["imbnum"] * (dic["satnum"] + dic["perforations"][0])

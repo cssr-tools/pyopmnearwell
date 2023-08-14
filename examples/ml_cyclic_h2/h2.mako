@@ -11,6 +11,7 @@ cake 36  #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in degre
 1e6          #Pore volume multiplier on the boundary [-] (0 to use well producers instead)[-]
 0 5 15       #Activate perforations [-], number of well perforations [-], and lenght [m]
 4 0 ${econ}  #Number of layers [-], hysteresis (1 to activate), and econ for the producer (for h2 models)
+0 0 0        #Initial salt concentrationn [kg/m3], salt solubility limit [kg/m3], and precipitated salt density [kg/m3] (for saltprec)
 300-300*mt.exp(-(x**2)/(2*500**2)) - 0*100*mt.exp(-((x-500)**2)/(2*100**2)) #The function for the reservoir surface
 
 """Set the saturation functions"""
@@ -19,11 +20,11 @@ krn * ((1.0 - sw - sni) / (1.0 - sni - swi)) ** nkrn      #Non-wetting rel perm 
 pec * ((sw - swi) / (1.0 - sni - swi)) ** (-(1.0 / npe)) #Capillary pressure saturation function [Pa]
 
 """Properties saturation functions"""
-"""swi [-], sni [-], krn [-], krw [-], pec [Pa], nkrw [-], nkrn [-], npe [-], threshold cP evaluation"""
-SWI3  0.1 SNI3  0.1 KRW3  .8 KRN3  .2 PRE3  .4e6 NKRW3 4 NKRN3 3.5 HNPE3 1.2 THRE3  1e-4
-SWI4  0.1 SNI4  0.1 KRW4  .8 KRN4  .2 PRE4   4e6 NKRW4 4 NKRN3 3.5 HNPE4 1.2 THRE4  1e-4
-SWI5  0.1 SNI5  0.1 KRW5  .8 KRN5  .2 PRE5  .4e6 NKRW5 4 NKRN3 3.5 HNPE5 1.2 THRE5  1e-4
-SWI6  0.1 SNI5  0.1 KRW5  .8 KRN5  .2 PRE5   4e6 NKRW5 4 NKRN3 3.5 HNPE5 1.2 THRE5  1e-4
+"""swi [-], sni [-], krn [-], krw [-], pec [Pa], nkrw [-], nkrn [-], npe [-], threshold cP evaluation, ignore swi for cP"""
+SWI3  0.1 SNI3  0.1 KRW3  .8 KRN3  .2 PRE3  .4e6 NKRW3 4 NKRN3 3.5 HNPE3 1.2 THRE3  1e-4 IGN1 0
+SWI4  0.1 SNI4  0.1 KRW4  .8 KRN4  .2 PRE4   4e6 NKRW4 4 NKRN3 3.5 HNPE4 1.2 THRE4  1e-4 IGN1 0
+SWI5  0.1 SNI5  0.1 KRW5  .8 KRN5  .2 PRE5  .4e6 NKRW5 4 NKRN3 3.5 HNPE5 1.2 THRE5  1e-4 IGN1 0
+SWI6  0.1 SNI5  0.1 KRW5  .8 KRN5  .2 PRE5   4e6 NKRW5 4 NKRN3 3.5 HNPE5 1.2 THRE5  1e-4 IGN1 0
 
 """Properties rock"""
 """Kxy [mD], Kz [mD], phi [-], thickness [m]"""
@@ -102,4 +103,4 @@ ${time-56} ${time-56} 7 1 -40000
 7 7 7 1 -40000
 ${time-63} ${time-63} 7 1 40000
 % endif
-3650 3650 7 1 -40000
+18251825 73 1 -40000
