@@ -64,6 +64,8 @@ def reservoir_files(dic):
                         (j + (k + 1.0) / num) * dic["dims"][i] / len(dic[f"{arr}"])
                     )
             dic[f"{name}"] = np.array(dic[f"{name}"])
+    elif dic["grid"] == "coord2d":
+        dic["xcor"] = dic["x_n"]
     else:
         dic["xcor"] = np.linspace(0, dic["dims"][0], dic["noCells"][0] + 1)
     if dic["removecells"] == 1:
@@ -72,7 +74,10 @@ def reservoir_files(dic):
         ]
         dic["xcor"] = np.insert(dic["xcor"], 1, 0.5 * dic["diameter"])
     dic["noCells"][0] = len(dic["xcor"]) - 1
-    dic = manage_grid(dic)
+    if dic["grid"] == "core":
+        dic = handle_core(dic)
+    else:
+        dic = manage_grid(dic)
     dic["zcor"] = np.linspace(0, dic["dims"][2], dic["noCells"][2] + 1)
     dic["z_centers"] = 0.5 * (dic["zcor"][:-1] + dic["zcor"][1:])
     dic["x_centers"] = 0.5 * (dic["xcor"][:-1] + dic["xcor"][1:])
@@ -129,7 +134,7 @@ def manage_grid(dic):
             encoding="utf8",
         ) as file:
             file.write("\n".join(dxarray))
-    elif dic["grid"] == "cake" or dic["grid"] == "tensor2d":
+    elif dic["grid"] == "cake" or dic["grid"] == "tensor2d" or dic["grid"] == "coord2d":
         dic["slope"] = mt.tan(0.5 * dic["dims"][1] * mt.pi / 180)
         lol = []
         with open(
@@ -160,15 +165,67 @@ def manage_grid(dic):
         ) as file:
             file.write(filledtemplate)
     else:
-        dic = crete_3dgrid(dic)
-        for cord in dic["xcorc"]:
-            dic["xcorc"] = np.insert(dic["xcorc"], 0, -cord)
+        if dic["grid"] == "coord3d":
+            dic["xcorc"] = dic["x_n"]
+        else:
+            dic = crete_3dgrid(dic)
+            for cord in dic["xcorc"]:
+                dic["xcorc"] = np.insert(dic["xcorc"], 0, -cord)
         dxarray = [
             f'{dic["xcorc"][i+1]-dic["xcorc"][i]}' for i in range(len(dic["xcorc"]) - 1)
         ]
         dic["noCells"][0] = len(dic["xcorc"]) - 1
         dic["noCells"][1] = dic["noCells"][0]
         dic = d3_grids(dic, dxarray)
+    return dic
+
+
+def handle_core(dic):
+    """
+    Function to handle the core geometry
+
+    Args:
+        dic (dict): Global dictionary with required parameters
+
+    Returns:
+        dic (dict): Global dictionary with new added parameters
+
+    """
+    dic["coregeometry"] = np.ones(
+        dic["noCells"][0] * dic["noCells"][2] * dic["noCells"][2]
+    )
+    indx = 0
+    for k in range(dic["noCells"][2]):
+        for j in range(dic["noCells"][2]):
+            for i in range(dic["noCells"][0]):
+                if (i + 0.5) * dic["dims"][0] / dic["noCells"][0] < dic["dims"][1] or (
+                    i + 0.5
+                ) * dic["dims"][0] / dic["noCells"][0] > dic["dims"][0] - dic["dims"][
+                    1
+                ]:
+                    if (
+                        (k + 0.5) * dic["dims"][2] / dic["noCells"][2]
+                        - 0.5 * dic["dims"][2]
+                    ) ** 2 + (
+                        (j + 0.5) * dic["dims"][2] / dic["noCells"][2]
+                        - 0.5 * dic["dims"][2]
+                    ) ** 2 > (
+                        0.5 * dic["dims"][2] / dic["noCells"][2]
+                    ) ** 2:
+                        dic["coregeometry"][indx] = 0
+                elif (
+                    (k + 0.5) * dic["dims"][2] / dic["noCells"][2]
+                    - 0.5 * dic["dims"][2]
+                ) ** 2 + (
+                    (j + 0.5) * dic["dims"][2] / dic["noCells"][2]
+                    - 0.5 * dic["dims"][2]
+                ) ** 2 > (
+                    0.5 * dic["dims"][2]
+                ) ** 2:
+                    dic["coregeometry"][indx] = 0
+                indx += 1
+    dic["dims"][1] = dic["dims"][2]
+    dic["noCells"][1] = dic["noCells"][2]
     return dic
 
 
