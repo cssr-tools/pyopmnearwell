@@ -78,7 +78,8 @@ def read_opm(dic):
         else:
             dic[f"{study}_injection_ratew"] = dic[f"{study}_smsp"]["FOIR"]
             dic[f"{study}_rhon_ref"] = 0.0850397  # H2 reference density
-            dic[f"{study}_rhow_ref"] = 0.6785064  # CH4 reference density
+            # dic[f"{study}_rhow_ref"] = 0.6785064  # CH4 reference density
+            dic[f"{study}_rhow_ref"] = 998.108  # Water reference density
             dic[f"{study}_rhor"] = dic[f"{study}_rhow_ref"]
         dic[f"{study}_well_pressure"] = dic[f"{study}_smsp"]["WBHP:INJ0"]
         dic[f"{study}_smsp_seconds"] = 86400 * dic[f"{study}_smsp"]["TIME"]
@@ -148,6 +149,24 @@ def create_arrays_opm(dic, study):
     for quantity in dic["quantity"]:
         dic[f"{study}_{quantity}_array"] = []
         for rst in dic[f"{study}_rst"].report_steps:
+            if quantity == "salt":
+                if dic[f"{study}_rst"].count("SALTP", 0):
+                    dic[f"{study}_{quantity}_array"].append(
+                        np.array(dic[f"{study}_rst"]["SALTP", rst])
+                    )
+                else:
+                    dic[f"{study}_{quantity}_array"].append(
+                        np.array(0 * dic[f"{study}_rst"]["SGAS", rst])
+                    )
+            if quantity == "permfact":
+                if dic[f"{study}_rst"].count("PERMFACT", 0):
+                    dic[f"{study}_{quantity}_array"].append(
+                        np.array(dic[f"{study}_rst"]["PERMFACT", rst])
+                    )
+                else:
+                    dic[f"{study}_{quantity}_array"].append(
+                        -1.0 < np.array(dic[f"{study}_rst"]["SGAS", rst])
+                    )
             if quantity == "saturation":
                 dic[f"{study}_indicator_array"].append(
                     np.array(dic[f"{study}_rst"]["SGAS", rst]) > dic["sat_thr"]
@@ -216,6 +235,12 @@ def read_ecl(dic):
         dic[f"{study}_grid"] = EclGrid(case + ".EGRID")
         dic[f"{study}_smsp"] = EclSum(case + ".SMSPEC")
         dic[f"{study}_saturation"] = dic[f"{study}_rst"].iget_kw("SGAS")
+        if dic[f"{study}_rst"].has_kw("SALTP"):
+            dic[f"{study}_salt"] = dic[f"{study}_rst"].iget_kw("SALTP")
+            dic[f"{study}_permfact"] = dic[f"{study}_rst"].iget_kw("PERMFACT")
+        else:
+            dic[f"{study}_salt"] = dic[f"{study}_rst"].iget_kw("PRESSURE")
+            dic[f"{study}_permfact"] = dic[f"{study}_rst"].iget_kw("PRESSURE")
         dic[f"{study}_pressure"] = dic[f"{study}_rst"].iget_kw("PRESSURE")
         dic[f"{study}_permeability_array"] = [dic[f"{study}_ini"].iget_kw("PERMX")[0]]
         dic[f"{study}_porosity_array"] = [dic[f"{study}_ini"]["PORO"][0]]
@@ -304,6 +329,14 @@ def create_arrays_ecl(dic, study):
                     dic[f"{study}_concentration_array"].append(
                         0 * np.array(dic[f"{study}_deng"][i])
                     )
+            if quantity == "salt":
+                dic[f"{study}_{quantity}_array"].append(
+                    np.array(dic[f"{study}_{quantity}"][i])
+                )
+            if quantity == "permfact":
+                dic[f"{study}_{quantity}_array"].append(
+                    np.array(dic[f"{study}_{quantity}"][i])
+                )
             if quantity == "pressure":
                 dic[f"{study}_{quantity}_array"].append(
                     np.array(dic[f"{study}_{quantity}"][i])

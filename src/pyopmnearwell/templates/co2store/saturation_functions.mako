@@ -28,7 +28,7 @@ def safu_evaluation():
     # Saturation function assignation
 
     # Properties: swi, sni, krw, krn, pe
-    safu = [[0.0] * 9 for _ in range(${len(dic['safu'])})]
+    safu = [[0.0] * 10 for _ in range(${len(dic['safu'])})]
     % for i, _ in enumerate(dic['safu']):
     % for j, _ in enumerate(dic['safu'][i]):
     safu[${i}][${j}] = ${dic['safu'][i][j]}

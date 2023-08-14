@@ -60,6 +60,7 @@ def plotting(dic):
         f"{dic['exe']}/{dic['fol']}/jobs/plotting.py",
         f"-f {dic['fol']}",
         f"-p {dic['plot']}",
+        f"-m {dic['model']}",
     ]
     print(" ".join(plot_exe))
     plot_results(dic)

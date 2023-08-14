@@ -39,11 +39,22 @@ def pyopmnearwell():
         default="",
         help="Generate a common plot for the current folders ('' by default).",
     )
+    parser.add_argument(
+        "-m",
+        "--model",
+        default="co2store",
+        help=(
+            "Simulated model (5th row in the configuration file). This is used "
+            + "for the plotting compare method (it gets overwritten by the configuration file)"
+            + "(co2store by default)."
+        ),
+    )
     cmdargs = vars(parser.parse_known_args()[0])
     dic = {"pat": os.path.dirname(__file__)[:-5]}  # Path to the pyopmnearwell folder
     dic["exe"] = os.getcwd()  # Path to the folder of the input.txt file
     dic["fol"] = cmdargs["output"]  # Name for the output folder
     dic["plot"] = cmdargs["plotting"]  # The python package used for plotting
+    dic["model"] = cmdargs["model"]  # Name of the simulated model
     dic["compare"] = cmdargs[
         "compare"
     ]  # If not empty, then the name of the compare plot (compare).

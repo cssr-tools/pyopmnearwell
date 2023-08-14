@@ -37,10 +37,17 @@ def main():
         default="",
         help="Generate a common plot for the current folders.",
     )
+    parser.add_argument(
+        "-m",
+        "--model",
+        default="co2store",
+        help="Simulated model (5th word in the configuration file).",
+    )
     cmdargs = vars(parser.parse_known_args()[0])
     dic = {"folders": [cmdargs["folder"].strip()]}
     dic["plot"] = cmdargs["plot"].strip()  # Using ecl or opm
     dic["compare"] = cmdargs["compare"]  # Name of the compare plot
+    dic["model"] = cmdargs["model"]  # Name of the simulated model
     dic["exe"] = os.getcwd()  # Path to the folder of the input.txt file
     plot_results(dic)
 
@@ -59,6 +66,13 @@ def plot_results(dic):
     dic["quantity"] = ["pressure", "saturation"]
     dic["units"] = ["[bar]", "[-]"]
     dic["labels"] = ["Pressure", "Non-wetting saturation"]
+    if dic["model"] in ["saltprec", "saltpruess"]:
+        dic["quantity"].append("salt")
+        dic["quantity"].append("permfact")
+        dic["units"].append("[-]")
+        dic["units"].append("[-]")
+        dic["labels"].append("Salt saturation")
+        dic["labels"].append("Permeability reduction")
     dic["linestyle"] = [
         (0, ()),
         (0, (1, 1)),
