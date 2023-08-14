@@ -62,6 +62,17 @@ def readthefirstpart(lol, dic):
                 dic[f"{ent}"] = [dic[f"{ent}"]]
         dic["noCells"] = [sum(dic["x_n"]), sum(dic["y_n"]), sum(dic["z_n"])]
         dic["x_fac"] = 0
+    elif dic["grid"] == "coord2d" or dic["grid"] == "coord3d":
+        dic["x_n"] = np.genfromtxt(
+            StringIO((lol[7][0].strip()).split()[0]), delimiter=",", dtype=int
+        )
+        dic["y_n"] = np.array(1)
+        dic["z_n"] = np.array(int((lol[7][0].strip()).split()[1]))
+        for ent in ["x_n", "y_n", "z_n"]:
+            if dic[f"{ent}"].size == 1:
+                dic[f"{ent}"] = [dic[f"{ent}"]]
+        dic["noCells"] = [len(dic["x_n"]) - 1, sum(dic["y_n"]), sum(dic["z_n"])]
+        dic["x_fac"] = 0
     else:
         dic["noCells"] = [int((lol[7][0].strip()).split()[j]) for j in range(2)]
         dic["noCells"].insert(1, 1)

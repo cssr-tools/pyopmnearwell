@@ -66,7 +66,7 @@ DZ
   ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*${dic['dims'][2]/dic['noCells'][2]} /
 TOPS
   ${dic['noCells'][0]}*0. /
-% elif dic['grid']== 'cake' or dic['grid']== 'tensor2d':
+% elif dic['grid']== 'cake' or dic['grid']== 'tensor2d' or dic['grid']== 'coord2d':
 INCLUDE
   '${dic['exe']}/${dic['fol']}/preprocessing/CAKE.INC' /
 % elif dic['grid']== 'cave':
@@ -136,7 +136,7 @@ PORO  ${dic['rock'][dic['satnum']][2]} ${mt.floor(dic["noCells"][1] / 2)-sum(dic
 ----------------------------------------------------------------------------
 EDIT
 ----------------------------------------------------------------------------
-% if dic['grid'] != 'cartesian' and dic['grid'] != 'cave' and dic['grid'] != 'tensor3d':
+% if dic['grid'] != 'cartesian' and dic['grid'] != 'cave' and dic['grid'] != 'tensor3d'  and dic['grid'] != 'coord3d':
 BOX
 ${dic['noCells'][0]} ${dic['noCells'][0]} 1 1 1* 1* / 
 MULTPV

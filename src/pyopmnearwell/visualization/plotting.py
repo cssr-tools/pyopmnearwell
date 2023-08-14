@@ -114,6 +114,8 @@ def plot_results(dic):
     dic = capillary_pressure(dic)
     dic = over_time_well_injectivity(dic)
     dic = over_time_max_distance(dic)
+    if dic["model"] == "h2store":
+        return
     dic = over_time_layers(dic)
     final_time_projections(dic)
     if dic["compare"]:
