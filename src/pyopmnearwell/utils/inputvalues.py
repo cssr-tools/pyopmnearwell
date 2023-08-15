@@ -64,7 +64,7 @@ def readthefirstpart(lol, dic):
         dic["x_fac"] = 0
     elif dic["grid"] == "coord2d" or dic["grid"] == "coord3d":
         dic["x_n"] = np.genfromtxt(
-            StringIO((lol[7][0].strip()).split()[0]), delimiter=",", dtype=int
+            StringIO((lol[7][0].strip()).split()[0]), delimiter=",", dtype=float
         )
         dic["y_n"] = np.array(1)
         dic["z_n"] = np.array(int((lol[7][0].strip()).split()[1]))
