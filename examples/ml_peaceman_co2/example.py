@@ -6,13 +6,14 @@
 Script to run Flow for a random input variable
 """
 
-import os
 import math
+import os
+
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 from ecl.eclfile import EclFile
 from mako.template import Template
-import matplotlib
-import matplotlib.pyplot as plt
 
 np.random.seed(7)
 
@@ -36,31 +37,43 @@ def compute_peaceman(k_h: float, r_e: float, r_w: float) -> float:
 # Give the full path to PYOPMNEARWELL and model parameters (ranges and inj rate based on the csp11b model)
 PYOPM = "/Users/dmar/Github/pyopmnearwell"
 FLOW = f"{PYOPM}/build/opm-simulators/bin/flow_gaswater_dissolution_diffuse"
-PERMEABILITY = 1e-12 # K between 1e-13 to 1e-12 m2
-WELLRADI = 0.1 # Between 0.025 to 0.125 m
-RATE = 1.665e-2 / 1.86843 # [sm3/s] Fix to 1.665e-2 kg/s, ref_dens = 1.86843 kg/sm3
+PERMEABILITY = 1e-12  # K between 1e-13 to 1e-12 m2
+WELLRADI = 0.1  # Between 0.025 to 0.125 m
+RATE = 1.665e-2 / 1.86843  # [sm3/s] Fix to 1.665e-2 kg/s, ref_dens = 1.86843 kg/sm3
 BOFAC = 1.0
 VISCOSCITY = 0.017 * 0.001
-CLIP = 2 # Remove the distances with value less than this [m]
+CLIP = 2  # Remove the distances with value less than this [m]
 
-#Run the main routine
+# Run the main routine
 NPOINTS, NPRUNS = 20, 5
-PERMEABILITYHS = np.linspace(1e-13, 1e-11, NPOINTS)  # K between 1e-13 to 1e-12 m2 and H betweem 1 to 10, i,e, [1e-13,1e-11]
-#WELLRADIS = [0.025, .05, .1, .125]
-#WELLRADIS = np.linspace(.05, .125, NPOINTS)
-WELLRADIS = [0.1, .125]
+PERMEABILITYHS = np.linspace(
+    1e-13, 1e-11, NPOINTS
+)  # K between 1e-13 to 1e-12 m2 and H betweem 1 to 10, i,e, [1e-13,1e-11]
+# WELLRADIS = [0.025, .05, .1, .125]
+# WELLRADIS = np.linspace(.05, .125, NPOINTS)
+WELLRADIS = [0.1, 0.125]
 nradis = len(WELLRADIS)
 nperm = len(PERMEABILITYHS)
 wi_simulated = []
-wi_analytical = []
+wi_analytical: list = []
 r_e = []
 r_w = []
 r_wi = []
-mytemplate = Template(filename="co2_nearwell.mako")
+mytemplate = Template(
+    filename=os.path.join(
+        os.path.split(os.path.abspath(__file__))[0], "co2_nearwell.mako"
+    )
+)
 for k, WELLRADI in enumerate(WELLRADIS):
     r_w.append(WELLRADI)
     for i, PERMEABILITYH in enumerate(PERMEABILITYHS):
-        var = {"flow": FLOW, "perm": PERMEABILITYH, "radius": WELLRADI, "rate": RATE, "pwd": os.getcwd()}
+        var = {
+            "flow": FLOW,
+            "perm": PERMEABILITYH,
+            "radius": WELLRADI,
+            "rate": RATE,
+            "pwd": os.getcwd(),
+        }
         filledtemplate = mytemplate.render(**var)
         with open(
             f"co2_{i+k*nperm}.txt",
@@ -88,19 +101,23 @@ for i in range(round(nradis * NPOINTS / NPRUNS)):
         wi_analytical.append([])
         for r in r_e[-1]:
             wi_analytical[-1].append(
-                compute_peaceman(PERMEABILITYH, r,r_wi[NPRUNS*i+j]) * BOFAC / VISCOSCITY
+                compute_peaceman(PERMEABILITYH, r, r_wi[NPRUNS * i + j])
+                * BOFAC
+                / VISCOSCITY
             )
         rst = EclFile(f"./co2_{NPRUNS*i+j}/output/RESERVOIR.UNRST")
         pressure = np.array(rst.iget_kw("PRESSURE")[-1])
         pw = pressure[0]
-        cell_pressures = pressure[len(pressure)-len(r_e[-1]):]
-        wi_simulated.append(RATE / ((pw - cell_pressures) * 1e5)) # 1e5 to connvert from bar to Pascals
+        cell_pressures = pressure[len(pressure) - len(r_e[-1]) :]
+        wi_simulated.append(
+            RATE / ((pw - cell_pressures) * 1e5)
+        )  # 1e5 to connvert from bar to Pascals
         if pw == cell_pressures[0]:
             exit()
         axis.plot(
             r_e[-1],
             wi_simulated[-1],
-            color=matplotlib.colormaps["tab20"].colors[(NPRUNS*i+j)%20],
+            color=matplotlib.colormaps["tab20"].colors[(NPRUNS * i + j) % 20],
             linestyle="",
             marker="*",
             markersize=5,
@@ -109,7 +126,7 @@ for i in range(round(nradis * NPOINTS / NPRUNS)):
         axis.plot(
             r_e[-1],
             wi_analytical[-1],
-            color=matplotlib.colormaps["tab20"].colors[(NPRUNS*i+j)%20],
+            color=matplotlib.colormaps["tab20"].colors[(NPRUNS * i + j) % 20],
             linestyle="",
             marker=".",
             markersize=5,
@@ -118,7 +135,13 @@ for i in range(round(nradis * NPOINTS / NPRUNS)):
         os.system(f"rm -rf co2_{NPRUNS*i+j} co2_{NPRUNS*i+j}.txt")
 
 # Write the configuration files for the comparison in the 3D reservoir
-var = {"flow": FLOW, "perm": PERMEABILITY, "radius": .1, "rate": RATE, "pwd": os.getcwd()}
+var = {
+    "flow": FLOW,
+    "perm": PERMEABILITY,
+    "radius": 0.1,
+    "rate": RATE,
+    "pwd": os.getcwd(),
+}
 for name in ["3d_flow_wellmodel", "3d_ml_wellmodel"]:
     mytemplate = Template(filename=f"co2_{name}.mako")
     filledtemplate = mytemplate.render(**var)

@@ -4,4 +4,4 @@ mako
 matplotlib
 scipy
 tensorflow
-# tensorflow-datasets
+scikit-learn
