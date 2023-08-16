@@ -1,17 +1,22 @@
-"""Train a neural network that predicts the well index from the initital
-reservoir pressure and distance from the well."""
+"""Train a neural network that predicts the well index from the pressure, progressed
+time, and distance from the well."""
+from __future__ import annotations
 
 import csv
 import logging
 import os
 
 import matplotlib.pyplot as plt
+import numpy as np
+import runspecs
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.layers import Dense, Input
 from tensorflow.keras.models import Sequential
 
+import pyopmnearwell.utils.units as units
 from pyopmnearwell.ml.kerasify import export_model
+from pyopmnearwell.utils.formulas import peaceman_WI
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -47,7 +52,7 @@ with open(os.path.join(savepath, "scales.csv"), "w", newline="") as csvfile:
     data_min = feature_scaler.data_min_
     data_max = feature_scaler.data_max_
     for feature_name, feature_min, feature_max in zip(
-        ["init_pressure", "radius"], data_min, data_max
+        ["pressure", "time", "radius"], data_min, data_max
     ):
         writer.writerow(
             {"variable": feature_name, "min": feature_min, "max": feature_max}
@@ -90,15 +95,17 @@ for x, y in train_ds:
 
 
 #  Create the neural network.
+ninputs: int = 3
+noutputs: int = 1
 model = Sequential(
     [
-        Input(shape=(2,)),
+        Input(shape=(ninputs,)),
         Dense(10, activation="sigmoid", kernel_initializer="glorot_normal"),
         Dense(10, activation="sigmoid", kernel_initializer="glorot_normal"),
         Dense(10, activation="sigmoid", kernel_initializer="glorot_normal"),
         Dense(10, activation="sigmoid", kernel_initializer="glorot_normal"),
         Dense(10, activation="sigmoid", kernel_initializer="glorot_normal"),
-        Dense(1),
+        Dense(noutputs),
     ]
 )
 
@@ -113,7 +120,7 @@ checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
 )
 lr_callback = (
     tf.keras.callbacks.ReduceLROnPlateau(
-        monitor="loss", factor=0.1, patience=10, verbose=1, min_delta=1e-10
+        monitor="loss", factor=0.1, patience=10, verbose=1, min_delta=1e-10, min_lr=1e-7
     ),
 )
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir)
@@ -146,26 +153,53 @@ features, targets = next(
     iter(orig_ds.batch(batch_size=len(orig_ds)).as_numpy_iterator())
 )
 
-features = features.reshape((600, 395, 2))[::100, ...]
-targets = targets.reshape((600, 395, 1))[::100, ...]
-plt.figure
-for feature, target in zip(features, targets):
+# loop through 2 time steps and 2 three pressures
+features = features.reshape((runspecs.NPOINTS, -1, 395, ninputs))[
+    :2, ::15, ...
+].reshape(-1, 395, ninputs)
+targets = targets.reshape((runspecs.NPOINTS, -1, 395, noutputs))[:2, ::15, ...].reshape(
+    -1, 395, noutputs
+)
+
+for feature, target in list(zip(features, targets)):
+    plt.figure()
     target_hat = target_scaler.inverse_transform(
-        model(feature_scaler.transform(feature.reshape((395, 2))))
+        model(feature_scaler.transform(feature))
     )
-    p = feature[0][0]
+    peaceman = (
+        np.vectorize(peaceman_WI)(
+            runspecs.PERMEABILITY * units.MILIDARCY_TO_M2,
+            feature[..., 2],
+            runspecs.WELL_RADIUS,
+            runspecs.DENSITY,
+            runspecs.VISCOSITY,
+        )
+        / runspecs.SURFACE_DENSITY
+    )
     plt.plot(
-        feature[..., 1].flatten(),
-        tf.reshape(target_hat, (-1)),
-        label=rf"$p_i={p}$ [bar] nn",
+        feature[..., 2].flatten(),
+        target_hat,
+        label="nn",
+    )
+    plt.plot(
+        feature[..., 2].flatten(),
+        peaceman,
+        label="Peaceman",
     )
     plt.scatter(
-        feature[..., 1].flatten()[::5],
+        feature[..., 2].flatten()[::5],
         target.flatten()[::5],
-        label=rf"$p_i={p}$ [bar] data",
+        label="data",
     )
-plt.legend()
-plt.xlabel(r"$r[m]$")
-plt.ylabel(r"$WI$ [m*s]")
-plt.savefig(os.path.join(savepath, "nn_p_r_to_WI.png"))
-plt.show()
+    plt.legend()
+    plt.title(
+        rf"$p_i={feature[20][0]:.3e}\,[Pa]$ at $r={feature[300][2]:.2f}\,[m]$ $t={feature[0][1]:.2f}\,[h]$"
+    )
+    plt.xlabel(r"$r\,[m]$")
+    plt.ylabel(r"$WI\,[m^4\cdots/kg]$")
+    plt.savefig(
+        os.path.join(
+            savepath, f"nn_p_r_to_WI_p_{feature[300][0]:.3e}_t_{feature[0][1]:0f}.png"
+        )
+    )
+    plt.show()

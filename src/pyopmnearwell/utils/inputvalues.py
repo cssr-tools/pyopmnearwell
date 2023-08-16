@@ -7,6 +7,7 @@ Utiliy functions to set the requiried input values by pynearwell.
 
 import csv
 from io import StringIO
+
 import numpy as np
 
 
@@ -45,6 +46,10 @@ def readthefirstpart(lol, dic):
     dic["flow"] = str(lol[1])[2:-2]  # Path to the flow executable
     dic["model"] = (str(lol[4][0]).strip()).split()[0]  # Physical model
     dic["template"] = (str(lol[4][0]).strip()).split()[1]  # Name
+    if len(str(lol[4][0]).strip().split()) >= 3:
+        dic["runname"] = (str(lol[4][0]).strip()).split()[2]  # Name for the deckfile
+    else:
+        dic["runname"] = "RESERVOIR"
     dic["grid"] = (
         lol[5][0].strip().split()[0]
     )  # Grid type (radial/cake/cartesian2d/cartesian)
