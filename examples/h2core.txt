@@ -3,7 +3,7 @@ flow --enable-tuning=true --enable-opm-rst-file=true --linear-solver=cprw --enab
 
 """Set the model parameters"""
 h2store      #Model (co2store/h2store)
-core .05     #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
+core .1     #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
 .5 .05       #Reservoir dimensions [m] (Lenght and height)
 50 9 0       #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)
 0.3 1 0      #Well diameter [m], well transmiscibility (0 to use the computed one internally in Flow), and remove the smaller cells than the well diameter

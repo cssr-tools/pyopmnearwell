@@ -55,7 +55,7 @@ def safu_evaluation():
                     file.write(
                         f"{value:.6f}"
                         f" 0.00000"
-                        f" 1.00000"
+                        f" {krwe(1-value,para[0], para[1] , para[2], para[5]) :.6f}"
                         f" {pcwce(1-value+para[8],para[0], para[1], para[4], para[7]):E} \n"
                     )
                 else:

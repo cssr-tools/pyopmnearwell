@@ -1,3 +1,6 @@
+<%
+import math as mt
+%>
 -- Copyright (C) 2023 NORCE
 
 ----------------------------------------------------------------------------
@@ -88,9 +91,9 @@ PERMX  ${dic['rock'][int(dic["layers"][i])][0]} 1* 1* 1* 1* ${i+1} ${i+1} /
 % if dic['perforations'][0] == 1:
 % for i in range(dic['perforations'][1]):
 % if dic['grid'] != 'cartesian':
-PERMX  ${dic['rock'][dic['satnum']][0]} 1 ${sum(dic['x_centers']<dic['perforations'][2])} 1* 1* ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} /
+PERMX  ${dic['rock'][dic['satnum']][0]} 1 ${sum(dic['x_centers']<dic['perforations'][2])} 1* 1* ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} /
 %else:
-PERMX  ${dic['rock'][dic['satnum']][0]} ${round(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${round(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${round(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${round(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} /
+PERMX  ${dic['rock'][dic['satnum']][0]} ${mt.floor(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${mt.floor(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${mt.floor(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${mt.floor(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} /
 %endif
 % endfor
 % endif
@@ -103,9 +106,9 @@ PERMZ  ${dic['rock'][int(dic["layers"][i])][1]} 1* 1* 1* 1* ${i+1} ${i+1} /
 % if dic['perforations'][0] == 1:
 % for i in range(dic['perforations'][1]):
 % if dic['grid'] != 'cartesian':
-PERMZ  ${dic['rock'][dic['satnum']][1]} 1 ${sum(dic['x_centers']<dic['perforations'][2])} 1* 1* ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} /
+PERMZ  ${dic['rock'][dic['satnum']][1]} 1 ${sum(dic['x_centers']<dic['perforations'][2])} 1* 1* ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} /
 %else:
-PERMZ  ${dic['rock'][dic['satnum']][1]} ${round(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${round(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${round(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${round(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} /
+PERMZ  ${dic['rock'][dic['satnum']][1]} ${mt.floor(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${mt.floor(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${mt.floor(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${mt.floor(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} /
 %endif
 % endfor
 % endif
@@ -122,9 +125,9 @@ PORO  ${dic['rock'][int(dic["layers"][i])][2]} 1* 1* 1* 1* ${i+1} ${i+1} /
 % if dic['perforations'][0] == 1:
 % for i in range(dic['perforations'][1]):
 % if dic['grid'] != 'cartesian':
-PORO  ${dic['rock'][dic['satnum']][2]} 1 ${sum(dic['x_centers']<dic['perforations'][2])} 1* 1* ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} /
+PORO  ${dic['rock'][dic['satnum']][2]} 1 ${sum(dic['x_centers']<dic['perforations'][2])} 1* 1* ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} /
 %else:
-PORO  ${dic['rock'][dic['satnum']][2]} ${round(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${round(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${round(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${round(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} /
+PORO  ${dic['rock'][dic['satnum']][2]} ${mt.floor(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${mt.floor(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${mt.floor(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${mt.floor(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} /
 %endif
 % endfor
 % endif
@@ -211,14 +214,14 @@ REGIONS
 
 EQUALS
 % for i in range(dic['noCells'][2]):
-SATNUM  ${round(dic["layers"][i]+1)} 1* 1* 1* 1* ${i+1} ${i+1} /
+SATNUM  ${mt.floor(dic["layers"][i]+1)} 1* 1* 1* 1* ${i+1} ${i+1} /
 % endfor
 % if dic['perforations'][0] == 1:
 % for i in range(dic['perforations'][1]):
 % if dic['grid'] != 'cartesian':
-SATNUM  ${dic['satnum']+1} 1 ${sum(dic['x_centers']<dic['perforations'][2])} 1* 1* ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} /
+SATNUM  ${dic['satnum']+1} 1 ${sum(dic['x_centers']<dic['perforations'][2])} 1* 1* ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} /
 % else:
-SATNUM  ${dic['satnum']+1} ${round(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${round(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${round(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${round(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} /
+SATNUM  ${dic['satnum']+1} ${mt.floor(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${mt.floor(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${mt.floor(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${mt.floor(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} /
 % endif
 % endfor
 % endif
@@ -227,14 +230,14 @@ SATNUM  ${dic['satnum']+1} ${round(dic["noCells"][1] / 2)-sum(dic['x_centers']<d
 % if dic["hysteresis"] ==1:
 EQUALS
 % for i in range(dic['noCells'][2]):
-IMBNUM  ${dic['satnum']+dic['perforations'][0]+round(dic["layers"][i]+1)} 1* 1* 1* 1* ${i+1} ${i+1} /
+IMBNUM  ${dic['satnum']+dic['perforations'][0]+mt.floor(dic["layers"][i]+1)} 1* 1* 1* 1* ${i+1} ${i+1} /
 % endfor
 % if dic['perforations'][0] == 1:
 % for i in range(dic['perforations'][1]):
 % if dic['grid'] != 'cartesian':
-IMBNUM  ${2*dic['satnum']+2} 1 ${sum(dic['x_centers']<dic['perforations'][2])} 1* 1* ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} /
+IMBNUM  ${2*dic['satnum']+2} 1 ${sum(dic['x_centers']<dic['perforations'][2])} 1* 1* ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} /
 %else:
-IMBNUM  ${2*dic['satnum']+2} ${round(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${round(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${round(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${round(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*round(dic['noCells'][2]/(dic['perforations'][1]+1))} /
+IMBNUM  ${2*dic['satnum']+2} ${mt.floor(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${mt.floor(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${mt.floor(dic["noCells"][1] / 2)-sum(dic['x_centers']<dic['perforations'][2])} ${mt.floor(dic["noCells"][1] / 2) + sum(dic['x_centers']<dic['perforations'][2])} ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} ${(i+1)*mt.floor(dic['noCells'][2]/(dic['perforations'][1]+1))} /
 %endif
 % endfor
 % endif
@@ -244,8 +247,8 @@ IMBNUM  ${2*dic['satnum']+2} ${round(dic["noCells"][1] / 2)-sum(dic['x_centers']
 ----------------------------------------------------------------------------
 SOLUTION
 ---------------------------------------------------------------------------
---EQUIL
--- 0 ${dic['pressure']} ${round((1-dic["initialphase"])*dic['dims'][2])} 0 0 0 1 1 0 /
+EQUIL
+ 0 ${dic['pressure']} ${mt.floor((1-dic["initialphase"])*dic['dims'][2])} 0 0 0 1 1 0 /
 --PRESSURE
 --% for i in range(dic['noCells'][2]):
 --	${dic['noCells'][0]*dic['noCells'][1]}*${dic['pressure']+1e-5*i*0.6785064*9.81*dic['dims'][2]/dic['noCells'][2]}
@@ -262,14 +265,14 @@ ${dic['dims'][2]} 0.0 /
 RS
 ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*0.0 /
 
-PRESSURE
-  ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*${dic['pressure']} /
+--PRESSURE
+--  ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*${dic['pressure']} /
 
-SOIL
-  ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*${1. - dic["initialphase"]} /
+--SOIL
+--  ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*${1. - dic["initialphase"]} /
 
-SGAS
-  ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*${dic["initialphase"]} /
+--SGAS
+--  ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*${dic["initialphase"]} /
 
 -- Initial microbe distribution
 SBACT
@@ -367,8 +370,8 @@ RPTRST
  'BASIC=2' FLOWS FLORES DEN VISC /
 
 WELSPECS
-'INJ0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'GAS' 2* 'STOP' /
-'PRO0'	'G1'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	1*	'GAS' 2* 'STOP'  /
+'INJ0'	'G1'	${max(1, mt.floor(dic['noCells'][1]/2))} ${max(1, mt.floor(dic['noCells'][1]/2))}	1*	'GAS' 2* 'STOP' /
+'PRO0'	'G1'	${max(1, mt.floor(dic['noCells'][1]/2))} ${max(1, mt.floor(dic['noCells'][1]/2))}	1*	'GAS' 2* 'STOP'  /
 % if dic["pvMult"] == 0:
 % if dic['grid'] != 'cartesian' and dic['grid'] != 'cave':
 'PRO1'	'G1'	${dic['noCells'][0]}	1	1*	'GAS' /
@@ -382,11 +385,11 @@ WELSPECS
 /
 COMPDAT
 % if dic["jfactor"] == 0:
-'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	${1} ${1}	'OPEN'	1*	1*	${dic['diameter']} /
+'INJ0'	${max(1, mt.floor(dic['noCells'][1]/2))}	${max(1, mt.floor(dic['noCells'][1]/2))}	${1} ${1}	'OPEN'	1*	1*	${dic['diameter']} /
 % else:
-'INJ0'	${max(1, round(dic['noCells'][1]/2))}	${max(1, round(dic['noCells'][1]/2))}	${1} ${1}	'OPEN'	1*	${dic["jfactor"]}	 /
+'INJ0'	${max(1, mt.floor(dic['noCells'][1]/2))}	${max(1, mt.floor(dic['noCells'][1]/2))}	${1} ${1}	'OPEN'	1*	${dic["jfactor"]}	 /
 %endif
-'PRO0'	${max(1, round(dic['noCells'][1]/2))} ${max(1, round(dic['noCells'][1]/2))}	${1} ${1}	'OPEN' 1*	1*	${dic['diameter']} /
+'PRO0'	${max(1, mt.floor(dic['noCells'][1]/2))} ${max(1, mt.floor(dic['noCells'][1]/2))}	${1} ${1}	'OPEN' 1*	1*	${dic['diameter']} /
 % if dic["pvMult"] == 0:
 % if dic['grid'] != 'cartesian':
 'PRO1'	${dic['noCells'][0]}	1	1	${0*dic['noCells'][2]+1}	'OPEN' 1*	1*	${dic['diameter']} /
@@ -428,6 +431,6 @@ WCONPROD
 /
 %endif
 TSTEP
-${round(dic['inj'][j][0]/dic['inj'][j][1])}*${dic['inj'][j][1]}
+${mt.floor(dic['inj'][j][0]/dic['inj'][j][1])}*${dic['inj'][j][1]}
 /
 % endfor
