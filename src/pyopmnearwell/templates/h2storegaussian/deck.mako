@@ -386,15 +386,15 @@ TUNING
 /
 WCONINJE
 % if dic['inj'][j][3] > 0:
-'INJ0' 'GAS' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'}
+'INJ0' 'GAS' ${'OPEN' if dic['inj'][j][4] > 0 else 'STOP'}
 'RATE' ${f"{dic['inj'][j][4] / 0.0850397 : E}"}  1* 400/
 % else:
-'INJ0' 'OIL' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'}
+'INJ0' 'OIL' ${'OPEN' if dic['inj'][j][4] > 0 else 'STOP'}
 'RATE' ${f"{dic['inj'][j][4] / 998.108 : E}"}  1* 400/ 998.108
 %endif
 /
 WCONPROD
-'PRO0' ${'OPEN' if dic['inj'][j][4] < 0 else 'SHUT'} 'GRAT' 2* ${f"{abs(dic['inj'][j][4]) / 0.0850397 : E}"} 2* ${.9*dic['pressure']}/
+'PRO0' ${'OPEN' if dic['inj'][j][4] < 0 else 'STOP'} 'GRAT' 2* ${f"{abs(dic['inj'][j][4]) / 0.0850397 : E}"} 2* ${.9*dic['pressure']}/
 /
 WECON
 'PRO0' 1* ${f"{dic['econ']*abs(dic['inj'][j][4]) / 0.0850397 : E}"} /
