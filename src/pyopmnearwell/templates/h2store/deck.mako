@@ -439,9 +439,9 @@ WCONPROD
 'PRO1' 'OPEN' 'BHP' 5* ${dic['pressure']}/
 %endif
 /
---WECON
---'PRO0' 1* ${f"{dic['econ']*abs(dic['inj'][j][4]) / 0.0850397 : E}"} /
---/
+WECON
+'PRO0' 1* ${f"{dic['econ']*abs(dic['inj'][j][4]) / 0.0850397 : E}"} /
+/
 % if dic["pvMult"] == 0:
 % if dic['grid'] == 'cartesian':
 'PRO1' 'OPEN' 'BHP' 5* ${dic['pressure']}/
