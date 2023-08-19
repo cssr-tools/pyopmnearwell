@@ -185,6 +185,7 @@ opm-simulators/
 
 # Developing
 developing/
+studies/
 
 # Examples
 examples/output*
