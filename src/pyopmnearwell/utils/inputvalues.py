@@ -150,7 +150,7 @@ def readthesecondpart(lol, dic, index):
         )
         if i < dic["satnum"]:
             dic["thickness"].append(float(row[7]))
-            if dic["model"] == "co2eor":
+            if dic["model"] == "co2eor" or dic["model"] == "co2eormodified":
                 dic["nz_perlayer"].append(int(row[9]))
     index += 3 + dic["satnum"] + dic["perforations"][0]
     column = []
