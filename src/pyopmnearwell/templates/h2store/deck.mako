@@ -383,7 +383,7 @@ WELSPECS
 % if dic["pvMult"] == 0 or dic['grid']== 'core':
 %if dic['grid']== 'core':
 'PRO1'	'G1'	${dic['noCells'][0]}	${1+mt.floor(dic['noCells'][2]/2)}	1*	'GAS' 2* 'STOP' /
-% elif dic['grid'] != 'cartesian' and dic['grid'] != 'cave':
+% elif dic['grid'] != 'cartesian' and dic['grid'] != 'tensor3d':
 'PRO1'	'G1'	${dic['noCells'][0]}	1	1*	'GAS' /
 %else:
 'PRO1'	'G1'	1	1	1*	'OIL' /
@@ -395,21 +395,21 @@ WELSPECS
 /
 COMPDAT
 % if dic["jfactor"] == 0:
-'INJ0'	${max(1, 1+mt.floor(dic['noCells'][1]/2))}	${max(1, 1+mt.floor(dic['noCells'][1]/2))}	1	${0*dic['noCells'][2]+1}	'OPEN'	1*	1*	${dic['diameter']} /
+'INJ0'	${max(1, 1+mt.floor(dic['noCells'][1]/2))}	${max(1, 1+mt.floor(dic['noCells'][1]/2))}	1	${dic['noCells'][2]}	'OPEN'	1*	1*	${dic['diameter']} /
 'PRO0'	${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${max(1, 1+mt.floor(dic['noCells'][1]/2))}	1	${0*dic['noCells'][2]+1}	'OPEN' 1*	1*	${dic['diameter']} /
 % else:
 %if dic['grid'] == 'core':
 'INJ0'	1	${1+mt.floor(dic['noCells'][2]/2)}	${1+mt.floor(dic['noCells'][2]/2)}	${1+mt.floor(dic['noCells'][2]/2)}	'OPEN' 1*	${dic["jfactor"]}	 /
 'PRO0'	1 ${1+mt.floor(dic['noCells'][2]/2)}	${1+mt.floor(dic['noCells'][2]/2)}	${1+mt.floor(dic['noCells'][2]/2)}	'OPEN' 1*	${dic["jfactor"]} /
 %else:
-'INJ0'	${max(1, 1+mt.floor(dic['noCells'][1]/2))}	${max(1, 1+mt.floor(dic['noCells'][1]/2))}	1	${0*dic['noCells'][2]+1}	'OPEN'	1*	${dic["jfactor"]}	 /
+'INJ0'	${max(1, 1+mt.floor(dic['noCells'][1]/2))}	${max(1, 1+mt.floor(dic['noCells'][1]/2))}	1	${dic['noCells'][2]}	'OPEN'	1*	${dic["jfactor"]}	 /
 'PRO0'	${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${max(1, 1+mt.floor(dic['noCells'][1]/2))}	1	${0*dic['noCells'][2]+1}	'OPEN' 1*	${dic["jfactor"]} /
 %endif
 %endif
 % if dic["pvMult"] == 0 or dic['grid']== 'core':
 % if dic['grid']== 'core':
 'PRO1'	${dic['noCells'][0]}	${1+mt.floor(dic['noCells'][2]/2)}	${1+mt.floor(dic['noCells'][2]/2)}	${1+mt.floor(dic['noCells'][2]/2)}	'OPEN' 1*	${dic["jfactor"]} /
-% elif dic['grid'] != 'cartesian':
+% elif dic['grid'] != 'cartesian' and dic['grid'] != 'tensor3d':
 'PRO1'	${dic['noCells'][0]}	1	1	${0*dic['noCells'][2]+1}	'OPEN' 1*	1*	${dic['diameter']} /
 %else:
 'PRO1'	1	1	1	${dic['noCells'][2]}	'OPEN' 1*	1*	${dic['diameter']} /
@@ -438,19 +438,18 @@ WCONPROD
 % if dic['grid'] == 'core':
 'PRO1' 'OPEN' 'BHP' 5* ${dic['pressure']}/
 %endif
+% if dic["pvMult"] == 0:
+% if dic['grid'] == 'cartesian' or dic['grid'] == 'tensor3d':
+'PRO1' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'} 'BHP' 5* ${dic['pressure']}/
+'PRO2' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'} 'BHP' 5* ${dic['pressure']}/
+'PRO3' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'} 'BHP' 5* ${dic['pressure']}/
+'PRO4' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'} 'BHP' 5* ${dic['pressure']}/
+%endif
+%endif
 /
 WECON
 'PRO0' 1* ${f"{dic['econ']*abs(dic['inj'][j][4]) / 0.0850397 : E}"} /
 /
-% if dic["pvMult"] == 0:
-% if dic['grid'] == 'cartesian':
-'PRO1' 'OPEN' 'BHP' 5* ${dic['pressure']}/
-'PRO2' 'OPEN' 'BHP' 5* ${dic['pressure']}/
-'PRO3' 'OPEN' 'BHP' 5* ${dic['pressure']}/
-'PRO4' 'OPEN' 'BHP' 5* ${dic['pressure']}/
-%endif
-/
-%endif
 TSTEP
 ${mt.floor(dic['inj'][j][0]/dic['inj'][j][1])}*${dic['inj'][j][1]}
 /
