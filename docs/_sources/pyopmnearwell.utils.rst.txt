@@ -7,8 +7,10 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   pyopmnearwell.utils.formulas
    pyopmnearwell.utils.inputvalues
    pyopmnearwell.utils.runs
+   pyopmnearwell.utils.units
    pyopmnearwell.utils.writefile
 
 Module contents

@@ -7,6 +7,7 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   pyopmnearwell.visualization.additional_plots
    pyopmnearwell.visualization.getpressure
    pyopmnearwell.visualization.plotting
    pyopmnearwell.visualization.reading

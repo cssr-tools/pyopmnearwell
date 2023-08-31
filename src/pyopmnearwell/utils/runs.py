@@ -5,6 +5,7 @@
 Utiliy functions to run the studies.
 """
 import os
+import math as mt
 import numpy as np
 from pyopmnearwell.visualization.plotting import plot_results
 
@@ -20,7 +21,7 @@ def simulations(dic):
     os.chdir(f"{dic['exe']}/{dic['fol']}/output")
     os.system(
         f"{dic['flow']} --output-dir={dic['exe']}/{dic['fol']}/output "
-        f"{dic['exe']}/{dic['fol']}/preprocessing/RESERVOIR.DATA  & wait\n"
+        f"{dic['exe']}/{dic['fol']}/preprocessing/{dic['fol'].upper()}.DATA  & wait\n"
     )
     # We save few variables for the plotting methods
     np.save("xspace", dic["xcor"])
@@ -37,7 +38,9 @@ def simulations(dic):
     else:
         np.save("angle", dic["dims"][1])
     if dic["grid"] == "cartesian":
-        np.save("position", (dic["noCells"][0] - 1) * round(dic["noCells"][0] / 2))
+        np.save(
+            "position", (dic["noCells"][0] - 1) * (mt.floor(dic["noCells"][0] / 2) + 1)
+        )
     else:
         np.save("position", 0)
 

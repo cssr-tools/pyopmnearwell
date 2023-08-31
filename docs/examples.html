@@ -94,11 +94,11 @@ the co2store model is used and only water is injected in a radial grid.</p>
 </pre></div>
 </div>
 <p>We change the grid to a 3D catesian grid:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">6</span><span class="n">cartesian</span> <span class="mi">1</span>  <span class="c1">#Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">6</span><span class="n">cartesian</span> <span class="mi">1</span>  <span class="c1">#Grid type (core/radial/cake/cartesian2d/cartesian/cpg3d/coord2d/coord3d/tensor2d/tensor3d) and size (input/output pipe length[m]/theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))</span>
 </pre></div>
 </div>
-<p>and increase the injection rate 10 times (this to be comparable since the radial grid has an angle of 36).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">30</span><span class="mi">3</span> <span class="mf">1e-1</span> <span class="mf">5e-2</span> <span class="mi">0</span> <span class="mi">100000</span>
+<p>and increase the injection rate 6 times (this to be comparable since the radial grid has an angle of 60).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">32</span><span class="mf">1e-1</span> <span class="mf">1e-1</span> <span class="mf">5e-2</span> <span class="mi">0</span> <span class="mi">360000</span>
 </pre></div>
 </div>
 <p>We run again the configuration file and save it in a different folder:</p>
@@ -123,7 +123,7 @@ examples folder as ‘co2.txt’.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pyopmnearwell<span class="w"> </span>-i<span class="w"> </span>co2.txt<span class="w"> </span>-o<span class="w"> </span>co2
 </pre></div>
 </div>
-<p>The execution time was c.a. 432 seconds and the following is an animation using
+<p>The execution time was c.a. 20 seconds and the following is an animation using
 ResInsight to visualize the gas saturation:</p>
 <figure class="align-default" id="id1">
 <img alt="_images/saturation.gif" src="_images/saturation.gif" />
@@ -136,13 +136,13 @@ ResInsight to visualize the gas saturation:</p>
 <img alt="_images/permeability_2D.png" src="_images/permeability_2D.png" />
 </figure>
 <figure class="align-default">
-<img alt="_images/nearwell_saturation.png" src="_images/nearwell_saturation.png" />
+<img alt="_images/w_rate.png" src="_images/w_rate.png" />
 </figure>
 <figure class="align-default" id="id2">
-<img alt="_images/pressure_2D.png" src="_images/pressure_2D.png" />
+<img alt="_images/nearwell_saturation.png" src="_images/nearwell_saturation.png" />
 <figcaption>
-<p><span class="caption-text">Permeability (top), saturation values over time on the cells along the well location
-at three different locations (middle), and pressure profile at the end of the simulation (bottom).</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+<p><span class="caption-text">Permeability (top), CO2 injection schedule (middle), and saturation values over time on the cells along the well location
+at three different locations (bottom).</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 </section>

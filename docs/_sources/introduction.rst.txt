@@ -14,13 +14,14 @@ Concept
 Simplified and flexible testing framework for near-well simulations via a
 :doc:`configuration file <./configuration_file>`:
 
-- Choose the physical model (current ones are co2store and h2store).
+- Set the physical model (current ones are co2store, co2eor, h2store, and saltprec).
+- Choose a `specific template <https://github.com/daavid00/pyopmnearwell/blob/main/src/pyopmnearwell/templates>`_ inside the folder for the chosen physical model.
 - Define the grid refinment in the x/y and z directions.
 - Define the number of different rocks along the z direction.
 - Define the number of layers (heterogeneity around the well) and its length.
 - Set the rock and fluid properties.
 - Define the injection schedule.
-- Run the simulations
+- Run the simulations.
 - Inspect the results by looking at the generated figures.
 
 Overview
@@ -30,14 +31,15 @@ The current implementation supports the following executable with the argument o
 
 .. code-block:: bash
 
-    pyopmnearwell -i input.txt -o output -p ecl -c compare
+    pyopmnearwell -i input.txt -o output -p ecl -c compare -m co2store
 
 where 
 
 - \-i, \-input: The base name of the :doc:`configuration file <./configuration_file>` ('input.txt' by default).
 - \-o, \-output: The base name of the :doc:`output folder <./output_folder>` ('output' by default).
-- \-p, \-plotting: Using the 'ecl' or 'opm' python package to generate the figures ('ecl' by default).
-- \-c, \-compare: Compare the results from different output folders ('' (write any name to actiate) by default).
+- \-p, \-plotting: Using the 'ecl' or 'opm' Python package to generate the figures ('ecl' by default, '' to skip the plotting).
+- \-c, \-compare: Compare the results from different output folders (write any name to actiate, '' by default).
+- \-m, \-model: Simulated model (5th row in the configuration file). This is used for the plotting compare method (it gets overwritten by the configuration file) ('co2store' by default).
 
 Installation
 ------------
@@ -55,7 +57,8 @@ See the `Github page <https://github.com/daavid00/pyopmnearwell>`_.
     export PYTHONPATH=$PYTHONPATH:/Users/dmar/Github/opm-common/build/python .
 
 .. warning::
-    The h2store option is under development and it is based on an input deck available in 
-    `opm-tests <https://github.com/OPM/opm-tests/blob/master/diffusion/BO_DIFFUSE_CASE1.DATA>`_. Currently the PVT tables
-    in that example are used, limiting the range of reservoir pressure and temperature, it is in the TODO list to extend
-    this. 
+    The H2CH4 template in the h2store model folder is under development and it is based on an input deck available in 
+    `opm-tests <https://github.com/OPM/opm-tests/blob/master/diffusion/BO_DIFFUSE_CASE1.DATA>`_. In addition, the templates 
+    in the co2eor model are based on an input deck available in `opm-publications <https://github.com/OPM/opm-publications/blob/master/dynamic_blackoil/SPE5.BASE>`_. 
+    Currently the PVT tables in those examples are used, limiting the range of reservoir pressure and temperature, it is in the TODO list to extend
+    this.

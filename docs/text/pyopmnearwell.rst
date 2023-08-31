@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    pyopmnearwell.core
+   pyopmnearwell.ml
    pyopmnearwell.utils
    pyopmnearwell.visualization
 

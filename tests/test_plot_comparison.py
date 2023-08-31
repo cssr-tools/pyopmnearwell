@@ -9,7 +9,7 @@ import os
 def test_plot_comparison():
     """See visualization/plotting.py"""
     cwd = os.getcwd()
-    os.chdir(f"{os.getcwd()}/tests/configs")
+    os.chdir(f"{os.getcwd()}/tests/models")
     os.system("pyopmnearwell -c compare -p opm")
     assert os.path.exists("compare/well_pressure.png")
     os.chdir(cwd)

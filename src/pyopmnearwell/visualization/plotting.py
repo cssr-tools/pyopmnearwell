@@ -12,8 +12,23 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 from pyopmnearwell.visualization.reading import read_simulations
+from pyopmnearwell.visualization.additional_plots import final_time_maps
+
+font = {"family": "normal", "weight": "normal", "size": 16}
+matplotlib.rc("font", **font)
+plt.rcParams.update(
+    {
+        "text.usetex": True,
+        "font.family": "monospace",
+        "legend.columnspacing": 0.9,
+        "legend.handlelength": 1.5,
+        "legend.fontsize": 14,
+        "lines.linewidth": 4,
+        "axes.titlesize": 16,
+        "axes.grid": True,
+    }
+)
 
 
 def main():
@@ -64,19 +79,19 @@ def plot_results(dic):
     dic["rock"] = ["satnum", "permeability", "porosity"]
     dic["rock_units"] = ["[-]", "mD", "[-]"]
     dic["quantity"] = ["pressure", "saturation"]
-    dic["units"] = ["[bar]", "[-]"]
+    dic["units"] = ["[Bar]", "[-]"]
     dic["labels"] = ["Pressure", "Non-wetting saturation"]
-    if dic["model"] in ["saltprec", "saltpruess"]:
+    if dic["model"] == "saltprec":
         dic["quantity"].append("salt")
         dic["quantity"].append("permfact")
         dic["units"].append("[-]")
         dic["units"].append("[-]")
-        dic["labels"].append("Salt saturation")
-        dic["labels"].append("Permeability reduction")
+        dic["labels"].append("Precipitated salt saturation")
+        dic["labels"].append("Permeability multiplier")
     dic["linestyle"] = [
         (0, ()),
-        (0, (1, 1)),
         "--",
+        (0, (1, 1)),
         "-.",
         (0, (1, 10)),
         (0, (1, 1)),
@@ -92,9 +107,16 @@ def plot_results(dic):
         (0, (3, 1, 1, 1, 1, 1)),
     ]
     dic["colors"] = [
-        (0.12156862745098039, 0.4666666666666667, 0.7058823529411765),
-        (1.0, 0.4980392156862745, 0.054901960784313725),
-        (0.17254901960784313, 0.6274509803921569, 0.17254901960784313),
+        "#1f77b4",
+        "#ff7f0e",
+        "#2ca02c",
+        "#d62728",
+        "#9467bd",
+        "#8c564b",
+        "#e377c2",
+        "#7f7f7f",
+        "#bcbd22",
+        "#17becf",
     ]
 
     if dic["compare"]:
@@ -117,10 +139,107 @@ def plot_results(dic):
     if dic["model"] == "h2store":
         return
     dic = over_time_layers(dic)
-    final_time_projections(dic)
+    dic = evaluate_projections(dic)
+    over_time_well_cell(dic)
+    final_time_projections_bottom(dic)
+    final_time_projections_layered(dic)
+    final_time_projections_norms(dic)
+    final_time_projections_max(dic)
+    if dic["model"] == "saltprec":
+        over_time_saltprec(dic)
+    if dic["plot"] == "ecl":
+        all_injectivities(dic)
+    # if dic["connections"]:
+    #     connections_injectivities(dic)
     if dic["compare"]:
         return
     final_time_maps(dic)
+
+
+def connections_injectivities(dic):
+    """
+    Function to plot the rates over the wells BHP
+
+    Args:
+        dic (dict): Global dictionary with required parameters
+
+    """
+    quantites = ["rate", "productivity"]
+    units = [
+        "Rate [sm$^3$/day]",
+        "Productivity [sm$^3$/(Bar day)]",
+    ]
+    for i, quantity in enumerate(quantites):
+        dic["fig"], dic["axis"] = plt.subplots()
+        for study in dic["folders"]:
+            for k in range(dic[f"{study}_nz"]):
+                dic[f"{study}_rate_plot"] = []
+                dic[f"{study}_productivity_plot"] = []
+                for nrst in dic[f"{study}_smsp_rst"]:
+                    dic[f"{study}_rate_plot"].append(
+                        dic[f"{study}_smsp"][f"CGIR:INJ0:1,1,{k+1}"].values[nrst]
+                    )
+                    dic[f"{study}_productivity_plot"].append(
+                        dic[f"{study}_smsp"][f"CPI:INJ0:1,1,{k+1}"].values[nrst]
+                    )
+                dic["axis"].plot(
+                    dic[f"{study}_report_time"],
+                    dic[f"{study}_{quantity}_plot"],
+                    label=f"1,1,{k+1}",
+                )
+        dic["axis"].set_ylabel(units[i])
+        dic["axis"].set_xlabel("Time")
+        dic["axis"].legend()
+        dic["axis"].xaxis.set_tick_params(size=6, rotation=45)
+        dic["fig"].savefig(f"{dic['where']}/c_{quantity}.png", bbox_inches="tight")
+
+        plt.close()
+
+
+def all_injectivities(dic):
+    """
+    Function to plot the rates over the wells BHP
+
+    Args:
+        dic (dict): Global dictionary with required parameters
+
+    """
+    quantites = ["pressure", "rate", "injectivity"]
+    units = [
+        "BHP [Bar]",
+        "Rate [sm3/day]",
+        "Injectivity [sm3/(Bar day)]",
+    ]
+    for i, quantity in enumerate(quantites):
+        dic["fig"], dic["axis"] = plt.subplots()
+        for study in dic["folders"]:
+            for well in dic[f"{study}_smsp"].wells():
+                dic[f"{study}_pressure_plot"] = []
+                dic[f"{study}_rate_plot"] = []
+                dic[f"{study}_injectivity_plot"] = []
+                for nrst in dic[f"{study}_smsp_rst"]:
+                    dic[f"{study}_pressure_plot"].append(
+                        dic[f"{study}_smsp"][f"WBHP:{well}"].values[nrst]
+                    )
+                    dic[f"{study}_rate_plot"].append(
+                        dic[f"{study}_smsp"][f"WGIR:{well}"].values[nrst]
+                    )
+                    dic[f"{study}_injectivity_plot"].append(
+                        dic[f"{study}_rate_plot"][-1]
+                        / dic[f"{study}_pressure_plot"][-1]
+                    )
+                dic["axis"].plot(
+                    dic[f"{study}_report_time"],
+                    dic[f"{study}_{quantity}_plot"],
+                    label=f"{study}",
+                )
+        dic["axis"].set_ylabel(units[i])
+        dic["axis"].set_xlabel("Time")
+        dic["axis"].legend()
+        dic["axis"].xaxis.set_tick_params(size=6, rotation=45)
+        dic["fig"].savefig(f"{dic['where']}/w_{quantity}.png", bbox_inches="tight")
+
+        plt.close()
 
 
 def capillary_pressure(dic):
@@ -141,30 +260,29 @@ def capillary_pressure(dic):
                 if row[0] == "SGOF":
                     kind = 0
                     col = 3
-                    axis.set_xlabel("Non-wetting saturation", fontsize=12)
+                    axis.set_xlabel("Non-wetting saturation [-]")
                 else:
                     kind = 1
                     col = 2
-                    axis.set_xlabel("Wetting saturation", fontsize=12)
+                    axis.set_xlabel("Wetting saturation [-]")
                 break
         data = read_table(table, kind)
         for j in range(len(data) - 1):
             axis.plot(
                 [float(row[0]) for row in data[j]],
                 [1e5 * float(row[col]) for row in data[j]],
-                label=f"{study}_satnum_{j}",
-                color=matplotlib.colormaps["tab20"].colors[2 * i],
-                linestyle=dic["linestyle"][j],
-                linewidth=2,
+                label=f"{study}",
+                color=dic["colors"][i % len(dic["colors"])],
+                linestyle=dic["linestyle"][j % len(dic["linestyle"])],
             )
     xvalue = np.array([float(row[0]) for row in data[0]])
     yvalue = np.array([float(row[col]) for row in data[0]])
     dic["cp_func"] = interp1d(xvalue, yvalue, fill_value="extrapolate")
     if yvalue[0] > 0:
         axis.set_yscale("log")
-    axis.set_ylabel("Capillary Pressure [Pa]", fontsize=12)
+    axis.set_ylabel("Capillary pressure [Pa]")
+    axis.legend()
     axis.set_xlim([0, 1])
-    axis.legend(fontsize=10)
     fig.savefig(f"{dic['where']}/capillary_pressure.png", bbox_inches="tight")
     return dic
 
@@ -207,112 +325,36 @@ def read_table(table, kind):
     return data
 
 
-def final_time_maps(dic):
-    """
-    Function to plot the 2D maps for the different reservoirs and quantitiesdic[f'{study}_wellid']
-
-    Args:
-        dic (dict): Global dictionary with required parameters
-
-    """
-    dic["quantity"] += ["concentration"]
-    dic["labels"] += ["concentration"] + dic["rock"]
-    for study in dic["folders"]:
-        dic[f"{study}_xcor"], dic[f"{study}_zcor"] = np.meshgrid(
-            dic[f"{study}_xmx"], dic[f"{study}_zmz"][::-1]
-        )
-        for j, quantity in enumerate(dic["quantity"] + dic["rock"]):
-            dic[f"{study}_{quantity}_plot"] = np.zeros(
-                [len(dic[f"{study}_zmz"]) - 1, len(dic[f"{study}_xmx"]) - 1]
-            )
-            for i in np.arange(0, len(dic[f"{study}_zmz"]) - 1):
-                dic[f"{study}_{quantity}_plot"][-1 - i, :] = dic[
-                    f"{study}_{quantity}_array"
-                ][-1][
-                    dic[f"{study}_wellid"]
-                    + i
-                    * max(dic[f"{study}_nx"], dic[f"{study}_ny"])
-                    * dic[f"{study}_ny"] : i
-                    * max(dic[f"{study}_nx"], dic[f"{study}_ny"])
-                    * dic[f"{study}_ny"]
-                    + dic[f"{study}_nx"]
-                    + dic[f"{study}_wellid"]
-                ]
-            fig, axis = plt.subplots()
-            imag = axis.pcolormesh(
-                dic[f"{study}_xcor"],
-                dic[f"{study}_zcor"],
-                dic[f"{study}_{quantity}_plot"],
-                shading="flat",
-                cmap="jet",
-            )
-            if quantity == "pressure":
-                axis.set_title(f"{dic['labels'][j]} [bar]")
-            elif quantity == "concentration":
-                axis.set_title(f"{dic['labels'][j]} " + r"[kg/m$^3$]")
-            elif quantity == "permeability":
-                axis.set_title(f"{dic['labels'][j]} [mD]")
-            else:
-                axis.set_title(f"{dic['labels'][j]} [-]")
-            if quantity == "saturation":
-                maxbar = 1.0
-            else:
-                maxbar = dic[f"{study}_{quantity}_plot"].max()
-            axis.invert_yaxis()
-            axis.set_xlabel("x [m]")
-            axis.set_ylabel("z [m]")
-            divider = make_axes_locatable(axis)
-            cax = divider.append_axes("right", size="5%", pad=0.05)
-            vect = np.linspace(
-                dic[f"{study}_{quantity}_plot"].min(),
-                maxbar,
-                4,
-                endpoint=True,
-            )
-            fig.colorbar(
-                imag,
-                cax=cax,
-                orientation="vertical",
-                ticks=vect,
-                format=lambda x, _: f"{x:.2E}",
-            )
-            imag.set_clim(
-                dic[f"{study}_{quantity}_plot"].min(),
-                maxbar,
-            )
-            fig.savefig(f"{dic['where']}/{quantity}_2D.png", bbox_inches="tight")
-            plt.close()
-
-    return dic
-
-
-def final_time_projections(dic):
+def evaluate_projections(dic):
     """
     Function to plot the 1D projected quantities along the z direction
 
     Args:
         dic (dict): Global dictionary with required parameters
 
+    Returns:
+        dic (dict): Global dictionary with required parameters
+
     """
     dic["projection"] = [
-        "top_cells",
-        "middle_cells",
         "bottom_cells",
+        "middle_cells",
+        "top_cells",
         "max",
         "min",
         "mean",
     ]
-    for j, quantity in enumerate(dic["quantity"]):
-        fig, axis = plt.subplots()
+    dic["well_cell"] = [
+        "wc_max",
+        "wc_min",
+        "wc_mean",
+    ]
+    for quantity in dic["quantity"]:
         for study in dic["folders"]:
-            if dic[f"{study}_nz"] > 1:
-                nlines = 3
-                dic["names"] = ["Upper layer", "Mid layer", "Bottom layer"]
-            else:
-                nlines = 1
-                dic["names"] = ["Simulation"]
             for projection in dic["projection"]:
                 dic[f"{study}_{quantity}_{projection}"] = []
+            for well_cell in dic["well_cell"]:
+                dic[f"{study}_{quantity}_{well_cell}"] = []
             for i in range(len(dic[f"{study}_xmidpoints"])):
                 temp = np.array(
                     [
@@ -332,12 +374,50 @@ def final_time_projections(dic):
                 dic[f"{study}_{quantity}_max"].append(temp.max())
                 dic[f"{study}_{quantity}_min"].append(temp.min())
                 dic[f"{study}_{quantity}_mean"].append(temp.mean())
+            for nrst in range(len(dic[f"{study}_rst"].report_steps)):
+                temp = np.array(
+                    [
+                        dic[f"{study}_{quantity}_array"][nrst][k]
+                        for k in range(
+                            dic[f"{study}_wellid"],
+                            dic[f"{study}_nx"]
+                            * dic[f"{study}_ny"]
+                            * dic[f"{study}_nz"],
+                            dic[f"{study}_ny"]
+                            * max(dic[f"{study}_nx"], dic[f"{study}_ny"]),
+                        )
+                    ]
+                )
+                dic[f"{study}_{quantity}_wc_max"].append(temp.max())
+                dic[f"{study}_{quantity}_wc_min"].append(temp.min())
+                dic[f"{study}_{quantity}_wc_mean"].append(temp.mean())
+    return dic
+
+
+def final_time_projections_bottom(dic):
+    """
+    Function to plot the 1D projected quantities along the z direction
+
+    Args:
+        dic (dict): Global dictionary with required parameters
+
+    """
+    for j, quantity in enumerate(dic["quantity"]):
+        fig, axis = plt.subplots()
+        nlines = 1
+        for ncolor, study in enumerate(dic["folders"]):
+            if dic[f"{study}_nz"] > 1:
+                dic["names"] = ["Bottom layer"]
+            else:
+                dic["names"] = ["Simulation"]
             if dic[f"{study}_wellid"] == 0:
                 for k, projection in enumerate(dic["projection"][:nlines]):
                     axis.plot(
                         dic[f"{study}_xmidpoints"],
                         dic[f"{study}_{quantity}_{projection}"],
-                        label=f"{dic['names'][k]} ({study})",
+                        label=f"{study}",
+                        color=dic["colors"][ncolor % len(dic["colors"])],
+                        linestyle=dic["linestyle"][k % len(dic["linestyle"])],
                     )
             else:
                 axis.plot(
@@ -349,6 +429,7 @@ def final_time_projections(dic):
                         for i in range(len(dic[f"{study}_xmidpoints"]))
                     ],
                     label=f"{dic['names'][0]} ({study})",
+                    color=dic["colors"][ncolor % len(dic["colors"])],
                 )
             if quantity == "pressure" and dic[f"{study}_nz"] < 2:
                 npoints = 10000
@@ -414,29 +495,260 @@ def final_time_projections(dic):
                     encoding="utf8",
                 ) as file:
                     file.write(f"q = {dic[f'{study}_Q']:.6E}" + " [kg/day]\n")
-                    file.write(f"pw = {dic[f'{study}_well_pressure'][-1]:.6E} [bar]\n")
+                    file.write(f"pw = {dic[f'{study}_well_pressure'][-1]:.6E} [Bar]\n")
                     file.write(
                         f"p0 = {dic[f'{study}_pressure_array'][-1][dic[f'{study}_wellid']]:.6E}"
-                        + " [bar]\n"
+                        + " [Bar]\n"
                     )
                     file.write(f"WI = {dic[f'{study}_WI']:.6E} [kg/(Bar day)]\n")
                     file.write(f"T = {dic[f'{study}_T']:.6E} [mD m]\n")
-                    file.write("Distance [m] Pressure [bar]\n")
+                    file.write("Distance [m] Pressure [Bar]\n")
                     for distance, pressure in zip(
                         dic[f"{study}_xmidpoints"][:-1],
-                        dic[f"{study}_pressure_{projection}"][:-1],
+                        dic[f"{study}_pressure_bottom_cells"][:-1],
                     ):
                         file.write(f"{distance:.3E} {pressure:.3E}\n")
                     file.write(
                         f"{dic[f'{study}_xmidpoints'][-1]:.3E} "
-                        + f"{dic[f'{study}_pressure_{projection}'][-1]:.3E}"
+                        + f"{dic[f'{study}_pressure_bottom_cells'][-1]:.3E}"
                     )
         axis.set_xlabel("Distance from wellbore [m]")
         axis.set_ylabel(f"{dic['labels'][j]} {dic['units'][j]}")
-        axis.legend(fontsize=8)
-        fig.savefig(f"{dic['where']}/{quantity}_1D.png", bbox_inches="tight")
-        axis.set_xlim([-0.3, 20])
-        fig.savefig(f"{dic['where']}/{quantity}_1D_zoom.png", bbox_inches="tight")
+        axis.set_title("Bottom cells of the reservoir")
+        axis.legend()
+        if quantity == "permfact":
+            axis.set_ylim([0, 1])
+        fig.savefig(
+            f"{dic['where']}/{quantity}_1D_single_layer.png", bbox_inches="tight"
+        )
+        axis.set_xlim([0, 20])
+        fig.savefig(
+            f"{dic['where']}/{quantity}_1D_single_layer_zoom.png", bbox_inches="tight"
+        )
+        plt.close()
+
+
+def final_time_projections_layered(dic):
+    """
+    Function to plot the 1D projected quantities along the z direction
+
+    Args:
+        dic (dict): Global dictionary with required parameters
+
+    """
+    for j, quantity in enumerate(dic["quantity"]):
+        fig, axis = plt.subplots()
+        for ncolor, study in enumerate(dic["folders"]):
+            if dic[f"{study}_nz"] > 1:
+                nlines = 3
+                dic["names"] = ["Bottom layer", "Mid layer", "Upper layer"]
+            else:
+                nlines = 1
+                dic["names"] = ["Simulation"]
+            if dic[f"{study}_wellid"] == 0:
+                for k, projection in enumerate(dic["projection"][:nlines]):
+                    axis.plot(
+                        dic[f"{study}_xmidpoints"],
+                        dic[f"{study}_{quantity}_{projection}"],
+                        label=f"{dic['names'][k]} ({study})",
+                        color=dic["colors"][ncolor % len(dic["colors"])],
+                        linestyle=dic["linestyle"][k % len(dic["linestyle"])],
+                    )
+            else:
+                axis.plot(
+                    dic[f"{study}_xmidpoints"],
+                    [
+                        dic[f"{study}_{quantity}_array"][-1][
+                            dic[f"{study}_wellid"] + i * (2 * dic[f"{study}_nx"] - 1)
+                        ]
+                        for i in range(len(dic[f"{study}_xmidpoints"]))
+                    ],
+                    label=f"{dic['names'][0]} ({study})",
+                    color=dic["colors"][ncolor % len(dic["colors"])],
+                )
+        axis.set_xlabel("Distance from wellbore [m]")
+        axis.set_ylabel(f"{dic['labels'][j]} {dic['units'][j]}")
+        axis.legend()
+        if quantity == "permfact":
+            axis.set_ylim([0, 1])
+        fig.savefig(f"{dic['where']}/{quantity}_1D_layered.png", bbox_inches="tight")
+        axis.set_xlim([0, 20])
+        fig.savefig(
+            f"{dic['where']}/{quantity}_1D_layered_zoom.png", bbox_inches="tight"
+        )
+        plt.close()
+
+
+def over_time_saltprec(dic):
+    """
+    Function to plot the 1D normed quantities along the z direction
+
+    Args:
+        dic (dict): Global dictionary with required parameters
+
+    """
+    fig, axis = plt.subplots()
+    for i, study in enumerate(dic["folders"]):
+        axis.plot(
+            dic[f"{study}_report_time"],
+            dic[f"{study}_totalsaltprec"],
+            label=f"{study}",
+            color=dic["colors"][i],
+        )
+    axis.set_xlabel("Time")
+    axis.set_ylabel("Total precipitated salt [kg]")
+    axis.legend()
+    axis.xaxis.set_tick_params(size=6, rotation=45)
+    fig.savefig(f"{dic['where']}/cumulative_saltprec.png", bbox_inches="tight")
+
+
+def over_time_well_cell(dic):
+    """
+    Function to plot the 1D normed quantities along the z direction
+
+    Args:
+        dic (dict): Global dictionary with required parameters
+
+    """
+    for j, quantity in enumerate(dic["quantity"]):
+        fig, axis = plt.subplots()
+        figm, axism = plt.subplots()
+        for i, study in enumerate(dic["folders"]):
+            if dic[f"{study}_nz"] > 1:
+                nlines = -3
+                dic["names"] = ["Max", "Min", "Mean"]
+            else:
+                nlines = -1
+                dic["names"] = ["Simulation"]
+            for k, well_cell in enumerate(dic["well_cell"][nlines:]):
+                axis.plot(
+                    dic[f"{study}_report_time"],
+                    dic[f"{study}_{quantity}_{well_cell}"],
+                    label=f"{dic['names'][k]} ({study})",
+                    color=dic["colors"][i % len(dic["colors"])],
+                    linestyle=dic["linestyle"][k % len(dic["linestyle"])],
+                )
+            axism.plot(
+                dic[f"{study}_report_time"],
+                dic[f"{study}_{quantity}_wc_mean"],
+                label=f"{study}",
+                color=dic["colors"][i % len(dic["colors"])],
+            )
+        axis.set_xlabel("Time")
+        axis.set_ylabel(f"{dic['labels'][j]} {dic['units'][j]}")
+        axis.legend()
+        axis.set_title("Along the well cells (x=0)")
+        axis.xaxis.set_tick_params(size=6, rotation=45)
+        if quantity == "permfact":
+            axis.set_ylim([0, 1])
+        fig.savefig(f"{dic['where']}/well_cell_{quantity}.png", bbox_inches="tight")
+        axism.set_xlabel("Time")
+        axism.set_ylabel(f"{dic['labels'][j]} {dic['units'][j]}")
+        axism.set_title("Mean along the well cells (x=0)")
+        axism.legend()
+        axism.xaxis.set_tick_params(size=6, rotation=45)
+        if quantity == "permfact":
+            axism.set_ylim([0, 1])
+        figm.savefig(
+            f"{dic['where']}/well_cell_{quantity}_mean.png", bbox_inches="tight"
+        )
+        plt.close()
+
+
+def final_time_projections_norms(dic):
+    """
+    Function to plot the 1D normed quantities along the z direction
+
+    Args:
+        dic (dict): Global dictionary with required parameters
+
+    """
+    for j, quantity in enumerate(dic["quantity"]):
+        fig, axis = plt.subplots()
+        for ncolor, study in enumerate(dic["folders"]):
+            if dic[f"{study}_nz"] > 1:
+                nlines = -3
+                dic["names"] = ["Max", "Min", "Mean"]
+            else:
+                nlines = -1
+                dic["names"] = ["Simulation"]
+            if dic[f"{study}_wellid"] == 0:
+                for k, projection in enumerate(dic["projection"][nlines:]):
+                    axis.plot(
+                        dic[f"{study}_xmidpoints"],
+                        dic[f"{study}_{quantity}_{projection}"],
+                        label=f"{dic['names'][k]} ({study})",
+                        color=dic["colors"][ncolor % len(dic["colors"])],
+                        linestyle=dic["linestyle"][k % len(dic["linestyle"])],
+                    )
+            else:
+                axis.plot(
+                    dic[f"{study}_xmidpoints"],
+                    [
+                        dic[f"{study}_{quantity}_array"][-1][
+                            dic[f"{study}_wellid"] + i * (2 * dic[f"{study}_nx"] - 1)
+                        ]
+                        for i in range(len(dic[f"{study}_xmidpoints"]))
+                    ],
+                    label=f"{dic['names'][0]} ({study})",
+                    color=dic["colors"][ncolor % len(dic["colors"])],
+                )
+        axis.set_xlabel("Distance from wellbore [m]")
+        axis.set_ylabel(f"{dic['labels'][j]} {dic['units'][j]}")
+        axis.legend()
+        if quantity == "permfact":
+            axis.set_ylim([0, 1])
+        fig.savefig(f"{dic['where']}/{quantity}_1D_norms.png", bbox_inches="tight")
+        axis.set_xlim([0, 20])
+        fig.savefig(f"{dic['where']}/{quantity}_1D_norms_zoom.png", bbox_inches="tight")
+        plt.close()
+
+
+def final_time_projections_max(dic):
+    """
+    Function to plot the 1D normed quantities along the z direction
+
+    Args:
+        dic (dict): Global dictionary with required parameters
+
+    """
+    for j, quantity in enumerate(dic["quantity"]):
+        fig, axis = plt.subplots()
+        for ncolor, study in enumerate(dic["folders"]):
+            if dic[f"{study}_nz"] > 1:
+                dic["names"] = ["Max"]
+            else:
+                dic["names"] = ["Simulation"]
+            if dic[f"{study}_wellid"] == 0:
+                for k, projection in enumerate([dic["projection"][3]]):
+                    axis.plot(
+                        dic[f"{study}_xmidpoints"],
+                        dic[f"{study}_{quantity}_{projection}"],
+                        label=f"{study}",
+                        color=dic["colors"][ncolor % len(dic["colors"])],
+                        linestyle=dic["linestyle"][k % len(dic["linestyle"])],
+                    )
+            else:
+                axis.plot(
+                    dic[f"{study}_xmidpoints"],
+                    [
+                        dic[f"{study}_{quantity}_array"][-1][
+                            dic[f"{study}_wellid"] + i * (2 * dic[f"{study}_nx"] - 1)
+                        ]
+                        for i in range(len(dic[f"{study}_xmidpoints"]))
+                    ],
+                    label=f"{study}",
+                    color=dic["colors"][ncolor % len(dic["colors"])],
+                )
+        axis.set_xlabel("Distance from wellbore [m]")
+        axis.set_ylabel(f"{dic['labels'][j]} {dic['units'][j]}")
+        axis.set_title("Maximum value along the height of the reservoir")
+        axis.legend()
+        if quantity == "permfact":
+            axis.set_ylim([0, 1])
+        fig.savefig(f"{dic['where']}/{quantity}_1D_max.png", bbox_inches="tight")
+        axis.set_xlim([0, 20])
+        fig.savefig(f"{dic['where']}/{quantity}_1D_max_zoom.png", bbox_inches="tight")
         plt.close()
 
 
@@ -453,7 +765,7 @@ def over_time_max_distance(dic):
     fig, axis = plt.subplots()
     dic["fig"].append(fig)
     dic["axis"].append(axis)
-    for study in dic["folders"]:
+    for j, study in enumerate(dic["folders"]):
         dic["dx_half_size"] = dic[f"{study}_xmidpoints"][0]
         dic[f"{study}_indicator_plot"] = []
         for nrst in range(len(dic[f"{study}_rst"].report_steps)):
@@ -473,14 +785,12 @@ def over_time_max_distance(dic):
         dic["axis"][-1].plot(
             dic[f"{study}_report_time"],
             dic[f"{study}_indicator_plot"],
+            color=dic["colors"][j % len(dic["colors"])],
             label=f"{study}",
         )
-    dic["axis"][-1].set_title(
-        f'Maximum horizontal distance to the well (sat thr={dic["sat_thr"]})'
-    )
-    dic["axis"][-1].set_ylabel("Distance [m]", fontsize=12)
-    dic["axis"][-1].set_xlabel("Time [y]", fontsize=12)
-    dic["axis"][-1].legend(fontsize=8)
+    dic["axis"][-1].set_ylabel("Plume distance to well [m]")
+    dic["axis"][-1].set_xlabel("Time")
+    dic["axis"][-1].legend()
     dic["axis"][-1].xaxis.set_tick_params(size=6, rotation=45)
     dic["fig"][-1].savefig(
         f"{dic['where']}/distance_from_well.png", bbox_inches="tight"
@@ -499,16 +809,17 @@ def over_time_well_injectivity(dic):
 
     """
 
-    quantites = ["injectivity", "ratew", "raten", "pressure"]
+    quantites = ["injectivity", "ratew", "raten", "pressure", "pi"]
     units = [
-        "Injectivity [kg/(bar day)]",
+        "Injectivity [kg/(Bar day)]",
         "Rate [kg/day]",
         "Rate [kg/day]",
-        "Pressure [bar]",
+        "Pressure [Bar]",
+        "Productivity [sm$^3$/(Bar day)]",
     ]
     for i, quantity in enumerate(quantites):
         dic["fig"], dic["axis"] = plt.subplots()
-        for study in dic["folders"]:
+        for k, study in enumerate(dic["folders"]):
             dic[f"{study}_xmx"] = np.load(
                 dic["exe"] + "/" + study + "/output/xspace.npy"
             )
@@ -526,10 +837,12 @@ def over_time_well_injectivity(dic):
             dic[f"{study}_ratew_plot"] = []
             dic[f"{study}_pressure_plot"] = []
             dic[f"{study}_well_pressure_plot"] = []
+            dic[f"{study}_pi_plot"] = []
             for j, nrst in enumerate(dic[f"{study}_smsp_rst"][1:]):
                 ratew = dic[f"{study}_injection_ratew"][nrst] * dic[f"{study}_rhow_ref"]
                 raten = dic[f"{study}_injection_raten"][nrst] * dic[f"{study}_rhon_ref"]
                 well_pressure = dic[f"{study}_well_pressure"][nrst]
+                dic[f"{study}_pi_plot"].append(dic[f"{study}_well_pi"][nrst])
                 if well_pressure == 0:
                     ratew = 0
                     raten = 0
@@ -561,6 +874,7 @@ def over_time_well_injectivity(dic):
                     dic[f"{study}_rst_seconds"][1:],
                     dic[f"{study}_{quantity}_plot"],
                     label=f"well ({study})",
+                    color=dic["colors"][k % len(dic["colors"])],
                 )
                 dic["axis"].plot(
                     dic[f"{study}_rst_seconds"],
@@ -569,16 +883,20 @@ def over_time_well_injectivity(dic):
                         for value in dic[f"{study}_pressure_array"]
                     ],
                     label=f"cell ({study})",
+                    color=dic["colors"][k % len(dic["colors"])],
+                    linestyle="dotted",
                 )
+                dic["axis"].set_xlabel("Time [s]")
             else:
                 dic["axis"].plot(
-                    dic[f"{study}_rst_seconds"][1:],
+                    dic[f"{study}_report_time"][1:],
                     dic[f"{study}_{quantity}_plot"],
                     label=f"{study}",
+                    color=dic["colors"][k % len(dic["colors"])],
                 )
-        dic["axis"].set_ylabel(units[i], fontsize=12)
-        dic["axis"].set_xlabel("Time [s]", fontsize=12)
-        dic["axis"].legend(fontsize=8)
+                dic["axis"].set_xlabel("Time")
+        dic["axis"].set_ylabel(units[i])
+        dic["axis"].legend()
         dic["axis"].xaxis.set_tick_params(size=6, rotation=45)
         dic["fig"].savefig(f"{dic['where']}/well_{quantity}.png", bbox_inches="tight")
 
@@ -624,29 +942,29 @@ def over_time_layers(dic):
                     ]
                 )
             dic["axis"].plot(
-                dic[f"{study}_rst_seconds"],
+                dic[f"{study}_report_time"],
                 dic[f"{study}_upper_plot"],
                 label=f"{dic['names'][0]} ({study})",
-                color=dic["colors"][0],
-                linestyle=dic["linestyle"][j],
+                color=dic["colors"][j],
+                linestyle=dic["linestyle"][0],
             )
             dic["axis"].plot(
-                dic[f"{study}_rst_seconds"],
+                dic[f"{study}_report_time"],
                 dic[f"{study}_mid_plot"],
                 label=f"{dic['names'][1]} ({study})",
-                color=dic["colors"][1],
-                linestyle=dic["linestyle"][j],
+                color=dic["colors"][j],
+                linestyle=dic["linestyle"][1],
             )
             dic["axis"].plot(
-                dic[f"{study}_rst_seconds"],
+                dic[f"{study}_report_time"],
                 dic[f"{study}_bottom_plot"],
                 label=f"{dic['names'][2]} ({study})",
-                color=dic["colors"][2],
-                linestyle=dic["linestyle"][j],
+                color=dic["colors"][j],
+                linestyle=dic["linestyle"][2],
             )
-        dic["axis"].set_ylabel(f"{dic['labels'][i]} {dic['units'][i]}", fontsize=12)
-        dic["axis"].set_xlabel("Time [s]", fontsize=12)
-        dic["axis"].legend(fontsize=8)
+        dic["axis"].set_ylabel(f"{dic['labels'][i]} {dic['units'][i]}")
+        dic["axis"].set_xlabel("Time")
+        dic["axis"].legend()
         dic["axis"].xaxis.set_tick_params(size=6, rotation=45)
         dic["fig"].savefig(
             f"{dic['where']}/nearwell_{quantity}.png", bbox_inches="tight"

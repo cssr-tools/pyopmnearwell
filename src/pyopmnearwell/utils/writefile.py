@@ -9,7 +9,6 @@ import csv
 import math as mt
 import os
 import subprocess
-
 import numpy as np
 from mako.template import Template
 
@@ -25,29 +24,6 @@ def reservoir_files(dic):
         dic (dict): Global dictionary with new added parameters
 
     """
-    mytemplate = Template(
-        filename=f"{dic['pat']}/templates/{dic['model']}/saturation_functions.mako"
-    )
-    var = {"dic": dic}
-    filledtemplate = mytemplate.render(**var)
-    with open(
-        os.path.join(dic["exe"], dic["fol"], "jobs", "saturation_functions.py"),
-        "w",
-        encoding="utf8",
-    ) as file:
-        file.write(filledtemplate)
-    os.system(
-        f"chmod u+x {os.path.join(dic['exe'], dic['fol'], 'jobs', 'saturation_functions.py')}"
-    )
-    prosc = subprocess.run(
-        [
-            "python",
-            os.path.join(dic["exe"], dic["fol"], "jobs", "saturation_functions.py"),
-        ],
-        check=True,
-    )
-    if prosc.returncode != 0:
-        raise ValueError(f"Invalid result: { prosc.returncode }")
     # Generation of the x-dir spatial discretization using a telescopic function.
     if dic["x_fac"] != 0:
         dic["xcor"] = np.flip(
@@ -72,7 +48,7 @@ def reservoir_files(dic):
         dic["xcor"] = dic["xcor"][
             (0.5 * dic["diameter"] < dic["xcor"]) | (0 == dic["xcor"])
         ]
-        dic["xcor"] = np.insert(dic["xcor"], 1, 0.5 * dic["diameter"])
+        # dic["xcor"] = np.insert(dic["xcor"], 1, 0.5 * dic["diameter"])
     dic["noCells"][0] = len(dic["xcor"]) - 1
     if dic["grid"] == "core":
         dic = handle_core(dic)
@@ -85,16 +61,88 @@ def reservoir_files(dic):
     for i, _ in enumerate(dic["thickness"]):
         dic["layers"] += dic["z_centers"] > sum(dic["thickness"][: i + 1])
     mytemplate = Template(
-        filename=os.path.join(dic["pat"], "templates", dic["model"], "deck.mako")
+        filename=os.path.join(
+            dic["pat"], "templates", dic["model"], f"{dic['template']}.mako"
+        )
     )
     var = {"dic": dic}
     filledtemplate = mytemplate.render(**var)
     with open(
-        os.path.join(dic["exe"], dic["fol"], "preprocessing", "RESERVOIR.DATA"),
+        os.path.join(
+            dic["exe"], dic["fol"], "preprocessing", f"{dic['fol'].upper()}.DATA"
+        ),
         "w",
         encoding="utf8",
     ) as file:
         file.write(filledtemplate)
+    if dic["model"] != "co2eor":
+        manage_tables(dic)
+        manage_sections(dic)
+
+
+def manage_sections(dic):
+    """
+    Function to write the include files in the input deck
+
+    Args:
+        dic (dict): Global dictionary with required parameters
+
+    """
+    sections = ["geology", "regions"]
+    if dic["pvMult"] != 0:
+        sections.append("multpv")
+    for section in sections:
+        mytemplate = Template(
+            filename=os.path.join(dic["pat"], "templates", "common", f"{section}.mako")
+        )
+        var = {"dic": dic}
+        filledtemplate = mytemplate.render(**var)
+        with open(
+            os.path.join(
+                dic["exe"], dic["fol"], "preprocessing", f"{section.upper()}.INC"
+            ),
+            "w",
+            encoding="utf8",
+        ) as file:
+            file.write(filledtemplate)
+
+
+def manage_tables(dic):
+    """
+    Function to write the saturation function tables
+
+    Args:
+        dic (dict): Global dictionary with required parameters
+
+    """
+    if dic["model"] in ["co2store", "saltprec"]:
+        mytemplate = Template(
+            filename=f"{dic['pat']}/templates/common/saturation_functions_format_2.mako"
+        )
+    else:
+        mytemplate = Template(
+            filename=f"{dic['pat']}/templates/common/saturation_functions_format_1.mako"
+        )
+    var = {"dic": dic}
+    filledtemplate = mytemplate.render(**var)
+    with open(
+        os.path.join(dic["exe"], dic["fol"], "jobs", "saturation_functions.py"),
+        "w",
+        encoding="utf8",
+    ) as file:
+        file.write(filledtemplate)
+    os.system(
+        f"chmod u+x {os.path.join(dic['exe'], dic['fol'], 'jobs', 'saturation_functions.py')}"
+    )
+    prosc = subprocess.run(
+        [
+            "python",
+            os.path.join(dic["exe"], dic["fol"], "jobs", "saturation_functions.py"),
+        ],
+        check=True,
+    )
+    if prosc.returncode != 0:
+        raise ValueError(f"Invalid result: { prosc.returncode }")
 
 
 def manage_grid(dic):
@@ -138,7 +186,7 @@ def manage_grid(dic):
         dic["slope"] = mt.tan(0.5 * dic["dims"][1] * mt.pi / 180)
         lol = []
         with open(
-            f"{dic['pat']}/templates/common/grid.mako", "r", encoding="utf8"
+            f"{dic['pat']}/templates/common/grid2d.mako", "r", encoding="utf8"
         ) as file:
             for i, row in enumerate(csv.reader(file, delimiter="#")):
                 if i == 3:
@@ -159,11 +207,12 @@ def manage_grid(dic):
         var = {"dic": dic}
         filledtemplate = mytemplate.render(**var)
         with open(
-            f"{dic['exe']}/{dic['fol']}/preprocessing/CAKE.INC",
+            f"{dic['exe']}/{dic['fol']}/preprocessing/GRID.INC",
             "w",
             encoding="utf8",
         ) as file:
             file.write(filledtemplate)
+        os.system(f"rm -rf {dic['exe']}/{dic['fol']}/preprocessing/cpg.mako")
     else:
         if dic["grid"] == "coord3d":
             dic["xcorc"] = dic["x_n"]
@@ -231,7 +280,7 @@ def handle_core(dic):
 
 def d3_grids(dic, dxarray):
     """
-    Function to handle the second part of th3 3d grids
+    Function to handle the second part of the 3d grids
 
     Args:
         dic (dict): Global dictionary with required parameters
@@ -241,10 +290,10 @@ def d3_grids(dic, dxarray):
         dic (dict): Global dictionary with new added parameters
 
     """
-    if dic["grid"] == "cave":
+    if dic["grid"] == "cpg3d":
         lol = []
         with open(
-            f"{dic['pat']}/templates/common/cave.mako", "r", encoding="utf8"
+            f"{dic['pat']}/templates/common/grid3d.mako", "r", encoding="utf8"
         ) as file:
             for i, row in enumerate(csv.reader(file, delimiter="#")):
                 if i == 3:
@@ -265,11 +314,12 @@ def d3_grids(dic, dxarray):
         var = {"dic": dic}
         filledtemplate = mytemplate.render(**var)
         with open(
-            f"{dic['exe']}/{dic['fol']}/preprocessing/CAVE.INC",
+            f"{dic['exe']}/{dic['fol']}/preprocessing/GRID.INC",
             "w",
             encoding="utf8",
         ) as file:
             file.write(filledtemplate)
+        os.system(f"rm -rf {dic['exe']}/{dic['fol']}/preprocessing/cpg.mako")
     else:
         dyarray = []
         for i in range(dic["noCells"][1] - 1):

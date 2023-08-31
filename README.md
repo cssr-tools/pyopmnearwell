@@ -39,11 +39,11 @@ after build opm-common from source inside the virtual environment with the flag 
 add to the python path the folder where you have built it, e.g., by running in the terminal
 `export PYTHONPATH=$PYTHONPATH:/Users/dmar/Github/opm-common/build/python` .
 
-To use the machine-learning approach, you need to run the `build_dune_and_opm-flow.bash` script. Then, after you
-have created your virtual environment, open the `vpyopmnearwell/bin/activate` script and add to the last line the
-path to the ml_tools folder in opm-common, i.e., `export PYTHONPATH=$PYTHONPATH:/Users/dmar/Github/pyopmnearwell/opm-common/opm/ml/ml_tools`.
-To test this, run `python3 example.py` in the examples/ml_peaceman_water folder after given the path to the pyopmnearwell package
-in line 37 in the `example.py` script.
+To build dune and the corresponding OPM master branches from source (e.g., you are a macOS user), you can run the script
+`./build_dune_and_opm-flow.bash`, which in turn should build flow in the folder 
+./build/opm-simulators/bin/flow (for macOS users the dependecies such as boost can be installed using brew or macports).
+If you are a Linux user (including the windows subsystem for Linux), then you could try to build Flow with mpi support,
+by running the script `./build_dune_and_opm-flow_mpi.bash` instead of `./build_dune_and_opm-flow.bash`.
 
 ## Running pyopmnearwell
 You can run _pyopmnearwell_ as a single command line:
@@ -52,8 +52,8 @@ pyopmnearwell -i some_input.txt -o some_output_folder
 ```
 Run `pyopmnearwell --help` to see all possible command line 
 argument options. Inside the `some_input.txt` file you provide the path to the
-flow executable and simulation parameters. See the .txt files in the tests/configs
-folder.
+flow executable and simulation parameters. See the .txt files in the `examples/`,
+`tests/geometries/`, and `tests/models/` folders.
 
 ## Getting started
 See the [_documentation_](https://daavid00.github.io/pyopmnearwell/introduction.html).
