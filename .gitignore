@@ -163,10 +163,11 @@ cython_debug/
 .DS_Store
 
 # Tests
-tests/configs/co2store/
-tests/configs/compare/
-tests/configs/h2store/
-tests/configs/output/
+tests/models/co2store/
+tests/models/compare/
+tests/models/h2store/
+tests/models/output/
+tests/models/saltprec/
 
 # Python environment
 vpyopmnearwell/
@@ -186,6 +187,8 @@ opm-simulators/
 # Developing
 developing/
 studies/
+prototyping/
+cssr/
 
 # Examples
 examples/output*

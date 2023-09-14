@@ -43,9 +43,8 @@ def readthefirstpart(lol, dic):
         inc (int): Number of line in the input file
     """
     dic["flow"] = str(lol[1])[2:-2]  # Path to the flow executable
-    dic["model"] = (
-        str(lol[4][0]).strip().split()[0]
-    )  # Physical model (co2store/h2store)
+    dic["model"] = (str(lol[4][0]).strip()).split()[0]  # Physical model
+    dic["template"] = (str(lol[4][0]).strip()).split()[1]  # Name
     dic["grid"] = (
         lol[5][0].strip().split()[0]
     )  # Grid type (radial/cake/cartesian2d/cartesian)
@@ -85,12 +84,13 @@ def readthefirstpart(lol, dic):
     dic["pressure"] = float((lol[9][0].strip()).split()[0]) / 1.0e5  # Convert to bar
     dic["temperature"] = float((lol[9][0].strip()).split()[1])
     dic["initialphase"] = int((lol[9][0].strip()).split()[2])
-    dic["pvMult"] = float(lol[10][0])  # Pore volume multiplier [-]
+    dic["pvMult"] = float((lol[10][0].strip()).split()[0])  # Pore volume multiplier [-]
+    dic["xflow"] = int((lol[10][0].strip()).split()[1])  # Cross flow within wellbore
     dic["perforations"] = [int((lol[11][0].strip()).split()[j]) for j in range(3)]
     dic["satnum"] = int((lol[12][0].strip()).split()[0])  # No. saturation regions
     dic["hysteresis"] = int((lol[12][0].strip()).split()[1])  # Hysteresis
     dic["econ"] = float((lol[12][0].strip()).split()[2])  # Econ
-    dic["salt_props"] = [float((lol[13][0].strip()).split()[j]) for j in range(3)]
+    dic["salt_props"] = [float((lol[13][0].strip()).split()[j]) for j in range(7)]
     dic["z_xy"] = str(lol[14][0])  # The function for the reservoir surface
     index = 17  # Increase this if more rows are added to the model parameters part
     dic["krwf"] = str(lol[index][0])  # Wetting rel perm saturation function [-]

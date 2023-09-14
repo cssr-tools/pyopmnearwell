@@ -94,28 +94,30 @@ The numerical studies are performed using the
 <p>Simplified and flexible testing framework for near-well simulations via a
 <a class="reference internal" href="configuration_file.html"><span class="doc">configuration file</span></a>:</p>
 <ul class="simple">
-<li><p>Choose the physical model (current ones are co2store and h2store).</p></li>
+<li><p>Set the physical model (current ones are co2store, co2eor, h2store, and saltprec).</p></li>
+<li><p>Choose a <a class="reference external" href="https://github.com/daavid00/pyopmnearwell/blob/main/src/pyopmnearwell/templates">specific template</a> inside the folder for the chosen physical model.</p></li>
 <li><p>Define the grid refinment in the x/y and z directions.</p></li>
 <li><p>Define the number of different rocks along the z direction.</p></li>
 <li><p>Define the number of layers (heterogeneity around the well) and its length.</p></li>
 <li><p>Set the rock and fluid properties.</p></li>
 <li><p>Define the injection schedule.</p></li>
-<li><p>Run the simulations</p></li>
+<li><p>Run the simulations.</p></li>
 <li><p>Inspect the results by looking at the generated figures.</p></li>
 </ul>
 </section>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
 <p>The current implementation supports the following executable with the argument options:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pyopmnearwell<span class="w"> </span>-i<span class="w"> </span>input.txt<span class="w"> </span>-o<span class="w"> </span>output<span class="w"> </span>-p<span class="w"> </span>ecl<span class="w"> </span>-c<span class="w"> </span>compare
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pyopmnearwell<span class="w"> </span>-i<span class="w"> </span>input.txt<span class="w"> </span>-o<span class="w"> </span>output<span class="w"> </span>-p<span class="w"> </span>ecl<span class="w"> </span>-c<span class="w"> </span>compare<span class="w"> </span>-m<span class="w"> </span>co2store
 </pre></div>
 </div>
 <p>where</p>
 <ul class="simple">
 <li><p>-i, -input: The base name of the <a class="reference internal" href="configuration_file.html"><span class="doc">configuration file</span></a> (‘input.txt’ by default).</p></li>
 <li><p>-o, -output: The base name of the <a class="reference internal" href="output_folder.html"><span class="doc">output folder</span></a> (‘output’ by default).</p></li>
-<li><p>-p, -plotting: Using the ‘ecl’ or ‘opm’ python package to generate the figures (‘ecl’ by default).</p></li>
-<li><p>-c, -compare: Compare the results from different output folders (’’ (write any name to actiate) by default).</p></li>
+<li><p>-p, -plotting: Using the ‘ecl’ or ‘opm’ Python package to generate the figures (‘ecl’ by default, ‘’ to skip the plotting).</p></li>
+<li><p>-c, -compare: Compare the results from different output folders (write any name to actiate, ‘’ by default).</p></li>
+<li><p>-m, -model: Simulated model (5th row in the configuration file). This is used for the plotting compare method (it gets overwritten by the configuration file) (‘co2store’ by default).</p></li>
 </ul>
 </section>
 <section id="installation">
@@ -135,9 +137,10 @@ export PYTHONPATH=$PYTHONPATH:/Users/dmar/Github/opm-common/build/python .</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>The h2store option is under development and it is based on an input deck available in
-<a class="reference external" href="https://github.com/OPM/opm-tests/blob/master/diffusion/BO_DIFFUSE_CASE1.DATA">opm-tests</a>. Currently the PVT tables
-in that example are used, limiting the range of reservoir pressure and temperature, it is in the TODO list to extend
+<p>The H2CH4 template in the h2store model folder is under development and it is based on an input deck available in
+<a class="reference external" href="https://github.com/OPM/opm-tests/blob/master/diffusion/BO_DIFFUSE_CASE1.DATA">opm-tests</a>. In addition, the templates
+in the co2eor model are based on an input deck available in <a class="reference external" href="https://github.com/OPM/opm-publications/blob/master/dynamic_blackoil/SPE5.BASE">opm-publications</a>.
+Currently the PVT tables in those examples are used, limiting the range of reservoir pressure and temperature, it is in the TODO list to extend
 this.</p>
 </div>
 </section>

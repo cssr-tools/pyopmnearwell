@@ -8,8 +8,8 @@ from pyopmnearwell.core.pyopmnearwell import main
 
 
 def test():
-    """See configs/input.txt"""
+    """See models/input.txt"""
     cwd = os.getcwd()
-    os.chdir(f"{os.getcwd()}/tests/configs")
+    os.chdir(f"{os.getcwd()}/tests/models")
     main()
     os.chdir(cwd)

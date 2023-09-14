@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="pyopmnearwell.visualization package" href="pyopmnearwell.visualization.html" />
-    <link rel="prev" title="pyopmnearwell.utils.runs module" href="pyopmnearwell.utils.runs.html" /> 
+    <link rel="prev" title="pyopmnearwell.utils.units module" href="pyopmnearwell.utils.units.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -85,13 +85,94 @@
 <span id="pyopmnearwell-utils-writefile-module"></span><h1>pyopmnearwell.utils.writefile module<a class="headerlink" href="#module-pyopmnearwell.utils.writefile" title="Permalink to this heading"></a></h1>
 <p>Utiliy functions for necessary files and variables to run OPM Flow.</p>
 <dl class="py function">
+<dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.crete_3dgrid">
+<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">crete_3dgrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.crete_3dgrid" title="Permalink to this definition"></a></dt>
+<dd><p>Function to handle the first part of the 3d grids</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Global dictionary with new added parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dic (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.d3_grids">
+<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">d3_grids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dxarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.d3_grids" title="Permalink to this definition"></a></dt>
+<dd><p>Function to handle the second part of the 3d grids</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p></li>
+<li><p><strong>dxarray</strong> (<em>list</em>) – String with the size of the grid cells</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Global dictionary with new added parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dic (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.handle_core">
+<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">handle_core</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.handle_core" title="Permalink to this definition"></a></dt>
+<dd><p>Function to handle the core geometry</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Global dictionary with new added parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dic (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.manage_grid">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">manage_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.manage_grid" title="Permalink to this definition"></a></dt>
 <dd><p>Function to handle the grid</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p>
 </dd>
-<dt>Returns:</dt><dd><p>dic (dict): Global dictionary with new added parameters</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Global dictionary with new added parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dic (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.manage_sections">
+<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">manage_sections</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.manage_sections" title="Permalink to this definition"></a></dt>
+<dd><p>Function to write the include files in the input deck</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.manage_tables">
+<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">manage_tables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.manage_tables" title="Permalink to this definition"></a></dt>
+<dd><p>Function to write the saturation function tables</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p>
 </dd>
 </dl>
 </dd></dl>
@@ -100,10 +181,15 @@
 <dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.reservoir_files">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">reservoir_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.reservoir_files" title="Permalink to this definition"></a></dt>
 <dd><p>Function to write opm-related files by running mako templates</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p>
 </dd>
-<dt>Returns:</dt><dd><p>dic (dict): Global dictionary with new added parameters</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Global dictionary with new added parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dic (dict)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -114,7 +200,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="pyopmnearwell.utils.runs.html" class="btn btn-neutral float-left" title="pyopmnearwell.utils.runs module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyopmnearwell.utils.units.html" class="btn btn-neutral float-left" title="pyopmnearwell.utils.units module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="pyopmnearwell.visualization.html" class="btn btn-neutral float-right" title="pyopmnearwell.visualization package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

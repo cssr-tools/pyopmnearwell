@@ -1,5 +1,5 @@
 """Transform keras models to an OPM format."""
-# pylint: disable-all
+
 import struct
 
 import numpy as np
@@ -21,6 +21,104 @@ ACTIVATION_TANH = 5
 ACTIVATION_HARD_SIGMOID = 6
 
 
+def write_dense(file, layer, write_activation):
+    """
+    Process the dense layer.
+    """
+    weights = layer.get_weights()[0]
+    biases = layer.get_weights()[1]
+    activation = layer.get_config()["activation"]
+
+    file.write(struct.pack("I", LAYER_DENSE))
+    file.write(struct.pack("I", weights.shape[0]))
+    file.write(struct.pack("I", weights.shape[1]))
+    file.write(struct.pack("I", biases.shape[0]))
+
+    weights = weights.flatten()
+    biases = biases.flatten()
+
+    write_floats(file, weights)
+    write_floats(file, biases)
+
+    write_activation(activation)
+
+
+def write_convolution2d(file, layer, write_activation):
+    """
+    Process the Convolution2D layer.
+    """
+    weights = layer.get_weights()[0]
+    biases = layer.get_weights()[1]
+    activation = layer.get_config()["activation"]
+
+    # The kernel is accessed in reverse order. To simplify the C side we'll
+    # flip the weight matrix for each kernel.
+    weights = weights[:, :, ::-1, ::-1]
+
+    file.write(struct.pack("I", LAYER_CONVOLUTION2D))
+    file.write(struct.pack("I", weights.shape[0]))
+    file.write(struct.pack("I", weights.shape[1]))
+    file.write(struct.pack("I", weights.shape[2]))
+    file.write(struct.pack("I", weights.shape[3]))
+    file.write(struct.pack("I", biases.shape[0]))
+
+    weights = weights.flatten()
+    biases = biases.flatten()
+
+    write_floats(file, weights)
+    write_floats(file, biases)
+
+    write_activation(activation)
+
+
+def write_lstm(file, layer, write_activation):
+    """
+    Process the LSTM layer.
+    """
+    inner_activation = layer.get_config()["inner_activation"]
+    activation = layer.get_config()["activation"]
+    return_sequences = int(layer.get_config()["return_sequences"])
+
+    weights = layer.get_weights()
+    dic = {}
+    dic["w_i"], dic["u_i"], dic["b_i"] = weights[0], weights[1], weights[2]
+    dic["w_c"], dic["u_c"], dic["b_c"] = weights[3], weights[4], weights[5]
+    dic["w_f"], dic["u_f"], dic["b_f"] = weights[6], weights[7], weights[8]
+    dic["w_o"], dic["u_o"], dic["b_o"] = weights[9], weights[10], weights[11]
+
+    file.write(struct.pack("I", LAYER_LSTM))
+    file.write(struct.pack("I", dic["w_i"].shape[0]))
+    file.write(struct.pack("I", dic["w_i"].shape[1]))
+    file.write(struct.pack("I", dic["u_i"].shape[0]))
+    file.write(struct.pack("I", dic["u_i"].shape[1]))
+    file.write(struct.pack("I", dic["b_i"].shape[0]))
+
+    file.write(struct.pack("I", dic["w_f"].shape[0]))
+    file.write(struct.pack("I", dic["w_f"].shape[1]))
+    file.write(struct.pack("I", dic["u_f"].shape[0]))
+    file.write(struct.pack("I", dic["u_f"].shape[1]))
+    file.write(struct.pack("I", dic["b_f"].shape[0]))
+
+    file.write(struct.pack("I", dic["w_c"].shape[0]))
+    file.write(struct.pack("I", dic["w_c"].shape[1]))
+    file.write(struct.pack("I", dic["u_c"].shape[0]))
+    file.write(struct.pack("I", dic["u_c"].shape[1]))
+    file.write(struct.pack("I", dic["b_c"].shape[0]))
+
+    file.write(struct.pack("I", dic["w_o"].shape[0]))
+    file.write(struct.pack("I", dic["w_o"].shape[1]))
+    file.write(struct.pack("I", dic["u_o"].shape[0]))
+    file.write(struct.pack("I", dic["u_o"].shape[1]))
+    file.write(struct.pack("I", dic["b_o"].shape[0]))
+
+    for weight in dic:
+        write_floats(file, weight.flatten())
+
+    write_activation(inner_activation)
+    write_activation(activation)
+    file.write(struct.pack("I", return_sequences))
+
+
 def write_floats(file, floats):
     """
     Writes floats to file in 1024 chunks.. prevents memory explosion
@@ -32,94 +130,59 @@ def write_floats(file, floats):
     for i in np.arange(0, len(floats), step):
         remaining = min(len(floats) - i, step)
         written += remaining
-        file.write(struct.pack("=%sf" % remaining, *floats[i : i + remaining]))
+        file.write(struct.pack(f"={remaining}f", *floats[i : i + remaining]))
 
     assert written == len(floats)
 
 
 def export_model(model, filename):
-    with open(filename, "wb") as f:
+    """
+    Main routine.
+    """
+    with open(filename, "wb") as file:
 
         def write_activation(activation):
             if activation == "linear":
-                f.write(struct.pack("I", ACTIVATION_LINEAR))
+                file.write(struct.pack("I", ACTIVATION_LINEAR))
             elif activation == "relu":
-                f.write(struct.pack("I", ACTIVATION_RELU))
+                file.write(struct.pack("I", ACTIVATION_RELU))
             elif activation == "softplus":
-                f.write(struct.pack("I", ACTIVATION_SOFTPLUS))
+                file.write(struct.pack("I", ACTIVATION_SOFTPLUS))
             elif activation == "tanh":
-                f.write(struct.pack("I", ACTIVATION_TANH))
+                file.write(struct.pack("I", ACTIVATION_TANH))
             elif activation == "sigmoid":
-                f.write(struct.pack("I", ACTIVATION_SIGMOID))
+                file.write(struct.pack("I", ACTIVATION_SIGMOID))
             elif activation == "hard_sigmoid":
-                f.write(struct.pack("I", ACTIVATION_HARD_SIGMOID))
+                file.write(struct.pack("I", ACTIVATION_HARD_SIGMOID))
             else:
-                assert False, "Unsupported activation type: %s" % activation
+                assert False, f"Unsupported activation type: {activation}"
 
         model_layers = [l for l in model.layers if type(l).__name__ not in ["Dropout"]]
-        num_layers = len(model_layers)
-        f.write(struct.pack("I", num_layers))
+        file.write(struct.pack("I", len(model_layers)))
 
         for layer in model_layers:
             layer_type = type(layer).__name__
 
             if layer_type == "Dense":
-                weights = layer.get_weights()[0]
-                biases = layer.get_weights()[1]
-                activation = layer.get_config()["activation"]
-
-                f.write(struct.pack("I", LAYER_DENSE))
-                f.write(struct.pack("I", weights.shape[0]))
-                f.write(struct.pack("I", weights.shape[1]))
-                f.write(struct.pack("I", biases.shape[0]))
-
-                weights = weights.flatten()
-                biases = biases.flatten()
-
-                write_floats(f, weights)
-                write_floats(f, biases)
-
-                write_activation(activation)
+                write_dense(file, layer, write_activation)
 
             elif layer_type == "Convolution2D":
                 assert (
                     layer.border_mode == "valid"
                 ), "Only border_mode=valid is implemented"
-
-                weights = layer.get_weights()[0]
-                biases = layer.get_weights()[1]
-                activation = layer.get_config()["activation"]
-
-                # The kernel is accessed in reverse order. To simplify the C side we'll
-                # flip the weight matrix for each kernel.
-                weights = weights[:, :, ::-1, ::-1]
-
-                f.write(struct.pack("I", LAYER_CONVOLUTION2D))
-                f.write(struct.pack("I", weights.shape[0]))
-                f.write(struct.pack("I", weights.shape[1]))
-                f.write(struct.pack("I", weights.shape[2]))
-                f.write(struct.pack("I", weights.shape[3]))
-                f.write(struct.pack("I", biases.shape[0]))
-
-                weights = weights.flatten()
-                biases = biases.flatten()
-
-                write_floats(f, weights)
-                write_floats(f, biases)
-
-                write_activation(activation)
+                write_convolution2d(file, layer, write_activation)
 
             elif layer_type == "Flatten":
-                f.write(struct.pack("I", LAYER_FLATTEN))
+                file.write(struct.pack("I", LAYER_FLATTEN))
 
             elif layer_type == "ELU":
-                f.write(struct.pack("I", LAYER_ELU))
-                f.write(struct.pack("f", layer.alpha))
+                file.write(struct.pack("I", LAYER_ELU))
+                file.write(struct.pack("f", layer.alpha))
 
             elif layer_type == "Activation":
                 activation = layer.get_config()["activation"]
 
-                f.write(struct.pack("I", LAYER_ACTIVATION))
+                file.write(struct.pack("I", LAYER_ACTIVATION))
                 write_activation(activation)
 
             elif layer_type == "MaxPooling2D":
@@ -129,97 +192,23 @@ def export_model(model, filename):
 
                 pool_size = layer.get_config()["pool_size"]
 
-                f.write(struct.pack("I", LAYER_MAXPOOLING2D))
-                f.write(struct.pack("I", pool_size[0]))
-                f.write(struct.pack("I", pool_size[1]))
+                file.write(struct.pack("I", LAYER_MAXPOOLING2D))
+                file.write(struct.pack("I", pool_size[0]))
+                file.write(struct.pack("I", pool_size[1]))
 
             elif layer_type == "LSTM":
-                inner_activation = layer.get_config()["inner_activation"]
-                activation = layer.get_config()["activation"]
-                return_sequences = int(layer.get_config()["return_sequences"])
-
-                weights = layer.get_weights()
-                W_i = weights[0]
-                U_i = weights[1]
-                b_i = weights[2]
-
-                W_c = weights[3]
-                U_c = weights[4]
-                b_c = weights[5]
-
-                W_f = weights[6]
-                U_f = weights[7]
-                b_f = weights[8]
-
-                W_o = weights[9]
-                U_o = weights[10]
-                b_o = weights[11]
-
-                f.write(struct.pack("I", LAYER_LSTM))
-                f.write(struct.pack("I", W_i.shape[0]))
-                f.write(struct.pack("I", W_i.shape[1]))
-                f.write(struct.pack("I", U_i.shape[0]))
-                f.write(struct.pack("I", U_i.shape[1]))
-                f.write(struct.pack("I", b_i.shape[0]))
-
-                f.write(struct.pack("I", W_f.shape[0]))
-                f.write(struct.pack("I", W_f.shape[1]))
-                f.write(struct.pack("I", U_f.shape[0]))
-                f.write(struct.pack("I", U_f.shape[1]))
-                f.write(struct.pack("I", b_f.shape[0]))
-
-                f.write(struct.pack("I", W_c.shape[0]))
-                f.write(struct.pack("I", W_c.shape[1]))
-                f.write(struct.pack("I", U_c.shape[0]))
-                f.write(struct.pack("I", U_c.shape[1]))
-                f.write(struct.pack("I", b_c.shape[0]))
-
-                f.write(struct.pack("I", W_o.shape[0]))
-                f.write(struct.pack("I", W_o.shape[1]))
-                f.write(struct.pack("I", U_o.shape[0]))
-                f.write(struct.pack("I", U_o.shape[1]))
-                f.write(struct.pack("I", b_o.shape[0]))
-
-                W_i = W_i.flatten()
-                U_i = U_i.flatten()
-                b_i = b_i.flatten()
-                W_f = W_f.flatten()
-                U_f = U_f.flatten()
-                b_f = b_f.flatten()
-                W_c = W_c.flatten()
-                U_c = U_c.flatten()
-                b_c = b_c.flatten()
-                W_o = W_o.flatten()
-                U_o = U_o.flatten()
-                b_o = b_o.flatten()
-
-                write_floats(f, W_i)
-                write_floats(f, U_i)
-                write_floats(f, b_i)
-                write_floats(f, W_f)
-                write_floats(f, U_f)
-                write_floats(f, b_f)
-                write_floats(f, W_c)
-                write_floats(f, U_c)
-                write_floats(f, b_c)
-                write_floats(f, W_o)
-                write_floats(f, U_o)
-                write_floats(f, b_o)
-
-                write_activation(inner_activation)
-                write_activation(activation)
-                f.write(struct.pack("I", return_sequences))
+                write_lstm(file, layer, write_activation)
 
             elif layer_type == "Embedding":
                 weights = layer.get_weights()[0]
 
-                f.write(struct.pack("I", LAYER_EMBEDDING))
-                f.write(struct.pack("I", weights.shape[0]))
-                f.write(struct.pack("I", weights.shape[1]))
+                file.write(struct.pack("I", LAYER_EMBEDDING))
+                file.write(struct.pack("I", weights.shape[0]))
+                file.write(struct.pack("I", weights.shape[1]))
 
                 weights = weights.flatten()
 
-                write_floats(f, weights)
+                write_floats(file, weights)
 
             else:
-                assert False, "Unsupported layer type: %s" % layer_type
+                assert False, f"Unsupported layer type: {layer_type}"
