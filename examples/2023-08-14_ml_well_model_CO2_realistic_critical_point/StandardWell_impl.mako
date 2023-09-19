@@ -2532,36 +2532,19 @@ namespace Opm
         model.LoadModel(Base::ml_wi_filename_);
         const auto& connection = Base::well_ecl_.getConnections()[perf];
 
-/*      Tensor<Value> in{4};
- *      const auto K = Base::scaleFunction(connection.Kh()/connection.connectionLength(), 1e-13, 1e-11);
- *      const auto h = Base::scaleFunction(connection.connectionLength(), 1, 20);
- *      const auto re = Base::scaleFunction(connection.r0(), 10, 300);
- *      const auto rw = connection.rw();
- *      in.data_ = {{h, K, re, rw}}; */
         // Run prediction.
 
-        // give number of input paramters
+        // give number of input parameters
         Tensor<Value> in{2};
-        //const auto rw = Value(scaleFunction(connection.rw(), ${xmin[0]}, ${xmax[0]}));
 
-        const auto PASCAL_TO_BAR = 0.00001;
-        // const auto Kh = Value(scaleFunction(connection.Kh(), ${xmin[0]}, ${xmax[0]}));
-        const auto p = scaleFunction(pressure * PASCAL_TO_BAR, ${xmin[0]}, ${xmax[0]});
+        const auto p = scaleFunction(pressure, ${xmin[0]}, ${xmax[0]});
         const auto re = Value(scaleFunction(connection.r0(), ${xmin[1]}, ${xmax[1]}));
-        // std::cout << p << std::endl;
 
         // note order need to be the same as under training
-        // in.data_ = {{rw, K, re}};
-        // permeability, pressure, radius
-        // in.data_ = {{Kh, p, re}};
         in.data_ = {{p ,re}};
         Tensor<Value> out;
         model.Apply(&in, &out);
-        // std::cout << connection.r0() << std::endl;
-        // std::cout << "STW: " << getValue(in.data_[1]) << " " << unscaleFunction(getValue(in.data_[1]), ${xmin[1]}, ${xmax[1]}) << std::endl;
-        // std::cout << "STW: " << getValue(out.data_[0]) << " " << unscaleFunction(getValue(out.data_[0]), ${ymin}, ${ymax}) << std::endl;
         return unscaleFunction(out.data_[0],${ymin}, ${ymax});
-        //return Base::wellIndex(perf);
     }
 
     template<typename TypeTag>

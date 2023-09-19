@@ -3,8 +3,8 @@ ${flow} --linear-solver-reduction=1e-5 --relaxed-max-pv-fraction=0 --ecl-enable-
 
 """Set the model parameters"""
 h2storegaussian      #Model (co2store/h2store)
-cake 36  #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
-2500 100     #Reservoir dimensions [m] (Lenght and height)
+cake 36      #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
+2500 100     #Reservoir dimensions [m] (length and height)
 25 20 0      #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)
 0.25 0 0     #Well diameter [m] and well transmiscibility (0 to use the computed one internally in Flow)
 4e6 50 0     #Pressure [Pa] on the top and uniform temperature [°] (!!!!!!!Currently only for these pressure and temperature values, it is in the TODO list to extend this)

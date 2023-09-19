@@ -117,7 +117,7 @@ for i in range(round(runspecs.NPOINTS / runspecs.NPRUNS)):
         ) as ecl_file:
             # Each pressure array has shape ``[number_report_steps, number_cells]``
             # Truncate the first report step at starting time. Take only every third
-            # time step.
+            # time step to reduce the dataset size.
             pressures.append(np.array(ecl_file.iget_kw("PRESSURE"))[1::3])
             # We assume constant report step delta. The steps cannot be taken directly
             # from the ecl file, as the hours and minutes are missing.
@@ -201,11 +201,8 @@ ds = tf.data.Dataset.from_tensor_slices((features, WI_data.flatten()[..., None])
 ds.save(os.path.join(ensemble_path, "pressure_radius_WI"))
 
 # Plot pressure, distance - WI relationship vs Peaceman model
-
 features = np.reshape(features, (runspecs.NPOINTS, -1, 395, 3))
 
-
-proc = subprocess.Popen(["cat", "/etc/services"], stdout=subprocess.PIPE, shell=True)
 # Fix the last time step
 for feature, target in list(zip(features[:5, -1, ...], WI_data[:5, -1, ...])):
     # Evalute density and viscosity

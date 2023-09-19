@@ -351,9 +351,9 @@ WELSPECS
 /
 COMPDAT
 % if dic["jfactor"] == 0:
-'INJ0'  ${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${max(1, 1+mt.floor(dic['noCells'][1]/2))} 1 ${0*dic['noCells'][2]+1}  'OPEN'  1*  1*  ${dic['diameter']}  /
+'INJ0'  ${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${max(1, 1+mt.floor(dic['noCells'][1]/2))} 1 ${dic['noCells'][2]}  'OPEN'  1*  1*  ${dic['diameter']}  /
 % else:
-'INJ0'  ${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${max(1, 1+mt.floor(dic['noCells'][1]/2))} 1 ${0*dic['noCells'][2]+1}  'OPEN'  1*  ${dic["jfactor"]}  /
+'INJ0'  ${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${max(1, 1+mt.floor(dic['noCells'][1]/2))} 1 ${dic['noCells'][2]}  'OPEN'  1*  ${dic["jfactor"]}  /
 %endif
 % if dic["pvMult"] == 0:
 % if dic['grid'] != 'cartesian':

@@ -3,7 +3,7 @@ pressures and construct a dataset containing initial reservoir pressures and equ
 well-radii as features and well indices as targets.
 
 Features:
-    1. pressure [bar]: Measured at the final time step at the equivalent well radius.
+    1. pressure [Pa]: Measured at the final time step at the equivalent well radius.
     2. radius [m]: Gives the equivalent well radius.
 
 Targets:
@@ -20,6 +20,7 @@ import math
 import os
 import shutil
 
+import constants
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
@@ -47,18 +48,10 @@ shutil.copyfile(
     os.path.join(dirpath, run_name, "CAKE.INC"),
 )
 
-# Set run specs and parameters for ensemble simulations
-npoints, npruns = 500, 5
-# Create pressure ensemble and convert to [m^2].
-init_pressures: np.ndarray = np.random.uniform(70, 120, npoints)  # unit: bar
-PERMEABILITY: float = 1e-12 * units.M2_TO_MILIDARCY  # unit: mD
-TEMPERATURE: float = 30.9780  # unit: °C
-INJECTION_RATE: float = 5.352087e3  # unit: [kg/d]
-X: float = 2.500000e-01  # Outer coordinates of first cell.
-Y: float = -1.443376e-01
-WELL_RADIUS: float = math.sqrt(X**2 + Y**2)  # unit: [m]; Fixed during training.
-DENSITY: float = 12.9788  # unit: kg/m^3; for 72 bar, 30.9780 °C. Is this at surface conditions or not?
-VISCOSITY: float = 1.52786e-05  # unit: Pa*s; for 72 bar, 30.9780 °C
+# Create pressure ensemble.
+init_pressures: np.ndarray = np.random.uniform(
+    70, 120, constants.constants.NPOINTS
+)  # unit: bar
 
 FLOW = "/home/peter/Documents/2023_CEMRACS/opm/build/opm-simulators/bin/flow"
 FLAGS = (
@@ -75,10 +68,10 @@ FLAGS = (
 mytemplate = Template(filename=os.path.join(dirpath, "RESERVOIR.mako"))
 for i, pressure in enumerate(init_pressures):
     var = {
-        "permeability_x": PERMEABILITY,
+        "permeability_x": constants.PERMEABILITY,
         "init_pressure": pressure,
-        "temperature": TEMPERATURE,
-        "injection_rate": INJECTION_RATE,
+        "temperature": constants.TEMPERATURE,
+        "injection_rate": constants.INJECTION_RATE,
     }
     filledtemplate = mytemplate.render(**var)
     with open(
@@ -92,39 +85,43 @@ for i, pressure in enumerate(init_pressures):
 pressures: list[np.ndarray] = []
 
 # Run OPM flow for each ensemble member.
-for i in range(round(npoints / npruns)):
+for i in range(round(constants.NPOINTS / constants.NPRUNS)):
     os.system(
         f"{FLOW}"
-        + f" {os.path.join(ensemble_path, f'RESERVOIR{npruns*i}.DATA')}"
-        + f" --output-dir={os.path.join(ensemble_path, f'results{npruns*i}')} {FLAGS} & "
+        + f" {os.path.join(ensemble_path, f'RESERVOIR{constants.NPRUNS*i}.DATA')}"
+        + f" --output-dir={os.path.join(ensemble_path, f'results{constants.NPRUNS*i}')} {FLAGS} & "
         f"{FLOW}"
-        + f" {os.path.join(ensemble_path, f'RESERVOIR{npruns*i+1}.DATA')}"
-        + f" --output-dir={os.path.join(ensemble_path, f'results{npruns*i+1}')} {FLAGS} & "
+        + f" {os.path.join(ensemble_path, f'RESERVOIR{constants.NPRUNS*i+1}.DATA')}"
+        + f" --output-dir={os.path.join(ensemble_path, f'results{constants.NPRUNS*i+1}')} {FLAGS} & "
         f"{FLOW}"
-        + f" {os.path.join(ensemble_path, f'RESERVOIR{npruns*i+2}.DATA')}"
-        + f" --output-dir={os.path.join(ensemble_path, f'results{npruns*i+2}')} {FLAGS} & "
+        + f" {os.path.join(ensemble_path, f'RESERVOIR{constants.NPRUNS*i+2}.DATA')}"
+        + f" --output-dir={os.path.join(ensemble_path, f'results{constants.NPRUNS*i+2}')} {FLAGS} & "
         f"{FLOW}"
-        + f" {os.path.join(ensemble_path, f'RESERVOIR{npruns*i+3}.DATA')}"
-        + f" --output-dir={os.path.join(ensemble_path, f'results{npruns*i+3}')} {FLAGS} & "
+        + f" {os.path.join(ensemble_path, f'RESERVOIR{constants.NPRUNS*i+3}.DATA')}"
+        + f" --output-dir={os.path.join(ensemble_path, f'results{constants.NPRUNS*i+3}')} {FLAGS} & "
         f"{FLOW}"
-        + f" {os.path.join(ensemble_path, f'RESERVOIR{npruns*i+4}.DATA')}"
-        + f" --output-dir={os.path.join(ensemble_path, f'results{npruns*i+4}')} {FLAGS} & wait"
+        + f" {os.path.join(ensemble_path, f'RESERVOIR{constants.NPRUNS*i+4}.DATA')}"
+        + f" --output-dir={os.path.join(ensemble_path, f'results{constants.NPRUNS*i+4}')} {FLAGS} & wait"
     )
-    for j in range(npruns):
+    for j in range(constants.NPRUNS):
         with open_ecl_file(
             os.path.join(
-                ensemble_path, f"results{npruns*i+j}", f"RESERVOIR{npruns*i+j}.UNRST"
+                ensemble_path,
+                f"results{constants.NPRUNS*i+j}",
+                f"RESERVOIR{constants.NPRUNS*i+j}.UNRST",
             )
         ) as ecl_file:
             # The pressure array has shape ``[number_report_steps, number_cells]``
             pressures.append(np.array(ecl_file.iget_kw("PRESSURE"))[-1])
 
         # Remove the run files and result folder (except for the first one).
-        if npruns * i + j > 0:
+        if constants.NPRUNS * i + j > 0:
             shutil.rmtree(
-                os.path.join(ensemble_path, f"results{npruns*i+j}"),
+                os.path.join(ensemble_path, f"results{constants.NPRUNS*i+j}"),
             )
-            os.remove(os.path.join(ensemble_path, f"RESERVOIR{npruns*i+j}.DATA"))
+            os.remove(
+                os.path.join(ensemble_path, f"RESERVOIR{constants.NPRUNS*i+j}.DATA")
+            )
 os.remove(os.path.join(ensemble_path, f"TABLES.INC"))
 os.remove(os.path.join(ensemble_path, f"CAKE.INC"))
 
@@ -157,12 +154,12 @@ assert radii_t.shape == (395,)
 
 pressures_t = (
     np.array(pressures) * units.BAR_TO_PASCAL
-)  # ``shape=(npoints, 400`, unit: [Pa]
+)  # ``shape=(constants.NPOINTS, 400`, unit: [Pa]
 
 
 features = np.stack(
-    [pressures_t[:, 4:-1].flatten(), np.tile(radii_t, npoints)], axis=-1
-)  # ``shape=(npoints * 395, 2)``
+    [pressures_t[:, 4:-1].flatten(), np.tile(radii_t, constants.NPOINTS)], axis=-1
+)  # ``shape=(constants.NPOINTS * 395, 2)``
 
 # Calculate the well indices from injection rate, cell pressures and bhp.
 # Get the pressure value of the innermost cell, which equals the bottom hole pressure.
@@ -170,45 +167,45 @@ bhp_t: np.ndarray = pressures_t[:, 0]
 
 # Truncate the cell pressures the same way the radii were truncated.
 WI_t: np.ndarray = (
-    INJECTION_RATE
+    constants.INJECTION_RATE
     * units.Q_per_day_to_Q_per_seconds
     / (bhp_t[..., None] - pressures_t[:, 4:-1])
-)  # unit: m*s; ``shape=(npoints, 395, 1)``
+)  # unit: m*s; ``shape=(constants.NPOINTS, 395, 1)``
 
 # Store the features: pressures, radii, and targets: WI as a dataset.
-# Features are in the following order
-# 1. initial reservoir pressure [bar]
-# 2. cell radius [m]
-# Furthermore, first the initial pressures and then the radii (in two nested loops,
-# where the pressures are on the lower loop and radii on the higher).
-# Targets are
-# 1. WI [m*s]
 ds = tf.data.Dataset.from_tensor_slices((features, WI_t.flatten()[..., None]))
 ds.save(os.path.join(ensemble_path, "pressure_radius_WI"))
 
 # Plot pressure, distance - WI relationship vs Peaceman model
 WI_analytical = np.vectorize(peaceman_WI)(
-    PERMEABILITY * units.MILIDARCY_TO_M2, radii_t, WELL_RADIUS, DENSITY, VISCOSITY
+    constants.PERMEABILITY * units.MILIDARCY_TO_M2,
+    radii_t,
+    constants.WELL_RADIUS,
+    constants.DENSITY,
+    constants.VISCOSITY,
 )
 
-features = np.reshape(features, (npoints, 395, 2))
+features = np.reshape(features, (constants.NPOINTS, 395, 2))
 
-for feature, target in list(zip(features, WI_t))[:3]:
+for feature, target in list(zip(features, WI_t))[:5]:
     plt.scatter(
         feature[..., 1].flatten()[::5],
         target.flatten()[::5],
-        label=rf"$p={feature[20][0]}$ Pa at $r={feature[20][1]}$ [m]",
+        label="data",
     )
-plt.plot(
-    feature[..., 1],
-    WI_analytical,
-    label=rf"$p={feature[20][0]}$ Pa Peaceman at $r={feature[20][1]}$ [m]",
-)
-plt.legend()
-plt.xlabel(r"$r$ [m]")
-plt.ylabel(r"$WI$ [ms]")
-plt.savefig(os.path.join(dirpath, run_name, "data_vs_Peaceman.png"))
-plt.show()
+    plt.plot(
+        feature[..., 1],
+        WI_analytical,
+        label="Peaceman",
+    )
+    plt.legend()
+    plt.title(rf"$p={feature[20][0]:.3e}$ Pa at $r={feature[20][1]:.2f}$ [m]")
+    plt.xlabel(r"$r$ [m]")
+    plt.ylabel(r"$WI$ [ms]")
+    plt.savefig(
+        os.path.join(dirpath, run_name, f"data_vs_Peaceman_p_f{feature[20][0]}.png")
+    )
+    plt.show()
 
 
 # Three dimensional plot of permeabilities and radii vs. WI, pressure fixed.

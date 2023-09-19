@@ -2564,7 +2564,6 @@ namespace Opm
         std::cout << "t_scaled: " << t << " re_scaled: " << re << " WI_scaled: " <<
         getValue(out.data_[0]) << std::endl;
         return unscaleFunction(out.data_[0],${ymin}, ${ymax});
-        //divide by surface density to get WI in m^3/(Pa*s)
     }
 
     template<typename TypeTag>

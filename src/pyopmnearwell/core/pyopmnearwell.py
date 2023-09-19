@@ -2,10 +2,11 @@
 # SPDX-License-Identifier: GPL-3.0
 
 """Main script"""
-import os
 import argparse
+import os
+
 from pyopmnearwell.utils.inputvalues import process_input
-from pyopmnearwell.utils.runs import simulations, plotting
+from pyopmnearwell.utils.runs import plotting, simulations
 from pyopmnearwell.utils.writefile import reservoir_files
 from pyopmnearwell.visualization.plotting import plot_results
 
@@ -64,7 +65,8 @@ def pyopmnearwell():
         return
     file = cmdargs["input"]  # Name of the input file
 
-    # Process the input file (open pyopmnearwell.utils.inputvalues to see the abbreviations meaning)
+    # Process the input file (open pyopmnearwell.utils.inputvalues to see the
+    # abbreviations meaning)
     dic = process_input(dic, file)
 
     # Make the output folders

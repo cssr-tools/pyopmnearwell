@@ -153,7 +153,7 @@ features, targets = next(
     iter(orig_ds.batch(batch_size=len(orig_ds)).as_numpy_iterator())
 )
 
-# loop through 3 time steps and 3 three pressures
+# loop through 2 time steps and 2 three pressures
 features = features.reshape((runspecs.NPOINTS, -1, 395, ninputs))[
     :2, ::15, ...
 ].reshape(-1, 395, ninputs)

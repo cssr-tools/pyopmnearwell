@@ -1,17 +1,22 @@
-"""Train a neural network that predicts the well index from the permeability, initital
-reservoir pressure and distance from the well."""
+"""Train a neural network that predicts the well index from the pressure and distance
+from the well."""
+from __future__ import annotations
 
 import csv
 import logging
 import os
 
+import constants
 import matplotlib.pyplot as plt
+import numpy as np
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.layers import Dense, Input
 from tensorflow.keras.models import Sequential
 
+import pyopmnearwell.utils.units as units
 from pyopmnearwell.ml.kerasify import export_model
+from pyopmnearwell.utils.formulas import peaceman_WI
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -146,26 +151,40 @@ features, targets = next(
     iter(orig_ds.batch(batch_size=len(orig_ds)).as_numpy_iterator())
 )
 
-NPOINTS: int = 500
-features = features.reshape((NPOINTS, 395, 2))[::100, ...]
-targets = targets.reshape((NPOINTS, 395, 1))[::100, ...]
-plt.figure
-for feature, target in list(zip(features, targets))[:3]:
+
+features = features.reshape((constants.NPOINTS, 395, 2))
+targets = targets.reshape((constants.NPOINTS, 395, 1))
+
+for feature, target in list(zip(features, targets))[:5]:
+    plt.figure()
     target_hat = target_scaler.inverse_transform(
         model(feature_scaler.transform(feature.reshape((395, 2))))
+    )
+    peaceman = np.vectorize(peaceman_WI)(
+        constants.PERMEABILITY * units.MILIDARCY_TO_M2,
+        feature[..., 1],
+        constants.WELL_RADIUS,
+        constants.DENSITY,
+        constants.VISCOSITY,
     )
     plt.plot(
         feature[..., 1].flatten(),
         tf.reshape(target_hat, (-1)),
-        label=rf"$p_i={ feature[20][0]}$ [Pa] at $r={feature[20][1]}$ [m] nn",
+        label="nn",
+    )
+    plt.plot(
+        feature[..., 1].flatten(),
+        peaceman,
+        label="Peaceman",
     )
     plt.scatter(
         feature[..., 1].flatten()[::5],
         target.flatten()[::5],
-        label=rf"$p_i={feature[20][0]}$ [Pa] at $r={feature[20][1]}$ [m] data",
+        label="data",
     )
-plt.legend()
-plt.xlabel(r"$r[m]$")
-plt.ylabel(r"$WI$ [m*s]")
-plt.savefig(os.path.join(savepath, "nn_p_r_to_WI.png"))
-plt.show()
+    plt.legend()
+    plt.title(rf"$p_i={feature[20][0]}$ [Pa] at $r={feature[300][1]}$ [m]")
+    plt.xlabel(r"$r[m]$")
+    plt.ylabel(r"$WI$ [m*s]")
+    plt.savefig(os.path.join(savepath, f"nn_p_r_to_WI_{feature[300][0]}.png"))
+    plt.show()

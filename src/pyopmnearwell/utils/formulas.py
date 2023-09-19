@@ -21,8 +21,27 @@ def peaceman_WI(  # pylint: disable=C0103
         mu: Viscosity. Needs to be in [Pa*s].
 
     Returns:
-        Well index :math:`WI\cdot\frac{\mu}{\rho}`. In [m*s].
+        Well index :math:`WI`. In [m*s].
 
     """
-    w_i = (2 * math.pi * k_h) / (math.log(r_e / r_w))
-    return w_i * rho / mu
+    WI = (2 * math.pi * k_h) / (math.log(r_e / r_w))
+    return WI * rho / mu
+
+
+def data_WI(q: float, p_w: float, p_gb: float) -> float:  # pylint: disable=C0103
+    r"""Compute the well productivity index from given data.
+
+    .. math::
+        WI = \frac{q}{p_w - p_{gb}
+
+    Parameters:
+        q: Injection rate. Needs to be in [m^3/s].
+        p_w: Bottom hole pressure. Needs to be in [Pa].
+        p_gb: Grid block pressure. Needs to be in [Pa].
+
+    Returns:
+        Well index :math:`WI`. In [m^4*s/kg].
+
+    """
+    WI = q / (p_w - p_gb)
+    return WI

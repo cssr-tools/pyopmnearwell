@@ -4,8 +4,8 @@ ${flow} --ml-wi-filename="" --linear-solver-reduction=1e-5 --relaxed-max-pv-frac
 """Set the model parameters"""
 co2store     #Model (co2store/h2store)
 tensor3d 60 #Grid type (radial/cake/cartesian2d/cartesian/cave) and size (theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
-100  1       #Reservoir dimensions [m] (Lenght and height)
-20,10 1 0        #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)
+${reservoir_size} 1      #Reservoir dimensions [m] (Lenght and height)
+100 1 0        #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)
 ${radius*2} 0 0 #Well diameter [m], well transmiscibility (0 to use the computed one internally in Flow), and remove the smaller cells than the well diameter
 ${pressure} ${temperature}  0    #Pressure [Pa] on the top, uniform temperature [°], and initial phase in the reservoir (0 wetting, 1 non-wetting)
 1e10         #Pore volume multiplier on the boundary [-] (0 to use well producers instead)[-]
