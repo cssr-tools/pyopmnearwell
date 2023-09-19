@@ -13,7 +13,7 @@ with open("dev-requirements.txt", "r", encoding="utf8") as file:
 
 setup(
     name="pyopmnearwell",
-    version="0.0.1",
+    version="0.0.2",
     install_requires=install_requires,
     extras_require={"dev": dev_requires},
     setup_requires=["setuptools_scm"],
@@ -21,8 +21,8 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/dmar/pyopmnearwell",
-    author="David Landa-Marbán",
-    mantainer="David Landa-Marbán",
+    author="David Landa-Marbán, Peter Moritz von Schultzendorff",
+    mantainer="David Landa-Marbán, Peter Moritz von Schultzendorff",
     mantainer_email="dmar@norceresearch.no",
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -33,7 +33,7 @@ setup(
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
     ],
-    keywords="co2 dynamics hydrogen opm wells",
+    keywords="co2 dynamics hydrogen opm wells saltprecipitation",
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     license="GPL-3.0",

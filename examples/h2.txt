@@ -2,16 +2,16 @@
 flow --linear-solver-reduction=1e-5 --relaxed-max-pv-fraction=0 --ecl-enable-drift-compensation=0 --newton-max-iterations=50 --newton-min-iterations=5 --tolerance-mb=1e-7 --tolerance-wells=1e-5 --relaxed-well-flow-tol=1e-5 --use-multisegment-well=false --enable-tuning=true --enable-opm-rst-file=true --linear-solver=cprw --enable-well-operability-check=false --min-time-step-before-shutting-problematic-wells-in-days=1e-99
 
 """Set the model parameters"""
-h2store      #Model (co2store/h2store)
+h2store base #Model (co2store/h2store)
 cake 36  #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
 500 50       #Reservoir dimensions [m] (Lenght and height)
 100 50 0      #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)
 0.3 0 0      #Well diameter [m], well transmiscibility (0 to use the computed one internally in Flow), and remove the smaller cells than the well diameter
 4e6 50  0    #Pressure [Pa] on the top, uniform temperature [°], and initial phase in the reservoir (0 wetting, 1 non-wetting)
-1e10         #Pore volume multiplier on the boundary [-] (0 to use well producers instead)[-]
+1e10 0       #Pore volume multiplier on the boundary [-] (0 to use well producers instead) and deactivate cross flow within the wellbore (see XFLOW in OPM Manual)
 0 5 15       #Activate perforations [-], number of well perforations [-], and lenght [m]
 1 0 .95      #Number of layers [-], hysteresis (1 to activate), and econ for the producer (for h2 models)
-0 0 0        #Initial salt concentrationn [kg/m3], salt solubility limit [kg/m3], and precipitated salt density [kg/m3] (for saltprec)
+0 0 0 0 0 0 0 #Ini salt conc [kg/m3], salt sol lim [kg/m3], prec salt den [kg/m3], gamma [-], phi_r [-], npoints [-], and threshold [-]  (all entries for saltprec)
 10-10*mt.cos((2*mt.pi*x/100)) + 100*(x/500)**2 #The function for the reservoir surface
 
 """Set the saturation functions"""

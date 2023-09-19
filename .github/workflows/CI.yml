@@ -38,6 +38,7 @@ jobs:
         
     - name: Install test dependecies
       run: |
+        sudo apt-get install texlive-fonts-recommended texlive-fonts-extra dvipng cm-super
         pip install --upgrade pip setuptools wheel
         pip install -r dev-requirements.txt
         

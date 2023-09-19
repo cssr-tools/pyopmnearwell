@@ -87,10 +87,21 @@
 Script to read the output files</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyopmnearwell.visualization.reading.create_arrays_ecl">
-<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.visualization.reading.</span></span><span class="sig-name descname"><span class="pre">create_arrays_ecl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">study</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.visualization.reading.create_arrays_ecl" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.visualization.reading.</span></span><span class="sig-name descname"><span class="pre">create_arrays_ecl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">study</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">salt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.visualization.reading.create_arrays_ecl" title="Permalink to this definition"></a></dt>
 <dd><p>Function to create the required numpy arrays</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p></li>
+<li><p><strong>str</strong> (<em>study</em>) – Name of the folder containing the results</p></li>
+<li><p><strong>int</strong> (<em>salt</em>) – Indicator for salt precipitation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Global dictionary with new added parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dic (dict)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -99,8 +110,29 @@ Script to read the output files</p>
 <dt class="sig sig-object py" id="pyopmnearwell.visualization.reading.create_arrays_opm">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.visualization.reading.</span></span><span class="sig-name descname"><span class="pre">create_arrays_opm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">study</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.visualization.reading.create_arrays_opm" title="Permalink to this definition"></a></dt>
 <dd><p>Function to create the required numpy arrays</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyopmnearwell.visualization.reading.handle_smsp_time">
+<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.visualization.reading.</span></span><span class="sig-name descname"><span class="pre">handle_smsp_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">study</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.visualization.reading.handle_smsp_time" title="Permalink to this definition"></a></dt>
+<dd><p>Function to chandle the times in the summary files</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p></li>
+<li><p><strong>str</strong> (<em>study</em>) – Name of the folder containing the results</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Global dictionary with new added parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dic (dict)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -109,10 +141,15 @@ Script to read the output files</p>
 <dt class="sig sig-object py" id="pyopmnearwell.visualization.reading.read_ecl">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.visualization.reading.</span></span><span class="sig-name descname"><span class="pre">read_ecl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.visualization.reading.read_ecl" title="Permalink to this definition"></a></dt>
 <dd><p>Function to read the output files using the Python ecl package</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p>
 </dd>
-<dt>Returns:</dt><dd><p>dic (dict): Global dictionary with new added parameters</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Global dictionary with new added parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dic (dict)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -121,10 +158,15 @@ Script to read the output files</p>
 <dt class="sig sig-object py" id="pyopmnearwell.visualization.reading.read_opm">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.visualization.reading.</span></span><span class="sig-name descname"><span class="pre">read_opm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.visualization.reading.read_opm" title="Permalink to this definition"></a></dt>
 <dd><p>Function to read the output files using the Python opm package</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p>
 </dd>
-<dt>Returns:</dt><dd><p>dic (dict): Global dictionary with new added parameters</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Global dictionary with new added parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dic (dict)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -133,10 +175,15 @@ Script to read the output files</p>
 <dt class="sig sig-object py" id="pyopmnearwell.visualization.reading.read_simulations">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.visualization.reading.</span></span><span class="sig-name descname"><span class="pre">read_simulations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.visualization.reading.read_simulations" title="Permalink to this definition"></a></dt>
 <dd><p>Function to read the generated output files</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p>
 </dd>
-<dt>Returns:</dt><dd><p>dic (dict): Global dictionary with new added parameters</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Global dictionary with new added parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dic (dict)</p>
 </dd>
 </dl>
 </dd></dl>

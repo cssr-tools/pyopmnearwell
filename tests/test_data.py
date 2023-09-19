@@ -19,7 +19,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 @pytest.fixture
 def EclKW_saturation() -> np.ndarray:  # pylint: disable=C0116, C0103
-    with open_ecl_file(os.path.join(dir_path, "DUMMY.UNRST")) as ecl_file:
+    with open_ecl_file(os.path.join(dir_path, "data/DUMMY.UNRST")) as ecl_file:
         saturation_array = np.array(ecl_file.iget_kw("SGAS"))
         # Transform to model input shape (no batch).
         return np.expand_dims(saturation_array, axis=-1)
@@ -27,7 +27,7 @@ def EclKW_saturation() -> np.ndarray:  # pylint: disable=C0116, C0103
 
 @pytest.fixture
 def EclKW_pressure() -> np.ndarray:  # pylint: disable=C0116, C0103
-    with open_ecl_file(os.path.join(dir_path, "DUMMY.UNRST")) as ecl_file:
+    with open_ecl_file(os.path.join(dir_path, "data/DUMMY.UNRST")) as ecl_file:
         pressure_array = np.array(ecl_file.iget_kw("PRESSURE"))
         # Transform to model output shape (no batch).
         return np.expand_dims(pressure_array, axis=-1)
@@ -36,7 +36,7 @@ def EclKW_pressure() -> np.ndarray:  # pylint: disable=C0116, C0103
 @pytest.fixture
 def Ecl_dummy_file() -> EclFile:  # pylint: disable=C0116, C0103
     """Return a dummy ``EclFile``."""
-    ecl_file = EclFile(os.path.join(dir_path, "DUMMY.UNRST"))
+    ecl_file = EclFile(os.path.join(dir_path, "data/DUMMY.UNRST"))
     return ecl_file
 
 

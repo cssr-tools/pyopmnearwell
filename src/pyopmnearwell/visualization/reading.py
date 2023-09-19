@@ -33,6 +33,7 @@ def read_simulations(dic):
         dic (dict): Global dictionary with new added parameters
 
     """
+    dic["connections"] = []
     if dic["plot"] == "ecl":
         dic = read_ecl(dic)
     else:
@@ -62,12 +63,13 @@ def read_opm(dic):
             dic["exe"] + "/" + study + "/output/radius.npy"
         )
         dic[f"{study}_angle"] = np.load(dic["exe"] + "/" + study + "/output/angle.npy")
-        case = dic["exe"] + "/" + study + "/output/RESERVOIR"
+        case = dic["exe"] + "/" + study + f"/output/{study.upper()}"
         dic[f"{study}_rst"] = ERst(case + ".UNRST")
         dic[f"{study}_ini"] = EclFileOpm(case + ".INIT")
         dic[f"{study}_smsp"] = ESmry(case + ".SMSPEC")
         dic[f"{study}_permeability_array"] = [dic[f"{study}_ini"]["PERMX"]]
         dic[f"{study}_porosity_array"] = [dic[f"{study}_ini"]["PORO"]]
+        dic[f"{study}_porv_array"] = [dic[f"{study}_ini"]["PORV"]]
         dic[f"{study}_satnum_array"] = [dic[f"{study}_ini"]["SATNUM"]]
         dic[f"{study}_injection_raten"] = dic[f"{study}_smsp"]["FGIR"]
         if dic[f"{study}_rst"].count("SWAT", 0):
@@ -82,6 +84,7 @@ def read_opm(dic):
             dic[f"{study}_rhow_ref"] = 998.108  # Water reference density
             dic[f"{study}_rhor"] = dic[f"{study}_rhow_ref"]
         dic[f"{study}_well_pressure"] = dic[f"{study}_smsp"]["WBHP:INJ0"]
+        dic[f"{study}_well_pi"] = dic[f"{study}_smsp"]["WPI:INJ0"]
         dic[f"{study}_smsp_seconds"] = 86400 * dic[f"{study}_smsp"]["TIME"]
         dic[f"{study}_report_time"] = dic[f"{study}_smsp"]["YEARS", True]
         dic[f"{study}_report_time"] = np.insert(dic[f"{study}_report_time"], 0, 0)
@@ -146,6 +149,7 @@ def create_arrays_opm(dic, study):
         dic (dict): Global dictionary with required parameters
 
     """
+    dic[f"{study}_totalsaltprec"] = []
     for quantity in dic["quantity"]:
         dic[f"{study}_{quantity}_array"] = []
         for rst in dic[f"{study}_rst"].report_steps:
@@ -153,6 +157,13 @@ def create_arrays_opm(dic, study):
                 if dic[f"{study}_rst"].count("SALTP", 0):
                     dic[f"{study}_{quantity}_array"].append(
                         np.array(dic[f"{study}_rst"]["SALTP", rst])
+                    )
+                    dic[f"{study}_totalsaltprec"].append(
+                        (
+                            np.array(dic[f"{study}_rst"]["SALTP", rst])
+                            * np.array(dic[f"{study}_porv_array"])
+                            * 2153
+                        ).sum()
                     )
                 else:
                     dic[f"{study}_{quantity}_array"].append(
@@ -229,21 +240,26 @@ def read_ecl(dic):
             dic["exe"] + "/" + study + "/output/radius.npy"
         )
         dic[f"{study}_angle"] = np.load(dic["exe"] + "/" + study + "/output/angle.npy")
-        case = dic["exe"] + "/" + study + "/output/RESERVOIR"
+        case = dic["exe"] + "/" + study + f"/output/{study.upper()}"
         dic[f"{study}_rst"] = EclFile(case + ".UNRST")
         dic[f"{study}_ini"] = EclFile(case + ".INIT")
         dic[f"{study}_grid"] = EclGrid(case + ".EGRID")
         dic[f"{study}_smsp"] = EclSum(case + ".SMSPEC")
+        if dic[f"{study}_smsp"].has_key("CGIR:INJ0:1,1,1"):
+            dic["connections"] = 1
         dic[f"{study}_saturation"] = dic[f"{study}_rst"].iget_kw("SGAS")
         if dic[f"{study}_rst"].has_kw("SALTP"):
             dic[f"{study}_salt"] = dic[f"{study}_rst"].iget_kw("SALTP")
             dic[f"{study}_permfact"] = dic[f"{study}_rst"].iget_kw("PERMFACT")
+            salt = 1.0
         else:
             dic[f"{study}_salt"] = dic[f"{study}_rst"].iget_kw("PRESSURE")
             dic[f"{study}_permfact"] = dic[f"{study}_rst"].iget_kw("PRESSURE")
+            salt = 0.0
         dic[f"{study}_pressure"] = dic[f"{study}_rst"].iget_kw("PRESSURE")
         dic[f"{study}_permeability_array"] = [dic[f"{study}_ini"].iget_kw("PERMX")[0]]
         dic[f"{study}_porosity_array"] = [dic[f"{study}_ini"]["PORO"][0]]
+        dic[f"{study}_porv_array"] = [dic[f"{study}_ini"]["PORV"][0]]
         dic[f"{study}_satnum_array"] = [dic[f"{study}_ini"]["SATNUM"][0]]
         dic[f"{study}_viscg"] = dic[f"{study}_rst"].iget_kw("GAS_VISC")
         dic[f"{study}_deng"] = dic[f"{study}_rst"].iget_kw("GAS_DEN")
@@ -267,41 +283,60 @@ def read_ecl(dic):
             dic[f"{study}_injection_ratew"] = dic[f"{study}_smsp"]["FOIR"].values
         dic[f"{study}_indicator_array"] = []
         dic[f"{study}_well_pressure"] = dic[f"{study}_smsp"]["WBHP:INJ0"].values
-        dic[f"{study}_smsp_report_step"] = dic[f"{study}_smsp"]["WBHP:INJ0"].report_step
-        dic[f"{study}_report_time"] = dic[f"{study}_rst"].dates
-        dic[f"{study}_smsp_seconds"] = [
-            (
-                dic[f"{study}_smsp"].numpy_dates[i + 1]
-                - dic[f"{study}_smsp"].numpy_dates[i]
-            )
-            / np.timedelta64(1, "s")
-            for i in range(len(dic[f"{study}_smsp"].numpy_dates) - 1)
-        ]
-        dic[f"{study}_smsp_seconds"].insert(
-            0,
-            (
-                dic[f"{study}_smsp"].numpy_dates[0]
-                - np.datetime64(dic[f"{study}_smsp"].get_start_time())
-            )
-            / np.timedelta64(1, "s"),
-        )
-        for i in range(len(dic[f"{study}_smsp"].numpy_dates) - 1):
-            dic[f"{study}_smsp_seconds"][i + 1] += dic[f"{study}_smsp_seconds"][i]
-        dic[f"{study}_smsp_rst"] = [
-            pd.Series(abs(dic[f"{study}_smsp_seconds"] - time)).argmin()
-            for time in dic[f"{study}_rst_seconds"]
-        ]
-        dic[f"{study}_smsp_seconds"] = np.insert(dic[f"{study}_smsp_seconds"], 0, 0.0)
-        dic = create_arrays_ecl(dic, study)
+        dic[f"{study}_well_pi"] = dic[f"{study}_smsp"]["WPI:INJ0"].values
+        dic = handle_smsp_time(dic, study)
+        dic = create_arrays_ecl(dic, study, salt)
     return dic
 
 
-def create_arrays_ecl(dic, study):
+def handle_smsp_time(dic, study):
+    """
+    Function to chandle the times in the summary files
+
+    Args:
+        dic (dict): Global dictionary with required parameters
+        str (study): Name of the folder containing the results
+
+    Returns:
+        dic (dict): Global dictionary with new added parameters
+
+    """
+    dic[f"{study}_smsp_report_step"] = dic[f"{study}_smsp"]["WBHP:INJ0"].report_step
+    dic[f"{study}_report_time"] = dic[f"{study}_rst"].dates
+    dic[f"{study}_smsp_seconds"] = [
+        (dic[f"{study}_smsp"].numpy_dates[i + 1] - dic[f"{study}_smsp"].numpy_dates[i])
+        / np.timedelta64(1, "s")
+        for i in range(len(dic[f"{study}_smsp"].numpy_dates) - 1)
+    ]
+    dic[f"{study}_smsp_seconds"].insert(
+        0,
+        (
+            dic[f"{study}_smsp"].numpy_dates[0]
+            - np.datetime64(dic[f"{study}_smsp"].get_start_time())
+        )
+        / np.timedelta64(1, "s"),
+    )
+    for i in range(len(dic[f"{study}_smsp"].numpy_dates) - 1):
+        dic[f"{study}_smsp_seconds"][i + 1] += dic[f"{study}_smsp_seconds"][i]
+    dic[f"{study}_smsp_rst"] = [
+        pd.Series(abs(dic[f"{study}_smsp_seconds"] - time)).argmin()
+        for time in dic[f"{study}_rst_seconds"]
+    ]
+    dic[f"{study}_smsp_seconds"] = np.insert(dic[f"{study}_smsp_seconds"], 0, 0.0)
+    return dic
+
+
+def create_arrays_ecl(dic, study, salt):
     """
     Function to create the required numpy arrays
 
     Args:
         dic (dict): Global dictionary with required parameters
+        str (study): Name of the folder containing the results
+        int (salt): Indicator for salt precipitation
+
+    Returns:
+        dic (dict): Global dictionary with new added parameters
 
     """
     dic[f"{study}_viscn_array"] = []
@@ -309,6 +344,7 @@ def create_arrays_ecl(dic, study):
     dic[f"{study}_viscw_array"] = []
     dic[f"{study}_denw_array"] = []
     dic[f"{study}_concentration_array"] = []
+    dic[f"{study}_totalsaltprec"] = []
     for quantity in dic["quantity"]:
         dic[f"{study}_{quantity}_array"] = []
         for i in range(dic[f"{study}_rst"].num_report_steps()):
@@ -317,7 +353,10 @@ def create_arrays_ecl(dic, study):
                     np.array(dic[f"{study}_saturation"][i]) > dic["sat_thr"]
                 )
                 dic[f"{study}_{quantity}_array"].append(
-                    np.array(dic[f"{study}_saturation"][i])
+                    np.array(
+                        dic[f"{study}_saturation"][i]
+                        * (1.0 - salt * dic[f"{study}_salt"][i])
+                    )
                 )
                 dic[f"{study}_viscn_array"].append(np.array(dic[f"{study}_viscg"][i]))
                 dic[f"{study}_denn_array"].append(np.array(dic[f"{study}_deng"][i]))
@@ -332,6 +371,13 @@ def create_arrays_ecl(dic, study):
             if quantity == "salt":
                 dic[f"{study}_{quantity}_array"].append(
                     np.array(dic[f"{study}_{quantity}"][i])
+                )
+                dic[f"{study}_totalsaltprec"].append(
+                    (
+                        np.array(dic[f"{study}_{quantity}"][i])
+                        * np.array(dic[f"{study}_porv_array"])
+                        * 2153
+                    ).sum()
                 )
             if quantity == "permfact":
                 dic[f"{study}_{quantity}_array"].append(
