@@ -51,7 +51,9 @@ def pyopmnearwell():
         ),
     )
     cmdargs = vars(parser.parse_known_args()[0])
-    dic = {"pat": os.path.dirname(__file__)[:-5]}  # Path to the pyopmnearwell folder
+    dic = {
+        "pat": os.path.split(os.path.dirname(__file__))[0]
+    }  # Path to the pyopmnearwell folder
     dic["exe"] = os.getcwd()  # Path to the folder of the input.txt file
     dic["fol"] = cmdargs["output"]  # Name for the output folder
     dic["plot"] = cmdargs["plotting"]  # The python package used for plotting
@@ -70,12 +72,12 @@ def pyopmnearwell():
     dic = process_input(dic, file)
 
     # Make the output folders
-    if not os.path.exists(f"{dic['exe']}/{dic['fol']}"):
-        os.system(f"mkdir {dic['exe']}/{dic['fol']}")
+    if not os.path.exists(os.path.join(dic["exe"], dic["fol"])):
+        os.makedirs(os.path.join(dic["exe"], dic["fol"]))
     for fil in ["preprocessing", "jobs", "output", "postprocessing"]:
-        if not os.path.exists(f"{dic['exe']}/{dic['fol']}/{fil}"):
-            os.system(f"mkdir {dic['exe']}/{dic['fol']}/{fil}")
-    os.chdir(f"{dic['exe']}/{dic['fol']}")
+        if not os.path.exists(os.path.join(dic["exe"], dic["fol"], fil)):
+            os.makedirs(os.path.join(dic["exe"], dic["fol"], fil))
+    os.chdir(os.path.join(dic["exe"], dic["fol"]))
 
     # Write used opm related files
     reservoir_files(dic)

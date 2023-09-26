@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0
 
 """
-Utiliy functions to run the studies.
+Utility functions to run the studies.
 """
 import math as mt
 import os

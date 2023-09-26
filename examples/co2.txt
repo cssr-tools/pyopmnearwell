@@ -4,12 +4,12 @@ flow --enable-opm-rst-file=true
 """Set the model parameters"""
 co2store base #Model (co2store/h2store/co2eor/saltprec) and name of the template file (see src/pyopmnearwell/templates/)
 cake 60       #Grid type (core/radial/cake/cartesian2d/cartesian/cpg3d/coord2d/coord3d/tensor2d/tensor3d) and size (input/output pipe length[m]/theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
-100 24        #Reservoir dimensions [m] (Lenght and height (diameter for the core geometry)) 
+100 24        #Reservoir dimensions [m] (length and height (diameter for the core geometry)) 
 80 48 2       #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)
 0.1 0 0       #Well diameter [m], well transmiscibility (0 to use the computed one internally in Flow), and remove the smaller cells than the well diameter
 1e7 40 0      #Pressure [Pa] on the top, uniform temperature [°], and initial phase in the reservoir (0 wetting, 1 non-wetting)
 1e10 0        #Pore volume multiplier on the boundary [-] (0 to use well producers instead) and deactivate cross flow within the wellbore (see XFLOW in OPM Manual)
-1 5 6         #Activate perforations [-], number of well perforations [-], and lenght [m]
+1 5 6         #Activate perforations [-], number of well perforations [-], and length [m]
 4 1 0         #Number of layers [-], hysteresis (1 to activate), and econ for the producer (for h2 models)
 0 0 0 0 0 0 0 #Ini salt conc [kg/m3], salt sol lim [kg/m3], prec salt den [kg/m3], gamma [-], phi_r [-], npoints [-], and threshold [-]  (all entries for saltprec)
 2-2*mt.cos((2*mt.pi*x/50)) + 10*(x/100)**2 #The function for the reservoir surface

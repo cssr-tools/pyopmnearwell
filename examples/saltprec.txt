@@ -4,7 +4,7 @@ flow --linear-solver=cprw --newton-min-iterations=5 --enable-tuning=true --enabl
 """Set the model parameters"""
 saltprec uniform #Model (co2store/h2store/co2eor/saltprec)
 cake 60    #Grid type (radial/cartesian/cake) and size (width/theta/theta [in degrees])
-500 44       #Reservoir dimensions [m] (Lenght and height)
+500 44       #Reservoir dimensions [m] (length and height)
 100 22 4.25  #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding
 0.05 0 0      #Well diameter [m], well transmiscibility (0 to use the computed one internally in Flow), and remove the smaller cells than the well diameter
 21.3e6 60 0  #Pressure [Pa] on the top, uniform temperature [°], and initial phase in the reservoir (0 wetting, 1 non-wetting)

@@ -2,23 +2,35 @@
 # SPDX-License-Identifier: GPL-3.0
 
 """
-Utiliy functions for necessary files and variables to run OPM Flow.
+Utility functions for necessary files and variables to run OPM Flow.
 """
 
 import csv
 import math as mt
 import os
 import subprocess
+
 import numpy as np
 from mako.template import Template
 
 
-def reservoir_files(dic):
+def reservoir_files(
+    dic,
+    recalc_grid: bool = True,
+    recalc_tables: bool = True,
+    recalc_sections: bool = True,
+):
     """
     Function to write opm-related files by running mako templates
 
     Args:
         dic (dict): Global dictionary with required parameters
+        recalc_grid (bool): If ``False``, ``GRID.INC`` is not recalculated. Intended for
+            ensemble runs, where the saturation functions/geography/etc. do not need to
+            be recalculated for each ensemble member
+        recalc_tables (bool): If ``False``, the tables not recalculated.
+        recalc_sections (bool): If ``False``, the ``GEOLOGY.INC`` and ``REGIONS.INC``
+            are not recalculated.
 
     Returns:
         dic (dict): Global dictionary with new added parameters
@@ -50,10 +62,11 @@ def reservoir_files(dic):
         ]
         # dic["xcor"] = np.insert(dic["xcor"], 1, 0.5 * dic["diameter"])
     dic["noCells"][0] = len(dic["xcor"]) - 1
-    if dic["grid"] == "core":
-        dic = handle_core(dic)
-    else:
-        dic = manage_grid(dic)
+    if recalc_grid:
+        if dic["grid"] == "core":
+            dic = handle_core(dic)
+        else:
+            dic = manage_grid(dic)
     dic["zcor"] = np.linspace(0, dic["dims"][2], dic["noCells"][2] + 1)
     dic["z_centers"] = 0.5 * (dic["zcor"][:-1] + dic["zcor"][1:])
     dic["x_centers"] = 0.5 * (dic["xcor"][:-1] + dic["xcor"][1:])
@@ -69,15 +82,17 @@ def reservoir_files(dic):
     filledtemplate = mytemplate.render(**var)
     with open(
         os.path.join(
-            dic["exe"], dic["fol"], "preprocessing", f"{dic['fol'].upper()}.DATA"
+            dic["exe"], dic["fol"], "preprocessing", f"{dic['runname'].upper()}.DATA"
         ),
         "w",
         encoding="utf8",
     ) as file:
         file.write(filledtemplate)
     if dic["model"] != "co2eor":
-        manage_tables(dic)
-        manage_sections(dic)
+        if recalc_tables:
+            manage_tables(dic)
+        if recalc_sections:
+            manage_sections(dic)
 
 
 def manage_sections(dic):
@@ -165,7 +180,7 @@ def manage_grid(dic):
         dxarray.insert(0, "DX")
         dxarray.append("/")
         with open(
-            f"{dic['exe']}/{dic['fol']}/preprocessing/DX.INC",
+            os.path.join(dic["exe"], dic["fol"], "preprocessing", "DX.INC"),
             "w",
             encoding="utf8",
         ) as file:
@@ -177,7 +192,7 @@ def manage_grid(dic):
         dxarray.insert(0, "DRV")
         dxarray.append("/")
         with open(
-            f"{dic['exe']}/{dic['fol']}/preprocessing/DRV.INC",
+            os.path.join(dic["exe"], dic["fol"], "preprocessing", "DRV.INC"),
             "w",
             encoding="utf8",
         ) as file:
@@ -195,24 +210,15 @@ def manage_grid(dic):
                     lol.append("")
                 else:
                     lol.append(row[0])
-        with open(
-            f"{dic['exe']}/{dic['fol']}/preprocessing/cpg.mako",
-            "w",
-            encoding="utf8",
-        ) as file:
-            file.write("\n".join(lol))
-        mytemplate = Template(
-            filename=f"{dic['exe']}/{dic['fol']}/preprocessing/cpg.mako"
-        )
+        mytemplate = Template(text="\n".join(lol))
         var = {"dic": dic}
         filledtemplate = mytemplate.render(**var)
         with open(
-            f"{dic['exe']}/{dic['fol']}/preprocessing/GRID.INC",
+            os.path.join(dic["exe"], dic["fol"], "preprocessing", "GRID.INC"),
             "w",
             encoding="utf8",
         ) as file:
             file.write(filledtemplate)
-        os.system(f"rm -rf {dic['exe']}/{dic['fol']}/preprocessing/cpg.mako")
     else:
         if dic["grid"] == "coord3d":
             dic["xcorc"] = dic["x_n"]
@@ -302,15 +308,7 @@ def d3_grids(dic, dxarray):
                     lol.append("")
                 else:
                     lol.append(row[0])
-        with open(
-            f"{dic['exe']}/{dic['fol']}/preprocessing/cpg.mako",
-            "w",
-            encoding="utf8",
-        ) as file:
-            file.write("\n".join(lol))
-        mytemplate = Template(
-            filename=f"{dic['exe']}/{dic['fol']}/preprocessing/cpg.mako"
-        )
+        mytemplate = Template(text="\n".join(lol))
         var = {"dic": dic}
         filledtemplate = mytemplate.render(**var)
         with open(
@@ -319,7 +317,6 @@ def d3_grids(dic, dxarray):
             encoding="utf8",
         ) as file:
             file.write(filledtemplate)
-        os.system(f"rm -rf {dic['exe']}/{dic['fol']}/preprocessing/cpg.mako")
     else:
         dyarray = []
         for i in range(dic["noCells"][1] - 1):
