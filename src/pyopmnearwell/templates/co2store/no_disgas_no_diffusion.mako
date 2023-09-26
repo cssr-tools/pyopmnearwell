@@ -2,6 +2,7 @@
 import math as mt
 %>
 -- Copyright (C) 2023 NORCE
+---testsetsetswet
 ----------------------------------------------------------------------------
 RUNSPEC
 ----------------------------------------------------------------------------
@@ -12,17 +13,6 @@ ${dic['noCells'][0]} ${dic['noCells'][1]} ${dic['noCells'][2]} /
 ${max(dic['noCells'][0],dic['noCells'][1])} ${dic['noCells'][1]} ${dic['noCells'][2]} /
 %endif
 
-WATER
-GAS
-CO2STORE
-DIFFUSE
-DISGASW
-
-METRIC
-
-START
-1 'JAN' 2000 /
-
 %if dic['grid']== 'radial':
 RADIAL
 %endif
@@ -32,6 +22,15 @@ EQLDIMS
 
 TABDIMS
 ${(dic["hysteresis"]+1)*(dic['satnum']+dic['perforations'][0])} 1* 10000 /
+
+WATER
+GAS
+CO2STORE
+
+METRIC
+
+START
+1 'JAN' 2000 /
 
 % if dic["hysteresis"] ==1:
 SATOPTS
@@ -47,7 +46,7 @@ UNIFOUT
 GRID
 ----------------------------------------------------------------------------
 INCLUDE
-  'GEOLOGY.INC' /
+  ${dic['geology_file']} /
 % if dic["pvMult"] != 0:
 ----------------------------------------------------------------------------
 EDIT
@@ -59,7 +58,7 @@ INCLUDE
 PROPS
 ----------------------------------------------------------------------------
 INCLUDE
-'TABLES.INC' /
+  ${dic['tables_file']} /
 
 % if dic["hysteresis"] ==1:
 EHYSTR
@@ -69,7 +68,7 @@ EHYSTR
 REGIONS
 ----------------------------------------------------------------------------
 INCLUDE
-  'REGIONS.INC' /
+  ${dic['regions_file']} /
 ----------------------------------------------------------------------------
 SOLUTION
 ---------------------------------------------------------------------------
@@ -100,13 +99,6 @@ CPI
  INJ0 /
 /
 
-CGIR
- INJ0 /
-/
-
-CGIRL
- INJ0 /
-/
 
 WGIRL
 % for j in range(0*dic['noCells'][2]+1):
