@@ -124,6 +124,7 @@ namespace Opm
                     const double Tw,
                     const int perf,
                     const bool allow_cf,
+                    const double elapsed_time,
                     std::vector<Value>& cq_s,
                     PerforationRates& perf_rates,
                     DeferredLogger& deferred_logger) const
@@ -209,6 +210,7 @@ namespace Opm
                         allow_cf,
                         skin_pressure,
                         cmix_s,
+                        elapsed_time,
                         cq_s,
                         perf_rates,
                         deferred_logger);
@@ -231,6 +233,7 @@ namespace Opm
                     const bool allow_cf,
                     const Value& skin_pressure,
                     const std::vector<Value>& cmix_s,
+                    const double elapsed_time,
                     std::vector<Value>& cq_s,
                     PerforationRates& perf_rates,
                     DeferredLogger& deferred_logger) const
@@ -281,9 +284,9 @@ namespace Opm
                              deferred_logger); 
                 }
                 if constexpr (std::is_same_v<Value, EvalWell>) {
-                    WI = this->extendEval(wellIndexEval(perf, Base::restrictEval(pressure)));
+                    WI = this->extendEval(wellIndexEval(perf, elapsed_time, Base::restrictEval(pressure)));
                 } else {
-                    WI = wellIndexEval(perf, pressure);
+                    WI = wellIndexEval(perf, elapsed_time, pressure);
                 }
                 auto injectorType = this->well_ecl_.injectorType();
                 if (injectorType == InjectorType::WATER) {
@@ -525,7 +528,9 @@ namespace Opm
         PerforationRates perf_rates;
         double trans_mult = ebosSimulator.problem().template rockCompTransMultiplier<double>(intQuants,  cell_idx);
         const double Tw = this->wellIndex(perf) * trans_mult;
-        computePerfRate(intQuants, mob, bhp, Tw, perf, allow_cf,
+        const double elapsed_time = ebosSimulator.time();
+
+        computePerfRate(intQuants, mob, bhp, Tw, perf, allow_cf, elapsed_time,
                         cq_s, perf_rates, deferred_logger);
 
         auto& ws = well_state.well(this->index_of_well_);
@@ -1393,10 +1398,11 @@ namespace Opm
             getMobility(ebosSimulator, perf, mob, deferred_logger);
             double trans_mult = ebosSimulator.problem().template rockCompTransMultiplier<double>(intQuants, cell_idx);
             const double Tw = this->wellIndex(perf) * trans_mult;
+            const double elapsed_time = ebosSimulator.time();
 
             std::vector<Scalar> cq_s(this->num_components_, 0.);
             PerforationRates perf_rates;
-            computePerfRate(intQuants, mob, bhp, Tw, perf, allow_cf,
+            computePerfRate(intQuants, mob, bhp, Tw, perf, allow_cf, elapsed_time, 
                             cq_s, perf_rates, deferred_logger);
 
             for(int p = 0; p < np; ++p) {
@@ -1687,8 +1693,9 @@ namespace Opm
             std::vector<EvalWell> cq_s(this->num_components_, {this->primary_variables_.numWellEq() + Indices::numEq, 0.});
             PerforationRates perf_rates;
             double trans_mult = ebos_simulator.problem().template rockCompTransMultiplier<double>(int_quant, cell_idx);
+            const double elapsed_time = ebos_simulator.time();
             const double Tw = this->wellIndex(perf) * trans_mult;
-            computePerfRate(int_quant, mob, bhp, Tw, perf, allow_cf, cq_s,
+            computePerfRate(int_quant, mob, bhp, Tw, perf, allow_cf, elapsed_time, cq_s,
                             perf_rates, deferred_logger);
             // TODO: make area a member
             const double area = 2 * M_PI * this->perf_rep_radius_[perf] * this->perf_length_[perf];
@@ -2194,9 +2201,10 @@ namespace Opm
             getMobility(ebosSimulator, perf, mob, deferred_logger);
             std::vector<Scalar> cq_s(this->num_components_, 0.);
             double trans_mult = ebosSimulator.problem().template rockCompTransMultiplier<double>(intQuants,  cell_idx);
+            double elapsed_time = ebosSimulator.time();
             const double Tw = this->wellIndex(perf) * trans_mult;
             PerforationRates perf_rates;
-            computePerfRate(intQuants, mob, bhp.value(), Tw, perf, allow_cf,
+            computePerfRate(intQuants, mob, bhp.value(), Tw, perf, allow_cf, elapsed_time,
                             cq_s, perf_rates, deferred_logger);
             for (int comp = 0; comp < this->num_components_; ++comp) {
                 well_q_s[comp] += cq_s[comp];
@@ -2527,7 +2535,7 @@ namespace Opm
     template<typename TypeTag>
     template<class Value>
     Value
-    StandardWell<TypeTag>::wellIndexEval(const int perf, const Value& pressure) const {
+    StandardWell<TypeTag>::wellIndexEval(const int perf, const double elapsed_time, const Value& pressure) const {
         KerasModel<Value> model;
         model.LoadModel(Base::ml_wi_filename_);
         const auto& connection = Base::well_ecl_.getConnections()[perf];
@@ -2539,11 +2547,15 @@ namespace Opm
 
         const auto p = scaleFunction(pressure, ${xmin[0]}, ${xmax[0]});
         const auto re = Value(scaleFunction(connection.r0(), ${xmin[1]}, ${xmax[1]}));
-
         // note order need to be the same as under training
-        in.data_ = {{p ,re}};
+        in.data_ = {{p, re}};
+
         Tensor<Value> out;
         model.Apply(&in, &out);
+        std::cout << "p: " << pressure << " re: " << connection.r0() << " WI: " <<
+        unscaleFunction(out.data_[0],${ymin}, ${ymax}) << std::endl;
+        std::cout << "p_scaled: " << p << " re_scaled: " << re << " WI_scaled: " <<
+        getValue(out.data_[0]) << std::endl;
         return unscaleFunction(out.data_[0],${ymin}, ${ymax});
     }
 

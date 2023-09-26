@@ -192,25 +192,25 @@ cssr/
 .vscode/
 
 # Examples
-examples/output*
-examples/2023*
+examples/outdated*
+examples/ml_near_well_model/2023-*
 
-!examples/2023-08-17_CO2
-examples/2023-08-17_CO2/*/*
-!examples/2023-08-17_CO2/tests_1/*.mako
-examples/2023-08-17_CO2/*.txt
-examples/2023-08-17_CO2/*.rsp
+!examples/ml_near_well_model/2023-08-17_CO2
+# examples/ml_near_well_model/2023-08-17_CO2/*/*
+# !examples/ml_near_well_model/2023-08-17_CO2/tests_1/*.mako
+# examples/ml_near_well_model/2023-08-17_CO2/*.txt
+# examples/ml_near_well_model/2023-08-17_CO2/*.rsp
 
 
-!examples/2023-08-21_CO2_3layers
-examples/2023-08-21_CO2_3layers/*/*
-!examples/2023-08-21_CO2_3layers/tests_1/*.mako
-examples/2023-08-21_CO2_3layers/*.txt
-examples/2023-08-21_CO2_3layers/*.rsp
+# examples/ml_near_well_model/2023-08-21_CO2_3layers/*
+!examples/ml_near_well_model/2023-08-21_CO2_3layers/tests_1/*.mako
+!examples/ml_near_well_model/2023-08-21_CO2_3layers/*.mako
+!examples/ml_near_well_model/2023-08-21_CO2_3layers/*.py
+!examples/ml_near_well_model/2023-08-21_CO2_3layers/*.INC
 
-!examples/2023-09-01_H2O
-examples/2023-09-01_H2O/*/*
-!examples/2023-09-01_H2O/tests/*.mako
-examples/2023-09-01_H2O/*.txt
-examples/2023-09-01_H2O/*.rsp
+!examples/ml_near_well_model/2023-09-01_H2O
+examples/ml_near_well_model/2023-09-01_H2O/*/*
+!examples/ml_near_well_model/2023-09-01_H2O/tests/*.mako
+examples/ml_near_well_model/2023-09-01_H2O/*.txt
+examples/ml_near_well_model/2023-09-01_H2O/*.rsp
 
