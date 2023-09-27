@@ -1,11 +1,10 @@
-"""Train a neural network that predicts the well index from the cell pressure and
-distance from the well."""
+"""Transform ensemble data into datasets and train neural networks."""
 from __future__ import annotations
 
 import csv
 import logging
 import os
-from typing import Optional
+from typing import Literal, Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -81,7 +80,8 @@ def scale_and_prepare_dataset(
         )
     logger.info(f"Saved scalings to {os.path.join(savepath, 'scales.csv')}.")
 
-    # Shuffle once before splitting into training and val.
+    # Reload the dataset and shuffle once before splitting into training and val.
+    ds = tf.data.Dataset.load(dsfile)
     ds = ds.shuffle(buffer_size=len(ds))
 
     # Split the dataset into a training and a validation data set.
@@ -103,6 +103,23 @@ def scale_and_prepare_dataset(
     val_targets = target_scaler.transform(val_targets)
     logger.info(f"Scaled data and split into training and validation dataset.")
     return (train_features, train_targets), (val_features, val_targets)
+
+
+def l2_error(
+    target: tf.Tensor, prediction: tf.Tensor, mode: Literal["relative", "max"]
+) -> tf.Tensor:
+    """Calculate the relative L2 error between the target and prediction.
+
+
+
+    Parameters:
+        target: _description_
+        prediction: _description_
+
+    Returns:
+        _description_
+    """
+    pass
 
 
 def train(

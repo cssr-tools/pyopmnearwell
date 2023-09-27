@@ -4,6 +4,7 @@ Test the Peaceman formulas versus several results calculated by hand.
 
 """
 
+import numpy as np
 import pytest
 
 from pyopmnearwell.utils.formulas import (
@@ -63,3 +64,24 @@ def test_data_WI(q, p_w, p_gb, expected_result):
 # Test cases for co2brinepvt (you may need to mock subprocess.Popen for this)
 # Mocking subprocess.Popen is recommended for testing external commands.
 # Example: https://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock
+@pytest.fixture
+def opm_cov2brinepvt():
+    # TODO
+    pass
+
+
+# Test cases for co2brinepvt
+@pytest.mark.parametrize(
+    "pressure, temperature",
+    [
+        (pressure, temperature)
+        for pressure, temperature in zip(
+            np.random.uniform(10000, 50000000, 50), np.random.uniform(250, 400, 50)
+        )
+    ],
+)
+@pytest.mark.parametrize("property", ["density", "viscosity"])
+@pytest.mark.parametrize("phase", ["CO2", "water"])
+def test_co2brinepvt(opm_cov2brinepvt) -> None:
+    # TODO
+    pass

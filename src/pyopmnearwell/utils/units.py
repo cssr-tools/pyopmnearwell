@@ -1,4 +1,13 @@
-"""Provide some common conversions between different units."""
+"""Provide some common conversions between different units.
+
+
+Some *.UNRST and *.SMSPEC to OPM conversion are included. They are inteded to be used as
+``keyword_conversions`` for ``ensemble.extract_features``. If the extracted quantity
+does not appear in the dict, the appropriate conversion has to be added manually.
+- UNRST_to_OPM_METRIC
+- UNRST_to_OPM_RESERVOIR
+
+"""
 
 # Permeability
 M2_TO_MILIDARCY: float = 1.01324997e15
@@ -19,3 +28,8 @@ PASCALSECOND_TO_CENTIPOISE: float = 1 / 1000
 # Temperature
 CELSIUS_TO_KELVIN: float = 273.15
 KELVIN_TO_CELSIUS: float = -CELSIUS_TO_KELVIN
+
+
+# *.UNRST and *.SMSPEC to OPM conversions.
+UNRST_to_OPM_METRIC: dict[str, float] = {"PRESSURE": BAR_TO_PASCAL}
+UNRST_to_OPM_RESERVOIR: dict[str, float] = {"PRESSURE": 1.0}

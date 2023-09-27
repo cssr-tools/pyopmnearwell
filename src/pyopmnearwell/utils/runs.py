@@ -22,8 +22,9 @@ def simulations(dic):
     """
     os.chdir(f"{dic['exe']}/{dic['fol']}/output")
     os.system(
-        f"{dic['flow']} --output-dir={dic['exe']}/{dic['fol']}/output "
-        f"{dic['exe']}/{dic['fol']}/preprocessing/RESERVOIR.DATA  & wait\n"
+        f"{dic['flow']} --output-dir={os.path.join(dic['exe'], dic['fol'], 'output')} "
+        f"{os.path.join(dic['exe'],dic['fol'], 'preprocessing', dic['runname'].upper())}.DATA  "
+        "& wait\n"
     )
     # We save few variables for the plotting methods
     np.save("xspace", dic["xcor"])

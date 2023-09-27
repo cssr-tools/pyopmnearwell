@@ -86,7 +86,7 @@ def pyopmnearwell():
     simulations(dic)
 
     # Make some useful plots after the studies
-    if cmdargs["plotting"] != "":
+    if cmdargs["plotting"] != "off":
         plotting(dic)
 
 
