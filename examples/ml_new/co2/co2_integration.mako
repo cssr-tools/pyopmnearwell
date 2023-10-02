@@ -5,7 +5,7 @@ ${FLOW} --ml-wi-filename="${ML_MODEL_PATH}" --linear-solver-reduction=1e-5 --rel
 co2store no_disgas_no_diffusion ${RUN_NAME} #Model (co2store/h2store)
 tensor3d 0                   #Grid type (radial/cake/cartesian2d/cartesian/cave) and size (theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
 ${RESERVOIR_SIZE} 100           #Reservoir dimensions [m] (length and height)
-${GRID_SIZE} 10 0               #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)
+${GRID_SIZE} {NUM_LAYERS} 0               #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)
 ${2*WELL_RADIUS} 0 0            #Well diameter [m], well transmiscibility (0 to use the computed one internally in Flow), and remove the smaller cells than the well diameter
 ${INIT_PRESSURE} ${INIT_TEMPERATURE}  0 #Pressure [Pa] on the top, uniform temperature [°], and initial phase in the reservoir (0 wetting, 1 non-wetting)
 1e10 1                          #Pore volume multiplier on the boundary [-] (0 to use well producers instead) and deactivate cross flow within the wellbore (see XFLOW in OPM Manual)

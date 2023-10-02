@@ -10,7 +10,12 @@ from unittest.mock import mock_open, patch
 import numpy as np
 import pytest
 
-from pyopmnearwell.ml.ensemble import create_ensemble, run_ensemble, setup_ensemble
+from pyopmnearwell.ml.ensemble import (
+    create_ensemble,
+    memory_efficient_sample,
+    run_ensemble,
+    setup_ensemble,
+)
 from pyopmnearwell.utils import units
 
 dir = os.path.dirname(__file__)
@@ -136,20 +141,47 @@ class TestEnsemble:
         if runspecs["npoints"] == 200:
             pytest.skip("Invalid case.")
 
-        ensemble = ensemble_dict["ensemble"]
+        ensemble: list[dict[str, Any]] = ensemble_dict["ensemble"]
         setup_ensemble(
             temp_ensemble_dir, ensemble, os.path.join(dir, "test_ensemble.mako")
         )
-        ensemble_files = [
-            file
-            for file in os.listdir(os.path.join(temp_ensemble_dir, "preprocessing"))
-            if file.startswith("RUN")
+        ensemble_folders: list[str] = [
+            folder
+            for folder in os.listdir(temp_ensemble_dir)
+            if folder.startswith("runfiles")
         ]
         # Check that all ensemble files were generated.
-        assert len(ensemble) == len(ensemble_files)
-        for member_file in ensemble_files:
-            assert member_file.startswith("RUN_")
-            assert member_file.endswith(".DATA")
+        assert len(ensemble) == len(ensemble_folders)
+        for member_folder in ensemble_folders:
+            subfolders: list[str] = os.listdir(
+                os.path.join(temp_ensemble_dir, member_folder)
+            )
+            assert "preprocessing" in subfolders
+            assert "jobs" in subfolders
+            if member_folder.endswith("_0"):
+                preprocessing_files: list[str] = os.listdir(
+                    os.path.join(temp_ensemble_dir, member_folder, "preprocessing")
+                )
+                for file in [
+                    "GEOLOGY.INC",
+                    "GRID.INC",
+                    "MULTPV.INC",
+                    "REGIONS.INC",
+                    "TABLES.INC",
+                    "RUN_0.DATA",
+                ]:
+                    assert file in preprocessing_files
+                assert "saturation_functions.py" in os.listdir(
+                    os.path.join(temp_ensemble_dir, member_folder, "jobs")
+                )
+            else:
+                runfiles: list[str] = os.listdir(
+                    os.path.join(temp_ensemble_dir, member_folder, "preprocessing")
+                )
+                assert len(runfiles) == 1
+                runfile: str = runfiles[0]
+                assert runfile.startswith("RUN_")
+                assert runfile.endswith(".DATA")
 
     def test_run_ensemble(self, runspecs: dict[str, Any], temp_ensemble_dir) -> None:
         """
@@ -167,14 +199,20 @@ class TestEnsemble:
         if runspecs["npoints"] == 200:
             pytest.skip("Invalid case.")
 
-        ecl_keywords = ["PRESSURE", "SGAS"]
-        summary_keywords = ["W1BHP"]
+        ecl_keywords: list[str] = ["PRESSURE", "SGAS"]
+        init_keywords: list[str] = ["PERMX"]
+        summary_keywords: list[str] = ["W1BHP"]
         OPM: str = "/home/peter/Documents/2023_CEMRACS/opm"
         FLOW: str = f"{OPM}/build/opm-simulators/bin/flow"
 
         with patch("builtins.open", mock_open()):
             data = run_ensemble(
-                FLOW, temp_ensemble_dir, runspecs, ecl_keywords, summary_keywords
+                FLOW,
+                temp_ensemble_dir,
+                runspecs,
+                ecl_keywords,
+                init_keywords,
+                summary_keywords,
             )
 
         # Ensure that the returned data are ``np.ndarrays``.
@@ -193,6 +231,26 @@ class TestEnsemble:
             else:
                 expected_shape = (0,)  # No data for summary keywords.
             assert array.shape == expected_shape
+
+
+@pytest.mark.parametrize("num_members", [1, 5, 10])
+def test_memory_efficient_sample(num_members: int):
+    # Create sample input data.
+    num_samples = 100
+    num_variables = 5
+    variables = np.random.rand(num_variables, num_samples)
+
+    # Call the function.
+    result = memory_efficient_sample(variables, num_members)
+
+    # Assert the result has the right shape.
+    assert isinstance(result, np.ndarray)
+    assert result.shape == (num_variables, num_members)
+
+    # Assert the result has the right values.
+    for i in range(num_variables):
+        for member in result[i]:
+            assert member in variables[i]
 
 
 def test_calculate_radii():

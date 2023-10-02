@@ -10,7 +10,10 @@ import os
 import shutil
 from typing import Any, Literal
 
+from mako import exceptions
 from mako.template import Template
+
+from pyopmnearwell.utils.mako import fill_template
 
 dir: str = os.path.dirname(__file__)
 
@@ -48,8 +51,7 @@ def recompile_flow(
         "ymin": target_min,
         "ymax": target_max,
     }
-    mytemplate = Template(filename=templatefile)
-    filledtemplate = mytemplate.render(**var)
+    filledtemplate: Template = fill_template(var, filename=templatefile)
     with open(
         os.path.join(opm_well_path, "StandardWell_impl.hpp"),
         "w",
@@ -70,7 +72,7 @@ def recompile_flow(
 def run_integration(runspecs: dict[str, Any], savepath: str, makofile: str) -> None:
     variables: dict[str, list[float]] = runspecs["variables"]
     constants: dict[str, float] = runspecs["constants"]
-    mytemplate = Template(filename=makofile)
+    mytemplate: Template = Template(filename=makofile)
     if len(set([len(value) for value in variables.values()])) != 1:
         raise ValueError("All variables need to have the same number of values.")
     # Ignore MyPy complaining.
@@ -79,7 +81,11 @@ def run_integration(runspecs: dict[str, Any], savepath: str, makofile: str) -> N
         constants.update(
             {variable: values[i] for variable, values in variables.items()}
         )
-        filledtemplate = mytemplate.render(**constants)
+        try:
+            filledtemplate = mytemplate.render(**constants)
+        except Exception as error:
+            print(exceptions.text_error_template().render())
+            raise (error)
         with open(
             os.path.join(savepath, f"run_{i}.txt"),
             "w",

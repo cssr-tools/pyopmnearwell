@@ -214,3 +214,8 @@ examples/ml_near_well_model/2023-09-01_H2O/*/*
 examples/ml_near_well_model/2023-09-01_H2O/*.txt
 examples/ml_near_well_model/2023-09-01_H2O/*.rsp
 
+examples/ml_new/*/*.rsp
+examples/ml_new/*/dataset/
+examples/ml_new/*/ensemble/
+examples/ml_new/*/integration/
+examples/ml_new/*/nn/

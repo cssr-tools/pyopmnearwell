@@ -59,11 +59,13 @@ pressures: np.ndarray = ensemble.extract_features(
 # for the ``pressures`` and ``WI`` arrays.
 pressures = pressures[..., -1, 4:-4, :]
 radiis: np.ndarray = ensemble.calculate_radii(
-    os.path.join(dirname, "ensemble", "preprocessing", "GRID.INC")
+    os.path.join(dirname, "ensemble", "runfiles_0", "preprocessing", "GRID.INC")
 )[5:-4]
 assert pressures.shape[-2] == radiis.shape[-1]
 
-WI: np.ndarray = ensemble.calculate_WI(data, runspecs_ensemble)[..., -1, 4:-4]
+WI: np.ndarray = ensemble.calculate_WI(data, runspecs_ensemble, num_zcells=1)[
+    ..., -1, 4:-4
+]
 ensemble.store_dataset(
     np.stack(
         [

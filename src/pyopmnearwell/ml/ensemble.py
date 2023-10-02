@@ -7,6 +7,7 @@ from __future__ import annotations
 import copy
 import csv
 import logging
+import math
 import os
 import shutil
 import subprocess
@@ -17,6 +18,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from ecl.eclfile.ecl_file import open_ecl_file
+from mako import exceptions
 from mako.template import Template
 
 import pyopmnearwell.utils.units as units
@@ -37,7 +39,9 @@ FLAGS = (
 )
 
 
-def create_ensemble(runspecs: dict[str, Any]) -> list[dict[str, Any]]:
+def create_ensemble(
+    runspecs: dict[str, Any], efficient_sampling: Optional[list[str]] = None
+) -> list[dict[str, Any]]:
     """Create an ensemble.
 
     Note: It is assumed that the user provides the variables in the correct units for
@@ -55,6 +59,13 @@ def create_ensemble(runspecs: dict[str, Any]) -> list[dict[str, Any]]:
               distribution in the interval :math:`[min, max]`.
             - "constants": ``dict`` containing the run Args that are constant for
               all ensemble members.
+        efficient_sampling (Optional[list[str]]): List containing the names of variables
+        that should be sampled instead of fully meshed and then sampled. This is faster
+        and avoids memory overload for higher dimensional combinations of variables.
+        E.g., when creating an ensemble with varying vertical permeabilities. Only 10
+        layers with 10 samples generate a grid of 10^10 values. By sampling directly
+        instead of generating the grid first, it is possible to deal with the
+        complexity.
 
     Note: The ensemble is generated as the cartesian product of all variable ranges. The
     total number of ensemble members is thus the product of all individual ``npoints``.
@@ -70,22 +81,66 @@ def create_ensemble(runspecs: dict[str, Any]) -> list[dict[str, Any]]:
         ensemble members.
 
     """
+    if efficient_sampling is None:
+        efficient_sampling = []
+
     variables: dict[str, np.ndarray] = OrderedDict()
 
     # Generate random value ranges for all variables.
-    for variable, (min, max, npoints) in runspecs["variables"].items():
-        variables[variable] = np.random.uniform(min, max, npoints)
+    for variable, (min_val, max_val, npoints) in runspecs["variables"].items():
+        if variable.startswith("PERM"):
+            # Generate a log uniform distribution for permeabilities.
+            variables[variable] = np.exp(
+                np.random.uniform(math.log(min_val), math.log(max_val), npoints)
+            )
+        else:
+            # Generate a uniform distribution for all other variables.
+            variables[variable] = np.random.uniform(min_val, max_val, npoints)
     constants: dict[str, float] = runspecs["constants"]
 
-    # Mesh all values to get the ensemble and put the values back into a dictionary.
-    meshed_variables = [
-        array.flatten() for array in np.meshgrid(*variables.values(), indexing="ij")
+    # Differentiate between variables whose data ranges are sampled memory efficiently
+    # and then added to the ensemble and variables whose data ranges are fully meshed
+    # together and then added to the ensemble.
+    # NOTE: At the end, the ensemble gets sampled again if it is too large.
+    variables_to_sample: dict[str, np.ndarray] = OrderedDict(
+        {
+            variable: values
+            for variable, values in variables.items()
+            if variable in efficient_sampling
+        }
+    )
+    variables_to_mesh: dict[str, np.ndarray] = OrderedDict(
+        {
+            variable: values
+            for variable, values in variables.items()
+            if variable not in efficient_sampling
+        }
+    )
+
+    # Mesh/sample all values to get the ensemble and put the values back into a
+    # dictionary.
+    meshed_variables: list[np.ndarray] = [
+        array.flatten()
+        for array in np.meshgrid(*variables_to_mesh.values(), indexing="ij")
     ]
+    if len(variables_to_sample) > 0:
+        sampled_variables: np.ndarray | list = memory_efficient_sample(
+            np.array(list(variables_to_sample.values())),
+            num_members=runspecs["npoints"],
+        )
+    else:
+        sampled_variables = []
+
     ensemble: list[dict[str, float]] = []
-    for values in zip(*meshed_variables):
+    for values in zip(*meshed_variables, *sampled_variables):
         member: dict[str, Any] = copy.deepcopy(constants)
         member.update(
-            {list(variables.keys())[i]: value for i, value in enumerate(values)}
+            {
+                (list(variables_to_mesh.keys()) + list(variables_to_sample.keys()))[
+                    i
+                ]: value
+                for i, value in enumerate(values)
+            }
         )
         ensemble.append(member)
 
@@ -107,15 +162,45 @@ def create_ensemble(runspecs: dict[str, Any]) -> list[dict[str, Any]]:
     return ensemble
 
 
+def memory_efficient_sample(variables: np.ndarray, num_members: int) -> np.ndarray:
+    """Requires that all variables have the same number of samples.
+
+    Parameters:
+        variables: _description_
+        num_members: _description_
+
+    Returns:
+        _description_
+    """
+    indices: np.ndarray = np.random.randint(
+        0, variables.shape[-1], size=(variables.shape[0], num_members)
+    )
+    return variables[np.arange(variables.shape[0])[..., None], indices]
+
+
 def setup_ensemble(
-    ensemble_path: str, ensemble: list[dict[str, Any]], makofile: str
+    ensemble_path: str,
+    ensemble: list[dict[str, Any]],
+    makofile: str,
+    recalc_grid: bool = False,
+    recalc_tables: bool = False,
+    recalc_sections: bool = False,
 ) -> None:
     """ "Create a deck file for each ensemble member."""
-    template = Template(filename=makofile)
-    os.makedirs(os.path.join(ensemble_path, "preprocessing"), exist_ok=True)
-    os.makedirs(os.path.join(ensemble_path, "jobs"), exist_ok=True)
+    mytemplate: Template = Template(filename=makofile)
     for i, member in enumerate(ensemble):
-        filledtemplate = template.render(**member)
+        try:
+            filledtemplate = mytemplate.render(**member)
+        except Exception as error:
+            print(exceptions.text_error_template().render())
+            raise (error)
+
+        os.makedirs(os.path.join(ensemble_path, f"runfiles_{i}"), exist_ok=True)
+        os.makedirs(
+            os.path.join(ensemble_path, f"runfiles_{i}", "preprocessing"), exist_ok=True
+        )
+        os.makedirs(os.path.join(ensemble_path, f"runfiles_{i}", "jobs"), exist_ok=True)
+
         lol = []
         for row in csv.reader(filledtemplate.split("\n"), delimiter="#"):
             lol.append(row)
@@ -124,18 +209,33 @@ def setup_ensemble(
             {
                 "exe": os.path.join(ensemble_path, ".."),
                 "pat": os.path.join(dir, ".."),  # Path to pyopmnearwell.
-                "fol": os.path.split(ensemble_path)[1],
+                "fol": os.path.join(os.path.split(ensemble_path)[1], f"runfiles_{i}"),
             },
         )
         dic = readthesecondpart(lol, dic, index)
         dic.update({"runname": f"RUN_{i}"})
-        # Only recalculate geology, grid, tables, etc. for the first ensemble member.
+        # Always calculate geology, grid, tables, etc. for the first ensemble member.
         if i == 0:
             reservoir_files(dic)
         else:
             reservoir_files(
-                dic, recalc_grid=False, recalc_tables=False, recalc_sections=False
+                dic,
+                recalc_grid=recalc_grid,
+                recalc_tables=recalc_tables,
+                recalc_sections=recalc_sections,
+                inc_folder=os.path.join(
+                    "..",
+                    "..",
+                    "runfiles_0",
+                    "preprocessing",
+                ),
             )
+    # pyopmnearwell creates these unneeded folders, so we remove them.
+    try:
+        shutil.rmtree(os.path.join(ensemble_path, "preprocessing"))
+        shutil.rmtree(os.path.join(ensemble_path, "jobs"))
+    except FileNotFoundError:
+        pass
 
 
 def run_ensemble(
@@ -143,14 +243,17 @@ def run_ensemble(
     ensemble_path: str,
     runspecs: dict[str, Any],
     ecl_keywords: list[str],
+    init_keywords: list[str],
     summary_keywords: list[str],
 ) -> dict[str, Any]:
     """Run OPM flow for each ensemble member and store data."""
-    data: dict = {keyword: [] for keyword in ecl_keywords + summary_keywords}
+    data: dict = {
+        keyword: [] for keyword in ecl_keywords + init_keywords + summary_keywords
+    }
     for i in range(round(runspecs["npoints"] / runspecs["npruns"])):
         command_lst = [
             f"{flow_path}"
-            + f" {os.path.join(ensemble_path, 'preprocessing', f'RUN_{j}.DATA')}"
+            + f" {os.path.join(ensemble_path, f'runfiles_{j}', 'preprocessing', f'RUN_{j}.DATA')}"
             + f" --output-dir={os.path.join(ensemble_path, f'results_{j}')}"
             + f" {FLAGS} & "
             for j in range(runspecs["npruns"] * i, runspecs["npruns"] * (i + 1))
@@ -159,7 +262,7 @@ def run_ensemble(
         command = " ".join(
             [
                 f"{flow_path}"
-                + f" {os.path.join(ensemble_path, 'preprocessing', f'RUN_{j}.DATA')}"
+                + f" {os.path.join(ensemble_path, f'runfiles_{j}', 'preprocessing', f'RUN_{j}.DATA')}"
                 + f" --output-dir={os.path.join(ensemble_path, f'results_{j}')}"
                 + f" {FLAGS} & "
                 for j in range(runspecs["npruns"] * i, runspecs["npruns"] * (i + 1))
@@ -175,8 +278,14 @@ def run_ensemble(
                     # and cells.
                     data[keyword].append(np.array(ecl_file.iget_kw(keyword)))
             with open_ecl_file(
+                os.path.join(ensemble_path, f"results_{j}", f"RUN_{j}.INIT")
+            ) as init_file:
+                for keyword in init_keywords:
+                    # Append the data corresponding to the keyword for all cells.
+                    data[keyword].append(np.array(init_file.iget_kw(keyword)))
+            with open_ecl_file(
                 os.path.join(ensemble_path, f"results_{j}", f"RUN_{j}.SMSPEC")
-            ) as ecl_file:
+            ) as summary_file:
                 for keyword in summary_keywords:
                     # Append the data corresponding to the keyword for all report steps.
                     # TODO
@@ -187,16 +296,10 @@ def run_ensemble(
                 shutil.rmtree(
                     os.path.join(ensemble_path, f"results_{j}"),
                 )
-                os.remove(os.path.join(ensemble_path, "preprocessing", f"RUN_{j}.DATA"))
-
-    # Clean up:
-    # Remove all run files except for `GRID.INC`, which is needed to calculate radii.
-    for file in ["TABLES", "CAKE", "GEOLOGY", "MULTPV", "REGIONS"]:
-        try:
-            os.remove(os.path.join(ensemble_path, "preprocessing", f"{file}.INC"))
-        except FileNotFoundError:
-            pass
-    shutil.rmtree(os.path.join(ensemble_path, "jobs"))
+                shutil.rmtree(
+                    os.path.join(ensemble_path, f"runfiles_{j}"),
+                )
+                pass
     return data
 
 
@@ -224,7 +327,7 @@ def calculate_radii(
 def calculate_WI(
     data: dict[str, Any],
     runspecs: dict[str, Any],
-    num_dims: int = 1,
+    num_zcells: int,
 ) -> np.ndarray:
     r"""Calculate the well index (WI) for a given dataset.
 
@@ -232,6 +335,8 @@ def calculate_WI(
 
     .. math::
         WI = \frac{q}{{p_w - p_{gb}}}
+
+    Note: In 3D this will more probably than not fail.
 
     Args:
         data (dict[str, Any]): Data generated by ``run_ensemble``.
@@ -247,30 +352,43 @@ def calculate_WI(
         ValueError: If no data is found for the 'pressure' keyword in the dataset.
     """
     # Transform pressure values from [bar] (unit in *.UNRST files) to [Pa] (unit to
-    # calculate the WI and internally used by OPM).
-    pressure_data = (
-        np.array(data["PRESSURE"]) * units.BAR_TO_PASCAL
-    )  # ``shape=(runspecs.NPOINTS, num_report_steps/5, 400)``; unit [Pa]
+    # calculate the WI and internally used by OPM). Remove the initial time step.
+    pressure_data = (np.array(data["PRESSURE"]) * units.BAR_TO_PASCAL)[
+        ..., 1:, :
+    ]  # ``shape=(runspecs["npoints"], num_time_data - 1, num_grid_cell_data)``;
+    # unit [Pa]
     if len(pressure_data) == 0:
         raise ValueError("No data found for the 'pressure' keyword.")
 
-    # Calculate WI for each ensemble member
+    # Calculate WI for each ensemble member.
     WI_values = []
-    for i, datapoint in enumerate(pressure_data):
-        p_w = datapoint[..., 0][
-            ..., None
-        ]  # Bottom hole pressure extracted at the first cell.
-        p_gb = datapoint[..., 1:]  # Cell pressures of all but the well block.
+    for i, member_pressure_data in enumerate(pressure_data):
+        p_w = member_pressure_data[
+            ..., 0 :: int(member_pressure_data.shape[-1] / num_zcells)
+        ]  # Bottom hole pressure extracted at the well blocks.
+        p_gb = np.delete(
+            member_pressure_data,
+            np.arange(
+                0,
+                member_pressure_data.shape[-1],
+                int(member_pressure_data.shape[-1] / num_zcells),
+            ),
+            axis=-1,
+        )  # Cell pressures of all but the well blocks.
         if "INJECTION_RATE_PER_SECOND" in runspecs["constants"]:
             # Injection rate is constant for all ensemble members.
             WI = runspecs["constants"]["INJECTION_RATE_PER_SECOND"] / (
-                p_w - p_gb
-            )  # ``shape=(...,num_cells - 1)``; unit [m^4*s/kg]
+                np.tile(p_w, int(member_pressure_data.shape[-1] / num_zcells) - 1)
+                - p_gb
+            )  # ``shape=(runspecs["npoints"], num_time_data - 1, num_grid_cell_data)``;
+            # unit [m^4*s/kg]
         elif "INJECTION_RATE_PER_SECOND" in data:
             # Get i-th injection rate in the ensemble.
             WI = data["INJECTION_RATE_PER_SECOND"][i] / (
-                p_w - p_gb
-            )  # ``shape=(...,num_cells - 1)``; unit [m^4*s/kg]
+                np.tile(p_w, int(member_pressure_data.shape[-1] / num_zcells) - 1)
+                - p_gb
+            )  # ``shape=(runspecs["npoints"], num_time_data - 1, num_grid_cell_data)``;
+            # unit [m^4*s/kg]
 
         WI_values.append(WI)
 
@@ -321,6 +439,11 @@ def extract_features(
         else:
             feature *= keyword_scalings.get(keyword, 1.0)
         features.append(feature)
+
+    # Broadcast all features to the same shape
+    broadcasted_shape = np.broadcast_shapes(*[feature.shape for feature in features])
+    features = [np.broadcast_to(feature, broadcasted_shape) for feature in features]
+
     return np.stack(
         features, axis=-1
     )  # ``shape=(ensemble_size, num_report_steps, num_cells, num_features)``

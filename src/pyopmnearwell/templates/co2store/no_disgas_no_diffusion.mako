@@ -2,6 +2,7 @@
 import math as mt
 %>
 -- Copyright (C) 2023 NORCE
+---testsetsetswet
 ----------------------------------------------------------------------------
 RUNSPEC
 ----------------------------------------------------------------------------
@@ -45,19 +46,19 @@ UNIFOUT
 GRID
 ----------------------------------------------------------------------------
 INCLUDE
-  'GEOLOGY.INC' /
+  ${dic['geology_file']} /
 % if dic["pvMult"] != 0:
 ----------------------------------------------------------------------------
 EDIT
 ----------------------------------------------------------------------------
 INCLUDE
-  'MULTPV.INC' /
+  ${dic['multpv_file']} /
 %endif
 ----------------------------------------------------------------------------
 PROPS
 ----------------------------------------------------------------------------
 INCLUDE
-  'TABLES.INC' /
+  ${dic['tables_file']} /
 
 % if dic["hysteresis"] ==1:
 EHYSTR
@@ -67,7 +68,7 @@ EHYSTR
 REGIONS
 ----------------------------------------------------------------------------
 INCLUDE
-  'REGIONS.INC' /
+  ${dic['regions_file']} /
 ----------------------------------------------------------------------------
 SOLUTION
 ---------------------------------------------------------------------------
@@ -191,7 +192,8 @@ COMPDAT
 % if dic['grid'] == 'core':
 'INJ0' 1 ${1+mt.floor(dic['noCells'][2]/2)} ${1+mt.floor(dic['noCells'][2]/2)} ${1+mt.floor(dic['noCells'][2]/2)} 'OPEN' 1* ${dic["jfactor"]} /
 % else:
-'INJ0' ${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${max(1, 1+mt.floor(dic['noCells'][1]/2))} 1 ${dic['noCells'][2]} 'OPEN' 1* ${dic["jfactor"]*2*mt.pi*dic['rock'][0][0]*dic['dims'][2]/dic['noCells'][2]} /
+--'INJ0' ${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${max(1, 1+mt.floor(dic['noCells'][1]/2))} 1 ${dic['noCells'][2]} 'OPEN' 1* ${dic["jfactor"]*2*mt.pi*dic['rock'][0][0]*dic['dims'][2]/dic['noCells'][2]} /
+'INJ0' ${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${max(1, 1+mt.floor(dic['noCells'][1]/2))} 1 ${dic['noCells'][2]} 'OPEN' 1* ${dic['diameter']} /
 % endif
 % endif
 % if dic["pvMult"] == 0 or dic['grid']== 'core':
