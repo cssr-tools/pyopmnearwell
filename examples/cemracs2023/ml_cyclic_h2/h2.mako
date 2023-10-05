@@ -17,7 +17,7 @@ cake 36  #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in degre
 """Set the saturation functions"""
 krw * ((sw - swi) / (1.0 - sni -swi)) ** nkrw             #Wetting rel perm saturation function [-]
 krn * ((1.0 - sw - sni) / (1.0 - sni - swi)) ** nkrn      #Non-wetting rel perm saturation function [-]
-pec * ((sw - swi) / (1.0 - sni - swi)) ** (-(1.0 / npe)) #Capillary pressure saturation function [Pa]
+pec * ((sw - swi) / (1.0 - swi)) ** (-(1.0 / npe))        #Capillary pressure saturation function [Pa]
 
 """Properties saturation functions"""
 """swi [-], sni [-], krn [-], krw [-], pec [Pa], nkrw [-], nkrn [-], npe [-], threshold cP evaluation, ignore swi for cP"""
@@ -38,69 +38,69 @@ PERMXY5 0.01 PERMZ5 0.01 PORO5 0.1 THIC2 25
 365 365 10 1 20000
 90 10 10 1 0
 % if time <= 7:
-${time} ${time} 7 1 -40000
+${time} ${time} 7 1 -40000 3.6e6
 % elif time <= 14:
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 ${time-7} ${time-7} 7 1 40000
 % elif time <= 21:
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-${time-14} ${time-14} 7 1 -40000
+${time-14} ${time-14} 7 1 -40000 3.6e6
 % elif time <= 28:
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 ${time-21} ${time-21} 7 1 40000
 % elif time <= 35:
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-${time-28} ${time-28} 7 1 -40000
+${time-28} ${time-28} 7 1 -40000 3.6e6
 % elif time <= 42:
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 ${time-35} ${time-35} 7 1 40000
 % elif time <= 49:
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-${time-42} ${time-42} 7 1 -40000
+${time-42} ${time-42} 7 1 -40000 3.6e6
 % elif time <= 56:
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 ${time-49} ${time-49} 7 1 40000
 % elif time <= 63:
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-${time-56} ${time-56} 7 1 -40000
+${time-56} ${time-56} 7 1 -40000 3.6e6
 %else:
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 ${time-63} ${time-63} 7 1 40000
 % endif
-730 73 73 1 -40000
+730 73 73 1 -40000 3.6e6

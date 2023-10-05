@@ -17,7 +17,7 @@ cake 60      #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in d
 """Set the saturation functions"""
 krw * ((sw - swi) / (1.0 - sni -swi)) ** nkrw             #Wetting rel perm saturation function [-]
 krn * ((1.0 - sw - sni) / (1.0 - sni - swi)) ** nkrn      #Non-wetting rel perm saturation function [-]
-pec * ((sw - swi) / (1.0 - sni - swi)) ** (-(1.0 / npe)) #Capillary pressure saturation function [Pa]
+pec * ((sw - swi) / (1.0 - swi)) ** (-(1.0 / npe))        #Capillary pressure saturation function [Pa]
 
 """Properties saturation functions"""
 """swi [-], sni [-], krn [-], krw [-], pec [Pa], nkrw [-], nkrn [-], npe [-], threshold cP evaluation, ignore swi for cP"""
@@ -32,6 +32,6 @@ PERMXY5 700.15 PERMZ5 700.15 PORO5 0.25 THIC2 20
 365 365 10 1 ${200000. / 6}
 90 90 10 1 0
 % for _,control in enumerate(schedule):
-${tperiod} ${tperiod} .1 1 ${-1*qrate if control == 0 else qrate}
+${tperiod} ${tperiod} .1 1 ${-1*qrate if control == 0 else qrate} ${3.6e6 if control == 0 else ' '}
 % endfor
-730 730 10 1 ${-200000. / 6}
+730 730 10 1 ${-200000. / 6} 3.6e6

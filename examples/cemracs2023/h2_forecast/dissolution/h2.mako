@@ -19,7 +19,7 @@ cake 36  #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in degre
 """Set the saturation functions"""
 krw * ((sw - swi) / (1.0 - sni -swi)) ** nkrw             #Wetting rel perm saturation function [-]
 krn * ((1.0 - sw - sni) / (1.0 - sni - swi)) ** nkrn      #Non-wetting rel perm saturation function [-]
-pec * ((sw - swi) / (1.0 - sni - swi)) ** (-(1.0 / npe)) #Capillary pressure saturation function [Pa]
+pec * ((sw - swi) / (1.0 - swi)) ** (-(1.0 / npe))        #Capillary pressure saturation function [Pa]
 
 """Properties saturation functions"""
 """swi [-], sni [-], krn [-], krw [-], pec [Pa], nkrw [-], nkrn [-], npe [-], threshold cP evaluation, ignore swi for cP"""
@@ -34,9 +34,9 @@ PERMXY5 700.15 PERMZ5 700.15 PORO5 0.25 THIC2 20
 365 365 10 1 20000
 90 10 10 1 0
 % for i in range(mt.floor(time/tperiod)):
-${tperiod} ${tperiod} .1 1 ${40000*(-1)**(i+1)}
+${tperiod} ${tperiod} .1 1 ${40000*(-1)**(i+1)} ${3.6e6 if -1==(-1)**(i+1) else ''}
 % endfor
 % if time%tperiod != 0:
-${time - tperiod*mt.floor(time/tperiod)} ${time - tperiod*mt.floor(time/tperiod)} ${time - tperiod*mt.floor(time/tperiod)} 1 ${40000*(-1)**(mt.floor(time/tperiod)+1)}
+${time - tperiod*mt.floor(time/tperiod)} ${time - tperiod*mt.floor(time/tperiod)} ${time - tperiod*mt.floor(time/tperiod)} 1 ${40000*(-1)**(mt.floor(time/tperiod)+1)} ${3.6e6 if -1==(-1)**(mt.floor(time/tperiod)+1) else ''}
 % endif
-730 730 1 1 -20000
+730 730 1 1 -20000 3.6e6

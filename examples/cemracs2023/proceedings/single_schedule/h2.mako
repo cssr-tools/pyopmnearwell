@@ -1,0 +1,57 @@
+<%
+import math as mt
+%>"""Set the full path to the flow executable and flags"""
+${flow} --enable-tuning=true --enable-opm-rst-file=true --linear-solver=cprw
+
+"""Set the model parameters"""
+h2store base #Model (co2store/h2store)
+cake 36  #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
+2500 100     #Reservoir dimensions [m] (Lenght and height)
+100 100 3      #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)
+0.15 0 0     #Well diameter [m] and well transmiscibility (0 to use the computed one internally in Flow)
+4e6 50 0     #Pressure [Pa] on the top and uniform temperature [°] (!!!!!!!Currently only for these pressure and temperature values, it is in the TODO list to extend this)
+1e7 0       #Pore volume multiplier on the boundary [-] (0 to use well producers instead) and deactivate cross flow within the wellbore (see XFLOW in OPM Manual)
+0 5 15       #Activate perforations [-], number of well perforations [-], and lenght [m]
+1 0 0  #Number of layers [-], hysteresis (1 to activate), and econ for the producer (for h2 models)
+0 0 0 0 0 0 0 #Ini salt conc [kg/m3], salt sol lim [kg/m3], prec salt den [kg/m3], gamma [-], phi_r [-], npoints [-], and threshold [-]  (all entries for saltprec)
+100-100*mt.cos((2*mt.pi*x/625)) + 250*(x/2500)**2 #The function for the reservoir surface
+
+"""Set the saturation functions"""
+krw * ((sw - swi) / (1.0 - sni -swi)) ** nkrw             #Wetting rel perm saturation function [-]
+krn * ((1.0 - sw - sni) / (1.0 - sni - swi)) ** nkrn      #Non-wetting rel perm saturation function [-]
+pec * ((sw - swi) / (1.0 - swi)) ** (-(1.0 / npe)) #Capillary pressure saturation function [Pa]
+
+"""Properties saturation functions"""
+"""swi [-], sni [-], krn [-], krw [-], pec [Pa], nkrw [-], nkrn [-], npe [-], threshold cP evaluation, ignore swi for cP"""
+SWI5  0.2 SNI5  0.05 KRW5  1 KRN5  1 PRE5  .4e6 NKRW5 2 NKRN3 2 HNPE5 1.2 THRE5  1e-2 IGN1 0
+
+"""Properties rock"""
+"""Kxy [mD], Kz [mD], phi [-], thickness [m]"""
+PERMXY5 700.15 PERMZ5 70.015 PORO5 0.15 THIC2 100
+
+"""Define the injection values""" 
+"""injection time [d], time step size to write results [d], maximum time step [d], fluid (0 wetting, 1 non-wetting), injection rates [kg/day]"""
+% if time == 0:
+% for j in range(nseason):
+% for i in range(mt.floor(timep/(tperiodi + tperiodp + tperiods))):
+${tperiodi} ${tperiodi} 1 1 ${qi}
+${tperiodp} ${tperiodp} 1 1 ${-qp} 3e6
+${tperiods} ${tperiods} 1 1 0
+% endfor
+${5*tperiodp} ${tperiodp} 1 1 ${-qp} 3e6
+% endfor
+% else:
+% for j in range(nseason-1):
+% for i in range(mt.floor(timep/(tperiodi + tperiodp + tperiods))):
+${tperiodi} ${tperiodi} 1 1 ${qi}
+${tperiodp} ${tperiodp} 1 1 ${-qp} 3e6
+${tperiods} ${tperiods} 1 1 0
+% endfor
+${5*tperiodp} ${tperiodp} 1 1 ${-qp} 3e6
+% endfor
+% for i in range(mt.floor(time/(tperiodi + tperiodp + tperiods))):
+${tperiodi} ${tperiodi} 1 1 ${qi}
+${tperiodp} ${tperiodp} 1 1 ${-qp} 3e6
+${tperiods} ${tperiods} 1 1 0
+% endfor
+% endif

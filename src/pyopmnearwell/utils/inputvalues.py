@@ -103,15 +103,17 @@ def readthefirstpart(lol, dic):  # pylint: disable=R0915
     dic["xflow"] = int((lol[10][0].strip()).split()[1])  # Cross flow within wellbore
     dic["perforations"] = [int((lol[11][0].strip()).split()[j]) for j in range(3)]
     dic["satnum"] = int((lol[12][0].strip()).split()[0])  # No. saturation regions
-    dic["hysteresis"] = int((lol[12][0].strip()).split()[1])  # Hysteresis
+    dic["hysteresis"] = 0  # Hysteresis
+    if ((lol[12][0].strip()).split()[1]).upper() == "CARLSON":
+        dic["hysteresis"] = 1
+        dic["hyst_model"] = 0
+    if ((lol[12][0].strip()).split()[1]).upper() == "KILLOUGH":
+        dic["hysteresis"] = 1
+        dic["hyst_model"] = 2
     dic["econ"] = float((lol[12][0].strip()).split()[2])  # Econ
     dic["salt_props"] = [float((lol[13][0].strip()).split()[j]) for j in range(7)]
     dic["z_xy"] = str(lol[14][0])  # The function for the reservoir surface
     index = 17  # Increase this if more rows are added to the model parameters part
-    dic["krwf"] = str(lol[index][0])  # Wetting rel perm saturation function [-]
-    dic["krnf"] = str(lol[index + 1][0])  # Non-wetting rel perm saturation function [-]
-    dic["pcwcf"] = str(lol[index + 2][0])  # Capillary pressure saturation function [Pa]
-    index += 6
     return dic, index
 
 
@@ -128,6 +130,12 @@ def readthesecondpart(lol, dic, index):
         dic (dict): Global dictionary with new added parameters
 
     """
+    if dic["template"] == "dyncpres":
+        dic["pcfact"] = [float((lol[13][0].strip()).split()[j]) for j in range(7, 12)]
+    dic["krwf"] = str(lol[index][0])  # Wetting rel perm saturation function [-]
+    dic["krnf"] = str(lol[index + 1][0])  # Non-wetting rel perm saturation function [-]
+    dic["pcwcf"] = str(lol[index + 2][0])  # Capillary pressure saturation function [Pa]
+    index += 6
     for name in ["rock", "safu"]:
         dic[name] = []
     if dic["hysteresis"] == 1:
@@ -170,10 +178,15 @@ def readthesecondpart(lol, dic, index):
                 dic["nz_perlayer"].append(int(row[9]))
     index += 3 + dic["satnum"] + dic["perforations"][0]
     column = []
+    dic["minWBHP_prod"] = []
     for i in range(len(lol) - index):
         if not lol[index + i]:
             break
         row = list((lol[index + i][0].strip()).split())
         column.append([float(row[j]) for j in range(5)])
+        if float(row[4]) < 0:
+            dic["minWBHP_prod"].append(float(row[5]) / 1e5)
+        else:
+            dic["minWBHP_prod"].append(dic["pressure"])
     dic["inj"] = column
     return dic
