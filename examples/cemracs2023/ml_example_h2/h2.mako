@@ -17,7 +17,7 @@ cake 36  #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in degre
 """Set the saturation functions"""
 krw * ((sw - swi) / (1.0 - sni -swi)) ** nkrw             #Wetting rel perm saturation function [-]
 krn * ((1.0 - sw - sni) / (1.0 - sni - swi)) ** nkrn      #Non-wetting rel perm saturation function [-]
-pec * ((sw - swi) / (1.0 - sni - swi)) ** (-(1.0 / npe)) #Capillary pressure saturation function [Pa]
+pec * ((sw - swi) / (1.0 - swi)) ** (-(1.0 / npe))        #Capillary pressure saturation function [Pa]
 
 """Properties saturation functions"""
 """swi [-], sni [-], krn [-], krw [-], pec [Pa], nkrw [-], nkrn [-], npe [-], threshold cP evaluation, ignore swi for cP"""
@@ -37,13 +37,13 @@ PERMXY5 0.01 PERMZ5 0.01 PORO5 0.1 THIC2 25
 """injection time [d], time step size to write results [d], maximum time step [d], fluid (0 wetting, 1 non-wetting), injection rates [kg/day]"""
 ${time} ${time} 10 1 20000
 90 10 10 1 0
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000
-7 7 7 1 -40000
+7 7 7 1 -40000 3.6e6
 7 7 7 1 40000

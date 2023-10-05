@@ -223,7 +223,7 @@ WCONINJE
 %endif
 /
 WCONPROD
-'PRO0' ${'OPEN' if dic['inj'][j][4] < 0 else 'STOP'} 'GRAT' 2* ${f"{abs(dic['inj'][j][4]) / 0.0850397 : E}"} 2* ${.9*dic['pressure']}/
+'PRO0' ${'OPEN' if dic['inj'][j][4] < 0 else 'STOP'} 'GRAT' 2* ${f"{abs(dic['inj'][j][4]) / 0.0850397 : E}"} 2* ${dic["minWBHP_prod"][j] if dic['inj'][j][4] < 0 else ''}/
 /
 WECON
 'PRO0' 1* ${f"{dic['econ']*abs(dic['inj'][j][4]) / 0.0850397 : E}"} /
