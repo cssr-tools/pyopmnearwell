@@ -41,9 +41,18 @@ ensemble.setup_ensemble(
     os.path.join(dirname, "ensemble"),
     h2o_ensemble,
     os.path.join(dirname, "h2o_ensemble.mako"),
+    recalc_grid=False,
+    recalc_sections=True,
+    recalc_tables=False,
 )
 data: dict[str, Any] = ensemble.run_ensemble(
-    FLOW, os.path.join(dirname, "ensemble"), runspecs_ensemble, ["PRESSURE"], []
+    FLOW,
+    os.path.join(dirname, "ensemble"),
+    runspecs_ensemble,
+    ["PRESSURE"],
+    [],
+    [],
+    num_report_steps=100,
 )
 
 
@@ -56,14 +65,14 @@ pressures: np.ndarray = ensemble.extract_features(
 
 # Truncate outer and inner cells. Truncate every time step but the last one.
 # The innermost radius corresponds to the bottom hole pressure and is already truncated
-# for the ``pressures`` and ``WI`` arrays.
-pressures = pressures[..., -1, 4:-4, :]
+# for the ``WI`` array.
+pressures = pressures[..., -1, 5:-4, :]
 radiis: np.ndarray = ensemble.calculate_radii(
     os.path.join(dirname, "ensemble", "runfiles_0", "preprocessing", "GRID.INC")
 )[5:-4]
 assert pressures.shape[-2] == radiis.shape[-1]
 
-WI: np.ndarray = ensemble.calculate_WI(data, runspecs_ensemble, num_zcells=1)[
+WI: np.ndarray = ensemble.calculate_WI(data, runspecs_ensemble, num_zcells=1)[0][
     ..., -1, 4:-4
 ]
 ensemble.store_dataset(
@@ -106,7 +115,7 @@ runspecs_integration: dict[str, Any] = {
     },
 }
 integration.recompile_flow(
-    os.path.join(dirname, "nn", "scales.csv"), "h2o_2_inputs", OPM_ML
+    os.path.join(dirname, "nn", "scalings.csv"), "h2o_2_inputs", OPM_ML
 )
 integration.run_integration(
     runspecs_integration,

@@ -5,31 +5,83 @@ from typing import Any, Optional
 
 import numpy as np
 import tensorflow as tf
+from numpy.typing import ArrayLike
+from tensorflow import keras
 from tensorflow import python as tf_python  # pylint: disable=E0611
 
 
-class ScalerLayer:
+class ScalerLayer(keras.layers.Layer):
     """MixIn to provide functionality for the Scaler Layer."""
+
+    data_min: tf.Tensor
+    data_max: tf.Tensor
 
     def __init__(
         self,
-        data_min: Optional[float | np.ndarray] = None,
-        data_max: Optional[float | np.ndarray] = None,
-        feature_range: tuple[float, float] = (0, 1),
+        # TODO: Is float a subset of
+        data_min: Optional[float | ArrayLike] = None,
+        data_max: Optional[float | ArrayLike] = None,
+        feature_range: ArrayLike = tf.Tensor([0, 1]),
         **kwargs,  # pylint: disable=W0613
     ) -> None:
         super().__init__()
-        self.feature_range = feature_range
+        self.feature_range: tf.Tensor = tf.convert_to_tensor(feature_range)
+        self._is_adapted: bool = False
         if data_min is not None and data_max is not None:
-            self.data_min = data_min
-            self.data_max = data_max
+            self.data_min = tf.convert_to_tensor(data_min)
+            self.data_max = tf.convert_to_tensor(data_max)
             self._adapt()
 
-    def adapt(self, data) -> None:
+    def build(self, input_shape: tuple[int, ...]) -> None:
+        """Initialize ``data_min`` and ``data_max`` with the default values if they have
+        not been initialized yet.
+
+        Args:
+            input_shape (tuple[int, ...]): _description_
+        """
+        if not self._is_adapted:
+            # ``data_min`` and ``data_max`` have the same shape as one input tensor.
+            self.data_min = tf.zeros(input_shape[1:])
+            self.data_max = tf.ones(input_shape[1:])
+            self._adapt()
+
+    def get_weights(self) -> list[ArrayLike]:
+        return [self.data_min, self.data_max, self.feature_range]
+
+    def set_weights(self, weights: list[np.ndarray]) -> None:
+        self.data_min = weights[0]
+        self.data_max = weights[1]
+        self.feature_range = weights[2]
+
+    # Ignore pylint complaining about a missing docstring.
+    # # TODO
+    # # Implement only if something special needs to be saved in the config compared to the base layer.
+    # # Every element of the config needs to be serialized.
+
+    # def get_config(self) -> dict[str, Any]:  # pylint: disable=C0116
+    #     config = super().get_config()  # type: ignore # pylint: disable=E1101
+    #     # Note: This returns the dict, but raises a warning that the layers is not JSON
+    #     # serializable. Fix this!
+    #     config.update(
+    #         {
+    #             "feature_range": self.feature_range,
+    #             "data_max": self.data_max,
+    #             "data_min": self.data_min,
+    #         }
+    #     )
+    #     return config
+
+    # def from_config(self, config: dict[str, Any]) -> None:
+    #     pass
+
+    def adapt(self, data: ArrayLike) -> None:
         """Fit the layer to the min and max of the data. This is done individually for
         each input feature.
 
-        Parameters:
+        Note: So far, this is only tested for 1 dimensional input and output. For higher
+        dimensional input and output some functionality might need to be added.
+
+        Args:
             data: _description_
         """
         data = tf.convert_to_tensor(data)
@@ -38,46 +90,22 @@ class ScalerLayer:
         self._adapt()
 
     def _adapt(self) -> None:
-        if np.any(self.data_min > self.data_max):
+        if tf.math.reduce_any(self.data_min > self.data_max):
             raise RuntimeError(
                 f"""self.data_min {self.data_min} cannot be larger than self.data_max
-                {self.data_max} for any element"""
+                {self.data_max} for any element."""
             )
-        self.scalar = np.where(
+        self.scalar = tf.where(
             self.data_max > self.data_min,
             self.data_max - self.data_min,
-            np.ones_like(self.data_min),
+            tf.ones_like(self.data_min),
         )
-        self.min = np.where(
+        self.min = tf.where(
             self.data_max > self.data_min,
             self.data_min,
-            np.zeros_like(self.data_min),
+            tf.zeros_like(self.data_min),
         )
         self._is_adapted = True
-
-    # Ignore pylint complaining about a missing docstring.
-    def set_params(self, params: dict[str, float]) -> None:  # pylint: disable=C0116
-        for key, value in params.items():
-            try:
-                setattr(self, key, value)
-            except KeyError:
-                raise KeyError(  # pylint: disable=W0707
-                    "Please pass a valid parameter."
-                )
-
-    # Ignore pylint complaining about a missing docstring.
-    def get_config(self) -> dict[str, Any]:  # pylint: disable=C0116
-        config = super().get_config()  # type: ignore # pylint: disable=E1101
-        # Note: This returns the dict, but raises a warning that the layers is not JSON
-        # serializable. Fix this!
-        config.update(
-            {
-                "feature_range": self.feature_range,
-                "data_max": self.data_max,
-                "data_min": self.data_min,
-            }
-        )
-        return config
 
 
 class MinMaxScalerLayer(
@@ -88,8 +116,17 @@ class MinMaxScalerLayer(
     See
     https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html
     for an explanation of the transform.
-
     """
+
+    def __init__(
+        self,
+        data_min: Optional[float | ArrayLike] = None,
+        data_max: Optional[float | ArrayLike] = None,
+        feature_range: ArrayLike = tf.Tensor([0, 1]),
+        **kwargs,  # pylint: disable=W0613
+    ) -> None:
+        super().__init__(data_min, data_max, feature_range, **kwargs)
+        self._name: str = "MinMaxScalerLayer"
 
     # Ignore pylint complaining about a missing docstring.
     def call(self, inputs: tf.Tensor) -> tf.Tensor:  # pylint: disable=C0116
@@ -100,6 +137,7 @@ class MinMaxScalerLayer(
                 the layer or set the ``data_min`` and ``data_max`` values manually."""
             )
 
+        # TODO: Does this need to be done?
         inputs = tf.convert_to_tensor(inputs)
         scaled_data = (inputs - self.min) / self.scalar
         # return self.feature_range[0] + (
@@ -108,14 +146,23 @@ class MinMaxScalerLayer(
         return scaled_data
 
 
-class MinMaxUNScalerLayer(ScalerLayer, tf.keras.layers.Layer):
+class MinMaxUnScalerLayer(ScalerLayer, tf.keras.layers.Layer):
     """Unscales the input by applying the inverse transform of ``MinMaxScalerLayer``.
 
     See
     https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html
     for an explanation of the transform.
-
     """
+
+    def __init__(
+        self,
+        data_min: Optional[float | ArrayLike] = None,
+        data_max: Optional[float | ArrayLike] = None,
+        feature_range: ArrayLike = np.array([0, 1]),
+        **kwargs,  # pylint: disable=W0613
+    ) -> None:
+        super().__init__(data_min, data_max, feature_range, **kwargs)
+        self._name: str = "MinMaxUnScalerLayer"
 
     # Ignore pylint complaining about a missing docstring and something else.
     def call(self, inputs: tf.Tensor) -> tf.Tensor:  # pylint: disable=W0221
@@ -125,6 +172,7 @@ class MinMaxUNScalerLayer(ScalerLayer, tf.keras.layers.Layer):
                 the layer or set the ``data_min`` and ``data_max`` values manually."""
             )
 
+        # TODO: Does this need to be done?
         inputs = tf.convert_to_tensor(inputs)
         unscaled_data = inputs * self.scalar + self.min
         return unscaled_data

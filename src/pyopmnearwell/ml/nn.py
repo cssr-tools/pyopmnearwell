@@ -6,16 +6,12 @@ import logging
 import os
 from typing import Literal, Optional
 
-import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
-from tensorflow.keras.layers import Dense, Input
-from tensorflow.keras.models import Sequential
+from tensorflow import keras
 
-import pyopmnearwell.utils.units as units
 from pyopmnearwell.ml.kerasify import export_model
-from pyopmnearwell.utils.formulas import peaceman_WI
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -27,14 +23,78 @@ def get_FCNN(
     depth: int = 5,
     hidden_dim: int = 10,
     saved_model: Optional[str] = None,
-) -> tf.Module:
+    kernel_initializer: Literal["glorot_normal", "glorot_uniform"] = "glorot_normal",
+) -> keras.Model:
     layers = [
-        Dense(hidden_dim, activation="sigmoid", kernel_initializer="glorot_normal")
+        keras.layers.Dense(
+            hidden_dim, activation="sigmoid", kernel_initializer=kernel_initializer
+        )
         for _ in range(depth)
     ]
-    layers.insert(0, Input(shape=(ninputs,)))
-    layers.append(Dense(noutputs))
-    model = Sequential(layers)
+    layers.insert(0, keras.layers.Input(shape=(ninputs,)))
+    layers.append(keras.layers.Dense(noutputs))
+    model = keras.Sequential(layers)
+    if saved_model is not None:
+        model.load_weights(saved_model)
+    return model
+
+
+def get_1D_CNN(
+    noutputs: int,
+    depth_conv: int = 5,
+    depth_dense: int = 5,
+    kernel_size: int = 3,
+    filter_size: int = 3,
+    hidden_dense_dim: int = 10,
+    saved_model: Optional[str] = None,
+    input_shape: Optional[
+        tuple[int, int]
+    ] = None,  # ``shape = (size + padding, num_features)``
+) -> keras.Model:
+    model: keras.Model = keras.Sequential()
+
+    # Padding layer
+    model.add(keras.layers.ZeroPadding1D(padding=1))
+
+    # Convolutional layers
+    model.add(keras.layers.Conv1D(filter_size, kernel_size, activation="relu"))
+    for _ in range(depth_conv - 1):
+        model.add(
+            keras.layers.Conv1D(
+                filter_size,
+                kernel_size,
+                activation="relu",
+            )
+        )
+    model.add(keras.layers.Flatten())
+
+    # Dense layers
+    for _ in range(depth_dense):
+        model.add(
+            keras.layers.Dense(
+                hidden_dense_dim,
+                activation="sigmoid",
+            )
+        )
+    model.add(keras.layers.Dense(noutputs))
+
+    if saved_model is not None:
+        model.load_weights(saved_model)
+    return model
+
+
+def get_2D_CNN(
+    input_shape: list[int],
+    noutputs: int,
+    depth_conv: int = 5,
+    depth_dense: int = 5,
+    kernel_size: tuple[int, int] = (3, 3),
+    filter_size: tuple[int, int] = (3, 3),
+    hidden_dense_dim: int = 10,
+    saved_model: Optional[str] = None,
+) -> keras.Model:
+    model: keras.Model = keras.Sequential()
+    # TODO
     if saved_model is not None:
         model.load_weights(saved_model)
     return model
@@ -46,9 +106,20 @@ def scale_and_prepare_dataset(
     savepath: str,
     train_split: float = 0.9,
     val_split: Optional[float] = None,
+    conv_input: bool = False,
+    conv_output: bool = False,
+    shuffle: bool = True,
 ) -> tuple[tuple[np.ndarray, np.ndarray], tuple[np.ndarray, np.ndarray]]:
     ds: tf.data.Dataset = tf.data.Dataset.load(dsfile)
     features, targets = next(iter(ds.batch(batch_size=len(ds)).as_numpy_iterator()))
+
+    # Reshape features and targets for multidimensional input and output (e.g., for
+    # CNNs).
+    if conv_input:
+        features = features.reshape((-1, features.shape[-1]))
+    if conv_output:
+        targets = targets.reshape((-1, targets.shape[-1]))
+
     if len(feature_names) > features.shape[-1]:
         raise ValueError("Too many feature names.")
     elif len(feature_names) < features.shape[-1]:
@@ -62,7 +133,7 @@ def scale_and_prepare_dataset(
     target_scaler = MinMaxScaler()
     feature_scaler.fit(features)
     target_scaler.fit(targets)
-    with open(os.path.join(savepath, "scales.csv"), "w", newline="") as csvfile:
+    with open(os.path.join(savepath, "scalings.csv"), "w", newline="") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=["variable", "min", "max"])
         writer.writeheader()
         for feature_name, feature_min, feature_max in zip(
@@ -78,11 +149,12 @@ def scale_and_prepare_dataset(
                 "max": target_scaler.data_max_[0],
             }
         )
-    logger.info(f"Saved scalings to {os.path.join(savepath, 'scales.csv')}.")
+    logger.info(f"Saved scalings to {os.path.join(savepath, 'scalings.csv')}.")
 
     # Reload the dataset and shuffle once before splitting into training and val.
     ds = tf.data.Dataset.load(dsfile)
-    ds = ds.shuffle(buffer_size=len(ds))
+    if shuffle:
+        ds = ds.shuffle(buffer_size=len(ds))
 
     # Split the dataset into a training and a validation data set.
     train_size = int(train_split * len(ds))
@@ -93,9 +165,16 @@ def scale_and_prepare_dataset(
     train_features, train_targets = next(
         iter(train_ds.batch(batch_size=len(train_ds)).as_numpy_iterator())
     )
-    val_features, val_targets = next(
-        iter(val_ds.batch(batch_size=len(val_ds)).as_numpy_iterator())
-    )
+
+    # Ensure that the program works for a train:val split of (1:0)
+    if val_split > 0:
+        val_features, val_targets = next(
+            iter(val_ds.batch(batch_size=len(val_ds)).as_numpy_iterator())
+        )
+    else:
+        val_features, val_targets = np.zeros((1, train_features.shape[-1])), np.zeros(
+            (1, train_targets.shape[-1])
+        )
     # Scale the features and targets.
     train_features = feature_scaler.transform(train_features)
     train_targets = target_scaler.transform(train_targets)
@@ -110,14 +189,13 @@ def l2_error(
 ) -> tf.Tensor:
     """Calculate the relative L2 error between the target and prediction.
 
-
-
-    Parameters:
-        target: _description_
-        prediction: _description_
+    Args:
+        target (_type_): _description_
+        prediction (_type_): _description_
+        mode (_type_): _description_
 
     Returns:
-        _description_
+        _type_: _description_
     """
     pass
 
@@ -130,7 +208,7 @@ def train(
     lr: float = 0.1,
     epochs: int = 500,
     bs: int = 64,
-    patience: int = 20,
+    patience: int = 100,
     lr_patience: int = 10,
 ) -> None:
     train_features, train_targets = train_data
@@ -151,8 +229,13 @@ def train(
             patience=lr_patience,
             verbose=1,
             min_delta=1e-10,
-            min_lr=1e-7,
+            # min_lr=1e-7,
         ),
+    )
+    early_stopping_callback = tf.keras.callbacks.EarlyStopping(
+        monitor="val_loss",
+        patience=patience,
+        verbose=1,
     )
     tensorboard_callback = tf.keras.callbacks.TensorBoard(
         log_dir=os.path.join(savepath, "logdir")
@@ -171,13 +254,66 @@ def train(
         # Ignore Pylance complaining. This is an typing error in tensorflow/keras.
         verbose=1,  # type: ignore
         validation_data=(val_features, val_targets),
-        callbacks=[checkpoint_callback, lr_callback, tensorboard_callback],
+        callbacks=[
+            checkpoint_callback,
+            lr_callback,
+            early_stopping_callback,
+            tensorboard_callback,
+        ],
     )
     model.save_weights(os.path.join(savepath, "finalmodel"))
 
     # Load the best model and save to OPM format.
     model.load_weights(os.path.join(savepath, "bestmodel"))
     export_model(model, os.path.join(savepath, "WI.model"))
+
+
+def scale_and_evaluate(
+    model: keras.Model, input: np.ndarray, scalingsfile: str
+) -> np.ndarray:
+    """Scale the input, evaluate with the model and scale the output.
+
+    Args:
+        model (tf.keras.Model): _description_
+        input (np.ndarray): _description_
+        scalingsfile (str): _description_
+
+    Returns:
+        _description_
+    """
+    # Get the feature and target scaling.
+    feature_min: list[float] = []
+    feature_max: list[float] = []
+    target_min: list[float] = []
+    target_max: list[float] = []
+    with open(scalingsfile) as csvfile:
+        reader = csv.DictReader(csvfile, fieldnames=["variable", "min", "max"])
+
+        # Skip the header
+        next(reader)
+
+        for row in reader:
+            if row["variable"].startswith("WI"):
+                target_min.append(float(row["min"]))
+                target_max.append(float(row["max"]))
+            else:
+                feature_min.append(float(row["min"]))
+                feature_max.append(float(row["max"]))
+
+    # Create MinMaxScalers and manually set the parameters.
+    feature_scaler: MinMaxScaler = MinMaxScaler()
+    feature_scaler.data_min_ = np.array(feature_min)
+    feature_scaler.data_max_ = np.array(feature_max)
+    feature_scaler.scale_ = 1 / (feature_scaler.data_max_ - feature_scaler.data_min_)
+    feature_scaler.min_ = 0 - feature_scaler.data_min_ * feature_scaler.scale_
+    target_scaler: MinMaxScaler = MinMaxScaler()
+    target_scaler.data_min_ = np.array(target_min)
+    target_scaler.data_max_ = np.array(target_max)
+    target_scaler.scale_ = 1 / (target_scaler.data_max_ - target_scaler.data_min_)
+    target_scaler.min_ = 0 - target_scaler.data_min_ * target_scaler.scale_
+
+    output = model(feature_scaler.transform(input))
+    return target_scaler.inverse_transform(output)
 
 
 # # Plot the trained model vs. the data.

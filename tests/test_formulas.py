@@ -71,17 +71,17 @@ def opm_cov2brinepvt():
 
 
 # Test cases for co2brinepvt
-@pytest.mark.parametrize(
-    "pressure, temperature",
-    [
-        (pressure, temperature)
-        for pressure, temperature in zip(
-            np.random.uniform(10000, 50000000, 50), np.random.uniform(250, 400, 50)
-        )
-    ],
-)
-@pytest.mark.parametrize("property", ["density", "viscosity"])
-@pytest.mark.parametrize("phase", ["CO2", "water"])
-def test_co2brinepvt(opm_cov2brinepvt) -> None:
-    # TODO
-    pass
+# @pytest.mark.parametrize(
+#     "pressure, temperature",
+#     [
+#         (pressure, temperature)
+#         for pressure, temperature in zip(
+#             np.random.uniform(10000, 50000000, 50), np.random.uniform(250, 400, 50)
+#         )
+#     ],
+# )
+# @pytest.mark.parametrize("property", ["density", "viscosity"])
+# @pytest.mark.parametrize("phase", ["CO2", "water"])
+# def test_co2brinepvt(opm_cov2brinepvt) -> None:
+#     # TODO
+#     pass

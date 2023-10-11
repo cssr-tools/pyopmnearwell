@@ -6,6 +6,19 @@ import subprocess
 from typing import Literal
 
 
+def equivalent_well_block_radius(delta_x: float) -> float:
+    """Calculate the equivalent well block radius for a given cell side length.
+
+    Parameters:
+        delta_x: _description_
+
+    Returns:
+        _description_
+
+    """
+    return math.exp(-math.pi / 2) * delta_x
+
+
 def peaceman_WI(  # pylint: disable=C0103
     k_h: float, r_e: float, r_w: float, rho: float, mu: float
 ) -> float:
@@ -114,7 +127,8 @@ def co2brinepvt(
         phase (Literal["CO2", "water"]): Phase of interest.
 
     Returns:
-        _description_
+        quantity (float): Density (unit: [kg/m^3]) or viscosity (unit: [Pa*s])
+
     """
     OPM_ML: str = "/home/peter/Documents/2023_CEMRACS/opm_ml"
     CO2BRINEPVT: str = os.path.join(OPM_ML, "build/opm-common/bin/co2brinepvt")

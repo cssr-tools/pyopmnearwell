@@ -19,27 +19,34 @@ dir: str = os.path.dirname(__file__)
 
 
 def recompile_flow(
-    scalesfile: str,
-    template: Literal["co2_3_inputs", "co2_5_inputs", "h2o_2_inputs"],
+    scalingsfile: str,
+    standard_well_impl_template: Literal[
+        "co2_3_inputs", "co2_5_inputs", "h2o_2_inputs", "co2_local_stencil"
+    ],
     opm_path: str,
+    standard_well_file: Literal["base", "local_stencil"] = "base",
+    stencil_size: int = 3,
+    cell_feature_names: list[str] = [],
 ) -> None:
     opm_well_path: str = os.path.join(
         opm_path, "opm-simulators", "opm", "simulators", "wells"
     )
-    template_path: str = os.path.join(dir, "..", "templates", "standardwell_opm")
-    templatefile: str = os.path.join(template_path, f"{template}.mako")
+    template_path: str = os.path.join(dir, "..", "templates")
+    templatefile: str = os.path.join(
+        template_path, "standardwell_impl", f"{standard_well_impl_template}.mako"
+    )
 
     # Get the scaling and write it to the C++ mako that integrates nn into OPM.
     feature_min: list[float] = []
     feature_max: list[float] = []
-    with open(scalesfile) as csvfile:
+    with open(scalingsfile) as csvfile:
         reader = csv.DictReader(csvfile, fieldnames=["variable", "min", "max"])
 
         # Skip the header
         next(reader)
 
         for row in reader:
-            if row["variable"] == "WI":
+            if row["variable"].startswith("WI"):
                 target_min: float = float(row["min"])
                 target_max: float = float(row["max"])
             else:
@@ -50,8 +57,10 @@ def recompile_flow(
         "xmax": feature_max,
         "ymin": target_min,
         "ymax": target_max,
+        "stencil_size": stencil_size,
+        "cell_feature_names": cell_feature_names,
     }
-    filledtemplate: Template = fill_template(var, filename=templatefile)
+    filledtemplate: str = fill_template(var, filename=templatefile)
     with open(
         os.path.join(opm_well_path, "StandardWell_impl.hpp"),
         "w",
@@ -60,7 +69,7 @@ def recompile_flow(
         file.write(filledtemplate)
 
     shutil.copyfile(
-        os.path.join(template_path, "StandardWell.hpp"),
+        os.path.join(template_path, "standardwell", f"{standard_well_file}.hpp"),
         os.path.join(opm_well_path, "StandardWell.hpp"),
     )
 

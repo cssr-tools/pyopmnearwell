@@ -10,11 +10,9 @@ import logging
 import math
 import os
 import shutil
-import subprocess
 from collections import OrderedDict
-from typing import Any, Literal, Optional
+from typing import Any, Optional
 
-import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from ecl.eclfile.ecl_file import open_ecl_file
@@ -22,7 +20,6 @@ from mako import exceptions
 from mako.template import Template
 
 import pyopmnearwell.utils.units as units
-from pyopmnearwell.utils.formulas import peaceman_WI
 from pyopmnearwell.utils.inputvalues import readthefirstpart, readthesecondpart
 from pyopmnearwell.utils.writefile import reservoir_files
 
@@ -32,10 +29,10 @@ FLAGS = (
     " --linear-solver-reduction=1e-5 --relaxed-max-pv-fraction=0"
     + " --ecl-enable-drift-compensation=0 --newton-max-iterations=50"
     + " --newton-min-iterations=5 --tolerance-mb=1e-7 --tolerance-wells=1e-5"
-    + " --relaxed-well-flow-tol=1e-5 --use-multisegment-well=false --enable-tuning=true"
+    + " --relaxed-well-flow-tol=1e-7 --use-multisegment-well=false --enable-tuning=true"
     + " --enable-opm-rst-file=true --linear-solver=cprw"
     + " --enable-well-operability-check=false"
-    + " --min-time-step-before-shutting-problematic-wells-in-days=1e-99"
+    + " --min-time-step-before-shutting-problematic-wells-in-days=1e-1"
 )
 
 
@@ -79,7 +76,6 @@ def create_ensemble(
     Raises:
         ValueError: If ``runspecs["npoints"]`` is larger than the number of generated
         ensemble members.
-
     """
     if efficient_sampling is None:
         efficient_sampling = []
@@ -166,8 +162,8 @@ def memory_efficient_sample(variables: np.ndarray, num_members: int) -> np.ndarr
     """Requires that all variables have the same number of samples.
 
     Parameters:
-        variables: _description_
-        num_members: _description_
+        variables (np.ndarray): _description_
+        num_members (int): _description_
 
     Returns:
         _description_
@@ -245,20 +241,26 @@ def run_ensemble(
     ecl_keywords: list[str],
     init_keywords: list[str],
     summary_keywords: list[str],
+    num_report_steps: Optional[int] = None,
 ) -> dict[str, Any]:
-    """Run OPM flow for each ensemble member and store data."""
+    """Run OPM flow for each ensemble member and store data.
+
+    Args:
+        flow_path (_type_): _description_
+        ensemble_path (_type_): _description_
+        runspecs (_type_): _description_
+        ecl_keywords (_type_): _description_
+        init_keywords (_type_): _description_
+        summary_keywords (_type_): _description_
+        num_report_steps (_type_, optional): _description_. Defaults to None.
+
+    Returns:
+        _type_: _description_
+    """
     data: dict = {
         keyword: [] for keyword in ecl_keywords + init_keywords + summary_keywords
     }
     for i in range(round(runspecs["npoints"] / runspecs["npruns"])):
-        command_lst = [
-            f"{flow_path}"
-            + f" {os.path.join(ensemble_path, f'runfiles_{j}', 'preprocessing', f'RUN_{j}.DATA')}"
-            + f" --output-dir={os.path.join(ensemble_path, f'results_{j}')}"
-            + f" {FLAGS} & "
-            for j in range(runspecs["npruns"] * i, runspecs["npruns"] * (i + 1))
-        ]
-
         command = " ".join(
             [
                 f"{flow_path}"
@@ -273,6 +275,13 @@ def run_ensemble(
             with open_ecl_file(
                 os.path.join(ensemble_path, f"results_{j}", f"RUN_{j}.UNRST")
             ) as ecl_file:
+                # Skip result, if the simulation did not run to the last time step:
+                if (
+                    num_report_steps is not None
+                    and ecl_file.num_report_steps() < num_report_steps
+                ):
+                    continue
+
                 for keyword in ecl_keywords:
                     # Append the data corresponding to the keyword for all report steps
                     # and cells.
@@ -328,7 +337,7 @@ def calculate_WI(
     data: dict[str, Any],
     runspecs: dict[str, Any],
     num_zcells: int,
-) -> np.ndarray:
+) -> tuple[np.ndarray, list[int]]:
     r"""Calculate the well index (WI) for a given dataset.
 
     The well index (WI) is calculated using the following formula:
@@ -347,6 +356,9 @@ def calculate_WI(
         WI_array (numpy.ndarray): ``shape=(,num_cells - 1)``
             An array of well index values for each data point in the dataset. In the
             correct unit for OPM. Unit [m^4*s/kg].
+        failed_indices (list[int]): Indices for the ensemble members where WI could not
+        be computed. E.g., if the simmulation went wrong and the pressure difference is
+        zero.
 
     Raises:
         ValueError: If no data is found for the 'pressure' keyword in the dataset.
@@ -361,7 +373,8 @@ def calculate_WI(
         raise ValueError("No data found for the 'pressure' keyword.")
 
     # Calculate WI for each ensemble member.
-    WI_values = []
+    WI_values: list[np.ndarray] = []
+    failed_indices: list[int] = []
     for i, member_pressure_data in enumerate(pressure_data):
         p_w = member_pressure_data[
             ..., 0 :: int(member_pressure_data.shape[-1] / num_zcells)
@@ -375,24 +388,29 @@ def calculate_WI(
             ),
             axis=-1,
         )  # Cell pressures of all but the well blocks.
-        if "INJECTION_RATE_PER_SECOND" in runspecs["constants"]:
-            # Injection rate is constant for all ensemble members.
-            WI = runspecs["constants"]["INJECTION_RATE_PER_SECOND"] / (
-                np.tile(p_w, int(member_pressure_data.shape[-1] / num_zcells) - 1)
-                - p_gb
-            )  # ``shape=(runspecs["npoints"], num_time_data - 1, num_grid_cell_data)``;
-            # unit [m^4*s/kg]
-        elif "INJECTION_RATE_PER_SECOND" in data:
-            # Get i-th injection rate in the ensemble.
-            WI = data["INJECTION_RATE_PER_SECOND"][i] / (
-                np.tile(p_w, int(member_pressure_data.shape[-1] / num_zcells) - 1)
-                - p_gb
-            )  # ``shape=(runspecs["npoints"], num_time_data - 1, num_grid_cell_data)``;
-            # unit [m^4*s/kg]
+        try:
+            if "INJECTION_RATE_PER_SECOND" in runspecs["constants"]:
+                # Injection rate is constant for all ensemble members.
+                WI = runspecs["constants"]["INJECTION_RATE_PER_SECOND"] / (
+                    np.tile(p_w, int(member_pressure_data.shape[-1] / num_zcells) - 1)
+                    - p_gb
+                )  # ``shape=(runspecs["npoints"], num_time_data - 1, num_grid_cell_data)``;
+                # unit [m^4*s/kg]
+            elif "INJECTION_RATE_PER_SECOND" in data:
+                # Get i-th injection rate in the ensemble.
+                WI = data["INJECTION_RATE_PER_SECOND"][i] / (
+                    np.tile(p_w, int(member_pressure_data.shape[-1] / num_zcells) - 1)
+                    - p_gb
+                )  # ``shape=(runspecs["npoints"], num_time_data - 1, num_grid_cell_data)``;
+                # unit [m^4*s/kg]
+            WI_values.append(WI)
+        except Exception:
+            failed_indices.append(i)
 
-        WI_values.append(WI)
-
-    return np.array(WI_values)  # ``shape=(,num_cells - 1)``; ; unit [m^4*s/kg]
+    return (
+        np.array(WI_values),
+        failed_indices,
+    )  # ``shape=(,num_cells - 1)``; ; unit [m^4*s/kg]
 
 
 def extract_features(
@@ -424,16 +442,14 @@ def extract_features(
 
     Raises:
         ValueError: If no data is found for the 'pressure' keyword in the dataset.
-
     """
     if keyword_scalings is None:
         keyword_scalings = {}
     features: list[np.ndarray] = []
     for keyword in keywords:
-        # Truncate the data at the well cell.
-        feature: np.ndarray = np.array(data[keyword])[
-            ..., 1:
-        ]  # ``shape=(ensemble_size, num_report_steps, num_cells - 1)``
+        feature: np.ndarray = np.array(
+            data[keyword]
+        )  # ``shape=(ensemble_size, num_report_steps, num_cells)``
         if keyword == "TEMPERATURE":
             feature += keyword_scalings.get(keyword, 0.0)
         else:

@@ -1,7 +1,5 @@
 """Test the ``ml.ensemble`` module."""
 import os
-import shutil
-import tempfile
 from collections.abc import Iterator
 from contextlib import nullcontext as does_not_raise
 from typing import Any
@@ -23,15 +21,22 @@ dir = os.path.dirname(__file__)
 REPORT_STEPS: int = 20
 NUM_CELLS: int = 100
 
+# @pytest.fixture(scope="session")
+# def temp_ensemble_dir(tmp_path_factory) -> Iterator[str]:
+#     """Create and return a temporary directory for testing."""
+#     dirname = tmp_path_factory.mktemp("ensemble")
+#     os.mkdir(os.path.join(dirname, "preprocessing"))
+#     os.mkdir(os.path.join(dirname, "jobs"))
+#     yield dirname
+
 
 @pytest.fixture(scope="session")
-def temp_ensemble_dir(tmp_path_factory) -> Iterator[str]:
+def temp_ensemble_dir(tmp_path_factory) -> str:
     """Create and return a temporary directory for testing."""
     dirname = tmp_path_factory.mktemp("ensemble")
     os.mkdir(os.path.join(dirname, "preprocessing"))
     os.mkdir(os.path.join(dirname, "jobs"))
-    yield dirname
-    # shutil.rmtree(dirname)
+    return dirname
 
 
 @pytest.fixture(scope="session")
