@@ -1,8 +1,8 @@
 # SPDX-FileCopyrightText: 2023 NORCE
 # SPDX-License-Identifier: GPL-3.0
 
-"""
-Utility functions for necessary files and variables to run OPM Flow.
+"""Utility functions for necessary files and variables to run OPM Flow.
+
 """
 
 import csv
@@ -36,8 +36,8 @@ def reservoir_files(
         recalc_tables (bool): If ``False``, ``TABLES.INC`` is not recalculated.
         recalc_sections (bool): If ``False``, the ``GEOLOGY.INC`` and ``REGIONS.INC``
             are not recalculated.
-        inc_folder: (str): If any of the mentioned files is not recalculated, they
-            are taken from this folder.
+        inc_folder (str): If any of the mentioned files is not recalculated, they are
+            taken from this folder.
 
     Note:
         - All of the ``recalc_*`` options only work for

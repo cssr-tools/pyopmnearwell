@@ -10,12 +10,13 @@ import pytest
 from pyopmnearwell.utils.formulas import (
     co2brinepvt,
     data_WI,
+    hydrostatic_fluid,
+    hydrostatic_gas,
     peaceman_WI,
     two_phase_peaceman_WI,
 )
 
 
-# Test cases for peaceman_WI
 @pytest.mark.parametrize(
     "k_h, r_e, r_w, rho, mu, expected_result",
     [
@@ -30,7 +31,6 @@ def test_peaceman_WI(k_h, r_e, r_w, rho, mu, expected_result):
     assert pytest.approx(result, rel=1e-4) == expected_result
 
 
-# Test cases for two_phase_peaceman_WI
 @pytest.mark.parametrize(
     "k_h, r_e, r_w, rho_1, mu_1, k_r1, rho_2, mu_2, k_r2, expected_result",
     [
@@ -47,7 +47,6 @@ def test_two_phase_peaceman_WI(
     assert pytest.approx(result, rel=1e-4) == expected_result
 
 
-# Test cases for data_WI
 @pytest.mark.parametrize(
     "q, p_w, p_gb, expected_result",
     [
@@ -70,7 +69,6 @@ def opm_cov2brinepvt():
     pass
 
 
-# Test cases for co2brinepvt
 # @pytest.mark.parametrize(
 #     "pressure, temperature",
 #     [
@@ -85,3 +83,43 @@ def opm_cov2brinepvt():
 # def test_co2brinepvt(opm_cov2brinepvt) -> None:
 #     # TODO
 #     pass
+
+
+@pytest.mark.parametrize(
+    "rho, height, gravity, expected_pressure",
+    [
+        (1000, 10, None, 98067.0),
+        (1200, 15, None, 176520.6),
+        (800, 20, 9.75, 156000.0),
+    ],
+)
+def test_hydrostatic_fluid(rho, height, gravity, expected_pressure):
+    args = locals()
+    filtered_args = {
+        key: value
+        for key, value in args.items()
+        if value is not None and key != "expected_pressure"
+    }
+    result = hydrostatic_fluid(**filtered_args)
+    assert pytest.approx(result, rel=1e-7) == expected_pressure
+
+
+@pytest.mark.parametrize(
+    "reference_pressure, height, temperature, molecule_mass, gravity, expected_pressure",
+    [
+        (101325, 1000, 300, 0.029, None, 90406.59923388921),
+        (80000, 200, 400, 0.032, None, 78504.42842124676),
+        (120000, 30, 350, 0.018, 9.3, 119793.09020997149),
+    ],
+)
+def test_hydrostatic_gas(
+    reference_pressure, height, temperature, molecule_mass, gravity, expected_pressure
+):
+    args = locals()
+    filtered_args = {
+        key: value
+        for key, value in args.items()
+        if value is not None and key != "expected_pressure"
+    }
+    result = hydrostatic_gas(**filtered_args)
+    assert pytest.approx(result, rel=1e-7) == expected_pressure

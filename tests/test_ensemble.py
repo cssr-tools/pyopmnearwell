@@ -206,7 +206,7 @@ class TestEnsemble:
 
         ecl_keywords: list[str] = ["PRESSURE", "SGAS"]
         init_keywords: list[str] = ["PERMX"]
-        summary_keywords: list[str] = ["W1BHP"]
+        summary_keywords: list[str] = ["WBHP:INJ0"]
         OPM: str = "/home/peter/Documents/2023_CEMRACS/opm"
         FLOW: str = f"{OPM}/build/opm-simulators/bin/flow"
 

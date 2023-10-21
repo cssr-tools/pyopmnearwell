@@ -27,12 +27,22 @@ def feature_batch(request) -> np.ndarray:
             "v_1": (-5.0, 5.0),
             "WI_1": (5.0, 10.0),
             "WI_2": (-20.0, -10.0),
+            "feature_range": (-1.0, 1.0),
+            "target_range": (-5.0, 1.0),
         },
         {
             "v_0": (-3.5, 20.5),
             "v_1": (-7.4, -5.6),
             "WI_1": (-400, 30.0),
             "WI_2": (375.5, 380.92),
+            "feature_range": (0.0, 1.0),
+            "target_range": (5.0, 10.0),
+        },
+        {
+            "v_0": (20, 20.5),
+            "v_1": (-14, -13),
+            "WI_1": (-40559.5, 1.0),
+            "WI_2": (-600.5, 2292),
         },
     ]
 )
@@ -41,7 +51,10 @@ def scalings(request) -> dict[str, tuple[float, float]]:
 
 
 @pytest.fixture
-def write_scalings(scalings: dict[str, tuple[float, float]], tmp_path_factory) -> str:
+def write_scalings(
+    scalings: dict[str, tuple[float, float]],
+    tmp_path_factory,
+) -> str:
     dirname = tmp_path_factory.mktemp("test_nn")
     with open(os.path.join(dirname, "scalings.csv"), "w", newline="") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=["variable", "min", "max"])
@@ -72,14 +85,34 @@ def test_scale_and_evaluate(
         identity_nn, feature_batch, os.path.join(write_scalings, "scalings.csv")
     )
     feature_scalings: list[tuple[float, float]] = list(scalings.values())[:2]
-    output_scalings: list[tuple[float, float]] = list(scalings.values())[2:]
+    output_scalings: list[tuple[float, float]] = list(scalings.values())[2:4]
+    if len(list(scalings.values())) > 4:
+        feature_range: tuple[float, float] = list(scalings.values())[4]
+        target_range: tuple[float, float] = list(scalings.values())[5]
+    else:
+        feature_range = (-1, 1)
+        target_range = (-1, 1)
     for i, (feature_min, feature_max), (target_min, target_max) in zip(
         range(output_batch.shape[-1]), feature_scalings, output_scalings
     ):
-        scaled_feature: np.ndarray = (feature_batch[..., i] - feature_min) / (
+        std_feature: np.ndarray = (feature_batch[..., i] - feature_min) / (
             feature_max - feature_min
         )
-        scaled_output: np.ndarray = (
-            output_batch[..., i] * (target_max - target_min) + target_min
+        scaled_feature: np.ndarray = (
+            std_feature * (feature_range[1] - feature_range[0]) + feature_range[0]
         )
-        assert pytest.approx(scaled_feature, rel=1e-4) == scaled_output
+        # The nn consists of one identity layer, hence the features and outputs are
+        # identical.
+        scaled_output: np.ndarray = scaled_feature
+        std_output: np.ndarray = (scaled_output - target_range[0]) / (
+            target_range[1] - target_range[0]
+        )
+        unscaled_output: np.ndarray = (
+            std_feature * (target_max - target_min)
+        ) + target_min
+
+        assert pytest.approx(output_batch[..., i], rel=1e-4) == unscaled_output
+
+
+def test_scale_and_prepare_dataset() -> None:
+    pass

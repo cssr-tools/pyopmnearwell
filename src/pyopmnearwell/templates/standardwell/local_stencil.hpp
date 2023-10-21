@@ -444,7 +444,7 @@ namespace Opm
                                                       const SummaryState& summary_state,
                                                       DeferredLogger& deferred_logger) const;
         template <class Value>
-        Value wellIndexEval(const int perf, const Simulator& ebosSimulator) const;
+        Value wellIndexEval(const int perf, const Value& pressure, const Simulator& ebosSimulator) const;
 
     private:
 

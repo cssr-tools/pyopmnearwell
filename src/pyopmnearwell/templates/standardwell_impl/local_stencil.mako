@@ -287,9 +287,9 @@ namespace Opm
                              deferred_logger); 
                 }
                 if constexpr (std::is_same_v<Value, EvalWell>) {
-                    WI = this->extendEval(wellIndexEval(perf, ebosSimulator));
+                    WI = this->extendEval(wellIndexEval(perf, Base::restrictEval(pressure), ebosSimulator));
                 } else {
-                    WI = wellIndexEval(perf, ebosSimulator);
+                    WI = wellIndexEval(perf, pressure, ebosSimulator);
                 }
                 auto injectorType = this->well_ecl_.injectorType();
                 if (injectorType == InjectorType::WATER) {
@@ -2540,8 +2540,30 @@ namespace Opm
     Value
     StandardWell<TypeTag>::wellIndexEval(
         const int perf,
+        const Value& pressure,
         const Simulator& ebosSimulator
         ) const {
+
+        // Define some helper functions in this scope
+        auto obtain = [this](const Eval& value)
+            {
+                if constexpr (std::is_same_v<Value, Scalar>) {
+                    static_cast<void>(this); // suppress clang warning
+                    return getValue(value);
+                } else {
+                    return this->extendEval(value);
+                }
+            };
+        auto zeroElem = [this]()
+                        {
+                            if constexpr (std::is_same_v<Value, Scalar>) {
+                                static_cast<void>(this); // suppress clang warning
+                                return 0.0;
+                            } else {
+                                return Value{this->primary_variables_.numWellEq() + Indices::numEq, 0.0};
+                            }
+                        };
+
 
         // Some constants; as of now they are set by filling out this *.hpp mako
         // TODO: Find some smarter way to do this
@@ -2572,7 +2594,7 @@ namespace Opm
         // Get simulator values
 
         // Get values for local features
-        Value features[num_cell_features][stencil_size];
+        std::array<std::array<Value, stencil_size>, num_cell_features> features;
 
         for (int i = 0; i < stencil_size; ++i) {
             // Perforation index
@@ -2580,11 +2602,15 @@ namespace Opm
 
             // Upper boundary: Set zero padding
             if (perf_i < 0 ) {
-                features[i] = { 0 };
+                for (int j = 0; j < num_cell_features; ++j) {
+                    features[i][j] = zeroElem();
+                    }
                 }
             // Lower boundary: Set zero padding
             else if (perf_i >= this->number_of_perforations_) {
-                features[i] = { 0 };
+                for (int j = 0; j < num_cell_features; ++j) {
+                    features[i][j] = zeroElem();
+                    }
                 }
 
             // Inside the domain
@@ -2595,24 +2621,23 @@ namespace Opm
 
             for (int j = 0; j < num_cell_features; ++j) {
                 std::string feature_name = cell_feature_names[j];
-                switch (feature_name) {
-                    case "pressure":
-                        features[i][j] = obtain(this->getPerfCellPressure(fs));
-                    // TODO: Are saturation and permeability Values or will this create
-                    // a bug?
-                    case "saturation":
-                        // Get gas saturation
-                        features[i][j] =
-                        fs.saturation(FluidSystem::gasPhaseIdx).value();
-                    case "perm":
-                        const auto& connection = Base::well_ecl_.getConnections()[perf_i];
-                        features[i][j] = connection.Kh()/connection.connectionLength();
+                if (feature_name == "pressure") {
+                    features[i][j] = obtain(this->getPerfCellPressure(fs));
+                    }
+                // TODO: Are saturation and permeability Values or will this create
+                // a bug?
+                else if (feature_name == "saturation") {
+                    features[i][j] = fs.saturation(FluidSystem::gasPhaseIdx).value();
+                    }
+                else if (feature_name == "perm") {
+                    const auto& connection = Base::well_ecl_.getConnections()[perf_i];
+                    features[i][j] = connection.Kh()/connection.connectionLength();
                     }
                 }
             }
 
         // Give number of input parameters
-        Tensor<Value> in{stencil_size * num_cell_features + num_global_features};
+        Tensor<Value> in[stencil_size * num_cell_features + num_global_features] {};
 
         // Scale features and order them as input tensor
         // Note: order need to be the same as under training
@@ -2622,7 +2647,7 @@ namespace Opm
                                                xmin[i * stencil_size + j],
                                                xmax[i * stencil_size + j]
                                                );
-                in.data_[0][i * stencil_size + j] = features[i][j];
+                in.data_[i * stencil_size + j] = features[i][j];
             }
         }
 

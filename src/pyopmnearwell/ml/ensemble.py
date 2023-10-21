@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import copy
 import csv
+import datetime
 import logging
 import math
 import os
@@ -15,13 +16,16 @@ from typing import Any, Optional
 
 import numpy as np
 import tensorflow as tf
-from ecl.eclfile.ecl_file import open_ecl_file
+from ecl.eclfile.ecl_file import EclFile, open_ecl_file
+from ecl.summary.ecl_sum import EclSum
 from mako import exceptions
 from mako.template import Template
 
 import pyopmnearwell.utils.units as units
 from pyopmnearwell.utils.inputvalues import readthefirstpart, readthesecondpart
 from pyopmnearwell.utils.writefile import reservoir_files
+
+logger = logging.getLogger(__name__)
 
 dir = os.path.dirname(__file__)
 
@@ -34,6 +38,7 @@ FLAGS = (
     + " --enable-well-operability-check=false"
     + " --min-time-step-before-shutting-problematic-wells-in-days=1e-1"
 )
+# FLAGS = " --linear-solver-reduction=1e-7"
 
 
 def create_ensemble(
@@ -272,33 +277,65 @@ def run_ensemble(
         )
         os.system(command + "wait")
         for j in range(runspecs["npruns"] * i, runspecs["npruns"] * (i + 1)):
+            simulation_finished: bool = True
+
             with open_ecl_file(
                 os.path.join(ensemble_path, f"results_{j}", f"RUN_{j}.UNRST")
             ) as ecl_file:
-                # Skip result, if the simulation did not run to the last time step:
+                # Skip result, if the simulation did not run to the last time step.
                 if (
                     num_report_steps is not None
                     and ecl_file.num_report_steps() < num_report_steps
                 ):
-                    continue
+                    simulation_finished = False
 
+                # Check again if the simulation data is available for all time steps.
+                # It seems that sometimes the keyword array has zero report steps, even
+                # though `ecl_file.num_report_steps()` is nonzero.
+                member_data: dict[str, np.ndarray] = {}
                 for keyword in ecl_keywords:
                     # Append the data corresponding to the keyword for all report steps
-                    # and cells.
-                    data[keyword].append(np.array(ecl_file.iget_kw(keyword)))
-            with open_ecl_file(
-                os.path.join(ensemble_path, f"results_{j}", f"RUN_{j}.INIT")
-            ) as init_file:
-                for keyword in init_keywords:
-                    # Append the data corresponding to the keyword for all cells.
-                    data[keyword].append(np.array(init_file.iget_kw(keyword)))
-            with open_ecl_file(
-                os.path.join(ensemble_path, f"results_{j}", f"RUN_{j}.SMSPEC")
-            ) as summary_file:
+                    # and cells. Disregard the zeroth time step.
+                    member_data[keyword] = np.array(ecl_file.iget_kw(keyword))[1:, ...]
+                    if (
+                        num_report_steps is not None
+                        and member_data[keyword].shape[0] < num_report_steps
+                    ):
+                        simulation_finished = False
+
+                    # Disregard the result if an `inf` value is returned.
+                    elif np.any(np.isinf(member_data[keyword])):
+                        simulation_finished = False
+
+            # Only append data if the simulation finished.
+            if simulation_finished:
+                for keyword in ecl_keywords:
+                    data[keyword].append(member_data[keyword])
+
+                with open_ecl_file(
+                    os.path.join(ensemble_path, f"results_{j}", f"RUN_{j}.INIT")
+                ) as init_file:
+                    for keyword in init_keywords:
+                        # Append the data corresponding to the keyword for all cells.
+                        data[keyword].append(np.array(init_file.iget_kw(keyword)))
+
+                summary_file: EclSum = EclSum(
+                    os.path.join(ensemble_path, f"results_{j}", f"RUN_{j}.SMSPEC")
+                )
                 for keyword in summary_keywords:
-                    # Append the data corresponding to the keyword for all report steps.
-                    # TODO
-                    pass
+                    # Append the data corresponding to the keyword for all but the first
+                    # report step (not for all time steps). Add a dimension to make it
+                    # broadcastable to data from the ``*.UNRST`` and ``*.INIT`` files.
+                    data[keyword].append(
+                        np.array(
+                            summary_file.get_values(keyword, report_only=True)[1:, None]
+                        )
+                    )
+                # NOTE: There does not seem to be a way to close an ``EclSum`` object. Also,
+                # there is no context manager.
+
+            else:
+                logger.warning(f"Disregarded ensemble run {j}")
             # Remove the run files and result folder (except for the first one that
             # remains to check if everything went right).
             if j > 0:
@@ -364,10 +401,10 @@ def calculate_WI(
         ValueError: If no data is found for the 'pressure' keyword in the dataset.
     """
     # Transform pressure values from [bar] (unit in *.UNRST files) to [Pa] (unit to
-    # calculate the WI and internally used by OPM). Remove the initial time step.
-    pressure_data = (np.array(data["PRESSURE"]) * units.BAR_TO_PASCAL)[
-        ..., 1:, :
-    ]  # ``shape=(runspecs["npoints"], num_time_data - 1, num_grid_cell_data)``;
+    # calculate the WI and internally used by OPM).
+    pressure_data = (
+        np.array(data["PRESSURE"]) * units.BAR_TO_PASCAL
+    )  # ``shape=(runspecs["npoints"], num_time_data - 1, num_grid_cell_data)``;
     # unit [Pa]
     if len(pressure_data) == 0:
         raise ValueError("No data found for the 'pressure' keyword.")

@@ -33,3 +33,30 @@ KELVIN_TO_CELSIUS: float = -CELSIUS_TO_KELVIN
 # *.UNRST and *.SMSPEC to OPM conversions.
 UNRST_to_OPM_METRIC: dict[str, float] = {"PRESSURE": BAR_TO_PASCAL}
 UNRST_to_OPM_RESERVOIR: dict[str, float] = {"PRESSURE": 1.0}
+
+# Gravity
+GRAVITATIONAL_ACCELERATION: float = 9.8067
+"""
+Unit: [m/s^2]
+
+Source: https://en.wikipedia.org/wiki/Gravitational_acceleration 
+
+"""
+
+# Boltzmann constant
+BOLTZMANN_CONSTANT: float = 1.380649e-23
+"""
+Unit: [J/K]
+
+Source: https://en.wikipedia.org/wiki/Boltzmann_constant
+
+"""
+
+# Universal gas constant
+UNIVERSAL_GAS_CONSTANT: float = 8.31446261815324
+"""
+Unit: [J/(mol·K)]
+
+Source: https://en.wikipedia.org/wiki/Gas_constant
+
+"""

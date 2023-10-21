@@ -23,16 +23,21 @@ def get_FCNN(
     depth: int = 5,
     hidden_dim: int = 10,
     saved_model: Optional[str] = None,
+    activation: Literal["sigmoid", "relu"] = "sigmoid",
     kernel_initializer: Literal["glorot_normal", "glorot_uniform"] = "glorot_normal",
+    normalization: bool = False,
 ) -> keras.Model:
     layers = [
         keras.layers.Dense(
-            hidden_dim, activation="sigmoid", kernel_initializer=kernel_initializer
+            hidden_dim, activation=activation, kernel_initializer=kernel_initializer
         )
         for _ in range(depth)
     ]
     layers.insert(0, keras.layers.Input(shape=(ninputs,)))
     layers.append(keras.layers.Dense(noutputs))
+    if normalization:
+        layers.insert(1, keras.layers.Normalization())
+        layers.append(keras.layers.Normalization(invert=True))
     model = keras.Sequential(layers)
     if saved_model is not None:
         model.load_weights(saved_model)
@@ -109,6 +114,9 @@ def scale_and_prepare_dataset(
     conv_input: bool = False,
     conv_output: bool = False,
     shuffle: bool = True,
+    feature_range: tuple[float, float] = (-1, 1),
+    target_range: tuple[float, float] = (-1, 1),
+    scale: bool = False,
 ) -> tuple[tuple[np.ndarray, np.ndarray], tuple[np.ndarray, np.ndarray]]:
     ds: tf.data.Dataset = tf.data.Dataset.load(dsfile)
     features, targets = next(iter(ds.batch(batch_size=len(ds)).as_numpy_iterator()))
@@ -128,11 +136,28 @@ def scale_and_prepare_dataset(
         val_split = 1 - train_split
     elif train_split + val_split != 1:
         raise ValueError("Train and val split does not add up to 1.")
+
     logger.info("Adapt MinMaxScalers")
-    feature_scaler = MinMaxScaler()
-    target_scaler = MinMaxScaler()
-    feature_scaler.fit(features)
-    target_scaler.fit(targets)
+    feature_scaler = MinMaxScaler(feature_range)
+    target_scaler = MinMaxScaler(target_range)
+
+    if scale:
+        feature_scaler.fit(features)
+        target_scaler.fit(targets)
+
+    # Fit with [0, 1] for each feature to get no scaling.
+    else:
+        feature_scaler.fit(
+            np.linspace(
+                np.zeros(features.shape[-1]), np.ones(features.shape[-1]), 2, axis=0
+            )
+        )
+        target_scaler.fit(
+            np.linspace(
+                np.zeros(features.shape[-1]), np.ones(features.shape[-1]), 2, axis=0
+            )
+        )
+
     with open(os.path.join(savepath, "scalings.csv"), "w", newline="") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=["variable", "min", "max"])
         writer.writeheader()
@@ -149,6 +174,21 @@ def scale_and_prepare_dataset(
                 "max": target_scaler.data_max_[0],
             }
         )
+        writer.writerow(
+            {
+                "variable": "feature_range",
+                "min": feature_range[0],
+                "max": feature_range[1],
+            }
+        )
+        writer.writerow(
+            {
+                "variable": "target_range",
+                "min": target_range[0],
+                "max": target_range[1],
+            }
+        )
+
     logger.info(f"Saved scalings to {os.path.join(savepath, 'scalings.csv')}.")
 
     # Reload the dataset and shuffle once before splitting into training and val.
@@ -210,6 +250,10 @@ def train(
     bs: int = 64,
     patience: int = 100,
     lr_patience: int = 10,
+    kerasify: bool = True,
+    loss_func: Literal[
+        "mse", "MeanAbsolutePercentageError", "MeanSquaredLogarithmicError"
+    ] = "mse",
 ) -> None:
     train_features, train_targets = train_data
     val_features, val_targets = val_data
@@ -241,9 +285,17 @@ def train(
         log_dir=os.path.join(savepath, "logdir")
     )
 
+    match loss_func:
+        case "mse":
+            loss = "mse"
+        case "MeanAbsolutePercentageError":
+            loss = keras.losses.MeanAbsolutePercentageError()
+        case "MeanSquaredLogarithmicError":
+            loss = keras.losses.MeanSquaredLogarithmicError()
+
     # Train the model.
     model.compile(
-        loss="mse",
+        loss=loss,
         optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
     )
     model.fit(
@@ -265,11 +317,14 @@ def train(
 
     # Load the best model and save to OPM format.
     model.load_weights(os.path.join(savepath, "bestmodel"))
-    export_model(model, os.path.join(savepath, "WI.model"))
+    if kerasify:
+        export_model(model, os.path.join(savepath, "WI.model"))
 
 
 def scale_and_evaluate(
-    model: keras.Model, input: np.ndarray, scalingsfile: str
+    model: keras.Model,
+    input: np.ndarray,
+    scalingsfile: str,
 ) -> np.ndarray:
     """Scale the input, evaluate with the model and scale the output.
 
@@ -286,6 +341,8 @@ def scale_and_evaluate(
     feature_max: list[float] = []
     target_min: list[float] = []
     target_max: list[float] = []
+    feature_range: list[float] = [-1.0, 1.0]
+    target_range: list[float] = [-1.0, 1.0]
     with open(scalingsfile) as csvfile:
         reader = csv.DictReader(csvfile, fieldnames=["variable", "min", "max"])
 
@@ -296,23 +353,31 @@ def scale_and_evaluate(
             if row["variable"].startswith("WI"):
                 target_min.append(float(row["min"]))
                 target_max.append(float(row["max"]))
+            elif row["variable"] == "feature_range":
+                feature_range[0] = float(row["min"])
+                feature_range[1] = float(row["max"])
+            elif row["variable"] == "target_range":
+                target_range[0] = float(row["min"])
+                target_range[1] = float(row["max"])
             else:
                 feature_min.append(float(row["min"]))
                 feature_max.append(float(row["max"]))
 
     # Create MinMaxScalers and manually set the parameters.
-    feature_scaler: MinMaxScaler = MinMaxScaler()
+    feature_scaler: MinMaxScaler = MinMaxScaler(feature_range)
     feature_scaler.data_min_ = np.array(feature_min)
     feature_scaler.data_max_ = np.array(feature_max)
     feature_scaler.scale_ = 1 / (feature_scaler.data_max_ - feature_scaler.data_min_)
     feature_scaler.min_ = 0 - feature_scaler.data_min_ * feature_scaler.scale_
-    target_scaler: MinMaxScaler = MinMaxScaler()
+    target_scaler: MinMaxScaler = MinMaxScaler(target_range)
     target_scaler.data_min_ = np.array(target_min)
     target_scaler.data_max_ = np.array(target_max)
     target_scaler.scale_ = 1 / (target_scaler.data_max_ - target_scaler.data_min_)
     target_scaler.min_ = 0 - target_scaler.data_min_ * target_scaler.scale_
 
-    output = model(feature_scaler.transform(input))
+    # Run model.
+    scaled_input: tf.Tensor = feature_scaler.transform(input)
+    output: tf.Tensor = model(scaled_input)
     return target_scaler.inverse_transform(output)
 
 

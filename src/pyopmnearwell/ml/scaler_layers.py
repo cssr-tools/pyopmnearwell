@@ -1,4 +1,4 @@
-"""Provide MinMax scaler layers for tensorflow.keras"""
+# """Provide MinMax scaler layers for tensorflow.keras"""
 from __future__ import annotations
 
 from typing import Any, Optional
@@ -38,6 +38,7 @@ class ScalerLayer(keras.layers.Layer):
 
         Args:
             input_shape (tuple[int, ...]): _description_
+
         """
         if not self._is_adapted:
             # ``data_min`` and ``data_max`` have the same shape as one input tensor.
@@ -53,36 +54,38 @@ class ScalerLayer(keras.layers.Layer):
         self.data_max = weights[1]
         self.feature_range = weights[2]
 
+    # TODO
+    # Implement only if something special needs to be saved in the config compared to the base layer.
+    # Every element of the config needs to be serialized.
+
     # Ignore pylint complaining about a missing docstring.
-    # # TODO
-    # # Implement only if something special needs to be saved in the config compared to the base layer.
-    # # Every element of the config needs to be serialized.
+    def get_config(self) -> dict[str, Any]:  # pylint: disable=C0116
+        config = super().get_config()  # type: ignore # pylint: disable=E1101
+        # Note: This returns the dict, but raises a warning that the layers is not JSON
+        # serializable. Fix this!
+        config.update(
+            {
+                "feature_range": self.feature_range,
+                "data_max": self.data_max,
+                "data_min": self.data_min,
+            }
+        )
+        return config
 
-    # def get_config(self) -> dict[str, Any]:  # pylint: disable=C0116
-    #     config = super().get_config()  # type: ignore # pylint: disable=E1101
-    #     # Note: This returns the dict, but raises a warning that the layers is not JSON
-    #     # serializable. Fix this!
-    #     config.update(
-    #         {
-    #             "feature_range": self.feature_range,
-    #             "data_max": self.data_max,
-    #             "data_min": self.data_min,
-    #         }
-    #     )
-    #     return config
-
-    # def from_config(self, config: dict[str, Any]) -> None:
-    #     pass
+    def from_config(self, config: dict[str, Any]) -> None:
+        pass
 
     def adapt(self, data: ArrayLike) -> None:
         """Fit the layer to the min and max of the data. This is done individually for
         each input feature.
 
-        Note: So far, this is only tested for 1 dimensional input and output. For higher
-        dimensional input and output some functionality might need to be added.
+        Note:
+            So far, this is only tested for 1 dimensional input and output. For higher
+            dimensional input and output some functionality might need to be added.
 
         Args:
             data: _description_
+
         """
         data = tf.convert_to_tensor(data)
         self.data_min = tf.math.reduce_min(data, axis=0)
@@ -116,6 +119,7 @@ class MinMaxScalerLayer(
     See
     https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html
     for an explanation of the transform.
+
     """
 
     def __init__(
@@ -134,16 +138,16 @@ class MinMaxScalerLayer(
             print(np.greater_equal(self.data_min, self.data_max))
             raise RuntimeError(
                 """The layer has not been adapted correctly. Call ``adapt`` before using
-                the layer or set the ``data_min`` and ``data_max`` values manually."""
+                the layer or set the ``data_min`` and ``data_max`` values manually.
+                """
             )
 
-        # TODO: Does this need to be done?
+        # TODO: Does this conversion to tensors need to be done?
         inputs = tf.convert_to_tensor(inputs)
         scaled_data = (inputs - self.min) / self.scalar
-        # return self.feature_range[0] + (
-        #     scaled_data * (self.feature_range[1] - self.feature_range[0])
-        # )
-        return scaled_data
+        return self.feature_range[0] + (
+            scaled_data * (self.feature_range[1] - self.feature_range[0])
+        )
 
 
 class MinMaxUnScalerLayer(ScalerLayer, tf.keras.layers.Layer):
@@ -152,6 +156,7 @@ class MinMaxUnScalerLayer(ScalerLayer, tf.keras.layers.Layer):
     See
     https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html
     for an explanation of the transform.
+
     """
 
     def __init__(
@@ -172,7 +177,7 @@ class MinMaxUnScalerLayer(ScalerLayer, tf.keras.layers.Layer):
                 the layer or set the ``data_min`` and ``data_max`` values manually."""
             )
 
-        # TODO: Does this need to be done?
+        # TODO: Does this conversion to tensors need to be done?
         inputs = tf.convert_to_tensor(inputs)
         unscaled_data = inputs * self.scalar + self.min
         return unscaled_data
