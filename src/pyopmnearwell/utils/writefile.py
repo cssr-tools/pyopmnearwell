@@ -1,18 +1,18 @@
 # SPDX-FileCopyrightText: 2023 NORCE
 # SPDX-License-Identifier: GPL-3.0
 
-"""Utility functions for necessary files and variables to run OPM Flow.
+# pylint: skip-file
+"""Utility functions for necessary files and variables to run OPM Flow."""
 
-"""
+from __future__ import annotations
 
 import csv
 import math as mt
 import os
+import pathlib
 import subprocess
-from typing import Optional
 
 import numpy as np
-from mako import exceptions
 from mako.template import Template
 
 from pyopmnearwell.utils.mako import fill_template
@@ -23,21 +23,22 @@ def reservoir_files(
     recalc_grid: bool = True,
     recalc_tables: bool = True,
     recalc_sections: bool = True,
-    inc_folder: str = "",
+    inc_folder: pathlib.Path = pathlib.Path(""),
 ):
     """
     Function to write opm-related files by running mako templates
 
     Args:
         dic (dict): Global dictionary with required parameters
-        recalc_grid (bool): If ``False``, ``GRID.INC`` is not recalculated. Intended for
+        recalc_grid (bool): Whether to recalculate the ``GRID.INC``file. Intended for
             ensemble runs, where the saturation functions/geography/etc. do not need to
-            be recalculated for each ensemble member.
-        recalc_tables (bool): If ``False``, ``TABLES.INC`` is not recalculated.
-        recalc_sections (bool): If ``False``, the ``GEOLOGY.INC`` and ``REGIONS.INC``
-            are not recalculated.
-        inc_folder (str): If any of the mentioned files is not recalculated, they are
-            taken from this folder.
+            be recalculated for each ensemble member. Defaults to True.
+        recalc_tables (bool): Whether to recalculate the ``TABLES.INC``file. Defaults to
+            True.
+        recalc_sections (bool): Whether to recalculate the ``GEOLOGY.INC`` and
+            ``REGIONS.INC`` files. Defaults to True.
+        inc_folder (pathlib.Path): If any of the mentioned files is not recalculated,
+            they are taken from this folder. Defaults to ``pathlib.Path("")``.
 
     Note:
         - All of the ``recalc_*`` options only work for
@@ -48,6 +49,9 @@ def reservoir_files(
         dic (dict): Global dictionary with new added parameters
 
     """
+    # Ensure ``inc_folder`` is a ``Path`` objects.
+    inc_folder = pathlib.Path(inc_folder)
+
     # default values
     dic.update(
         {
@@ -98,24 +102,24 @@ def reservoir_files(
     else:
         dic.update(
             {
-                "grid_file": f"'{os.path.join(inc_folder, 'GRID.INC')}'",
-                "drv_file": f"'{os.path.join(inc_folder, 'DRV.INC')}'",
-                "dx_file": f"'{os.path.join(inc_folder, 'DX.INC')}'",
-                "dy_file": f"'{os.path.join(inc_folder, 'DY.INC')}'",
+                "grid_file": f"'{inc_folder / 'GRID.INC'}'",
+                "drv_file": f"'{inc_folder / 'DRV.INC'}'",
+                "dx_file": f"'{inc_folder / 'DX.INC'}'",
+                "dy_file": f"'{inc_folder / 'DY.INC'}'",
             }
         )
 
     # If the tables are not recalculated, update the link to the tables file.
     if not recalc_tables:
-        dic.update({"tables_file": f"'{os.path.join(inc_folder, 'TABLES.INC')}'"})
+        dic.update({"tables_file": f"'{inc_folder / 'TABLES.INC'}'"})
 
     # If the sections are not recalculated, update the link to all section files.
     if not recalc_sections:
         dic.update(
             {
-                "geology_file": f"'{os.path.join(inc_folder, 'GEOLOGY.INC')}'",
-                "regions_file": f"'{os.path.join(inc_folder, 'REGIONS.INC')}'",
-                "multpv_file": f"'{os.path.join(inc_folder, 'MULTPV.INC')}'",
+                "geology_file": f"'{inc_folder / 'GEOLOGY.INC'}'",
+                "regions_file": f"'{inc_folder / 'REGIONS.INC'}'",
+                "multpv_file": f"'{inc_folder / 'MULTPV.INC'}'",
             }
         )
 
@@ -139,7 +143,7 @@ def reservoir_files(
             dic["exe"], dic["fol"], "preprocessing", f"{dic['runname'].upper()}.DATA"
         ),
         "w",
-        encoding="utf8",
+        encoding="utf-8",
     ) as file:
         file.write(filledtemplate)
     if dic["model"] != "co2eor":
@@ -174,7 +178,7 @@ def manage_sections(dic):
                 f"{section.upper()}.INC",
             ),
             "w",
-            encoding="utf8",
+            encoding="utf-8",
         ) as file:
             file.write(filledtemplate)
 
@@ -196,7 +200,7 @@ def manage_tables(dic):
     var = {"dic": dic}
     filledtemplate: Template = fill_template(var, filename=filename)
     with open(
-        os.path.join(dic["exe"], dic["fol"], "jobs", f"saturation_functions.py"),
+        os.path.join(dic["exe"], dic["fol"], "jobs", "saturation_functions.py"),
         "w",
         encoding="utf8",
     ) as file:

@@ -35,6 +35,7 @@ setup(
     ],
     keywords="co2 dynamics hydrogen opm wells saltprecipitation",
     package_dir={"": "src"},
+    package_data={find_packages(where="src")[0]: ["py.typed"]},
     packages=find_packages(where="src"),
     license="GPL-3.0",
     python_requires=">=3.8, <4",

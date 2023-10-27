@@ -1,12 +1,17 @@
+# pylint: skip-file
 """Transform ensemble data into datasets and train neural networks."""
 from __future__ import annotations
 
 import csv
 import logging
-import os
-from typing import Literal, Optional
+import math
+import pathlib
+from functools import partial
+from typing import Any, Literal, Optional
 
+import keras_tuner
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow import keras
@@ -23,10 +28,33 @@ def get_FCNN(
     depth: int = 5,
     hidden_dim: int = 10,
     saved_model: Optional[str] = None,
-    activation: Literal["sigmoid", "relu"] = "sigmoid",
+    activation: Literal["sigmoid", "relu", "tanh"] = "sigmoid",
     kernel_initializer: Literal["glorot_normal", "glorot_uniform"] = "glorot_normal",
     normalization: bool = False,
 ) -> keras.Model:
+    """
+    Returns a fully connected neural network with the specified architecture.
+
+    Args:
+        ninputs (int): Number of inputs to the model.
+        noutputs (int): Number of outputs from the model.
+        depth (int, optional): Number of hidden layers in the model. Defaults to 5.
+        hidden_dim (int, optional): Number of neurons in each hidden layer. Defaults to
+            10.
+        saved_model (str, optional): Path to a saved model to load weights from.
+            Defaults to None.
+        activation (Literal["sigmoid", "relu", "tanh"], optional): Activation function
+            to use in the hidden layers. Defaults to "sigmoid".
+        kernel_initializer (Literal["glorot_normal", "glorot_uniform"], optional):
+            Weight initialization method to use in the hidden layers. Defaults to
+            "glorot_normal".
+        normalization (bool, optional): Whether to use batch normalization in the model.
+            Defaults to False.
+
+    Returns:
+        keras.Model: A fully connected neural network.
+
+    """
     layers = [
         keras.layers.Dense(
             hidden_dim, activation=activation, kernel_initializer=kernel_initializer
@@ -44,81 +72,68 @@ def get_FCNN(
     return model
 
 
-def get_1D_CNN(
-    noutputs: int,
-    depth_conv: int = 5,
-    depth_dense: int = 5,
-    kernel_size: int = 3,
-    filter_size: int = 3,
-    hidden_dense_dim: int = 10,
-    saved_model: Optional[str] = None,
-    input_shape: Optional[
-        tuple[int, int]
-    ] = None,  # ``shape = (size + padding, num_features)``
-) -> keras.Model:
-    model: keras.Model = keras.Sequential()
-
-    # Padding layer
-    model.add(keras.layers.ZeroPadding1D(padding=1))
-
-    # Convolutional layers
-    model.add(keras.layers.Conv1D(filter_size, kernel_size, activation="relu"))
-    for _ in range(depth_conv - 1):
-        model.add(
-            keras.layers.Conv1D(
-                filter_size,
-                kernel_size,
-                activation="relu",
-            )
-        )
-    model.add(keras.layers.Flatten())
-
-    # Dense layers
-    for _ in range(depth_dense):
-        model.add(
-            keras.layers.Dense(
-                hidden_dense_dim,
-                activation="sigmoid",
-            )
-        )
-    model.add(keras.layers.Dense(noutputs))
-
-    if saved_model is not None:
-        model.load_weights(saved_model)
-    return model
-
-
-def get_2D_CNN(
-    input_shape: list[int],
-    noutputs: int,
-    depth_conv: int = 5,
-    depth_dense: int = 5,
-    kernel_size: tuple[int, int] = (3, 3),
-    filter_size: tuple[int, int] = (3, 3),
-    hidden_dense_dim: int = 10,
-    saved_model: Optional[str] = None,
-) -> keras.Model:
-    model: keras.Model = keras.Sequential()
-    # TODO
-    if saved_model is not None:
-        model.load_weights(saved_model)
-    return model
-
-
 def scale_and_prepare_dataset(
-    dsfile: str,
+    dsfile: str | pathlib.Path,
     feature_names: list[str],
-    savepath: str,
+    savepath: pathlib.Path,
     train_split: float = 0.9,
-    val_split: Optional[float] = None,
+    val_split: Optional[float] = 0.1,
+    test_split: Optional[float] = None,
     conv_input: bool = False,
     conv_output: bool = False,
-    shuffle: bool = True,
+    shuffle: Literal["first", "last", "false"] = "first",
     feature_range: tuple[float, float] = (-1, 1),
     target_range: tuple[float, float] = (-1, 1),
     scale: bool = False,
-) -> tuple[tuple[np.ndarray, np.ndarray], tuple[np.ndarray, np.ndarray]]:
-    ds: tf.data.Dataset = tf.data.Dataset.load(dsfile)
+    **kwargs,
+) -> (
+    tuple[tuple[np.ndarray, np.ndarray], tuple[np.ndarray, np.ndarray]]
+    | tuple[
+        tuple[np.ndarray, np.ndarray],
+        tuple[np.ndarray, np.ndarray],
+        tuple[np.ndarray, np.ndarray],
+    ]
+):
+    """Scale, shuffle and split a dataset.
+
+    Args:
+        dsfile (str | pathlib.Path): Dataset file.
+        feature_names (list[str]): List of feature names.
+        savepath (pathlib.Path): Savepath for the scaling values.
+        train_split (float, optional): Train split. Defaults to 0.9.
+        val_split (float, optional): Val split. Defaults to 0.1.
+        test_split (float, optional): Test split. Defaults to None.
+        conv_input (bool, optional): Whether the input is for a convolutional neural
+            network. Defaults to False.
+        conv_output (bool, optional): Whether the output is for a convolutional neural
+            network. Defaults to False.
+        shuffle (Literal["first", "last", "false"], optional): Options for shuffling the
+            dataset:
+            - "first": The dataset gets shuffled before the split.
+            - "last": The dataset gets shuffled after the split.
+            - "false": The dataset does not get shuffled.
+            Defaults to "first".
+        feature_range (tuple[float, float], optional): Target range of feature scaling.
+            Defaults to (-1, 1).
+        target_range (tuple[float, float], optional): Target range of target scaling.
+            Defaults to (-1, 1)
+        scale (bool, optional): Whether to scale the dataset. Defaults to False.
+
+    Returns:
+        tuple[tuple[np.ndarray, np.ndarray], np.ndarray]
+        | tuple[
+            tuple[np.ndarray, np.ndarray],
+            tuple[np.ndarray, np.ndarray],
+            tuple[np.ndarray, np.ndarray],
+        ]: Tuple of scaled and split dataset. Includes test set only if
+            ``test_split > 0``.
+
+    """
+
+    # Ensure ``savepath`` is a ``Path`` object.
+    savepath = pathlib.Path(savepath)
+
+    ds: tf.data.Dataset = tf.data.Dataset.load(str(dsfile))
     features, targets = next(iter(ds.batch(batch_size=len(ds)).as_numpy_iterator()))
 
     # Reshape features and targets for multidimensional input and output (e.g., for
@@ -130,14 +145,33 @@ def scale_and_prepare_dataset(
 
     if len(feature_names) > features.shape[-1]:
         raise ValueError("Too many feature names.")
-    elif len(feature_names) < features.shape[-1]:
+    if len(feature_names) < features.shape[-1]:
         raise ValueError("Not all features are named.")
-    if val_split is None:
-        val_split = 1 - train_split
-    elif train_split + val_split != 1:
-        raise ValueError("Train and val split does not add up to 1.")
 
-    logger.info("Adapt MinMaxScalers")
+    # Infere values for ``val_split`` and test_split``.
+    if val_split is None and test_split is None:
+        val_split = 0.0
+        test_split = 0.0
+    elif val_split is None and test_split is not None:
+        val_split = 1 - train_split - test_split
+    elif val_split is not None and test_split is None:
+        test_split = 1 - train_split - val_split
+
+    # Some sanitizing of the splits. Have some tolerance to account for floating point
+    # errors.
+    abs_tol: float = 1e-5
+    # Ignore mypy complaining that ``val_split`` and ``test_split`` can be None. The
+    # lines above take care of that.
+    if train_split + abs_tol < 0 or val_split + abs_tol < 0 or test_split + abs_tol < 0:  # type: ignore
+        raise ValueError("Neither train, val not test split can be negative.")
+    if not math.isclose(train_split + val_split + test_split, 1, abs_tol=abs_tol):  # type: ignore
+        raise ValueError(
+            "Train, val and test split do not add up to 1. If only train"
+            + " split is specified, val and test split are set to 0."
+        )
+    logger.info(f"Train/val/test split is {train_split}/{val_split}/{test_split}")
+
+    logger.info("Adapting MinMaxScalers")
     feature_scaler = MinMaxScaler(feature_range)
     target_scaler = MinMaxScaler(target_range)
 
@@ -145,31 +179,42 @@ def scale_and_prepare_dataset(
         feature_scaler.fit(features)
         target_scaler.fit(targets)
 
-    # Fit with [0, 1] for each feature to get no scaling.
+    # Fit with ``feature_range``/``target_range`` for each feature/target to get no
+    # scaling.
     else:
         feature_scaler.fit(
             np.linspace(
-                np.zeros(features.shape[-1]), np.ones(features.shape[-1]), 2, axis=0
+                np.full_like(features.shape[-1], feature_range[0]),
+                np.full_like(features.shape[-1], feature_range[1]),
+                2,
+                axis=0,
             )
         )
         target_scaler.fit(
             np.linspace(
-                np.zeros(features.shape[-1]), np.ones(features.shape[-1]), 2, axis=0
+                np.full_like(features.shape[-1], feature_range[0]),
+                np.full_like(features.shape[-1], feature_range[1]),
+                2,
+                axis=0,
             )
         )
 
-    with open(os.path.join(savepath, "scalings.csv"), "w", newline="") as csvfile:
+    with (savepath / "scalings.csv").open("w", newline="", encoding="utf-8") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=["variable", "min", "max"])
         writer.writeheader()
         for feature_name, feature_min, feature_max in zip(
             feature_names, feature_scaler.data_min_, feature_scaler.data_max_
         ):
             writer.writerow(
-                {"variable": feature_name, "min": feature_min, "max": feature_max}
+                {
+                    "variable": f"input_{feature_name}",
+                    "min": feature_min,
+                    "max": feature_max,
+                }
             )
         writer.writerow(
             {
-                "variable": "WI",
+                "variable": "output_WI",
                 "min": target_scaler.data_min_[0],
                 "max": target_scaler.data_max_[0],
             }
@@ -188,26 +233,49 @@ def scale_and_prepare_dataset(
                 "max": target_range[1],
             }
         )
+    logger.info(f"Saved scalings to {savepath / 'scalings.csv'}")
 
-    logger.info(f"Saved scalings to {os.path.join(savepath, 'scalings.csv')}.")
+    # Reload the dataset and shuffle once before splitting.
+    ds = tf.data.Dataset.load(str(dsfile))
+    if shuffle == "first":
+        logger.info("Shuffling the dataset (before splitting)")
+        # Do not ``reshuffle_each_iteration`` s.t. take and skip applies to the same
+        # shuffle order.
+        ds = ds.shuffle(
+            buffer_size=max([len(ds), kwargs.get("buffer_size", len(ds))]),
+            reshuffle_each_iteration=False,
+        )
 
-    # Reload the dataset and shuffle once before splitting into training and val.
-    ds = tf.data.Dataset.load(dsfile)
-    if shuffle:
-        ds = ds.shuffle(buffer_size=len(ds))
-
-    # Split the dataset into a training and a validation data set.
-    train_size = int(train_split * len(ds))
-    val_size = int(val_split * len(ds))
+    # Split the dataset.
+    # Ignore mypy complaining that ``val_split`` and ``test_split`` can be None.
+    logger.info("Splitting data into train/val/test dataset")
+    train_size = round(train_split * len(ds))  # type: ignore
+    val_size = round(val_split * len(ds))  # type: ignore
     train_ds = ds.take(train_size)
-    val_ds = ds.skip(train_size)
+    val_ds = ds.skip(train_size).take(val_size)
+    test_ds = ds.skip(train_size).skip(val_size)
+
+    # Treat the other two shuffle options.
+    if shuffle == "last":
+        logger.info("Shuffling the dataset (after splitting)")
+        train_ds, val_ds, test_ds = [
+            partial_ds.shuffle(
+                buffer_size=max(
+                    [len(partial_ds), kwargs.get("buffer_size", len(partial_ds))]
+                )
+            )
+            for partial_ds in [train_ds, val_ds, test_ds]
+        ]
+
+    elif shuffle == "false":
+        logger.info("The dataset was not shuffled")
 
     train_features, train_targets = next(
         iter(train_ds.batch(batch_size=len(train_ds)).as_numpy_iterator())
     )
-
-    # Ensure that the program works for a train:val split of (1:0)
-    if val_split > 0:
+    # Ensure that the program works for a val split of 0.0.
+    # Ignore mypy complaining that ``val_split`` can be None.
+    if val_split > 0:  # type: ignore
         val_features, val_targets = next(
             iter(val_ds.batch(batch_size=len(val_ds)).as_numpy_iterator())
         )
@@ -215,36 +283,36 @@ def scale_and_prepare_dataset(
         val_features, val_targets = np.zeros((1, train_features.shape[-1])), np.zeros(
             (1, train_targets.shape[-1])
         )
+
     # Scale the features and targets.
+    logger.info("Scaling data")
     train_features = feature_scaler.transform(train_features)
     train_targets = target_scaler.transform(train_targets)
     val_features = feature_scaler.transform(val_features)
     val_targets = target_scaler.transform(val_targets)
-    logger.info(f"Scaled data and split into training and validation dataset.")
+
+    # Only return test ds if ``test_split > 0``.
+    # Ignore mypy complaining that ``test_split`` can be None.
+    if test_split > 0:  # type: ignore
+        test_features, test_targets = next(
+            iter(test_ds.batch(batch_size=len(test_ds)).as_numpy_iterator())
+        )
+        test_features = feature_scaler.transform(test_features)
+        test_targets = target_scaler.transform(test_targets)
+        return (
+            (train_features, train_targets),
+            (val_features, val_targets),
+            (test_features, test_targets),
+        )
+
     return (train_features, train_targets), (val_features, val_targets)
 
 
-def l2_error(
-    target: tf.Tensor, prediction: tf.Tensor, mode: Literal["relative", "max"]
-) -> tf.Tensor:
-    """Calculate the relative L2 error between the target and prediction.
-
-    Args:
-        target (_type_): _description_
-        prediction (_type_): _description_
-        mode (_type_): _description_
-
-    Returns:
-        _type_: _description_
-    """
-    pass
-
-
 def train(
-    model: tf.Module,
+    model: keras.Model,
     train_data: tuple[tf.Tensor, tf.Tensor],
     val_data: tuple[tf.Tensor, tf.Tensor],
-    savepath: str,
+    savepath: pathlib.Path,
     lr: float = 0.1,
     epochs: int = 500,
     bs: int = 64,
@@ -254,13 +322,46 @@ def train(
     loss_func: Literal[
         "mse", "MeanAbsolutePercentageError", "MeanSquaredLogarithmicError"
     ] = "mse",
+    recompile_model: bool = True,
+    **train_kwargs,
 ) -> None:
+    """Train a tensorflow model on the provided training data and save the best model.
+
+    Args:
+        model (tf.Module): Model to be trained.
+        train_data (tuple[tf.Tensor, tf.Tensor]): Training features and targets.
+        val_data (tuple[tf.Tensor, tf.Tensor]): Validation features and targets.
+        savepath (pathlib.Path): Savepath for models and logging.
+        lr (float, optional): Initial learning rate. Defaults to 0.1.
+        epochs (_type_, optional): Training epochs. Defaults to 500.
+        bs (int, optional): Batch size. Defaults to 64.
+        patience (int, optional): Number of epochs without improvement before early
+            stopping. Defaults to 100.
+        lr_patience (int, optional): Number of epochs without improvement before lr
+            decay. Defaults to 10.
+        kerasify (bool, optional): Export the best model with kerasify after training.
+            Defaults to True.
+        loss_func (Literal["mse", "MeanAbsolutePercentageError",
+            "MeanSquaredLogarithmicError"], optional): Loss function. Defaults to "mse".
+        recompile_model (bool, optional): Whether to recompile the model before
+            training. Can e.g., be set to false, if the model is built and compiled by a
+            different function. Defaults to True.
+        **train_kwargs: Additional keyword arguments to be passed to the ``model.fit()``
+            method.
+
+    Returns:
+        None
+
+    """
+    # Ensure ``savepath`` is a ``Path`` object.
+    savepath = pathlib.Path(savepath)
+
     train_features, train_targets = train_data
     val_features, val_targets = val_data
 
     # Callbacks for model saving, learning rate decay and logging.
     checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
-        os.path.join(savepath, "bestmodel"),
+        savepath / "bestmodel",
         monitor="val_loss",
         verbose=1,
         save_best_only=True,
@@ -282,22 +383,21 @@ def train(
         verbose=1,
     )
     tensorboard_callback = tf.keras.callbacks.TensorBoard(
-        log_dir=os.path.join(savepath, "logdir")
+        log_dir=str(savepath / "logdir")
     )
 
-    match loss_func:
-        case "mse":
-            loss = "mse"
-        case "MeanAbsolutePercentageError":
+    if recompile_model:
+        if loss_func == "mse":
+            loss: keras.losses.Loss = keras.losses.MeanSquaredError()
+        elif loss_func == "MeanAbsolutePercentageError":
             loss = keras.losses.MeanAbsolutePercentageError()
-        case "MeanSquaredLogarithmicError":
+        elif loss_func == "MeanSquaredLogarithmicError":
             loss = keras.losses.MeanSquaredLogarithmicError()
+        model.compile(
+            loss=loss,
+            optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
+        )
 
-    # Train the model.
-    model.compile(
-        loss=loss,
-        optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
-    )
     model.fit(
         train_features,
         train_targets,
@@ -312,30 +412,162 @@ def train(
             early_stopping_callback,
             tensorboard_callback,
         ],
+        **train_kwargs,
     )
-    model.save_weights(os.path.join(savepath, "finalmodel"))
+    model.save_weights(savepath / "finalmodel")
 
     # Load the best model and save to OPM format.
-    model.load_weights(os.path.join(savepath, "bestmodel"))
+    model.load_weights(savepath / "bestmodel")
     if kerasify:
-        export_model(model, os.path.join(savepath, "WI.model"))
+        export_model(model, savepath / "WI.model")
+
+
+def build_model(
+    hp: keras_tuner.HyperParameters,
+    ninputs: int,
+    noutputs: int,
+) -> tf.Module:
+    """Build and compile a FCNN with the given hyperparameters.
+
+    Args:
+        hp (keras_tuner.Hyperparameters): Hyperparameters object.
+        ninputs (int): Number of inputs.
+        noutputs (int): Number of outputs.
+
+    Returns:
+        tf.Module: The built neural network model.
+
+    """
+    # Get hyperparameters.
+    depth: int = hp.Int("depth", min_value=3, max_value=20, step=2)
+    hidden_size: int = hp.Int("hidden_size", min_value=5, max_value=50, step=5)
+    activation: Literal["sigmoid", "relu", "tanh"] = hp.Choice(
+        "activation", ["sigmoid", "relu", "tanh"]
+    )
+    loss_func: str = hp.Choice("loss", ["mse"])
+    if loss_func == "mse":
+        loss: keras.losses.Loss = keras.losses.MeanSquaredError()
+    elif loss_func == "MeanAbsolutePercentageError":
+        loss = keras.losses.MeanAbsolutePercentageError()
+    elif loss_func == "MeanSquaredLogarithmicError":
+        loss = keras.losses.MeanSquaredLogarithmicError()
+
+    # Build model.
+    model: keras.Model = get_FCNN(
+        ninputs=ninputs,
+        noutputs=noutputs,
+        depth=depth,
+        hidden_dim=hidden_size,
+        activation=activation,
+    )
+    model.compile(
+        loss=loss,
+        optimizer=tf.keras.optimizers.Adam(learning_rate=0.1),
+    )
+    return model
+
+
+def tune(
+    ninputs: int,
+    noutputs: int,
+    train_data: tuple[tf.Tensor, tf.Tensor],
+    val_data: tuple[tf.Tensor, tf.Tensor],
+    objective: Literal["loss", "val_loss"] = "val_loss",
+    **tune_kwargs,
+) -> tuple[tf.Module, keras_tuner.Tuner]:
+    """
+    Tune the hyperparameters of a neural network model using random search.
+
+    Args:
+        ninputs (int): Number of input features to the model.
+        noutputs (int): Number of output features to the model.
+        train_data (tuple[tf.Tensor, tf.Tensor]): Tuple of training input and target
+            data.
+        val_data (tuple[tf.Tensor, tf.Tensor],): Tuple of validation input and target
+            data.
+        objective (Literal["loss", "val_loss"], optional): Objective for search.
+            Defaults to ``"val_loss"``.
+        **tune_kwargs: Additional keyword arguments to pass to the tuner's search
+            method.
+
+    Returns:
+        tf.Module: The model compiled with the best hyperparameters.
+        keras_tuner.Tuner: The tuner.
+
+    Raises:
+        ValueError: If `train_data` or `val_data` is not a tuple of two tensors.
+
+    """
+    # Define the tuner and start a search.
+    tuner = keras_tuner.RandomSearch(
+        hypermodel=partial(build_model, ninputs=ninputs, noutputs=noutputs),
+        objective=objective,
+        max_trials=20,
+        executions_per_trial=2,
+        overwrite=True,
+        directory="my_dir",
+        project_name="helloworld",
+    )
+    tuner.search_space_summary()
+
+    if not isinstance(train_data, tuple) or len(train_data) != 2:
+        raise ValueError("train_data must be a tuple of two tensors.")
+    if not isinstance(val_data, tuple) or len(val_data) != 2:
+        raise ValueError("val_data must be a tuple of two tensors.")
+
+    tuner.search(
+        train_data[0], train_data[1], epochs=20, validation_data=val_data, **tune_kwargs
+    )
+    tuner.results_summary()
+
+    # Build the model with the best hp.
+    best_hps = tuner.get_best_hyperparameters(5)
+    model = build_model(best_hps[0], ninputs, noutputs)
+
+    return model, tuner
+
+
+def save_tune_results(tuner: keras_tuner.Tuner, savepath: pathlib.Path) -> None:
+    # Ensure ``savepath`` is a ``Path`` object.
+    savepath = pathlib.Path(savepath)
+
+    trials: list[keras_tuner.engine.trial.Trial] = tuner.oracle.get_best_trials(
+        num_trials=tuner.oracle.max_trials
+    )
+    hp_list: list[dict[str, Any]] = []
+    for trial in trials:
+        hp_list.append(
+            trial.hyperparameters.get_config()["values"] | {"Score": trial.score}
+        )
+    pd.DataFrame(hp_list).to_csv(
+        str(savepath / "tuner_results.csv"), na_rep="Missing", index=False
+    )
 
 
 def scale_and_evaluate(
     model: keras.Model,
-    input: np.ndarray,
-    scalingsfile: str,
+    model_input: np.ndarray,
+    scalingsfile: pathlib.Path,
 ) -> np.ndarray:
     """Scale the input, evaluate with the model and scale the output.
 
     Args:
-        model (tf.keras.Model): _description_
-        input (np.ndarray): _description_
-        scalingsfile (str): _description_
+        model (tf.keras.Model): A Keras model to evaluate the input with.
+        model_input (np.ndarray): Input tensor. Can be a batch.
+        scalingsfile (pathlib.Path): The path to the CSV file containing the
+            scaling parameters for MinMaxScaling.
 
     Returns:
-        _description_
+        np.ndarray: The model's output, scaled back to the original range.
+
+    Raises:
+        FileNotFoundError: If ``scalingsfile`` does not exist.
+        ValueError: If ``scalingsfile`` contains an invalid row.
+
     """
+    # Ensure ``ensemble_path`` is a ``Path`` object.
+    scalingsfile = pathlib.Path(scalingsfile)
+
     # Get the feature and target scaling.
     feature_min: list[float] = []
     feature_max: list[float] = []
@@ -343,16 +575,19 @@ def scale_and_evaluate(
     target_max: list[float] = []
     feature_range: list[float] = [-1.0, 1.0]
     target_range: list[float] = [-1.0, 1.0]
-    with open(scalingsfile) as csvfile:
+    with scalingsfile.open("r", encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile, fieldnames=["variable", "min", "max"])
 
         # Skip the header
         next(reader)
 
         for row in reader:
-            if row["variable"].startswith("WI"):
+            if row["variable"].startswith("output"):
                 target_min.append(float(row["min"]))
                 target_max.append(float(row["max"]))
+            elif row["variable"].startswith("input"):
+                feature_min.append(float(row["min"]))
+                feature_max.append(float(row["max"]))
             elif row["variable"] == "feature_range":
                 feature_range[0] = float(row["min"])
                 feature_range[1] = float(row["max"])
@@ -360,101 +595,29 @@ def scale_and_evaluate(
                 target_range[0] = float(row["min"])
                 target_range[1] = float(row["max"])
             else:
-                feature_min.append(float(row["min"]))
-                feature_max.append(float(row["max"]))
+                raise ValueError("Name of scaling variable is invalid.")
 
     # Create MinMaxScalers and manually set the parameters.
     feature_scaler: MinMaxScaler = MinMaxScaler(feature_range)
     feature_scaler.data_min_ = np.array(feature_min)
     feature_scaler.data_max_ = np.array(feature_max)
-    feature_scaler.scale_ = 1 / (feature_scaler.data_max_ - feature_scaler.data_min_)
-    feature_scaler.min_ = 0 - feature_scaler.data_min_ * feature_scaler.scale_
+    feature_scaler.scale_ = (feature_range[1] - feature_range[0]) / (
+        feature_scaler.data_max_ - feature_scaler.data_min_
+    )
+    feature_scaler.min_ = (
+        feature_range[0] - feature_scaler.data_min_ * feature_scaler.scale_
+    )
     target_scaler: MinMaxScaler = MinMaxScaler(target_range)
     target_scaler.data_min_ = np.array(target_min)
     target_scaler.data_max_ = np.array(target_max)
-    target_scaler.scale_ = 1 / (target_scaler.data_max_ - target_scaler.data_min_)
-    target_scaler.min_ = 0 - target_scaler.data_min_ * target_scaler.scale_
+    target_scaler.scale_ = (target_range[1] - target_range[0]) / (
+        target_scaler.data_max_ - target_scaler.data_min_
+    )
+    target_scaler.min_ = (
+        target_range[0] - target_scaler.data_min_ * target_scaler.scale_
+    )
 
     # Run model.
-    scaled_input: tf.Tensor = feature_scaler.transform(input)
+    scaled_input: tf.Tensor = feature_scaler.transform(model_input)
     output: tf.Tensor = model(scaled_input)
     return target_scaler.inverse_transform(output)
-
-
-# # Plot the trained model vs. the data.
-# # Sample from the unshuffled data set to have the elements sorted.
-# features, targets = next(
-#     iter(orig_ds.batch(batch_size=len(orig_ds)).as_numpy_iterator())
-# )
-
-# # loop through 3 time steps and 3 three pressures
-# features = features.reshape((runspecs.NPOINTS, 395, ninputs))[:3, ...]
-# targets = targets.reshape((runspecs.NPOINTS, 395, noutputs))[:3, ...]
-
-# OPM_ML: str = "/home/peter/Documents/2023_CEMRACS/opm_ml"
-# CO2BRINEPVT: str = os.path.join(OPM_ML, "build/opm-common/bin/co2brinepvt")
-
-# for feature, target in list(zip(features, targets)):
-#     plt.figure()
-#     target_hat = target_scaler.inverse_transform(
-#         model(feature_scaler.transform(feature))
-#     )
-#     # Calculate density and viscosity
-#     with subprocess.Popen(
-#         [
-#             CO2BRINEPVT,
-#             "density",
-#             "brine",
-#             str(feature[0, 0]),
-#             str(runspecs.TEMPERATURE + units.CELSIUS_TO_KELVIN),
-#         ],
-#         stdout=subprocess.PIPE,
-#     ) as proc:
-#         density: float = float(proc.stdout.read())
-#     with subprocess.Popen(
-#         [
-#             CO2BRINEPVT,
-#             "viscosity",
-#             "brine",
-#             str(feature[0, 0]),
-#             str(runspecs.TEMPERATURE + units.CELSIUS_TO_KELVIN),
-#         ],
-#         stdout=subprocess.PIPE,
-#     ) as proc:
-#         viscosity: float = float(proc.stdout.read())
-#     # Calculate analytical WI.
-#     peaceman = (
-#         np.vectorize(peaceman_WI)(
-#             runspecs.PERMEABILITY * units.MILIDARCY_TO_M2,
-#             feature[..., 1],
-#             runspecs.WELL_RADIUS,
-#             density,
-#             viscosity,
-#         )
-#         / runspecs.SURFACE_DENSITY
-#     )
-#     plt.plot(
-#         feature[..., 1].flatten(),
-#         target_hat,
-#         label="nn",
-#     )
-#     plt.plot(
-#         feature[..., 1].flatten(),
-#         peaceman,
-#         label="Peaceman",
-#     )
-#     plt.scatter(
-#         feature[..., 1].flatten()[::5],
-#         target.flatten()[::5],
-#         label="data",
-#     )
-#     plt.legend()
-#     plt.title(rf"$p_i={feature[20][0]:.3e}\,[Pa]$ at $r={feature[300][1]:.2f}\,[m]$")
-#     plt.xlabel(r"$r\,[m]$")
-#     plt.ylabel(r"$WI\,[m^4\cdots/kg]$")
-#     plt.savefig(
-#         os.path.join(
-#             savepath, f"nn_p_r_to_WI_p_{feature[300][0]:.3e}_t_{feature[0][1]:0f}.png"
-#         )
-#     )
-#     plt.show()

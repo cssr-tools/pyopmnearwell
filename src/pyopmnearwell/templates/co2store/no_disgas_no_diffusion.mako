@@ -192,7 +192,9 @@ COMPDAT
 % if dic['grid'] == 'core':
 'INJ0' 1 ${1+mt.floor(dic['noCells'][2]/2)} ${1+mt.floor(dic['noCells'][2]/2)} ${1+mt.floor(dic['noCells'][2]/2)} 'OPEN' 1* ${dic["jfactor"]} /
 % else:
-'INJ0' ${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${max(1, 1+mt.floor(dic['noCells'][1]/2))} 1 ${dic['noCells'][2]} 'OPEN' 1* ${dic["jfactor"]*2*mt.pi*dic['rock'][0][0]*dic['dims'][2]/dic['noCells'][2]} /
+--'INJ0' ${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${max(1, 1+mt.floor(dic['noCells'][1]/2))} 1 ${dic['noCells'][2]} 'OPEN' 1* ${dic["jfactor"]*2*mt.pi*dic['rock'][0][0]*dic['dims'][2]/dic['noCells'][2]} /
+'INJ0' ${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${max(1, 1+mt.floor(dic['noCells'][1]/2))} 1 ${dic['noCells'][2]} 'OPEN' 1* ${dic["jfactor"]} /
+
 % endif
 % endif
 % if dic["pvMult"] == 0 or dic['grid']== 'core':

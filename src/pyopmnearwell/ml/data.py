@@ -5,6 +5,8 @@ Note: Some manual changes are needed if the tensors of the dataset shall have a 
 different from the default one. The lines that need to be changed are marked with 
 # MANUAL CHANGES.
 
+Deprecated: This module is deprecated in favor of the ``ensemble`` module.
+
 """
 from __future__ import annotations
 

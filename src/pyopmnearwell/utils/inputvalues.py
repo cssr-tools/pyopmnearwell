@@ -21,6 +21,7 @@ def process_input(dic, in_file):
 
     Returns:
         dic (dict): Global dictionary with new added parameters
+
     """
     lol = []
     with open(in_file, "r", encoding="utf8") as file:
@@ -31,7 +32,7 @@ def process_input(dic, in_file):
     return dic
 
 
-def readthefirstpart(lol, dic):
+def readthefirstpart(lol, dic):  # pylint: disable=R0915
     """
     Function to process the first lines from the configuration file
 
@@ -42,14 +43,13 @@ def readthefirstpart(lol, dic):
     Returns:
         dic (dict): Global dictionary with new added parameters
         inc (int): Number of line in the input file
+
     """
     dic["flow"] = str(lol[1])[2:-2]  # Path to the flow executable
     dic["model"] = (str(lol[4][0]).strip()).split()[0]  # Physical model
     dic["template"] = (str(lol[4][0]).strip()).split()[1]  # Name
     if len(str(lol[4][0]).strip().split()) >= 3:
         dic["runname"] = (str(lol[4][0]).strip()).split()[2]  # Name for the deckfile
-    else:
-        dic["runname"] = "RESERVOIR"
     dic["grid"] = (
         lol[5][0].strip().split()[0]
     )  # Grid type (radial/cake/cartesian2d/cartesian)
@@ -86,6 +86,16 @@ def readthefirstpart(lol, dic):
         (lol[8][0].strip()).split()[1]
     )  # Well connection transmissibility factor [mD m]
     dic["removecells"] = int((lol[8][0].strip()).split()[2])  # Remove small cells
+
+    # Empty well, the permeability is set high and the injection takes part at the upper
+    # boundary of the well cells.
+    if len(lol[8][0].strip().split()) >= 4 and not lol[8][0].strip().split()[
+        3
+    ].startswith("#"):
+        dic["empty_well"] = float((lol[8][0].strip()).split()[3])
+    else:
+        dic["empty_well"] = 0.0
+
     dic["pressure"] = float((lol[9][0].strip()).split()[0]) / 1.0e5  # Convert to bar
     dic["temperature"] = float((lol[9][0].strip()).split()[1])
     dic["initialphase"] = int((lol[9][0].strip()).split()[2])
@@ -116,6 +126,7 @@ def readthesecondpart(lol, dic, index):
 
     Returns:
         dic (dict): Global dictionary with new added parameters
+
     """
     for name in ["rock", "safu"]:
         dic[name] = []

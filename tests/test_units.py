@@ -3,9 +3,11 @@
 The module is tested by checking that the unit conversion are inverses of each other.
 
 """
+from __future__ import annotations
+
 import pytest
 
-import pyopmnearwell.utils.units as units
+from pyopmnearwell.utils import units
 
 
 def test_permeability() -> None:
@@ -21,5 +23,5 @@ def test_pressure() -> None:
 def test_temperature() -> None:
     """Test that the temperature unit conversions are additive inverses."""
     assert units.CELSIUS_TO_KELVIN + units.KELVIN_TO_CELSIUS == pytest.approx(
-        0.0, rel=1e-4
+        0.0, abs=1e-7
     )

@@ -444,15 +444,15 @@ namespace Opm
                                                       const SummaryState& summary_state,
                                                       DeferredLogger& deferred_logger) const;
         template <class Value>
-        Value wellIndexEval(const int perf, const Value& pressure, const Simulator& ebosSimulator) const;
+        Value wellIndexEval(const int perf, const Simulator& ebosSimulator) const;
 
     private:
 
         template <class Value>
-        Value scaleFunction(Value X, double min, double max) const;
+        Value scaleFunction(Value X, double min, double max, double range_min, double range_max) const;
     
         template <class Value>
-        Value unscaleFunction(Value X, double min, double max) const;
+        Value unscaleFunction(Value X, double min, double max, double range_min, double range_max) const;
 
         Eval connectionRateEnergy(const double maxOilSaturation,
                                   const std::vector<EvalWell>& cq_s,

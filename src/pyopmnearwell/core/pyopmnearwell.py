@@ -4,6 +4,7 @@
 """Main script"""
 import argparse
 import os
+import pathlib
 
 from pyopmnearwell.utils.inputvalues import process_input
 from pyopmnearwell.utils.runs import plotting, simulations
@@ -32,7 +33,7 @@ def pyopmnearwell():
         "-p",
         "--plotting",
         default="ecl",
-        help="Using the 'ecl' or 'opm' python package (ecl by default).",
+        help="Using the 'ecl' or 'opm' python package or turn plotting 'off' (ecl by default).",
     )
     parser.add_argument(
         "-c",
@@ -65,7 +66,9 @@ def pyopmnearwell():
     if dic["compare"]:
         plot_results(dic)
         return
+
     file = cmdargs["input"]  # Name of the input file
+    dic["runname"] = pathlib.Path(file).stem
 
     # Process the input file (open pyopmnearwell.utils.inputvalues to see the
     # abbreviations meaning)

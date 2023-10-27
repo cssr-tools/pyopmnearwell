@@ -4,12 +4,14 @@
 """Test the script to obtain the pressure at given distance"""
 
 import os
+import pathlib
+
 from pyopmnearwell.visualization.getpressure import main
+
+dirname: pathlib.Path = pathlib.Path(__file__).parent
 
 
 def test_pressure_reader():
     """See visualization/getpressure.py"""
-    cwd = os.getcwd()
-    os.chdir(f"{os.getcwd()}/tests/models")
+    os.chdir(dirname / "models")
     main()
-    os.chdir(cwd)

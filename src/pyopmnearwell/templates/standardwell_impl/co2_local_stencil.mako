@@ -287,9 +287,9 @@ namespace Opm
                              deferred_logger); 
                 }
                 if constexpr (std::is_same_v<Value, EvalWell>) {
-                    WI = this->extendEval(wellIndexEval(perf, Base::restrictEval(pressure), ebosSimulator));
+                    WI = this->extendEval(wellIndexEval<Eval>(perf, ebosSimulator));
                 } else {
-                    WI = wellIndexEval(perf, pressure, ebosSimulator);
+                    WI = wellIndexEval<Value>(perf, ebosSimulator);
                 }
                 auto injectorType = this->well_ecl_.injectorType();
                 if (injectorType == InjectorType::WATER) {
@@ -2538,32 +2538,21 @@ namespace Opm
     template<typename TypeTag>
     template<class Value>
     Value
-    StandardWell<TypeTag>::wellIndexEval(
-        const int perf,
-        const Value& pressure,
-        const Simulator& ebosSimulator
-        ) const {
-
+    StandardWell<TypeTag>::
+    wellIndexEval(const int perf,
+                  const Simulator& ebosSimulator
+                  ) const 
+    {
         // Define some helper functions in this scope
         auto obtain = [this](const Eval& value)
-            {
-                if constexpr (std::is_same_v<Value, Scalar>) {
-                    static_cast<void>(this); // suppress clang warning
-                    return getValue(value);
-                } else {
-                    return this->extendEval(value);
-                }
-            };
-        auto zeroElem = [this]()
-                        {
+                      {
                             if constexpr (std::is_same_v<Value, Scalar>) {
                                 static_cast<void>(this); // suppress clang warning
-                                return 0.0;
+                                return getValue(value);
                             } else {
-                                return Value{this->primary_variables_.numWellEq() + Indices::numEq, 0.0};
+                                return value;
                             }
-                        };
-
+                      };
 
         // Some constants; as of now they are set by filling out this *.hpp mako
         // TODO: Find some smarter way to do this
@@ -2572,20 +2561,28 @@ namespace Opm
         float xmin[${len(xmin)}];
         float xmax[${len(xmax)}];
         std::string cell_feature_names[${len(cell_feature_names)}];
-        const int stencil_size = ${stencil_size};
-        const int num_cell_features = ${len(cell_feature_names)};
+        const int stencil_size{ ${stencil_size} };
+        const int num_cell_features{ ${len(cell_feature_names)} };
 
         % for min_value, max_value in zip(xmin, xmax):
         xmin[${loop.index}] = ${min_value};
         xmax[${loop.index}] = ${max_value};
         % endfor
+        auto feature_min { ${x_range_min} };
+        auto feature_max { ${x_range_max} };
+        auto target_min { ${y_range_min} };
+        auto target_max { ${y_range_max} };
+
 
         % for cell_feature_name in cell_feature_names:
         cell_feature_names[${loop.index}] = "${cell_feature_name}";
         % endfor
 
-        // For now, only time is a global feature
-        const int num_global_features = 1;
+        // For now, total injected gas and analytical WI are the global features
+        const int num_global_features { 2 };
+        const double injection_rate_per_second { 5000000 / 86000 };
+        // TODO: This needs to be passed to the function
+        const double analytical_WI { 0.000005 };
 
         // Load ML model
         KerasModel<Value> model;
@@ -2600,83 +2597,116 @@ namespace Opm
             // Perforation index
             int perf_i = perf - 1 + i;
 
+            // TODO: Add neighbor padding for pressure
+
             // Upper boundary: Set zero padding
             if (perf_i < 0 ) {
                 for (int j = 0; j < num_cell_features; ++j) {
-                    features[i][j] = zeroElem();
+                    features[i][j] = Value(0.0);
                     }
                 }
             // Lower boundary: Set zero padding
             else if (perf_i >= this->number_of_perforations_) {
                 for (int j = 0; j < num_cell_features; ++j) {
-                    features[i][j] = zeroElem();
+                    features[i][j] = Value(0.0);
                     }
                 }
 
             // Inside the domain
-            const int cell_idx = this->well_cells_[perf_i];
-            const auto& intQuants = ebosSimulator.model().intensiveQuantities(cell_idx, /*timeIdx=*/ 0);
+            else {
+                const int cell_idx = this->well_cells_[perf_i];
+                const auto& intQuants = ebosSimulator.model().intensiveQuantities(cell_idx, /*timeIdx=*/ 0);
 
-            auto fs = intQuants.fluidState();
+                auto fs = intQuants.fluidState();
 
-            for (int j = 0; j < num_cell_features; ++j) {
-                std::string feature_name = cell_feature_names[j];
-                if (feature_name == "pressure") {
-                    features[i][j] = obtain(this->getPerfCellPressure(fs));
-                    }
-                // TODO: Are saturation and permeability Values or will this create
-                // a bug?
-                else if (feature_name == "saturation") {
-                    features[i][j] = fs.saturation(FluidSystem::gasPhaseIdx).value();
-                    }
-                else if (feature_name == "perm") {
-                    const auto& connection = Base::well_ecl_.getConnections()[perf_i];
-                    features[i][j] = connection.Kh()/connection.connectionLength();
+                for (int j = 0; j < num_cell_features; ++j) {
+                    std::string feature_name = cell_feature_names[j];
+                    if (feature_name == "pressure") {
+                        features[i][j] = obtain(this->getPerfCellPressure(fs));
+                        }
+                    // TODO: Are saturation and permeability Values or will this create
+                    // a bug?
+                    else if (feature_name == "saturation") {
+                        features[i][j] = obtain(fs.saturation(FluidSystem::gasPhaseIdx));
+                        }
+                    else if (feature_name == "permeability") {
+                        const auto& connection = Base::well_ecl_.getConnections()[perf_i];
+                        features[i][j] = Value(connection.Kh()/connection.connectionLength());
+                        }
+                    std::cout << feature_name << " cell_" << i << ": " << features[i][j] << std::endl;
                     }
                 }
             }
 
         // Give number of input parameters
-        Tensor<Value> in[stencil_size * num_cell_features + num_global_features] {};
+        Tensor<Value> in{stencil_size * num_cell_features + num_global_features};
 
-        // Scale features and order them as input tensor
-        // Note: order need to be the same as under training
-        for (int i = 0; i < num_cell_features; ++i) {
-            for (int j = 0; j < stencil_size; ++j) {
+        // Scale local features and order them as input tensor
+        // Note: order needs to be the same as during training
+        for (int j = 0; j < num_cell_features; ++j) {
+            for (int i = 0; i < stencil_size; ++i) {
                 features[i][j] = scaleFunction(features[i][j],
-                                               xmin[i * stencil_size + j],
-                                               xmax[i * stencil_size + j]
+                                               xmin[j * stencil_size + i],
+                                               xmax[j * stencil_size + i],
+                                            feature_min,
+                                            feature_max
                                                );
-                in.data_[i * stencil_size + j] = features[i][j];
+                in.data_[j * stencil_size + i] = features[i][j];
+                std::cout << "feature_" << i << " cell_" << j << " scaled: " << features[i][j] << std::endl;
             }
         }
 
-        // Get values for global features
+        // Add local features
+        // Note: order needs to be the same as during training
         // TODO: Needs more functionality for num_global_features > 1
-        const auto time =  scaleFunction(ebosSimulator.time(),
-                                            xmin[-1],
-                                            xmax[-1]
-                                            );
-        in.data_[0][-1] = time;
+        const auto total_inj_gas =  Value(scaleFunction(ebosSimulator.time() * injection_rate_per_second,
+                                            xmin[${len(xmin)} - 2],
+                                            xmax[${len(xmin)} - 2],
+                                            feature_min,
+                                            feature_max
+                                            ));
+        const auto analytical_WI_scaled = Value(scaleFunction(analytical_WI,
+                                            xmin[${len(xmin)} - 1],
+                                            xmax[${len(xmin)} - 1],
+                                            feature_min,
+                                            feature_max
+                                            ));
+        in.data_[stencil_size * num_cell_features + num_global_features - 2] = total_inj_gas;
+        in.data_[stencil_size * num_cell_features + num_global_features - 1] = analytical_WI_scaled;
 
         // Run prediction
         Tensor<Value> out;
         model.Apply(&in, &out);
-        return unscaleFunction(out.data_[0],${ymin}, ${ymax});
+
+        // Some help for debugging
+        std::cout << "total_inj_gas_scaled: " << total_inj_gas << std::endl;
+        std::cout << "total_inj_gas: " << ebosSimulator.time() * injection_rate_per_second << std::endl;
+        std::cout << "time: " << ebosSimulator.time() << std::endl;
+
+        std::cout << "WI: " << unscaleFunction(out.data_[0],${ymin}, ${ymax}, target_min, target_max) << std::endl;
+        std::cout << "WI_scaled: " << getValue(out.data_[0]) << std::endl;
+
+        return unscaleFunction(out.data_[0],${ymin}, ${ymax}, target_min, target_max);
     }
 
     template<typename TypeTag>
     template<class Value>
     Value
-    StandardWell<TypeTag>::scaleFunction(Value X, double min, double max) const {
-    return (X - min) / (max - min);
-}
+    StandardWell<TypeTag>::
+    scaleFunction(Value X, double min, double max, double range_min, double range_max) const 
+    {
+        Value X_std { (X - min) / (max - min) };
+        return X_std * (range_max - range_min) + range_min;
+    }
 
     template<typename TypeTag>
     template<class Value>
     Value
-    StandardWell<TypeTag>::unscaleFunction(Value X, double min, double max) const {
-    return X * (max - min) + min;
-}
+    StandardWell<TypeTag>::
+    unscaleFunction(Value X, double min, double max, double range_min, double range_max) const
+    {
+        Value X_std { (X - range_min) / (range_max - range_min) };
+        return X_std * (max - min) + min;
+    }
 
 } // namespace Opm
