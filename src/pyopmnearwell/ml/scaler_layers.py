@@ -15,6 +15,8 @@ class ScalerLayer(keras.layers.Layer):
 
     data_min: tf.Tensor
     data_max: tf.Tensor
+    min: tf.Tensor
+    scalar: tf.Tensor
 
     def __init__(
         self,
@@ -24,12 +26,16 @@ class ScalerLayer(keras.layers.Layer):
         feature_range: ArrayLike = tf.Tensor([0, 1]),
         **kwargs,  # pylint: disable=W0613
     ) -> None:
-        super().__init__()
-        self.feature_range: tf.Tensor = tf.convert_to_tensor(feature_range)
+        super().__init__(**kwargs)
+        if feature_range[0] >= feature_range[1]:
+            raise ValueError("Feature range must be strictly increasing.")
+        self.feature_range: tf.Tensor = tf.convert_to_tensor(
+            feature_range, dtype=tf.float32
+        )
         self._is_adapted: bool = False
         if data_min is not None and data_max is not None:
-            self.data_min = tf.convert_to_tensor(data_min)
-            self.data_max = tf.convert_to_tensor(data_max)
+            self.data_min = tf.convert_to_tensor(data_min, dtype=tf.float32)
+            self.data_max = tf.convert_to_tensor(data_max, dtype=tf.float32)
             self._adapt()
 
     def build(self, input_shape: tuple[int, ...]) -> None:
@@ -47,33 +53,54 @@ class ScalerLayer(keras.layers.Layer):
             self._adapt()
 
     def get_weights(self) -> list[ArrayLike]:
+        """Return weights.
+
+        Returns:
+            list[ArrayLike]: List with three elements in the following order:
+            ``self.data_min``, ``self.data_max``, ``self.feature_range``
+
+        """
         return [self.data_min, self.data_max, self.feature_range]
 
-    def set_weights(self, weights: list[np.ndarray]) -> None:
-        self.data_min = weights[0]
-        self.data_max = weights[1]
-        self.feature_range = weights[2]
+    def set_weights(self, weights: list[ArrayLike]) -> None:
+        """_summary_
 
-    # TODO
-    # Implement only if something special needs to be saved in the config compared to the base layer.
-    # Every element of the config needs to be serialized.
+        Args:
+            weights (list[ArrayLike]): List with three elements in the following order:
+            ``data_min``, ``data_max``, ``feature_range``
+
+        Raises:
+            ValueError: If ``feature_range[0] >= feature_range[1]``.
+
+        """
+        self.feature_range: tf.Tensor = tf.convert_to_tensor(
+            weights[2], dtype=tf.float32
+        )
+        if self.feature_range[0] >= self.feature_range[1]:
+            raise ValueError("Feature range must be strictly increasing.")
+        self.data_min = tf.convert_to_tensor(weights[0], dtype=tf.float32)
+        self.data_max = tf.convert_to_tensor(weights[1], dtype=tf.float32)
+
+    # NOTE: Implement only if something special needs to be saved in the config compared
+    # to the base layer.
+    # Every element of the config needs to be serializable. -> Transform tensors to
+    # something else.
 
     # Ignore pylint complaining about a missing docstring.
-    def get_config(self) -> dict[str, Any]:  # pylint: disable=C0116
-        config = super().get_config()  # type: ignore # pylint: disable=E1101
-        # Note: This returns the dict, but raises a warning that the layers is not JSON
-        # serializable. Fix this!
-        config.update(
-            {
-                "feature_range": self.feature_range,
-                "data_max": self.data_max,
-                "data_min": self.data_min,
-            }
-        )
-        return config
+    # def get_config(self) -> dict[str, Any]:  # pylint: disable=C0116
+    # config = super().get_config()  # type: ignore # pylint: disable=E1101
+    # TODO: If this is supposed
+    # config.update(
+    #     {
+    #         "feature_range": self.feature_range,
+    #         "data_max": self.data_max,
+    #         "data_min": self.data_min,
+    #     }
+    # )
+    # return config
 
-    def from_config(self, config: dict[str, Any]) -> None:
-        pass
+    # def from_config(self, config: dict[str, Any]) -> None:
+    #     pass
 
     def adapt(self, data: ArrayLike) -> None:
         """Fit the layer to the min and max of the data. This is done individually for
@@ -87,7 +114,7 @@ class ScalerLayer(keras.layers.Layer):
             data: _description_
 
         """
-        data = tf.convert_to_tensor(data)
+        data = tf.convert_to_tensor(data, dtype=tf.float32)
         self.data_min = tf.math.reduce_min(data, axis=0)
         self.data_max = tf.math.reduce_max(data, axis=0)
         self._adapt()
@@ -143,11 +170,11 @@ class MinMaxScalerLayer(
             )
 
         # TODO: Does this conversion to tensors need to be done?
-        inputs = tf.convert_to_tensor(inputs)
+        inputs = tf.convert_to_tensor(inputs, dtype=tf.float32)
         scaled_data = (inputs - self.min) / self.scalar
-        return self.feature_range[0] + (
+        return (
             scaled_data * (self.feature_range[1] - self.feature_range[0])
-        )
+        ) + self.feature_range[0]
 
 
 class MinMaxUnScalerLayer(ScalerLayer, tf.keras.layers.Layer):
@@ -178,6 +205,8 @@ class MinMaxUnScalerLayer(ScalerLayer, tf.keras.layers.Layer):
             )
 
         # TODO: Does this conversion to tensors need to be done?
-        inputs = tf.convert_to_tensor(inputs)
-        unscaled_data = inputs * self.scalar + self.min
-        return unscaled_data
+        inputs = tf.convert_to_tensor(inputs, dtype=tf.float32)
+        unscaled_data = (inputs - self.feature_range[0]) / (
+            self.feature_range[1] - self.feature_range[0]
+        )
+        return unscaled_data * self.scalar + self.min
