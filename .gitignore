@@ -189,10 +189,5 @@ developing/
 studies/
 prototyping/
 cssr/
+.vscode/
 
-# Examples
-examples/output*
-examples/2023-08-*
-
-!examples/2023-08-10*
-examples/2023-08-10*/

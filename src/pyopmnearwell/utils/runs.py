@@ -2,11 +2,13 @@
 # SPDX-License-Identifier: GPL-3.0
 
 """
-Utiliy functions to run the studies.
+Utility functions to run the studies.
 """
-import os
 import math as mt
+import os
+
 import numpy as np
+
 from pyopmnearwell.visualization.plotting import plot_results
 
 
@@ -21,7 +23,7 @@ def simulations(dic):
     os.chdir(f"{dic['exe']}/{dic['fol']}/output")
     os.system(
         f"{dic['flow']} --output-dir={dic['exe']}/{dic['fol']}/output "
-        f"{dic['exe']}/{dic['fol']}/preprocessing/{dic['fol'].upper()}.DATA  & wait\n"
+        f"{dic['exe']}/{dic['fol']}/preprocessing/{dic['runname'].upper()}.DATA  & wait\n"
     )
     # We save few variables for the plotting methods
     np.save("xspace", dic["xcor"])

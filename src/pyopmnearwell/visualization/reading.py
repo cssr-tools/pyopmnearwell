@@ -1,23 +1,25 @@
 # SPDX-FileCopyrightText: 2023 NORCE
 # SPDX-License-Identifier: GPL-3.0
 
+# pylint: skip-file
 """"
 Script to read the output files
 """
+
+import pathlib
 
 import numpy as np
 import pandas as pd
 
 try:
-    from opm.io.ecl import ESmry
     from opm.io.ecl import EclFile as EclFileOpm
-    from opm.io.ecl import ERst
+    from opm.io.ecl import ERst, ESmry
 except ImportError:
     print("The opm Python package was not found, using ecl")
 try:
-    from ecl.summary import EclSum
     from ecl.eclfile import EclFile
     from ecl.grid import EclGrid
+    from ecl.summary import EclSum
 except ImportError:
     print("The ecl Python package was not found, using opm")
 
@@ -63,7 +65,12 @@ def read_opm(dic):
             dic["exe"] + "/" + study + "/output/radius.npy"
         )
         dic[f"{study}_angle"] = np.load(dic["exe"] + "/" + study + "/output/angle.npy")
-        case = dic["exe"] + "/" + study + f"/output/{study.upper()}"
+        deck = [
+            f.stem
+            for f in (pathlib.Path(dic["exe"]) / study / "output").iterdir()
+            if str(f).endswith(".UNRST")
+        ]
+        case = str(pathlib.Path(dic["exe"]) / study / f"output/{deck[0]}")
         dic[f"{study}_rst"] = ERst(case + ".UNRST")
         dic[f"{study}_ini"] = EclFileOpm(case + ".INIT")
         dic[f"{study}_smsp"] = ESmry(case + ".SMSPEC")
@@ -240,7 +247,15 @@ def read_ecl(dic):
             dic["exe"] + "/" + study + "/output/radius.npy"
         )
         dic[f"{study}_angle"] = np.load(dic["exe"] + "/" + study + "/output/angle.npy")
-        case = dic["exe"] + "/" + study + f"/output/{study.upper()}"
+        deck = [
+            f.stem
+            for f in (pathlib.Path(dic["exe"]) / study / "output").iterdir()
+            if str(f).endswith(".UNRST")
+        ]
+        case = str(pathlib.Path(dic["exe"]) / study / f"output/{deck[0]}")
+        print(study)
+        print(dic["exe"])
+        print(case)
         dic[f"{study}_rst"] = EclFile(case + ".UNRST")
         dic[f"{study}_ini"] = EclFile(case + ".INIT")
         dic[f"{study}_grid"] = EclGrid(case + ".EGRID")

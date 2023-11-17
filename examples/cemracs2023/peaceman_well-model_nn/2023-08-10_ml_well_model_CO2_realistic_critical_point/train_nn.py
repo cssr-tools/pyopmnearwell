@@ -1,4 +1,4 @@
-"""Train a neural network that predicts the well index from the permeability, initital
+"""Train a neural network that predicts the well index from the initital
 reservoir pressure and distance from the well."""
 
 import csv

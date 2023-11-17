@@ -6,7 +6,7 @@ import math as mt
 INIT
 % if dic['grid']== 'cartesian2d':
 INCLUDE
-'DX.INC' /
+${dic['dx_file']} /
 DY 
   ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*${dic['dims'][1]/dic['noCells'][1]} /
 DZ 
@@ -27,7 +27,7 @@ INRAD
 ${dic["diameter"]}
 /
 INCLUDE
-  'DRV.INC' /
+  ${dic['drv_file']} /
 DTHETAV
   ${dic['dims'][1]} /
 DZ 
@@ -36,15 +36,15 @@ TOPS
   ${dic['noCells'][0]}*0. /
 % elif dic['grid']== 'cake' or dic['grid']== 'tensor2d' or dic['grid']== 'coord2d':
 INCLUDE
-  'GRID.INC' /
+  ${dic['grid_file']} /
 % elif dic['grid']== 'cpg3d':
 INCLUDE
-  'GRID.INC' /
+  ${dic['grid_file']} /
 % else:
 INCLUDE
-'DX.INC' /
+${dic['dx_file']} /
 INCLUDE
-'DY.INC' /
+${dic['dy_file']} /
 DZ 
   ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*${dic['dims'][2]/dic['noCells'][2]} /
 TOPS

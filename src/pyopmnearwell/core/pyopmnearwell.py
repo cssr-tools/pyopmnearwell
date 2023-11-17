@@ -2,10 +2,12 @@
 # SPDX-License-Identifier: GPL-3.0
 
 """Main script"""
-import os
 import argparse
+import os
+import pathlib
+
 from pyopmnearwell.utils.inputvalues import process_input
-from pyopmnearwell.utils.runs import simulations, plotting
+from pyopmnearwell.utils.runs import plotting, simulations
 from pyopmnearwell.utils.writefile import reservoir_files
 from pyopmnearwell.visualization.plotting import plot_results
 
@@ -31,7 +33,7 @@ def pyopmnearwell():
         "-p",
         "--plotting",
         default="ecl",
-        help="Using the 'ecl' or 'opm' python package (ecl by default).",
+        help="Using the 'ecl' or 'opm' python package or turn plotting 'off' (ecl by default).",
     )
     parser.add_argument(
         "-c",
@@ -50,7 +52,9 @@ def pyopmnearwell():
         ),
     )
     cmdargs = vars(parser.parse_known_args()[0])
-    dic = {"pat": os.path.dirname(__file__)[:-5]}  # Path to the pyopmnearwell folder
+    dic = {
+        "pat": os.path.split(os.path.dirname(__file__))[0]
+    }  # Path to the pyopmnearwell folder
     dic["exe"] = os.getcwd()  # Path to the folder of the input.txt file
     dic["fol"] = cmdargs["output"]  # Name for the output folder
     dic["plot"] = cmdargs["plotting"]  # The python package used for plotting
@@ -62,18 +66,21 @@ def pyopmnearwell():
     if dic["compare"]:
         plot_results(dic)
         return
-    file = cmdargs["input"]  # Name of the input file
 
-    # Process the input file (open pyopmnearwell.utils.inputvalues to see the abbreviations meaning)
+    file = cmdargs["input"]  # Name of the input file
+    dic["runname"] = pathlib.Path(file).stem
+
+    # Process the input file (open pyopmnearwell.utils.inputvalues to see the
+    # abbreviations meaning)
     dic = process_input(dic, file)
 
     # Make the output folders
-    if not os.path.exists(f"{dic['exe']}/{dic['fol']}"):
-        os.system(f"mkdir {dic['exe']}/{dic['fol']}")
+    if not os.path.exists(os.path.join(dic["exe"], dic["fol"])):
+        os.makedirs(os.path.join(dic["exe"], dic["fol"]))
     for fil in ["preprocessing", "jobs", "output", "postprocessing"]:
-        if not os.path.exists(f"{dic['exe']}/{dic['fol']}/{fil}"):
-            os.system(f"mkdir {dic['exe']}/{dic['fol']}/{fil}")
-    os.chdir(f"{dic['exe']}/{dic['fol']}")
+        if not os.path.exists(os.path.join(dic["exe"], dic["fol"], fil)):
+            os.makedirs(os.path.join(dic["exe"], dic["fol"], fil))
+    os.chdir(os.path.join(dic["exe"], dic["fol"]))
 
     # Write used opm related files
     reservoir_files(dic)
@@ -82,7 +89,7 @@ def pyopmnearwell():
     simulations(dic)
 
     # Make some useful plots after the studies
-    if cmdargs["plotting"] != "":
+    if cmdargs["plotting"] != "off":
         plotting(dic)
 
 
