@@ -97,6 +97,8 @@ def readthefirstpart(lol, dic):
         dic["hyst_model"] = 2
     dic["econ"] = float((lol[12][0].strip()).split()[2])  # Econ
     dic["salt_props"] = [float((lol[13][0].strip()).split()[j]) for j in range(7)]
+    if dic["template"] == "dyncpres":
+        dic["pcfact"] = [float((lol[13][0].strip()).split()[j]) for j in range(7, 12)]
     dic["z_xy"] = str(lol[14][0])  # The function for the reservoir surface
     index = 17  # Increase this if more rows are added to the model parameters part
     return dic, index

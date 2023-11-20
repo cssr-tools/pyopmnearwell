@@ -15,7 +15,7 @@ from scipy.interpolate import interp1d
 from pyopmnearwell.visualization.reading import read_simulations
 from pyopmnearwell.visualization.additional_plots import final_time_maps
 
-font = {"family": "normal", "weight": "normal", "size": 16}
+font = {"family": "normal", "weight": "normal", "size": 13}
 matplotlib.rc("font", **font)
 plt.rcParams.update(
     {
@@ -23,10 +23,11 @@ plt.rcParams.update(
         "font.family": "monospace",
         "legend.columnspacing": 0.9,
         "legend.handlelength": 1.5,
-        "legend.fontsize": 14,
+        "legend.fontsize": 12,
         "lines.linewidth": 4,
-        "axes.titlesize": 16,
+        "axes.titlesize": 13,
         "axes.grid": True,
+        "figure.figsize": (10, 5),
     }
 )
 
