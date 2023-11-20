@@ -9,6 +9,12 @@ ${mult}
 %endfor
 /
 ENDBOX
+% elif dic["template"] in ["hwell", "hwellnoise"]:
+BOX
+1* 1* 1* 1* ${dic['noCells'][2]} ${dic['noCells'][2]} /  
+MULTPV
+${dic['noCells'][0]}*${dic["pvMult"]} /
+ENDBOX
 % elif dic['grid'] != 'cartesian' and dic['grid'] != 'cpg3d' and dic['grid'] != 'tensor3d'  and dic['grid'] != 'coord3d':
 BOX
 ${dic['noCells'][0]} ${dic['noCells'][0]} 1 1 1* 1* / 

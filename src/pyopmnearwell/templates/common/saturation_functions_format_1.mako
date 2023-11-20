@@ -61,7 +61,7 @@ def safu_evaluation():
                 else:
                     file.write(
                         f"{value:.6f}"
-                        f" {krne(1-value,para[0], para[1] , para[2], para[6]) :.6f}"
+                        f" {krne(1-value,para[0], para[1] , para[3], para[6]) :.6f}"
                         f" {krwe(1-value,para[0], para[1] , para[2], para[5]) :.6f}"
                         f" {pcwce(1-value+para[8],para[0], para[1], para[4], para[7]):E} \n"
                     )

@@ -9,15 +9,15 @@ cake 60       #Grid type (core/radial/cake/cartesian2d/cartesian/cpg3d/coord2d/c
 0.1 0 0       #Well diameter [m], well transmiscibility (0 to use the computed one internally in Flow), and remove the smaller cells than the well diameter
 1e7 40 0      #Pressure [Pa] on the top, uniform temperature [°], and initial phase in the reservoir (0 wetting, 1 non-wetting)
 1e10 0        #Pore volume multiplier on the boundary [-] (0 to use well producers instead) and deactivate cross flow within the wellbore (see XFLOW in OPM Manual)
-1 5 6         #Activate perforations [-], number of well perforations [-], and length [m]
-4 1 0         #Number of layers [-], hysteresis (1 to activate), and econ for the producer (for h2 models)
+1 5 6         #Activate perforations [-], number of well perforations [-], and lenght [m]
+4 Killough 0  #Number of layers [-], hysteresis (1 to activate), and econ for the producer (for h2 models)
 0 0 0 0 0 0 0 #Ini salt conc [kg/m3], salt sol lim [kg/m3], prec salt den [kg/m3], gamma [-], phi_r [-], npoints [-], and threshold [-]  (all entries for saltprec)
 2-2*mt.cos((2*mt.pi*x/50)) + 10*(x/100)**2 #The function for the reservoir surface
 
 """Set the saturation functions"""
 krw * ((sw - swi) / (1.0 - sni -swi)) ** nkrw             #Wetting rel perm saturation function [-]
 krn * ((1.0 - sw - sni) / (1.0 - sni - swi)) ** nkrn      #Non-wetting rel perm saturation function [-]
-pec * ((sw - swi) / (1.0 - sni - swi)) ** (-(1.0 / npe))  #Capillary pressure saturation function [Pa]
+pec * ((sw - swi) / (1.0 - swi)) ** (-(1.0 / npe))        #Capillary pressure saturation function [Pa]
 
 """Properties saturation functions"""
 """swi [-], sni [-], krn [-], krw [-], pec [Pa], nkrw [-], nkrn [-], npe [-], threshold cP evaluation, ignore swi for cP"""
@@ -26,10 +26,10 @@ SWI3  0.12 SNI3  0.1 KRW3  1 KRN3  1 PRE3  6120 NNKRW3 2 NNKRN3 2 HNPE3 2 THRE3 
 SWI4  0.12 SNI4  0.1 KRW4  1 KRN4  1 PRE4  3871 NNKRW4 2 NNKRN4 2 HNPE4 2 THRE4  1e-4 IGN3  0
 SWI5  0.12 SNI5  0.1 KRW5  1 KRN5  1 PRE5  3060 NNKRW5 2 NNKRN5 2 HNPE5 2 THRE5  1e-4 IGN4  0
 SWIP     0 SNIP    0 KRWP  1 KRNP  1 PECP     0 NNKRWP 1 NNKRNP 1 NPEP  1 THREP  1e-4 IGNP  0
-HSWI2 0.28 HSNI2 0.2 HKRW2 1 HKRN2 1 HPRE2 8655 HNKRW2 3 HNKRN2 3 HNPE2 2 HTHRE2 1e-4 HIGN1 0
-HSWI3 0.24 HSNI3 0.2 HKRW3 1 HKRN3 1 HPRE3 6120 HNKRW3 3 HNKRN3 3 HNPE3 2 HTHRE3 1e-4 HIGN2 0
-HSWI4 0.24 HSNI4 0.2 HKRW4 1 HKRN4 1 HPRE4 3871 HNKRW4 3 HNKRN4 3 HNPE4 2 HTHRE4 1e-4 HIGN3 0
-HSWI5 0.24 HSNI5 0.2 HKRW5 1 HKRN5 1 HPRE5 3060 HNKRW5 3 HNKRN5 3 HNPE5 2 HTHRE5 1e-4 HIGN4 0
+HSWI2 0.14 HSNI2 0.2 HKRW2 1 HKRN2 1 HPRE2 8655 HNKRW2 2 HNKRN2 3 HNPE2 2 HTHRE2 1e-4 HIGN1 0
+HSWI3 0.12 HSNI3 0.2 HKRW3 1 HKRN3 1 HPRE3 6120 HNKRW3 2 HNKRN3 3 HNPE3 2 HTHRE3 1e-4 HIGN2 0
+HSWI4 0.12 HSNI4 0.2 HKRW4 1 HKRN4 1 HPRE4 3871 HNKRW4 2 HNKRN4 3 HNPE4 2 HTHRE4 1e-4 HIGN3 0
+HSWI5 0.12 HSNI5 0.2 HKRW5 1 HKRN5 1 HPRE5 3060 HNKRW5 2 HNKRN5 3 HNPE5 2 HTHRE5 1e-4 HIGN4 0
 HSWIP    0 HSNIP   0 HKRWP 1 HKRNP 1 HPECP    0 HNKRWP 1 HNKRNP 1 HNPEP 1 HTHREP 1e-4 HIGN5 0
 
 """Properties rock"""
