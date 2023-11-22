@@ -24,12 +24,15 @@ def compute_peaceman(k_h: float, r_e: float, r_w: float) -> float:
     from the Peaceman well model.
     .. math::
         WI\cdot\frac{\mu}{\rho} = \frac{2\pi hk}{\ln (r_e/r_w)}
-    Parameters:
-        k_h: Permeability times the cell thickness (thickness fix to 1 m).
-        r_e: Equivalent well-block radius.
-        r_w: Wellbore radius.
+
+    Args:
+        k_h (float): Permeability times the cell thickness (thickness fix to 1 m).
+        r_e (float): Equivalent well-block radius.
+        r_w (float): Wellbore radius.
+
     Returns:
-        :math:`WI\cdot\frac{\mu}{\rho}`
+        float: :math:`WI\cdot\frac{\mu}{\rho}`
+
     """
     w_i = (2 * math.pi * k_h) / (math.log(r_e / r_w))
     return w_i

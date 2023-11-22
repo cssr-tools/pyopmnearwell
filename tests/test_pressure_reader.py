@@ -8,10 +8,8 @@ import pathlib
 
 from pyopmnearwell.visualization.getpressure import main
 
-dirname: pathlib.Path = pathlib.Path(__file__).parent
 
-
-def test_pressure_reader():
+def test_pressure_reader(run_main: pathlib.Path) -> None:
     """See visualization/getpressure.py"""
-    os.chdir(dirname / "models")
+    os.chdir(run_main)
     main()

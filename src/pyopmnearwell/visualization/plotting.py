@@ -1,39 +1,25 @@
 # SPDX-FileCopyrightText: 2023 NORCE
 # SPDX-License-Identifier: GPL-3.0
 
-""""
-Script to plot OPM Flow results
-"""
+""""Script to plot OPM Flow results."""
 
 import argparse
-import os
 import csv
-import numpy as np
-import matplotlib
+import os
+
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.interpolate import interp1d
-from pyopmnearwell.visualization.reading import read_simulations
+
+from pyopmnearwell.utils.plotting import set_latex_params
 from pyopmnearwell.visualization.additional_plots import (
     final_time_maps,
-    saltprec_plots,
     over_time_saltprec,
+    saltprec_plots,
 )
+from pyopmnearwell.visualization.reading import read_simulations
 
-font = {"family": "normal", "weight": "normal", "size": 16}
-matplotlib.rc("font", **font)
-plt.rcParams.update(
-    {
-        "text.usetex": True,
-        "font.family": "monospace",
-        "legend.columnspacing": 0.9,
-        "legend.handlelength": 3.0,
-        "legend.fontsize": 12,
-        "lines.linewidth": 4,
-        "axes.titlesize": 16,
-        "axes.grid": True,
-        "figure.figsize": (10, 5),
-    }
-)
+set_latex_params()
 
 KMOL_TO_KG = 1e3 * 0.044
 

@@ -1,5 +1,6 @@
-# pylint: skip-file
+# pylint: disable=missing-function-docstring, fixme
 """Test the ``ml.ensemble`` module."""
+
 from __future__ import annotations
 
 import itertools
@@ -12,7 +13,9 @@ import numpy as np
 import pytest
 
 from pyopmnearwell.ml.ensemble import (
+    calculate_WI,
     create_ensemble,
+    get_flags,
     integrate_fine_scale_value,
     memory_efficient_sample,
     run_ensemble,
@@ -25,8 +28,15 @@ TEST_ENSEMBLE_MAKO: pathlib.Path = pathlib.Path(__file__).parent / "test_ensembl
 REPORT_STEPS: int = 20
 NUM_CELLS: int = 100
 
+rng: np.random.Generator = np.random.default_rng()
 
-# Test cases for create_ensemble, setup_ensemble, run_ensemble
+
+# Disable some pylint warnings for the ``TestEnsemble`` class. Some functions need
+# unused arguments, because they rely on the connected fixtures being run.
+# pylint: disable=unused-argument, invalid-name
+
+
+# Test cases for create_ensemble, setup_ensemble, run_ensemble:
 @pytest.mark.parametrize(
     "runspecs",
     [
@@ -77,11 +87,11 @@ NUM_CELLS: int = 100
     ],
     indirect=True,
 )
-# NOTE: The ``create_ensemble_fixture`` parametrization is only needed for
+# NOTE: The ``fixture_create_ensemble`` parametrization is only needed for
 # ``test_create_ensemble`` and ``test_setup_ensemble``. It is ignored by
 # ``test_run_ensemble``.
 @pytest.mark.parametrize(
-    "create_ensemble_fixture",
+    "fixture_create_ensemble",
     [
         (does_not_raise()),
         (does_not_raise()),
@@ -89,11 +99,11 @@ NUM_CELLS: int = 100
     ],
     indirect=True,
 )
-# NOTE: The ``setup_assemble_fixture`` parametrization is only needed for
+# NOTE: The ``fixture_setup_ensemble`` parametrization is only needed for
 # ``test_setup_ensemble`` and ``test_run_ensemble``. It is ignored by
 # ``test_create_ensemble``.
 @pytest.mark.parametrize(
-    "setup_assemble_fixture",
+    "fixture_setup_ensemble",
     itertools.product(*([[True, False]] * 3)),
     indirect=True,
 )
@@ -106,12 +116,12 @@ class TestEnsemble:
 
     """
 
-    @pytest.fixture(scope="class")
-    def runspecs(self, request) -> dict[str, Any]:
+    @pytest.fixture(scope="class", name="runspecs")
+    def fixture_runspecs(self, request) -> dict[str, Any]:
         return request.param
 
-    @pytest.fixture(scope="class")
-    def create_ensemble_fixture(
+    @pytest.fixture(scope="class", name="fixture_create_ensemble")
+    def fixture_create_ensemble(
         self, request, runspecs: dict[str, Any]
     ) -> Optional[list[dict[str, Any]]]:
         """Create and return ensemble.
@@ -137,12 +147,11 @@ class TestEnsemble:
         with expected_exception:
             return create_ensemble(runspecs)
 
-    @pytest.fixture(scope="class")
-    def setup_assemble_fixture(
+    @pytest.fixture(scope="class", name="fixture_setup_ensemble")
+    def fixture_setup_ensemble(
         self,
         request,
-        runspecs: dict[str, Any],
-        create_ensemble_fixture: Optional[list[dict[str, Any]]],
+        fixture_create_ensemble: Optional[list[dict[str, Any]]],
         tmp_path_factory,
     ) -> Optional[pathlib.Path]:
         """Setup ensemble and return the folder path.
@@ -150,14 +159,14 @@ class TestEnsemble:
         Args:
             request (_type_): _description_
             runspecs (dict[str, Any]):
-            create_ensemble_fixture (_type_): _description_
+            fixture_create_ensemble (_type_): _description_
             tmp_path_factory (_type_): _description_
 
         Returns:
             _type_: _description_
 
         """
-        if create_ensemble_fixture is not None:
+        if fixture_create_ensemble is not None:
             recalc_grid: bool = request.param[-3]
             recalc_tables: bool = request.param[-2]
             recalc_sections: bool = request.param[-1]
@@ -169,7 +178,7 @@ class TestEnsemble:
 
             setup_ensemble(
                 dirname,
-                create_ensemble_fixture,
+                fixture_create_ensemble,
                 TEST_ENSEMBLE_MAKO,
                 recalc_grid=recalc_grid,
                 recalc_tables=recalc_tables,
@@ -181,17 +190,17 @@ class TestEnsemble:
     def test_create_ensemble(
         self,
         runspecs: dict[str, Any],
-        create_ensemble_fixture: Optional[list[dict[str, Any]]],
-        setup_assemble_fixture: Optional[pathlib.Path],
+        fixture_create_ensemble: Optional[list[dict[str, Any]]],
+        fixture_setup_ensemble: Optional[pathlib.Path],
     ) -> None:
-        if create_ensemble_fixture is not None:
+        if fixture_create_ensemble is not None:
             max_values: dict[str, np.ndarray] = {}
             min_values: dict[str, np.ndarray] = {}
             for variable, (min_value, max_value, _) in runspecs["variables"].items():
                 max_values[variable] = max_value
                 min_values[variable] = min_value
-            assert len(create_ensemble_fixture) == runspecs["npoints"]
-            for member in create_ensemble_fixture:
+            assert len(fixture_create_ensemble) == runspecs["npoints"]
+            for member in fixture_create_ensemble:
                 for variable, value in member.items():
                     if variable in max_values:
                         assert value <= max_values[variable]
@@ -201,25 +210,25 @@ class TestEnsemble:
     def test_setup_assemble(
         self,
         runspecs: dict[str, Any],
-        create_ensemble_fixture: list[dict[str, Any]],
-        setup_assemble_fixture: pathlib.Path,
+        fixture_create_ensemble: list[dict[str, Any]],
+        fixture_setup_ensemble: pathlib.Path,
     ) -> None:
         # Skip invalid test cases.
         if runspecs["npoints"] == 200:
             pytest.skip("Invalid case.")
-        # if create_ensemble_fixture is None:
+        # if fixture_create_ensemble is None:
         #     pytest.skip("Invalid case.")
 
         ensemble_folders: list[str] = [
             folder.name
-            for folder in setup_assemble_fixture.iterdir()
+            for folder in fixture_setup_ensemble.iterdir()
             if folder.name.startswith("runfiles")
         ]
         # Check that all ensemble files were generated.
-        assert len(create_ensemble_fixture) == len(ensemble_folders)
+        assert len(fixture_create_ensemble) == len(ensemble_folders)
         for member_folder in ensemble_folders:
             subfolders: list[str] = [
-                file.name for file in (setup_assemble_fixture / member_folder).iterdir()
+                file.name for file in (fixture_setup_ensemble / member_folder).iterdir()
             ]
             assert "preprocessing" in subfolders
             assert "jobs" in subfolders
@@ -228,7 +237,7 @@ class TestEnsemble:
                 preprocessing_files: list[str] = [
                     file.name
                     for file in (
-                        setup_assemble_fixture / member_folder / "preprocessing"
+                        fixture_setup_ensemble / member_folder / "preprocessing"
                     ).iterdir()
                 ]
                 for file in [
@@ -243,13 +252,13 @@ class TestEnsemble:
                 assert "saturation_functions.py" in [
                     file.name
                     for file in (
-                        setup_assemble_fixture / member_folder / "jobs"
+                        fixture_setup_ensemble / member_folder / "jobs"
                     ).iterdir()
                 ]
 
             else:
                 runfiles: list[pathlib.Path] = list(
-                    (setup_assemble_fixture / member_folder / "preprocessing").iterdir()
+                    (fixture_setup_ensemble / member_folder / "preprocessing").iterdir()
                 )
                 assert len(runfiles) == 1
                 runfile: pathlib.Path = runfiles[0]
@@ -260,16 +269,16 @@ class TestEnsemble:
     def test_run_ensemble(
         self,
         runspecs: dict[str, Any],
-        create_ensemble_fixture: list[dict[str, Any]],
-        setup_assemble_fixture: pathlib.Path,
+        fixture_create_ensemble: list[dict[str, Any]],
+        fixture_setup_ensemble: pathlib.Path,
     ) -> None:
         """
         Test the `run_ensemble` for various inputs.
 
         Args:
             runspecs (dict[str, Any]):
-            create_ensemble_fixture (list[dict[str, Any]]):
-            setup_assemble_fixture (pathlib.Path):
+            fixture_create_ensemble (list[dict[str, Any]]):
+            fixture_setup_ensemble (pathlib.Path):
 
         Asserts:
             - The lists in the returned dictionary have the correct length (npoints)
@@ -280,7 +289,7 @@ class TestEnsemble:
         # Skip invalid test cases.
         if runspecs["npoints"] == 200:
             pytest.skip("Invalid case.")
-        # if create_ensemble_fixture is None:
+        # if fixture_create_ensemble is None:
         #     pytest.skip("Invalid case.")
 
         ecl_keywords: list[str] = ["PRESSURE", "SGAS"]
@@ -292,7 +301,7 @@ class TestEnsemble:
         with patch("builtins.open", mock_open()):
             data = run_ensemble(
                 FLOW,
-                setup_assemble_fixture,
+                fixture_setup_ensemble,
                 runspecs,
                 ecl_keywords,
                 init_keywords,
@@ -317,12 +326,15 @@ class TestEnsemble:
             assert array.shape == expected_shape
 
 
+# pylint: enable=unused-argument, invalid-name
+
+
 @pytest.mark.parametrize("num_members", [1, 5, 10])
 def test_memory_efficient_sample(num_members: int):
     # Create sample input data.
     num_samples = 100
     num_variables = 5
-    variables = np.random.rand(num_variables, num_samples)
+    variables = rng.random((num_variables, num_samples))
 
     # Call the function.
     result = memory_efficient_sample(variables, num_members)
@@ -337,36 +349,47 @@ def test_memory_efficient_sample(num_members: int):
             assert member in variables[i]
 
 
-# def test_calculate_radii():
-#     # TODO
-#     pass
-
-
-# def test_calculate_WI():
-#     # TODO
-#     pass
-
-
+# TODO: Implement tests for the following functions.
 # def test_extract_features():
-#     # TODO
+#     pass
+
+# def test_calculate_radii():
 #     pass
 
 
-# Define some example data for testing
-radial_values = np.array([1.0, 2.0, 3.0, 4.0])
-radii = np.array([1.0, 2.0, 3.0, 4.0])
-block_sidelength = 4.0
-
-# Test data and expected results for the parametrized tests
-test_data = [
-    (
-        np.array([1.0, 2.0, 3.0, 4.0]),
-        np.array([1.0, 2.0, 3.0, 4.0]),
-        4.0,
-        30.849556708632265,
-    ),  # Expected result calculated separately
-    (np.array([]), np.array([]), 4.0, 0.0),  # Empty data should result in 0
-]
+@pytest.mark.parametrize(
+    "pressures,injection_rates,expected_WI,expected_failed_indices",
+    [
+        (
+            np.array([[100, 90, 80, 60]], dtype=np.float32),
+            10.0,
+            np.array([[1.0, 0.5, 0.25]]),
+            [],
+        ),
+        (
+            np.array([[100, 90, 80, 60], [110, 100, 90, 70]]),
+            np.array([10.0, 20.0]),
+            np.array([[1.0, 0.5, 0.25], [2.0, 1.0, 0.5]]),
+            [],
+        ),
+        (
+            np.array([[100, 90, 80, 60], [100, 100, 90, 80]]),
+            np.array([10.0, 20.0]),
+            np.array([[1.0, 0.5, 0.25]]),
+            [1],
+        ),
+    ],
+)
+def test_calculate_WI(  # pylint: disable=invalid-name
+    pressures: np.ndarray,
+    injection_rates: np.ndarray,
+    expected_WI: np.ndarray,  # pylint: disable=invalid-name
+    expected_failed_indices: list[int],
+):
+    # pylint: disable-next=invalid-name
+    WI_array, failed_indices = calculate_WI(pressures, injection_rates)
+    assert np.allclose(WI_array, expected_WI)
+    assert failed_indices == expected_failed_indices
 
 
 @pytest.mark.parametrize(
@@ -377,8 +400,8 @@ test_data = [
             np.array([0.0, 1.0, 2.0, 3.0, 4.0]),
             4.0,
             32.0,
-        ),  # Expected result calculated separately
-        (np.array([]), np.array([]), 4.0, 0.0),  # Empty data should result in 0
+        ),  # Expected result calculated by hand.
+        (np.array([]), np.array([]), 4.0, 0.0),  # Empty data should result in 0.
     ],
 )
 def test_integrate_fine_scale_value(radial_values, radii, block_sidelength, expected):
@@ -386,5 +409,17 @@ def test_integrate_fine_scale_value(radial_values, radii, block_sidelength, expe
     assert pytest.approx(result, rel=1e-7) == expected
 
 
-if __name__ == "__main__":
-    pytest.main()
+@pytest.mark.parametrize(
+    "flags, expected_value",
+    [
+        ("flow --flag1 --flag2=value --flag3\n", "--flag1 --flag2=value --flag3"),
+        ("${FLOW} --flag1=2 --flag3=test --flag", "--flag1=2 --flag3=test --flag"),
+    ],
+)
+def test_get_flags(flags: str, expected_value: str, tmp_path):
+    makofile = tmp_path / "test.mako"
+    with makofile.open("w") as f:  # pylint: disable=invalid-name
+        f.write("\n")
+        f.write(flags)
+    flags = get_flags(makofile)
+    assert flags == expected_value

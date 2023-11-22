@@ -1,3 +1,4 @@
+# pylint: disable=fixme
 """This module provides functionality to parse ``*.UNRST`` files for given keywords and
 transform the extracted values into a tensorflow dataset.
 
@@ -5,7 +6,8 @@ Note: Some manual changes are needed if the tensors of the dataset shall have a 
 different from the default one. The lines that need to be changed are marked with 
 # MANUAL CHANGES.
 
-Deprecated: This module is deprecated in favor of the ``ensemble`` module.
+Deprecated: This module is deprecated in favor of the ``ensemble`` module which can run
+an ensemble of pyopmnearwell decks AND extract data afterwards.
 
 """
 
@@ -18,20 +20,21 @@ from typing import Literal
 
 import numpy as np
 import tensorflow as tf
-from ecl.eclfile.ecl_file import EclFile, open_ecl_file
+from resdata import FileMode
+from resdata.resfile import ResdataFile
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-class EclDataSet:  # pylint: disable=R0902
-    """Generate samples for a ``tf.data.Dataset`` from a folder of ``*.UNRST`` files.
+class ResDataSet:  # pylint: disable=R0902
+    """Generate samples for a ``tf.data.Dataset`` from a folder of ``.UNRST`` files.
 
     Example:
         After instantiation of the class, it can be passed to
         ``tf.data.Dataset.from_generator()``, to create a dataset that ``tensorflow``
         can work with.
-        >>> data = EclDataSet(path, input_kws, target_kws)
+        >>> data = ResDataSet(path, input_kws, target_kws)
         >>> data.read_data()
         >>> ds = tf.data.Dataset.from_generator(
         >>>     data,
@@ -40,10 +43,11 @@ class EclDataSet:  # pylint: disable=R0902
 
         To save the dataset, use
         >>> ds.save(path)
-        Afterwards, the ``*.UNRST`` files used to generated the dataset can be deleted.
+        Afterwards, the ``.UNRST`` files used to generated the dataset can be deleted.
 
     """
 
+    # Typing for instance attributes.
     features: tf.Tensor
     """Stores all inputs of the dataset.
 
@@ -62,7 +66,7 @@ class EclDataSet:  # pylint: disable=R0902
         path: str,
         input_kws: list[str],
         target_kws: list[str],
-        file_format: Literal["ecl", "opm"] = "ecl",
+        file_format: Literal["resdata", "opm"] = "resdata",
         dtype=tf.float32,
         shuffle_on_epoch_end: bool = False,
         read_data_on_init: bool = True,
@@ -71,17 +75,17 @@ class EclDataSet:  # pylint: disable=R0902
 
         Parameters:
             path: _description_
-            input_kws: Keywords for attributes of the ``EclFile`` that shall become
+            input_kws: Keywords for attributes of the ``.UNRST`` file that shall become
                 model input.
-            target_kws: Keywords for attributes of the ``EclFile`` that shall become
+            target_kws: Keywords for attributes of the ``.UNRST`` file that shall become
                 targets for model training.
-            type: _description_. Defaults to ``"ecl"``.
-            read_data_on_init: Reads data from ``*.UNRST`` files in ``path`` on
+            type: _description_. Defaults to ``"resdata"``.
+            read_data_on_init: Reads data from ``.UNRST`` files in ``path`` on
                 instantiation. Disable for testing/debugging. Defaults to ``True``.
 
 
         Warning:
-            As of now, ``type`` is always assumed to be ``ecl``. ``opm`` is not
+            As of now, ``type`` is always assumed to be ``resdata``. ``opm`` is not
             implemented yet.
 
         Returns:
@@ -95,28 +99,30 @@ class EclDataSet:  # pylint: disable=R0902
         if read_data_on_init:
             self.read_data()
         self.shuffle_on_epoch_end: bool = shuffle_on_epoch_end
-        self.file_format: Literal["ecl", "opm"] = file_format
+        self.file_format: Literal["resdata", "opm"] = file_format
 
     def read_data(self):
-        """Create a ``tensorflow`` dataset from a folder of ``ecl`` or ``opm`` files."""
+        """Create a ``tensorflow`` dataset from a folder of ``resdata`` or ``opm`` files."""
         logger.info("Generating datapoints...")
         _features_lst: list[tf.Tensor] = []
         _targets_lst: list[tf.Tensor] = []
         for filename in os.listdir(self.path):
             if filename.endswith("UNRST"):
-                with open_ecl_file(os.path.join(self.path, filename)) as ecl_file:
-                    try:
-                        feature, target = self.EclFile_to_datapoint(ecl_file)
-                        _features_lst.append(feature)
-                        _targets_lst.append(target)
-                        logger.info(  # pylint: disable=W1203
-                            f"Generated a datapoint from {filename}."
-                        )
-                    except KeyError as keyerror:
-                        logger.info(  # pylint: disable=W1203
-                            f"{filename} has no keyword {keyerror}."
-                        )
-                        continue
+                resdata_file: ResdataFile = ResdataFile(
+                    os.path.join(self.path, filename), flags=FileMode.CLOSE_STREAM
+                )
+                try:
+                    feature, target = self.ResdataFile_to_datapoint(resdata_file)
+                    _features_lst.append(feature)
+                    _targets_lst.append(target)
+                    logger.info(  # pylint: disable=W1203
+                        f"Generated a datapoint from {filename}."
+                    )
+                except KeyError as keyerror:
+                    logger.info(  # pylint: disable=W1203
+                        f"{filename} has no keyword {keyerror}."
+                    )
+                    continue
         if len(_features_lst) > 0 and len(_targets_lst) > 0:
             # Transform the lists into a tensor
 
@@ -138,25 +144,24 @@ class EclDataSet:  # pylint: disable=R0902
                 Generated an empty dataset for now."""
             )
 
-    def EclFile_to_datapoint(  # pylint: disable= C0103
-        self, ecl_file: EclFile
+    def ResdataFile_to_datapoint(  # pylint: disable= C0103
+        self, resdata_file: ResdataFile
     ) -> tuple[tf.Tensor, tf.Tensor]:
-        """Extract values from an ``EclFile`` to form an (input, target) tuple of
-        tensors.
+        """Extract values from an ``ResdataFile`` object to form an (input, target)
+        tuple of tensors.
 
-
-        Parameters:
-            ecl_file: _description_
+        Args:
+            ecl_file (EclFile): _description_
 
         Raises:
-            KeyError: If ``ecl_file`` does not have either of the keywords in
+            KeyError: If ``resdata_file`` does not have either of the keywords in
                 ``self.input_kws`` or ``self.target_kws``
 
         Returns:
-            A tuple containing the input and target tensor. The former has shape
-            ``(ecl_file.num_report_steps(), num_cells, len(input_kws))``, while the
-            latter has shape
-            ``(ecl_file.num_report_steps(), num_cells, len(target_kws))``.
+            tuple[tf.Tensor, tf.Tensor]: A tuple containing the input and target tensor.
+                The former has shape ``(resdata_file.num_report_steps(), num_cells,
+                len(input_kws))``, while the latter has shape
+                ``(resdata_file.num_report_steps(), num_cells, len(target_kws))``.
 
         """
         # Only add the datapoint if all input features and targets are
@@ -167,13 +172,13 @@ class EclDataSet:  # pylint: disable=R0902
         # corresponding to the keyword, with shape
         # ``(ecl_file.num_report_steps(), num_cells)``.
         for input_kw in self.input_kws:
-            if ecl_file.has_kw(input_kw):
-                feature[input_kw] = np.array(ecl_file.iget_kw(input_kw))
+            if resdata_file.has_kw(input_kw):
+                feature[input_kw] = np.array(resdata_file.iget_kw(input_kw))
             else:
                 raise KeyError(input_kw)
         for target_kw in self.target_kws:
-            if ecl_file.has_kw(target_kw):
-                target[target_kw] = np.array(ecl_file.iget_kw(target_kw))
+            if resdata_file.has_kw(target_kw):
+                target[target_kw] = np.array(resdata_file.iget_kw(target_kw))
             else:
                 raise KeyError(target_kw)
         # Stack the different input and target properties into one input
@@ -220,13 +225,13 @@ class EclDataSet:  # pylint: disable=R0902
 
 def main(args):  # pylint: disable=W0621
     """Create a dataset from the given arguments and store it"""
-    data = EclDataSet(args.path, args.input_kws, args.target_kws, args.file_format)
+    data = ResDataSet(args.path, args.input_kws, args.target_kws, args.file_format)
     assert len(data) > 0
     dataset = tf.data.Dataset.from_generator(
         data,
         output_signature=(
-            tf.TensorSpec.from_tensor(data[0][0]),
-            tf.TensorSpec.from_tensor(data[0][1]),
+            tf.TensorSpec.from_tensor(data[0][0]),  # type: ignore
+            tf.TensorSpec.from_tensor(data[0][1]),  # type: ignore
         ),
     )
     # Manually set the dataset cardinality.

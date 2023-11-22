@@ -10,6 +10,7 @@ Targets:
     1. WI [m*s]
 
 """
+
 from __future__ import annotations
 
 import logging
@@ -54,13 +55,15 @@ INJECTION_RATE: float = 5.352087e3  # unit: [kg/d]
 X: float = 2.500000e-01  # Outer coordinates of first cell.
 Y: float = -1.443376e-01
 WELL_RADIUS: float = math.sqrt(X**2 + Y**2)  # unit: [m]; Fixed during training.
-DENSITY: float = 12.9788  # unit: kg/m^3; for 72 bar, 30.9780 °C. Is this at surface conditions or not?
+DENSITY: float = (
+    12.9788  # unit: kg/m^3; for 72 bar, 30.9780 °C. Is this at surface conditions or not?
+)
 VISCOSITY: float = 1.52786e-05  # unit: Pa*s; for 72 bar, 30.9780 °C
 
 FLOW = "flow"
 FLAGS = (
     " --linear-solver-reduction=1e-5 --relaxed-max-pv-fraction=0"
-    + " --ecl-enable-drift-compensation=0 --newton-max-iterations=50"
+    + " --enable-drift-compensation=0 --newton-max-iterations=50"
     + " --newton-min-iterations=5 --tolerance-mb=1e-7 --tolerance-wells=1e-5"
     + " --relaxed-well-flow-tol=1e-5 --use-multisegment-well=false --enable-tuning=true"
     + " --enable-opm-rst-file=true --linear-solver=cprw"

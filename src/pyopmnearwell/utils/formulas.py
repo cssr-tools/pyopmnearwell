@@ -1,5 +1,11 @@
 # pylint: skip-file
-"""Provide useful mathematical formulas for reservoir modelling."""
+"""Provide useful mathematical formulas for reservoir modelling.
+
+TODO: The typing is off in this module. Instead of returning an ArrayLike, most
+functions should return an np.ndarray, however that does not work when a float is passed
+as then an np.float64 or similar is returned. Not sure how to fix this.
+
+"""
 
 import math
 import os
@@ -9,7 +15,6 @@ from typing import Literal
 
 import numpy as np
 from numpy.typing import ArrayLike
-
 from pyopmnearwell.utils import units
 
 # TODO: Change the typing to typevars. There needs to be some logic, e.g., in case some
@@ -19,16 +24,15 @@ from pyopmnearwell.utils import units
 R_E_RATIO: float = math.exp(-math.pi / 2)
 
 
-def pyopmnearwell_correction(theta: ArrayLike = math.pi / 3) -> ArrayLike:
+def pyopmnearwell_correction(angle: ArrayLike = math.pi / 3) -> ArrayLike:
     r"""Calculate a correction factor that scales cell volume, equivalent radius etc.
     from a 2D triangle grid to a radial grid.
 
     In pyopmnearwell, when using the `cake` grid, a 2D triangle grid is used. As the
-    scaling for cell volumes between a raidal and a triangular grid is linear, the
+    scaling for cell volumes between a radial and a triangular grid is linear, the
     radial solution can be recovered. This function calculates the ratio
 
     .. math::
-
         r_{radial_grid} / x_{triangle_grid},
 
     where :math:`x_{triangle_grid}` is the altitude of the triangle, s.t. the solution
@@ -36,17 +40,18 @@ def pyopmnearwell_correction(theta: ArrayLike = math.pi / 3) -> ArrayLike:
     radii.
 
     Args:
-        theta (ArrayLike): Angle of the triangle grid. Default is :math:`\pi/3`.
+        angle (ArrayLike): Angle between both sides of the triangle grid. Default is
+            :math:`\pi/3`.
 
     Returns:
         ArrayLike: :math:`r_{radial_grid} / x_{triangle_grid}`
 
     """
-    theta = np.asarray(theta)
-    return 2 * np.tan(theta / 2) / theta
+    angle = np.asarray(angle)
+    return 2 * np.tan(angle / 2) / angle
 
 
-def equivalent_well_block_radius(delta_x: ArrayLike) -> ArrayLike:
+def equivalent_well_radius(delta_x: ArrayLike) -> np.ndarray:
     """Calculate the equivalent well block radius for a given quadratic cell size.
 
     Args:
@@ -61,7 +66,7 @@ def equivalent_well_block_radius(delta_x: ArrayLike) -> ArrayLike:
 
 
 def cell_size(radii: ArrayLike) -> ArrayLike:
-    """Calculate the cell size for a given equivalent well block radius.
+    """Calculate the size of a quadratic cell for a given equivalent well block radius.
 
     Args:
         delta_x (ArrayLike): _description_
@@ -74,6 +79,41 @@ def cell_size(radii: ArrayLike) -> ArrayLike:
     return radii / R_E_RATIO
 
 
+def peaceman_matrix_WI(  # pylint: disable=C0103
+    k_h: ArrayLike, r_e: ArrayLike, r_w: ArrayLike
+) -> ArrayLike:
+    r"""Compute the well productivity index (without taking into account density and
+     viscosity) from the Peaceman well model.
+
+    .. math::
+
+        WI = \frac{2 \pi h \mathbf{k}}{\ln(r_e/r_w)}
+
+    Args:
+        k_h (ArrayLike): Permeability times the cell thickness. Unit: [m^3].
+        r_e (ArrayLike): Equivalent well-block radius. Needs to have the same unit as
+            ``r_w``.
+        r_w (ArrayLike): Wellbore radius. Needs to have the same unit as ``r_e``.
+
+    Returns:
+        WI (ArrayLike): :math:`WI`. Unit: [m^3].
+
+    Raises:
+        ValueError: If r_w is zero for any point.
+        ValueError: If either r_e or r_w contains a negative value
+
+    """
+    k_h = np.asarray(k_h)
+    r_e = np.asarray(r_e)
+    r_w = np.asarray(r_w)
+    if np.any(r_w <= 0):
+        raise ValueError("r_w must be positive.")
+    if np.any(r_e <= r_w):
+        raise ValueError("r_e must greater than r_w.")
+    WI = (2 * math.pi * k_h) / (np.log(r_e / r_w))
+    return WI
+
+
 def peaceman_WI(  # pylint: disable=C0103
     k_h: ArrayLike, r_e: ArrayLike, r_w: ArrayLike, rho: ArrayLike, mu: ArrayLike
 ) -> ArrayLike:
@@ -82,11 +122,12 @@ def peaceman_WI(  # pylint: disable=C0103
 
     .. math::
 
-        WI = \frac{2\pi hk\frac{\mu}{\rho}}{\ln(r_e/r_w)}
+        WI = \frac{2 \pi h \mathbf{k} \frac{\mu}{\rho}}{\ln(r_e/r_w)}
 
     Args:
         k_h (ArrayLike): Permeability times the cell thickness. Unit: [m^3].
-        r_e (ArrayLike): Equivalent well-block radius. Needs to have the same unit as ``r_w``.
+        r_e (ArrayLike): Equivalent well-block radius. Needs to have the same unit as
+            ``r_w``.
         r_w (ArrayLike): Wellbore radius. Needs to have the same unit as ``r_e``.
         rho (ArrayLike): Density. Unit: [kg/m^3].
         mu (ArrayLike): Viscosity. Unit: [Pa*s].
@@ -94,19 +135,10 @@ def peaceman_WI(  # pylint: disable=C0103
     Returns:
         WI (ArrayLike): :math:`WI`. Unit: [m*s].
 
-    Raises:
-        ValueError: If r_w is zero for any point.
-
     """
-    k_h = np.asarray(k_h)
-    r_e = np.asarray(r_e)
-    r_w = np.asarray(r_w)
     rho = np.asarray(rho)
     mu = np.asarray(mu)
-
-    if np.any(r_w == 0):
-        raise ValueError("r_w cannot be zero")
-    WI = (2 * math.pi * k_h) / (np.log(r_e / r_w))
+    WI = peaceman_matrix_WI(k_h, r_e, r_w)
     return WI * rho / mu
 
 
@@ -132,8 +164,8 @@ def two_phase_peaceman_WI(  # pylint: disable=C0103
 
     .. math::
 
-        WI = \frac{2\pi h\mathbf{k}}{\ln(r_e/r_w)}\left(\frac{k_{r,1}}{\mu_1} +
-        \frac{k_{r,2}}{\mu_2})
+        WI = \frac{2 \pi h \mathbf{k}}{\ln(r_e/r_w)} \left(\frac{k_{r,1}}{\mu_1} +
+        \frac{k_{r,2}}{\mu_2})\right)
 
 
     Note:
@@ -154,13 +186,7 @@ def two_phase_peaceman_WI(  # pylint: disable=C0103
     Returns:
         WI (ArrayLike): :math:`WI`. Unit: [m*s].
 
-    Raises:
-        ValueError: If ``r_w`` is zero for any point.
-
     """
-    k_h = np.asarray(k_h)
-    r_e = np.asarray(r_e)
-    r_w = np.asarray(r_w)
     rho_1 = np.asarray(rho_1)
     mu_1 = np.asarray(mu_1)
     k_r1 = np.asarray(k_r1)
@@ -168,11 +194,10 @@ def two_phase_peaceman_WI(  # pylint: disable=C0103
     mu_2 = np.asarray(mu_2)
     k_r2 = np.asarray(k_r2)
 
-    if np.any(r_w == 0):
-        raise ValueError("r_w cannot be zero")
     total_mobility: ArrayLike = (k_r1 * rho_1) / mu_1 + (k_r2 * rho_2) / mu_2
-    WI = (2 * math.pi * k_h) / (np.log(r_e / r_w))
-    return WI * total_mobility
+    WI = peaceman_matrix_WI(k_h, r_e, r_w)
+    # Ignore unsupported operand types for *. Fixing this would be quite complex.
+    return WI * total_mobility  # type: ignore
 
 
 def data_WI(
@@ -220,7 +245,7 @@ def co2brinepvt(
     temperature: float,
     phase_property: Literal["density", "viscosity"],
     phase: Literal["CO2", "water"],
-    OPM: pathlib.Path,
+    OPM: str | pathlib.Path,
 ) -> float:
     """Call OPM's ``co2brinepvt`` to calculate density/viscosity.
 
@@ -229,13 +254,13 @@ def co2brinepvt(
         temperature (float): Unit: [K].
         property (Literal["density", "viscosity"]): Phase property to return.
         phase (Literal["CO2", "water"]): Phase of interest.
-        OPM: (pathlib.Path): Path to OPM installation.
+        OPM: (str | pathlib.Path): Path to OPM installation.
 
     Returns:
         quantity (float): Density (unit: [kg/m^3]) or viscosity (unit: [Pa*s])
 
     """
-    CO2BRINEPVT: pathlib.Path = OPM / "build/opm-common/bin/co2brinepvt"
+    CO2BRINEPVT: pathlib.Path = pathlib.Path(OPM) / "build/opm-common/bin/co2brinepvt"
     with subprocess.Popen(
         [
             str(CO2BRINEPVT),
