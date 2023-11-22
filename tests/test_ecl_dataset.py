@@ -12,7 +12,7 @@ import pytest
 import tensorflow as tf
 from ecl.eclfile.ecl_file import EclFile, open_ecl_file
 
-from pyopmnearwell.ml.data import EclDataSet
+from pyopmnearwell.ml.ecl_dataset import EclDataSet
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 

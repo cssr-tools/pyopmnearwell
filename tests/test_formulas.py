@@ -14,9 +14,51 @@ from pyopmnearwell.utils.formulas import (
     data_WI,
     hydrostatic_fluid,
     hydrostatic_gas,
+    peaceman_matrix_WI,
     peaceman_WI,
     two_phase_peaceman_WI,
 )
+
+
+@pytest.mark.parametrize(
+    "k_h, r_e, r_w, expected",
+    [
+        (1e-12, 100.0, 1.0, 2 * math.pi * 1e-12 / math.log(100.0)),
+        (1e-11, 200.0, 0.5, 2 * math.pi * 1e-11 / math.log(400.0)),
+        (1e-11, 250.0, 0.5, 2 * math.pi * 1e-11 / math.log(500.0)),
+        (1e-13, 200.0, 0.5, 2 * math.pi * 1e-13 / math.log(400.0)),
+        (
+            np.array([1e-12, 1e-11]),
+            np.array([100.0, 200.0]),
+            np.array([1.0, 0.5]),
+            np.array(
+                [
+                    2 * math.pi * 1e-12 / math.log(100.0),
+                    2 * math.pi * 1e-11 / math.log(400.0),
+                ]
+            ),
+        ),
+        (
+            np.array([1e-11, 1e-13]),
+            np.array([250.0, 200.0]),
+            np.array([0.5, 0.5]),
+            np.array(
+                [
+                    2 * math.pi * 1e-11 / math.log(500.0),
+                    2 * math.pi * 1e-13 / math.log(400.0),
+                ]
+            ),
+        ),
+    ],
+)
+def test_peaceman_matrix_WI(
+    k_h: ArrayLike, r_e: ArrayLike, r_w: ArrayLike, expected: ArrayLike
+):
+    if expected == ValueError:
+        with pytest.raises(expected)
+    else:
+        result = peaceman_matrix_WI(k_h, r_e, r_w)
+        assert np.allclose(result, expected, rtol=1e-7)
 
 
 @pytest.mark.parametrize(

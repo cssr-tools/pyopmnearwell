@@ -267,7 +267,7 @@ def setup_ensemble(
                 recalc_grid=recalc_grid,
                 recalc_tables=recalc_tables,
                 recalc_sections=recalc_sections,
-                inc_folder=pathlib.Path("..") / ".." "runfiles_0" / "preprocessing",
+                inc_folder=pathlib.Path("..") / ".." / "runfiles_0" / "preprocessing",
             )
     # pyopmnearwell creates these unneeded folders, so we remove them.
     try:
@@ -326,7 +326,7 @@ def run_ensemble(
             simulation_finished: bool = True
 
             with open_ecl_file(
-                ensemble_path / f"results_{j}" / f"RUN_{j}.UNRST"
+                str(ensemble_path / f"results_{j}" / f"RUN_{j}.UNRST")
             ) as ecl_file:
                 # Skip result, if the simulation did not run to the last time step.
                 if (
@@ -359,14 +359,14 @@ def run_ensemble(
                     data[keyword].append(member_data[keyword])
 
                 with open_ecl_file(
-                    ensemble_path / f"results_{j}" / f"RUN_{j}.INIT"
+                    str(ensemble_path / f"results_{j}" / f"RUN_{j}.INIT")
                 ) as init_file:
                     for keyword in init_keywords:
                         # Append the data corresponding to the keyword for all cells.
                         data[keyword].append(np.array(init_file.iget_kw(keyword)))
 
                 summary_file: EclSum = EclSum(
-                    ensemble_path / f"results_{j}" / f"RUN_{j}.SMSPEC"
+                    str(ensemble_path / f"results_{j}" / f"RUN_{j}.SMSPEC")
                 )
                 for keyword in summary_keywords:
                     # Append the data corresponding to the keyword for all report steps
@@ -594,7 +594,7 @@ def extract_features(
 def integrate_fine_scale_value(
     radial_values: np.ndarray,
     radii: np.ndarray,
-    block_sidelength: float,
+    block_sidelength: float | np.ndarray,
     axis: int = -1,
 ) -> np.ndarray:
     """Integrate a fine scale value across all radial cells lying in a square grid
@@ -604,7 +604,7 @@ def integrate_fine_scale_value(
         radial_values (np.ndarray): Cell values for the radial cells.
         radii (np.ndarray): Array of radii for inner and outer radius of the radial
         cells.
-        block_sidelength (float): The sidelength of the square grid block.
+        block_sidelength (float | np.ndarray): The sidelength of the square grid block.
         axis (int): Axis to integrate along.
 
     Returns:

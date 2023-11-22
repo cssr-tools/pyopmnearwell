@@ -74,6 +74,41 @@ def cell_size(radii: ArrayLike) -> ArrayLike:
     return radii / R_E_RATIO
 
 
+def peaceman_matrix_WI(  # pylint: disable=C0103
+    k_h: ArrayLike, r_e: ArrayLike, r_w: ArrayLike
+) -> ArrayLike:
+    r"""Compute the well productivity index (without taking into account density and
+     viscosity) from the Peaceman well model.
+
+    .. math::
+
+        WI = \frac{2 \pi h \mathbf{k}}{\ln(r_e/r_w)}
+
+    Args:
+        k_h (ArrayLike): Permeability times the cell thickness. Unit: [m^3].
+        r_e (ArrayLike): Equivalent well-block radius. Needs to have the same unit as
+            ``r_w``.
+        r_w (ArrayLike): Wellbore radius. Needs to have the same unit as ``r_e``.
+
+    Returns:
+        WI (ArrayLike): :math:`WI`. Unit: [m^3].
+
+    Raises:
+        ValueError: If r_w is zero for any point.
+        ValueError: If either r_e or r_w contains a negative value
+
+    """
+    k_h = np.asarray(k_h)
+    r_e = np.asarray(r_e)
+    r_w = np.asarray(r_w)
+    if np.any(r_w == 0):
+        raise ValueError("r_w cannot be zero.")
+    if np.any(r_e < 0) or np.any(r_w < 0):
+        raise ValueError("r_e and r_w cannot be negative.")
+    WI = (2 * math.pi * k_h) / (np.log(r_e / r_w))
+    return WI
+
+
 def peaceman_WI(  # pylint: disable=C0103
     k_h: ArrayLike, r_e: ArrayLike, r_w: ArrayLike, rho: ArrayLike, mu: ArrayLike
 ) -> ArrayLike:
@@ -82,11 +117,12 @@ def peaceman_WI(  # pylint: disable=C0103
 
     .. math::
 
-        WI = \frac{2\pi hk\frac{\mu}{\rho}}{\ln(r_e/r_w)}
+        WI = \frac{2 \pi h \mathbf{k} \frac{\mu}{\rho}}{\ln(r_e/r_w)}
 
     Args:
         k_h (ArrayLike): Permeability times the cell thickness. Unit: [m^3].
-        r_e (ArrayLike): Equivalent well-block radius. Needs to have the same unit as ``r_w``.
+        r_e (ArrayLike): Equivalent well-block radius. Needs to have the same unit as
+            ``r_w``.
         r_w (ArrayLike): Wellbore radius. Needs to have the same unit as ``r_e``.
         rho (ArrayLike): Density. Unit: [kg/m^3].
         mu (ArrayLike): Viscosity. Unit: [Pa*s].
@@ -94,19 +130,11 @@ def peaceman_WI(  # pylint: disable=C0103
     Returns:
         WI (ArrayLike): :math:`WI`. Unit: [m*s].
 
-    Raises:
-        ValueError: If r_w is zero for any point.
-
     """
-    k_h = np.asarray(k_h)
-    r_e = np.asarray(r_e)
-    r_w = np.asarray(r_w)
     rho = np.asarray(rho)
     mu = np.asarray(mu)
 
-    if np.any(r_w == 0):
-        raise ValueError("r_w cannot be zero")
-    WI = (2 * math.pi * k_h) / (np.log(r_e / r_w))
+    WI = peaceman_matrix_WI(k_h, r_e, r_w)
     return WI * rho / mu
 
 
@@ -132,8 +160,8 @@ def two_phase_peaceman_WI(  # pylint: disable=C0103
 
     .. math::
 
-        WI = \frac{2\pi h\mathbf{k}}{\ln(r_e/r_w)}\left(\frac{k_{r,1}}{\mu_1} +
-        \frac{k_{r,2}}{\mu_2})
+        WI = \frac{2 \pi h \mathbf{k}}{\ln(r_e/r_w)} \left(\frac{k_{r,1}}{\mu_1} +
+        \frac{k_{r,2}}{\mu_2})\right)
 
 
     Note:
@@ -154,13 +182,7 @@ def two_phase_peaceman_WI(  # pylint: disable=C0103
     Returns:
         WI (ArrayLike): :math:`WI`. Unit: [m*s].
 
-    Raises:
-        ValueError: If ``r_w`` is zero for any point.
-
     """
-    k_h = np.asarray(k_h)
-    r_e = np.asarray(r_e)
-    r_w = np.asarray(r_w)
     rho_1 = np.asarray(rho_1)
     mu_1 = np.asarray(mu_1)
     k_r1 = np.asarray(k_r1)
@@ -168,10 +190,8 @@ def two_phase_peaceman_WI(  # pylint: disable=C0103
     mu_2 = np.asarray(mu_2)
     k_r2 = np.asarray(k_r2)
 
-    if np.any(r_w == 0):
-        raise ValueError("r_w cannot be zero")
     total_mobility: ArrayLike = (k_r1 * rho_1) / mu_1 + (k_r2 * rho_2) / mu_2
-    WI = (2 * math.pi * k_h) / (np.log(r_e / r_w))
+    WI = peaceman_matrix_WI(k_h, r_e, r_w)
     return WI * total_mobility
 
 
