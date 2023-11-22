@@ -75,7 +75,7 @@ def get_FCNN(
 def scale_and_prepare_dataset(
     dsfile: str | pathlib.Path,
     feature_names: list[str],
-    savepath: pathlib.Path,
+    savepath: str | pathlib.Path,
     train_split: float = 0.9,
     val_split: Optional[float] = 0.1,
     test_split: Optional[float] = None,
@@ -84,7 +84,7 @@ def scale_and_prepare_dataset(
     shuffle: Literal["first", "last", "false"] = "first",
     feature_range: tuple[float, float] = (-1, 1),
     target_range: tuple[float, float] = (-1, 1),
-    scale: bool = False,
+    scale: bool = True,
     **kwargs,
 ) -> (
     tuple[tuple[np.ndarray, np.ndarray], tuple[np.ndarray, np.ndarray]]
@@ -117,7 +117,7 @@ def scale_and_prepare_dataset(
             Defaults to (-1, 1).
         target_range (tuple[float, float], optional): Target range of target scaling.
             Defaults to (-1, 1)
-        scale (bool, optional): Whether to scale the dataset. Defaults to False.
+        scale (bool, optional): Whether to scale the dataset. Defaults to True.
 
     Returns:
         tuple[tuple[np.ndarray, np.ndarray], np.ndarray]
@@ -312,7 +312,7 @@ def train(
     model: keras.Model,
     train_data: tuple[tf.Tensor, tf.Tensor],
     val_data: tuple[tf.Tensor, tf.Tensor],
-    savepath: pathlib.Path,
+    savepath: str | pathlib.Path,
     lr: float = 0.1,
     epochs: int = 500,
     bs: int = 64,
@@ -418,6 +418,7 @@ def train(
 
     # Load the best model and save to OPM format.
     model.load_weights(savepath / "bestmodel")
+    model.save(savepath / "bestmodel.keras")
     if kerasify:
         export_model(model, savepath / "WI.model")
 
@@ -473,8 +474,10 @@ def tune(
     train_data: tuple[tf.Tensor, tf.Tensor],
     val_data: tuple[tf.Tensor, tf.Tensor],
     objective: Literal["loss", "val_loss"] = "val_loss",
+    max_trials: int = 20,
+    executions_per_trial: int = 2,
     **tune_kwargs,
-) -> tuple[tf.Module, keras_tuner.Tuner]:
+) -> tuple[keras.Model, keras_tuner.Tuner]:
     """
     Tune the hyperparameters of a neural network model using random search.
 
@@ -502,8 +505,8 @@ def tune(
     tuner = keras_tuner.RandomSearch(
         hypermodel=partial(build_model, ninputs=ninputs, noutputs=noutputs),
         objective=objective,
-        max_trials=20,
-        executions_per_trial=2,
+        max_trials=max_trials,
+        executions_per_trial=executions_per_trial,
         overwrite=True,
         directory="my_dir",
         project_name="helloworld",
@@ -527,7 +530,7 @@ def tune(
     return model, tuner
 
 
-def save_tune_results(tuner: keras_tuner.Tuner, savepath: pathlib.Path) -> None:
+def save_tune_results(tuner: keras_tuner.Tuner, savepath: str | pathlib.Path) -> None:
     # Ensure ``savepath`` is a ``Path`` object.
     savepath = pathlib.Path(savepath)
 
@@ -547,14 +550,14 @@ def save_tune_results(tuner: keras_tuner.Tuner, savepath: pathlib.Path) -> None:
 def scale_and_evaluate(
     model: keras.Model,
     model_input: np.ndarray,
-    scalingsfile: pathlib.Path,
+    scalingsfile: str | pathlib.Path,
 ) -> np.ndarray:
     """Scale the input, evaluate with the model and scale the output.
 
     Args:
         model (tf.keras.Model): A Keras model to evaluate the input with.
         model_input (np.ndarray): Input tensor. Can be a batch.
-        scalingsfile (pathlib.Path): The path to the CSV file containing the
+        scalingsfile (str | pathlib.Path): The path to the CSV file containing the
             scaling parameters for MinMaxScaling.
 
     Returns:

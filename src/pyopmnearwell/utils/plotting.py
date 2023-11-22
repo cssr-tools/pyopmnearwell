@@ -8,12 +8,12 @@ import pickle
 from matplotlib.figure import Figure
 
 
-def save_fig_and_data(fig: Figure, path: pathlib.Path) -> None:
+def save_fig_and_data(fig: Figure, path: str | pathlib.Path) -> None:
     """Save a pyplot figure to a png file and save the data to a pickle file.
 
     Args:
         fig (matplotlib.figure.Figure): The figure to save.
-        path (pathlib.Path): The path to save the figure and data to.
+        path (str | pathlib.Path): The path to save the figure and data to.
 
     Returns:
         None
@@ -25,7 +25,7 @@ def save_fig_and_data(fig: Figure, path: pathlib.Path) -> None:
     # Save the figure to a png file
     # NOTE: Convert filename to str to ensure this works. With fig, ax = plt.subplots()
     # the conversion is not necessary, but with fig = plt.figure() it is.
-    fig.savefig(str(path.with_suffix(".png")))
+    fig.savefig(str(path.with_suffix(".png")), bbox_inches="tight")
 
     # Save the data to a pickle file
     with path.with_suffix(".pickle").open("wb") as f:  # pylint: disable=C0103

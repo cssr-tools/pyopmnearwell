@@ -1,267 +1,352 @@
-"""This module provides functionality to parse ``*.UNRST`` files for given keywords and
-transform the extracted values into a tensorflow dataset.
-
-Note: Some manual changes are needed if the tensors of the dataset shall have a shape
-different from the default one. The lines that need to be changed are marked with 
-# MANUAL CHANGES.
-
-Deprecated: This module is deprecated in favor of the ``ensemble`` module.
-
-"""
-
-from __future__ import annotations
-
-import argparse
-import logging
+import math
 import os
-from typing import Literal
+import pathlib
+from typing import Any
 
+import matplotlib.pyplot as plt
 import numpy as np
-import tensorflow as tf
-from ecl.eclfile.ecl_file import EclFile, open_ecl_file
+from matplotlib import cm
+from tqdm import tqdm
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+from pyopmnearwell.ml import ensemble
+from pyopmnearwell.utils import formulas, units
 
 
-class EclDataSet:  # pylint: disable=R0902
-    """Generate samples for a ``tf.data.Dataset`` from a folder of ``*.UNRST`` files.
+class BaseDataset:
+    """Provide methods to create a dataset from ensemble dataset.
 
-    Example:
-        After instantiation of the class, it can be passed to
-        ``tf.data.Dataset.from_generator()``, to create a dataset that ``tensorflow``
-        can work with.
-        >>> data = EclDataSet(path, input_kws, target_kws)
-        >>> data.read_data()
-        >>> ds = tf.data.Dataset.from_generator(
-        >>>     data,
-        >>>     output_signature=(tf.TensorSpec(), tf.TensorSpec())
-        >>> )
+    This base class provides several methods to obtain features from a dataset and reduce
+    dimensions. This is done by averaging/summing/etc. values along all vertical cells
+    inside layer and by taking only some timesteps/horizontal cells.
 
-        To save the dataset, use
-        >>> ds.save(path)
-        Afterwards, the ``*.UNRST`` files used to generated the dataset can be deleted.
+    Subclasses need to implement ``__init__`` and (if needed) ``create_ds`` methods.
 
-    """
+    The feature array will have shape ``(num_ensemble_runs, num_timesteps/step_size_t,
+    num_layers, num_xcells/step_size_x, num_features)``.
+    The target array will have shape ``(num_ensemble_runs, num_timesteps/step_size_t,
+    num_layers, num_xcells/step_size_x, 1)``
 
-    features: tf.Tensor
-    """Stores all inputs of the dataset.
-
-    ``shape=(num_files, num_report_steps, num_cells, len(input_kws))``
-
-    """
-    targets: tf.Tensor
-    """Stores all targets of the dataset.
-
-    ``shape=(num_files, num_report_steps, num_cells, len(target_kws))``
+    Note: All methods assume that all cells have the same height. if this is not the
+        case, the methods must be overridden.
 
     """
 
-    def __init__(  # pylint: disable=R0913
+    num_timesteps: int
+    num_layers: int
+    num_zcells: int
+    num_xcells: int
+    single_feature_shape: tuple
+
+    def __init__(self):
+        pass
+
+    def create_ds(self):
+        pass
+
+    def reduce_data_size(
         self,
-        path: str,
-        input_kws: list[str],
-        target_kws: list[str],
-        file_format: Literal["ecl", "opm"] = "ecl",
-        dtype=tf.float32,
-        shuffle_on_epoch_end: bool = False,
-        read_data_on_init: bool = True,
-    ) -> None:
-        """Initiate the class.
+        feature: np.ndarray,
+        step_size_x: int = 1,
+        step_size_t: int = 1,
+        random: bool = False,
+    ) -> np.ndarray:
+        if random:
+            pass
+        # TODO: Choose a random selection of elements for each member, instead of a
+        # fixed stepsize. This needs to be the same for each feature, hence the current
+        # idea does not work.
+        return feature[:, ::step_size_t, ::, ::step_size_x]
 
-        Parameters:
-            path: _description_
-            input_kws: Keywords for attributes of the ``EclFile`` that shall become
-                model input.
-            target_kws: Keywords for attributes of the ``EclFile`` that shall become
-                targets for model training.
-            type: _description_. Defaults to ``"ecl"``.
-            read_data_on_init: Reads data from ``*.UNRST`` files in ``path`` on
-                instantiation. Disable for testing/debugging. Defaults to ``True``.
+    def get_vertically_averaged_values(
+        self, features: np.ndarray, feature_index, disregard_first_xcell: bool = True
+    ) -> np.ndarray:
+        """Average features vertically inside each layer.
 
-
-        Warning:
-            As of now, ``type`` is always assumed to be ``ecl``. ``opm`` is not
-            implemented yet.
+        Args:
+            features (np.ndarray): _description_
+            feature_index (int): _description_.
 
         Returns:
-            _description_
+            np.ndarray (``shape = (num_ensemble_runs, num_timesteps, num_layers,
+                num_xcells)``):
 
         """
-        self.path: str = path
-        self.input_kws: list[str] = input_kws
-        self.target_kws: list[str] = target_kws
-        self.dtype = dtype
-        if read_data_on_init:
-            self.read_data()
-        self.shuffle_on_epoch_end: bool = shuffle_on_epoch_end
-        self.file_format: Literal["ecl", "opm"] = file_format
+        # Innermost cells (well cells) get disregarded.
+        feature: np.ndarray = np.average(features[..., feature_index], axis=-2)[..., 1:]
+        assert feature.shape == self.single_feature_shape
+        return feature
 
-    def read_data(self):
-        """Create a ``tensorflow`` dataset from a folder of ``ecl`` or ``opm`` files."""
-        logger.info("Generating datapoints...")
-        _features_lst: list[tf.Tensor] = []
-        _targets_lst: list[tf.Tensor] = []
-        for filename in os.listdir(self.path):
-            if filename.endswith("UNRST"):
-                with open_ecl_file(os.path.join(self.path, filename)) as ecl_file:
-                    try:
-                        feature, target = self.EclFile_to_datapoint(ecl_file)
-                        _features_lst.append(feature)
-                        _targets_lst.append(target)
-                        logger.info(  # pylint: disable=W1203
-                            f"Generated a datapoint from {filename}."
-                        )
-                    except KeyError as keyerror:
-                        logger.info(  # pylint: disable=W1203
-                            f"{filename} has no keyword {keyerror}."
-                        )
-                        continue
-        if len(_features_lst) > 0 and len(_targets_lst) > 0:
-            # Transform the lists into a tensor
+    def get_radii(self, radii_file: pathlib.Path) -> tuple[np.ndarray, np.ndarray]:
+        """Get full list of cell radii."""
+        cell_center_radii, inner_radii, outer_radii = ensemble.calculate_radii(
+            radii_file,
+            num_cells=self.num_xcells + 1,
+            return_outer_inner=True,
+            triangle_grid=True,
+            theta=math.pi / 3,  # TODO: More flexible
+        )
+        # Innermost cells (well cells) get disregarded. If the cell_boundary_radii are
+        # used for integrating, this is actually needed, as the content of the well does
+        # not count towards the well block, hence the well radius should not be
+        # integrated.
+        cell_center_radii = cell_center_radii[1:]
+        inner_radii = inner_radii[1:]
+        outer_radii = outer_radii[1:]
 
-            # MANUAL CHANGES: Change the lines below to change what becomes part of the
-            # batch dimension and what becomes part of the input dimension.
-            self.features = tf.stack(_features_lst, axis=0)
-            # ``shape=(num_files, num_report_steps, num_cells, len(input_kws))``
-            self.targets = tf.stack(_targets_lst, axis=0)
-            # ``shape=(num_files, num_report_steps, num_cells, len(target_kws))``
-            self.features = tf.reshape(self.features, [-1, 1])
-            self.targets = tf.reshape(self.targets, [-1, 1])
-        else:
-            self.features = tf.zeros((1, 1))
-            self.targets = tf.zeros((1, 1))
-            logger.info(
-                """Not able to extract keywords from input files. Check if there are
-                input files in the folder that contain the given keywords.
+        cell_boundary_radii: np.ndarray = np.append(inner_radii, outer_radii[-1])
+        assert cell_center_radii.shape == (self.num_xcells,)
+        assert cell_boundary_radii.shape == (self.num_xcells + 1,)
+        return cell_center_radii, cell_boundary_radii
 
-                Generated an empty dataset for now."""
+    def get_timesteps(self, simulation_length: float) -> np.ndarray:
+        """_summary_
+
+        Returns:
+            np.ndarray (``shape = (num_timesteps,) ``): Unit: [d].
+
+        """
+        timesteps: np.ndarray = np.linspace(0, simulation_length, self.num_timesteps)
+        assert timesteps.shape == self.num_timesteps
+        return timesteps
+
+    def get_horizontically_integrated_values(
+        self,
+        features: np.ndarray,
+        cell_center_radii: np.ndarray,
+        cell_boundary_radii: np.ndarray,
+        feature_index: int,
+    ):
+        """Integrate feature horizontically along layers and divide by equivalent
+        cartesian block area.
+
+        Note:
+            - Before integrating, the feature is averaged vertically inside each layer.
+            - As the feature is averaged and not summed, the integration takes place in
+              2D with vertically averaged values. Hence it suffices to divide by area
+              and not by  volume.
+
+        Args:
+            features (np.ndarray): _description_
+            cell_center_radii (np.ndarray):
+            cell_boundary_radii (np.ndarray):
+            feature_index (int): _description_. Default is 1.
+
+        Returns:
+            np.ndarray (``shape = (num_ensemble_runs, num_timesteps, num_layers,
+                num_xcells)``): Features values average for each cell.
+
+        """
+        # Average along vertical cells in a layer.
+        feature: np.ndarray = np.average(features[..., feature_index], axis=-2)[..., 1:]
+
+        # Integrate horizontically along layers and divide by equivalent cartesian block
+        # area.
+        block_sidelengths: np.ndarray = formulas.cell_size(cell_center_radii)
+        # feature_lst: list[np.ndarray] = []
+        # for i in range(feature.shape[-1]):
+        #     feature_lst.append(
+        #         ensemble.integrate_fine_scale_value(
+        #             feature[..., : i + 1],
+        #             cell_boundary_radii[: i + 2],
+        #             block_sidelengths[: i + 1],
+        #         )
+        #         / (block_sidelengths[i] ** 2)
+        #     )
+        # averaged_feature: np.ndarray = np.concatenate(feature_lst, axis=-1)
+        # The horizontal dimension is the last axis of each feature, hence we pass
+        # ``axis=-1``.
+        integrated_feature: np.ndarray = ensemble.integrate_fine_scale_value(
+            feature, cell_boundary_radii, block_sidelengths, axis=-1
+        ) / (block_sidelengths**2)
+
+        assert integrated_feature.shape == self.single_feature_shape
+        return integrated_feature
+
+    def get_homogeneous_values(self, features, feature_index):
+        """Get a feature that is homogeneous inside a layer.
+
+        Note: Since the feature is equal inside a layer, this method takes the first
+        value for each layer.
+
+        Args:
+            features (np.ndarray): _description_
+            feature_index (int): _description_.
+
+        Returns:
+            np.ndarray (``shape = (num_ensemble_runs, num_timesteps, num_layers,
+                num_xcells)``):
+
+        """
+        # Innermost cells (well cells) get disregarded.
+        feature: np.ndarray = features[..., feature_index][..., 0, 1:]
+        assert feature.shape == self.single_feature_shape
+        return feature
+
+    def get_analytical_PI(
+        self,
+        permeabilities: np.ndarray,
+        radii: np.ndarray,
+        well_radius: float,
+    ) -> np.ndarray:
+        """_summary_
+
+        _extended_summary_
+
+        Args:
+            permeabilities (np.ndarray): Unit has to be [mD]!
+            radii (np.ndarray): _description_
+            well_radius (float): _description_
+
+        Returns:
+            np.ndarray: _description_
+        """
+        analytical_PI: np.ndarray = formulas.peaceman_matrix_WI(
+            k_h=permeabilities
+            * units.MILIDARCY_TO_M2
+            * (self.num_zcells / self.num_layers),
+            r_e=radii,
+            r_w=well_radius,
+        )
+        assert analytical_PI.shape == self.single_feature_shape
+        return analytical_PI
+
+    def get_analytical_WI(
+        self,
+        pressures: np.ndarray,
+        saturations: np.ndarray,
+        permeabilities: np.ndarray,
+        temperature: float,
+        surface_density: float,
+        radii: np.ndarray,
+        well_radius: float,
+        OPM: pathlib.Path,
+    ) -> np.ndarray:
+        """_summary_
+
+        _extended_summary_
+
+        Args:
+            pressures (np.ndarray): _description_
+            saturations (np.ndarray): _description_
+            permeabilities (np.ndarray): Unit has to be [mD]!
+            temperature (float): _description_
+            surface_density (float): _description_
+            radii (np.ndarray): _description_
+            well_radius (float): _description_
+            OPM (pathlib.Path): _description_
+
+        Returns:
+            np.ndarray: _description_
+        """
+        densities_lst: list[list[float]] = []
+        viscosities_lst: list[list[float]] = []
+        # Implement progress bar, since this can take some time.
+        pressures_bar = tqdm(pressures.flatten())
+        for pressure in pressures_bar:
+            # Evaluate density and viscosity.
+            density_tuple: list[float] = []
+            viscosity_tuple: list[float] = []
+
+            for phase in ["water", "CO2"]:
+                density_tuple.append(
+                    formulas.co2brinepvt(
+                        pressure=pressure,
+                        temperature=temperature + units.CELSIUS_TO_KELVIN,
+                        phase_property="density",
+                        phase=phase,
+                        OPM=OPM,
+                    )
+                )
+
+                viscosity_tuple.append(
+                    formulas.co2brinepvt(
+                        pressure=pressure,
+                        temperature=temperature + units.CELSIUS_TO_KELVIN,
+                        phase_property="viscosity",
+                        phase=phase,
+                        OPM=OPM,
+                    )
+                )
+            densities_lst.append(density_tuple)
+            viscosities_lst.append(viscosity_tuple)
+
+        densities_shape = list(pressures.shape)
+        densities_shape.extend([2])
+        densities: np.ndarray = np.array(densities_lst).reshape(densities_shape)
+        viscosities: np.ndarray = np.array(viscosities_lst).reshape(densities_shape)
+
+        # Calculate the well index from Peaceman. The analytical well index is in [m*s],
+        # hence we need to devide by surface density to transform to [m^4*s/kg].
+        analytical_WI: np.ndarray = (
+            formulas.two_phase_peaceman_WI(
+                k_h=permeabilities
+                * units.MILIDARCY_TO_M2
+                * (self.num_zcells / self.num_layers),
+                r_e=radii,
+                r_w=well_radius,
+                rho_1=densities[..., 0],
+                mu_1=viscosities[..., 0],
+                k_r1=(1 - saturations) ** 2,
+                rho_2=densities[..., 1],
+                mu_2=viscosities[..., 1],
+                k_r2=saturations**2,
             )
-
-    def EclFile_to_datapoint(  # pylint: disable= C0103
-        self, ecl_file: EclFile
-    ) -> tuple[tf.Tensor, tf.Tensor]:
-        """Extract values from an ``EclFile`` to form an (input, target) tuple of
-        tensors.
-
-
-        Parameters:
-            ecl_file: _description_
-
-        Raises:
-            KeyError: If ``ecl_file`` does not have either of the keywords in
-                ``self.input_kws`` or ``self.target_kws``
-
-        Returns:
-            A tuple containing the input and target tensor. The former has shape
-            ``(ecl_file.num_report_steps(), num_cells, len(input_kws))``, while the
-            latter has shape
-            ``(ecl_file.num_report_steps(), num_cells, len(target_kws))``.
-
-        """
-        # Only add the datapoint if all input features and targets are
-        # available.
-        feature: dict[str, np.ndarray] = {}
-        target: dict[str, np.ndarray] = {}
-        # The dic values can be converted to an ``np.ndarray`` containing the values
-        # corresponding to the keyword, with shape
-        # ``(ecl_file.num_report_steps(), num_cells)``.
-        for input_kw in self.input_kws:
-            if ecl_file.has_kw(input_kw):
-                feature[input_kw] = np.array(ecl_file.iget_kw(input_kw))
-            else:
-                raise KeyError(input_kw)
-        for target_kw in self.target_kws:
-            if ecl_file.has_kw(target_kw):
-                target[target_kw] = np.array(ecl_file.iget_kw(target_kw))
-            else:
-                raise KeyError(target_kw)
-        # Stack the different input and target properties into one input
-        # and output tensor. ``len(input_kws)`` and ``len(target_kws)``
-        # become the size of the last dimension.
-
-        # MANUAL CHANGES: Change the lines below to change the shape of the input and
-        # target tensors.
-        return tf.stack(
-            [tf.convert_to_tensor(val, dtype=self.dtype) for val in feature.values()],
-            axis=-1,
-        ), tf.stack(
-            [tf.convert_to_tensor(val, dtype=self.dtype) for val in target.values()],
-            axis=-1,
+            / surface_density
         )
 
-    def __len__(self):
-        return self.features.shape[0]
+        # TODO: Add this assert again. It's turned off s.t. the analytical WI can be
+        # computed after size reduction of features.
+        # assert analytical_WI.shape == self.single_feature_shape
+        return analytical_WI
 
-    def __getitem__(self, idx) -> tuple[tf.Tensor, tf.Tensor]:
-        feature = self.features[idx]
-        target = self.targets[idx]
-        return feature, target
+    def get_data_WI(
+        self,
+        features: np.ndarray,
+        pressure_index: int,
+        inj_rate_index: int,
+        angle: float = math.pi / 3,
+    ) -> np.ndarray:
+        """_summary_
 
-    def __call__(self):
-        for i in range(self.__len__()):
-            yield self.__getitem__(i)
+        Similar functionality to ``ensemble.calculate_WI``, but takes a feature array
+        rather than a data dictionary.
 
-            if i == self.__len__() - 1 and self.shuffle_on_epoch_end:
-                self.on_epoch_end()
+        Note: Pressures get averaged over each layer, injection rates get summed over
+            each layer.
 
-    def on_epoch_end(self):
-        """Shuffle the dataset at the end of each epoch.
+        Args:
+            features (np.ndarray): _description_
+            pressure_index (int): _description_
+            inj_rate_index (int): _description_
 
-        Warning:
-            Using this method might give an error atm.
+        Returns:
+            np.ndarray: _description_
 
         """
-        indices = tf.range(start=0, limit=self.features.shape[0], dtype=tf.int32)
-        shuffled_indices = tf.random.shuffle(indices)
-        self.features = tf.gather(self.features, shuffled_indices, axis=0)
-        self.targets = tf.gather(self.targets, shuffled_indices, axis=0)
+        # Take the pressure values of the well blocks as bhp.
+        bhps: np.ndarray = np.average(features[..., pressure_index], axis=-2)[..., 0][
+            ..., None
+        ]  # ``shape = (num_completed_runs, num_timesteps, num_layers, 1)``
 
+        # Ge the pressure values of all other blocks.
+        pressures: np.ndarray = np.average(features[..., pressure_index], axis=-2)[
+            ..., 1:
+        ]  # ``shape = (num_completed_runs, num_timesteps, num_layers, num_xcells)``
 
-def main(args):  # pylint: disable=W0621
-    """Create a dataset from the given arguments and store it"""
-    data = EclDataSet(args.path, args.input_kws, args.target_kws, args.file_format)
-    assert len(data) > 0
-    dataset = tf.data.Dataset.from_generator(
-        data,
-        output_signature=(
-            tf.TensorSpec.from_tensor(data[0][0]),
-            tf.TensorSpec.from_tensor(data[0][1]),
-        ),
-    )
-    # Manually set the dataset cardinality.
-    dataset = dataset.apply(tf.data.experimental.assert_cardinality(len(data)))
-    dataset.save(args.save_path)
+        # Get the individual injection rates per second for each layer. Sum across a
+        # layer to get the rates for a full layer. Multiply by
+        # ``(math.pi * 2 / angle)`` to transform from a cake of given ``angle`` to a
+        # full radial model and convert to rate per second.
+        injection_rate_per_second_per_cell: np.ndarray = (
+            np.sum(features[..., inj_rate_index], axis=-2)[..., 0]
+            * (math.pi * 2 / angle)
+            * units.Q_per_day_to_Q_per_seconds
+        )[
+            ..., None
+        ]  # ``shape = (num_completed_runs, num_timesteps, num_layers, 1)``
 
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--path", default=".", type=str, help="folder containing the *.UNRST files"
-    )
-    parser.add_argument(
-        "--save-path",
-        default="./ecl_dataset",
-        type=str,
-        help="save path for the tensorflow dataset",
-    )
-    parser.add_argument(
-        "--input-kws",
-        type=str,
-        nargs="+",
-        help="keywords to extract from the *.UNRST files for inputs of the dataset",
-    )
-    parser.add_argument(
-        "--target-kws",
-        type=str,
-        nargs="+",
-        help="keywords to extract from the *.UNRST files for targets of the dataset",
-    )
-    parser.add_argument(
-        "--file-format",
-        choices=["ecl", "opm"],
-        type=str,
-        help="type of the *.UNRST files (opm not implemented yet)",
-    )
-    args = parser.parse_args()
-    main(args)
+        # Check that we do not divide by zero.
+        assert np.all(bhps - pressures)
+        WI_data: np.ndarray = injection_rate_per_second_per_cell / (bhps - pressures)
+        assert WI_data.shape == self.single_feature_shape
+        return WI_data

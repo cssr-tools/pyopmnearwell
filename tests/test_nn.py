@@ -227,6 +227,8 @@ def test_scale_and_prepare_dataset(
     unshuffled_test_targets = target_scaler.transform(unshuffled_test_targets)
 
     # Check that the dataset is shuffled correctly.
+    # There is a small chance this will fail for shuffle == "first" and shuffle ==
+    # "last", when shuffling returns the original order by accident.
     if shuffle == "first":
         assert_raises(
             AssertionError, assert_allclose, train[1], unshuffled_train_targets
@@ -252,8 +254,6 @@ def test_scale_and_prepare_dataset(
             np.sort(test[1], axis=0),
             unshuffled_test_targets,
         )
-    # In general, there is a small chance this test (and also suffle == "first") will
-    # fail, when the shuffling returns the original order.
     elif shuffle == "last":
         assert_raises(
             AssertionError, assert_allclose, train[1], unshuffled_train_targets

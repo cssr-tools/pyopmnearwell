@@ -1,128 +1,118 @@
-"""Test the data module.
-
-We disable quite a lot of pylint errors, as it struggles with the pytest fictures and so
-on.
-
-"""
-
-import os
+import math
+from pathlib import Path
 
 import numpy as np
 import pytest
-import tensorflow as tf
-from ecl.eclfile.ecl_file import EclFile, open_ecl_file
 
-from pyopmnearwell.ml.data import EclDataSet
-
-dir_path = os.path.dirname(os.path.realpath(__file__))
+from pyopmnearwell.ml.data import BaseDataset
 
 
 @pytest.fixture
-def EclKW_saturation() -> np.ndarray:  # pylint: disable=C0116, C0103
-    with open_ecl_file(os.path.join(dir_path, "data/DUMMY.UNRST")) as ecl_file:
-        saturation_array = np.array(ecl_file.iget_kw("SGAS"))
-        # Transform to model input shape (no batch).
-        return np.expand_dims(saturation_array, axis=-1)
+def base_dataset():
+    return BaseDataset()
 
 
-@pytest.fixture
-def EclKW_pressure() -> np.ndarray:  # pylint: disable=C0116, C0103
-    with open_ecl_file(os.path.join(dir_path, "data/DUMMY.UNRST")) as ecl_file:
-        pressure_array = np.array(ecl_file.iget_kw("PRESSURE"))
-        # Transform to model output shape (no batch).
-        return np.expand_dims(pressure_array, axis=-1)
+@pytest.fixture(
+    params=[
+        np.random.rand(10, 20, 30, 40, 5),
+        np.random.rand(5, 1, 15, 20, 5),
+        np.random.rand(5, 10, 15, 1, 5),
+        np.random.rand(3, 1, 15, 1, 20),
+    ]
+)
+def feature(request) -> np.ndarray:
+    return request.param
 
 
-@pytest.fixture
-def Ecl_dummy_file() -> EclFile:  # pylint: disable=C0116, C0103
-    """Return a dummy ``EclFile``."""
-    ecl_file = EclFile(os.path.join(dir_path, "data/DUMMY.UNRST"))
-    return ecl_file
+@pytest.mark.parametrize("step_size_x", [2, 4, 8])
+@pytest.mark.parametrize("step_size_t", [1, 2, 3])
+def test_reduce_data_size(
+    base_dataset: BaseDataset,
+    feature: np.ndarray,
+    step_size_x: int,
+    step_size_t: int,
+):
+    feature_shape: list[int] = list(feature.shape)
+    feature_shape[-1] = math.floor(feature_shape[-1] / step_size_x)
+    feature_shape[1] = math.floor(feature_shape[1] / step_size_t)
+
+    reduced_feature = base_dataset.reduce_data_size(feature, step_size_x, step_size_t)
+
+    assert reduced_feature.shape == tuple(feature_shape)
 
 
-@pytest.fixture
-def Ecl_data_set() -> EclDataSet:  # pylint: disable=C0116, C0103
-    dataset = EclDataSet(
-        path=dir_path,
-        input_kws=["PRESSURE"],
-        target_kws=["SGAS"],
-        read_data_on_init=False,
+def test_get_vertically_averaged_values(base_dataset: BaseDataset):
+    features = np.random.rand(10, 20, 30, 40, 5)
+    feature_index = 2
+    averaged_values = base_dataset.get_vertically_averaged_values(
+        features, feature_index
     )
-    return dataset
+    assert averaged_values.shape == (10, 20, 30, 40)
 
 
-# def test_ECLDataSet(Ecl_dummy_file: EclFile, Ecl_data_set: EclDataSet) -> None:
-#     """_summary_
-
-#     Parameters:
-#         ECL_dummy_file: _description_
-#     """
-#     pass
+def test_get_radii(base_dataset: BaseDataset):
+    radii_file = Path("path/to/radii_file.txt")
+    cell_center_radii, cell_boundary_radii = base_dataset.get_radii(radii_file)
+    assert cell_center_radii.shape == (40,)
+    assert cell_boundary_radii.shape == (41,)
 
 
-def test_EclFile_to_datapoint(  # pylint: disable=C0116, C0103
-    Ecl_data_set: EclDataSet,  # pylint: disable=W0621
-    Ecl_dummy_file: EclFile,  # pylint: disable=W0621
-    EclKW_pressure: np.ndarray,  # pylint: disable=W0621
-    EclKW_saturation: np.ndarray,  # pylint: disable=W0621
-) -> None:
-    """Test the ``EclFile_to_datapoint`` method.
-
-    Parameters:
-        ECL_dummmy_file: _description_
-        Ecl_data_set: _description_
-    """
-    feature, target = Ecl_data_set.EclFile_to_datapoint(Ecl_dummy_file)
-    assert np.allclose(feature, EclKW_pressure)
-    assert np.allclose(target, EclKW_saturation)
+def test_create_ds(base_dataset: BaseDataset):
+    pass
 
 
-def test_ECLDataSet_read_data(  # pylint: disable=C0116, C0103
-    Ecl_data_set: EclDataSet,  # pylint: disable=W0621
-) -> None:
-    """Test that ``EclDataSet.read_data`` runs without any error.
-
-    Parameters:
-        Ecl_data_set: _description_
-
-    """
-    Ecl_data_set.read_data()
+def test_get_timesteps(base_dataset):
+    simulation_length = 10.0
+    timesteps = base_dataset.get_timesteps(simulation_length)
+    assert len(timesteps) == base_dataset.num_timesteps
+    assert timesteps[-1] == simulation_length
 
 
-def test_ECLDataSet_on_epoch_end(  # pylint: disable=C0116, C0103
-    Ecl_data_set: EclDataSet,  # pylint: disable=W0621
-) -> None:
-    """Test that ``EclDataSet.on_epoch_end`` runs without any error.
-
-    Parameters:
-        Ecl_data_set: _description_
-
-    """
-    Ecl_data_set.read_data()
-    Ecl_data_set.on_epoch_end()
-
-
-def test_ECLDataSet_len(  # pylint: disable=C0116, C0103
-    Ecl_data_set: EclDataSet,  # pylint: disable=W0621
-) -> None:
-    """Test that ``EclDataSet.__len__`` is greater than zero."""
-    Ecl_data_set.read_data()
-    assert len(Ecl_data_set) > 0
-
-
-def test_tfDataset_from_ECLDataSet_len(  # pylint: disable=C0116, C0103
-    Ecl_data_set: EclDataSet,  # pylint: disable=W0621
-) -> None:
-    """Test that a ``tf.data.Dataset`` generated from ``EclDataSet`` has length greater
-    than zero."""
-    Ecl_data_set.read_data()
-    ds = tf.data.Dataset.from_generator(
-        Ecl_data_set,
-        output_signature=(
-            tf.TensorSpec.from_tensor(Ecl_data_set[0][0]),
-            tf.TensorSpec.from_tensor(Ecl_data_set[0][1]),
-        ),
+def test_get_horizontically_integrated_values(base_dataset: BaseDataset):
+    features = np.random.rand(10, 20, 30, 40, 5)
+    radii_file = Path("path/to/radii_file.txt")
+    cell_center_radii, cell_boundary_radii = base_dataset.get_radii(radii_file)
+    feature_index = 2
+    integrated_values = base_dataset.get_horizontically_integrated_values(
+        features, cell_center_radii, cell_boundary_radii, feature_index
     )
+    assert integrated_values.shape == (10, 20, 30, 1)
 
-    ds = ds.apply(tf.data.experimental.assert_cardinality(len(Ecl_data_set)))
-    assert tf.data.experimental.cardinality(ds).numpy() == len(Ecl_data_set)
+
+def test_get_homogeneous_values(base_dataset: BaseDataset):
+    features = np.random.rand(10, 20, 30, 40, 5)
+    feature_index = 2
+    homogeneous_values = base_dataset.get_homogeneous_values(features, feature_index)
+    assert homogeneous_values.shape == (10, 20, 30, 1)
+
+
+def test_get_analytical_WI(base_dataset: BaseDataset):
+    pressures = np.random.rand(10, 20, 30, 40)
+    saturations = np.random.rand(10, 20, 30, 40)
+    permeabilities = np.random.rand(10, 20, 30, 40)
+    temperature = 300.0
+    surface_density = 0.1
+    radii = np.random.rand(40)
+    OPM = Path("path/to/OPM.txt")
+    analytical_WI = base_dataset.get_analytical_WI(
+        pressures,
+        saturations,
+        permeabilities,
+        temperature,
+        surface_density,
+        radii,
+        OPM,
+    )
+    assert analytical_WI.shape == (10, 20, 30, 40)
+
+
+def test_get_data_WI(base_dataset: BaseDataset):
+    features = np.random.rand(10, 20, 30, 40, 5)
+    pressures = np.random.rand(10, 20, 30, 40)
+    pressure_index = 2
+    inj_rate_index = 3
+    angle = math.pi / 3
+    data_WI = base_dataset.get_data_WI(
+        features, pressures, pressure_index, inj_rate_index, angle
+    )
+    assert data_WI.shape == (10, 20, 30, 40)

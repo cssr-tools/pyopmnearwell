@@ -285,7 +285,7 @@ def manage_grid(dic):
         if dic["grid"] == "coord3d":
             dic["xcorc"] = dic["x_n"]
         else:
-            dic = crete_3dgrid(dic)
+            dic = create_3dgrid(dic)
             if dic["model"] != "co2eor":
                 for cord in dic["xcorc"]:
                     dic["xcorc"] = np.insert(dic["xcorc"], 0, -cord)
@@ -409,7 +409,7 @@ def d3_grids(dic, dxarray):
     return dic
 
 
-def crete_3dgrid(dic):
+def create_3dgrid(dic):
     """
     Function to handle the first part of the 3d grids
 
