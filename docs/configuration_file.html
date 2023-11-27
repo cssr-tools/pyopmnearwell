@@ -11,11 +11,11 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -84,7 +84,7 @@
            <div itemprop="articleBody">
              
   <section id="configuration-file">
-<h1>Configuration file<a class="headerlink" href="#configuration-file" title="Permalink to this heading"></a></h1>
+<h1>Configuration file<a class="headerlink" href="#configuration-file" title="Link to this heading"></a></h1>
 <p>The following configuration file is available in the <a class="reference external" href="https://github.com/daavid00/pyopmnearwell/blob/main/examples">examples</a> folder
 in the GitHub repository and in the <a class="reference internal" href="examples.html"><span class="doc">examples</span></a> documentation section the simulation results are shown.</p>
 <p>The first input parameter in the configuration file is:</p>
@@ -101,7 +101,7 @@ line as many flags as required (see the OPM Flow documentation <a class="referen
 parallel by adding <strong>mpirun -np N flow …</strong> where N is the number of cpus.</p>
 </div>
 <section id="reservoir-related-parameters">
-<h2>Reservoir-related parameters<a class="headerlink" href="#reservoir-related-parameters" title="Permalink to this heading"></a></h2>
+<h2>Reservoir-related parameters<a class="headerlink" href="#reservoir-related-parameters" title="Link to this heading"></a></h2>
 <p>The following input lines are:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 4</span><span class="sd">&quot;&quot;&quot;Set the model parameters&quot;&quot;&quot;</span>
 <span class="linenos"> 5</span><span class="n">co2store</span> <span class="n">base</span> <span class="c1">#Model (co2store/h2store/co2eor/saltprec) and name of the template file (see src/pyopmnearwell/templates/)</span>
@@ -112,7 +112,7 @@ parallel by adding <strong>mpirun -np N flow …</strong> where N is the number 
 <span class="linenos">10</span><span class="mf">1e7</span> <span class="mi">40</span> <span class="mi">0</span>      <span class="c1">#Pressure [Pa] on the top, uniform temperature [°], and initial phase in the reservoir (0 wetting, 1 non-wetting)</span>
 <span class="linenos">11</span><span class="mf">1e10</span> <span class="mi">0</span>        <span class="c1">#Pore volume multiplier on the boundary [-] (0 to use well producers instead) and deactivate cross flow within the wellbore (see XFLOW in OPM Manual)</span>
 <span class="linenos">12</span><span class="mi">1</span> <span class="mi">5</span> <span class="mi">6</span>         <span class="c1">#Activate perforations [-], number of perforations [-], and lenght [m]</span>
-<span class="linenos">13</span><span class="mi">4</span> <span class="mi">1</span> <span class="mi">0</span>         <span class="c1">#Number of layers [-], hysteresis (1 to activate), and econ for the producer (for h2 models)</span>
+<span class="linenos">13</span><span class="mi">4</span> <span class="n">Killough</span> <span class="mi">0</span>  <span class="c1">#Number of layers [-], hysteresis (Killough, Carlson, or 0 to neglect it), and econ for the producer (for h2 models)</span>
 <span class="linenos">14</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="c1">#Ini salt conc [kg/m3], salt sol lim [kg/m3], prec salt den [kg/m3], gamma [-], phi_r [-], npoints [-], and threshold [-]  (all entries for saltprec)</span>
 <span class="linenos">15</span><span class="mi">2</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">mt</span><span class="o">.</span><span class="n">cos</span><span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">mt</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="o">/</span><span class="mi">50</span><span class="p">))</span> <span class="o">+</span> <span class="mi">10</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="c1">#The function for the reservoir surface</span>
 </pre></div>
@@ -130,13 +130,13 @@ set to 0 then an equidistance partition is generated).</p>
 <img alt="_images/gridding.png" src="_images/gridding.png" />
 <figcaption>
 <p><span class="caption-text">Four different grids by setting the line # 6 to ‘radial 36’ (top left, showing the depth), ‘cake 60’ (top right, showing the y-direction cell size),
-‘cartesian2d 1’ (bottom left, showing the x-direction cell size), and cartesian 1 (bottom right, showing the cell pore volume).</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+‘cartesian2d 1’ (bottom left, showing the x-direction cell size), and cartesian 1 (bottom right, showing the cell pore volume).</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <figure class="align-default" id="id2">
 <img alt="_images/core.png" src="_images/core.png" />
 <figcaption>
-<p><span class="caption-text">Example of core geometry (generated by running the examples/h2core.txt configuration file).</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+<p><span class="caption-text">Example of core geometry (generated by running the examples/h2core.txt configuration file).</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <p>We then define the diameter of the well, the well transmissibility (0 to use the
@@ -147,12 +147,12 @@ If the saltprec model is used, then on line 14 we set the parameters as describe
 z direction.</p>
 </section>
 <section id="rock-related-parameters">
-<h2>Rock-related parameters<a class="headerlink" href="#rock-related-parameters" title="Permalink to this heading"></a></h2>
+<h2>Rock-related parameters<a class="headerlink" href="#rock-related-parameters" title="Link to this heading"></a></h2>
 <p>The following entries define the rock related parameters:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">17</span><span class="sd">&quot;&quot;&quot;Set the saturation functions&quot;&quot;&quot;</span>
 <span class="linenos">18</span><span class="n">krw</span> <span class="o">*</span> <span class="p">((</span><span class="n">sw</span> <span class="o">-</span> <span class="n">swi</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">sni</span> <span class="o">-</span><span class="n">swi</span><span class="p">))</span> <span class="o">**</span> <span class="n">nkrw</span>             <span class="c1">#Wetting rel perm saturation function [-]</span>
 <span class="linenos">19</span><span class="n">krn</span> <span class="o">*</span> <span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">sw</span> <span class="o">-</span> <span class="n">sni</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">sni</span> <span class="o">-</span> <span class="n">swi</span><span class="p">))</span> <span class="o">**</span> <span class="n">nkrn</span>      <span class="c1">#Non-wetting rel perm saturation function [-]</span>
-<span class="linenos">20</span><span class="n">pec</span> <span class="o">*</span> <span class="p">((</span><span class="n">sw</span> <span class="o">-</span> <span class="n">swi</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">sni</span> <span class="o">-</span> <span class="n">swi</span><span class="p">))</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">npe</span><span class="p">))</span>  <span class="c1">#Capillary pressure saturation function [Pa]</span>
+<span class="linenos">20</span><span class="n">pec</span> <span class="o">*</span> <span class="p">((</span><span class="n">sw</span> <span class="o">-</span> <span class="n">swi</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">swi</span><span class="p">))</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">npe</span><span class="p">))</span>        <span class="c1">#Capillary pressure saturation function [Pa]</span>
 </pre></div>
 </div>
 <p>In this example we consider properties for the sands number 2 to 5 as described in the
@@ -197,7 +197,7 @@ no impact, so far the name has at least one character since this is used in the 
 </div>
 </section>
 <section id="well-related-parameters">
-<h2>Well-related parameters<a class="headerlink" href="#well-related-parameters" title="Permalink to this heading"></a></h2>
+<h2>Well-related parameters<a class="headerlink" href="#well-related-parameters" title="Link to this heading"></a></h2>
 <p>Now we proceed to define the schedule for the injection well. Here the injection well is located from the
 top to the bottom on the left side of the domain and the injection is given as kg/day:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">43</span><span class="sd">&quot;&quot;&quot;Define the injection values&quot;&quot;&quot;</span>

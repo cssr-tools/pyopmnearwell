@@ -61,11 +61,13 @@ def plotting(dic):
     )
     os.chdir(f"{dic['exe']}/{dic['fol']}/postprocessing")
     plot_exe = [
-        "python",
+        "python3",
         f"{dic['exe']}/{dic['fol']}/jobs/plotting.py",
         f"-f {dic['fol']}",
         f"-p {dic['plot']}",
         f"-m {dic['model']}",
+        f"-s {dic['scale']}",
+        f"-z {dic['zoom']}",
     ]
     print(" ".join(plot_exe))
     plot_results(dic)

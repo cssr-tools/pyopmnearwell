@@ -5,8 +5,9 @@ include src/pyopmnearwell/ml/*
 include src/pyopmnearwell/templates/co2eor/*
 include src/pyopmnearwell/templates/co2store/*
 include src/pyopmnearwell/templates/common/*
-include src/pyopmnearwell/templates/co2store_no_disgas_no_diff/*
 include src/pyopmnearwell/templates/h2store/*
 include src/pyopmnearwell/templates/saltprec/*
+include src/pyopmnearwell/templates/standardwell/*
+include src/pyopmnearwell/templates/standardwell_impl/*
 include src/pyopmnearwell/utils/*
 include src/pyopmnearwell/visualization/*

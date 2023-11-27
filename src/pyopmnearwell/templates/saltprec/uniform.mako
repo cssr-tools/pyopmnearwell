@@ -73,12 +73,8 @@ SALTSOL
 	${dic['salt_props'][1]} ${dic['salt_props'][2]}/
 /
 
-PERMFACT
-0.0 ${((dic['salt_props'][4] - (dic['salt_props'][4] - dic['salt_props'][6])) / (1 - (dic['salt_props'][4] - dic['salt_props'][6]))) ** 2 * ((1 - dic['salt_props'][3] + dic['salt_props'][3]/(1 + (1/dic['salt_props'][3])/(1/(dic['salt_props'][4] - dic['salt_props'][6]) - 1))**2)) / (1 - dic['salt_props'][3] + dic['salt_props'][3] * ((dic['salt_props'][4] - (dic['salt_props'][4] - dic['salt_props'][6])) / (1 - (dic['salt_props'][4] - dic['salt_props'][6])) / ((dic['salt_props'][4] - (dic['salt_props'][4] - dic['salt_props'][6])) / (1 - (dic['salt_props'][4] - dic['salt_props'][6])) + (1 + (1/dic['salt_props'][3])/(1/(dic['salt_props'][4] - dic['salt_props'][6]) - 1)) - 1)) ** 2)}
-% for poro_fac in np.linspace(dic['salt_props'][4], 1, mt.floor(dic['salt_props'][5])):
-${poro_fac} ${((poro_fac - (dic['salt_props'][4] - dic['salt_props'][6])) / (1 - (dic['salt_props'][4] - dic['salt_props'][6]))) ** 2 * ((1 - dic['salt_props'][3] + dic['salt_props'][3]/(1 + (1/dic['salt_props'][3])/(1/(dic['salt_props'][4] - dic['salt_props'][6]) - 1))**2)) / (1 - dic['salt_props'][3] + dic['salt_props'][3] * ((poro_fac - (dic['salt_props'][4] - dic['salt_props'][6])) / (1 - (dic['salt_props'][4] - dic['salt_props'][6])) / ((poro_fac - (dic['salt_props'][4] - dic['salt_props'][6])) / (1 - (dic['salt_props'][4] - dic['salt_props'][6])) + (1 + (1/dic['salt_props'][3])/(1/(dic['salt_props'][4] - dic['salt_props'][6]) - 1)) - 1)) ** 2)}
-% endfor /
-/
+INCLUDE
+'PERMFACT.INC' /
 ----------------------------------------------------------------------------
 REGIONS
 ----------------------------------------------------------------------------
@@ -99,7 +95,7 @@ RTEMPVD
 ${dic['dims'][2]} ${dic['temperature']} /
 
 RPTRST 
- 'BASIC=2' FLOWS FLORES DEN VISC PCOW PCOG /
+ 'BASIC=2' FLOWS FLORES DEN VISC /
 ----------------------------------------------------------------------------
 SUMMARY
 ----------------------------------------------------------------------------
@@ -143,7 +139,7 @@ RGIP
 SCHEDULE
 ----------------------------------------------------------------------------
 RPTRST
- 'BASIC=2' FLOWS FLORES DEN VISC PCOW PCOG /
+ 'BASIC=2' FLOWS FLORES DEN VISC /
 
 WELSPECS
 % if dic['grid'] == 'core':

@@ -40,7 +40,7 @@ The following input lines are:
     1e7 40 0      #Pressure [Pa] on the top, uniform temperature [°], and initial phase in the reservoir (0 wetting, 1 non-wetting)
     1e10 0        #Pore volume multiplier on the boundary [-] (0 to use well producers instead) and deactivate cross flow within the wellbore (see XFLOW in OPM Manual)
     1 5 6         #Activate perforations [-], number of perforations [-], and lenght [m]
-    4 1 0         #Number of layers [-], hysteresis (1 to activate), and econ for the producer (for h2 models)
+    4 Killough 0  #Number of layers [-], hysteresis (Killough, Carlson, or 0 to neglect it), and econ for the producer (for h2 models)
     0 0 0 0 0 0 0 #Ini salt conc [kg/m3], salt sol lim [kg/m3], prec salt den [kg/m3], gamma [-], phi_r [-], npoints [-], and threshold [-]  (all entries for saltprec)
     2-2*mt.cos((2*mt.pi*x/50)) + 10*(x/100)**2 #The function for the reservoir surface
 
@@ -84,7 +84,7 @@ The following entries define the rock related parameters:
     """Set the saturation functions"""
     krw * ((sw - swi) / (1.0 - sni -swi)) ** nkrw             #Wetting rel perm saturation function [-]
     krn * ((1.0 - sw - sni) / (1.0 - sni - swi)) ** nkrn      #Non-wetting rel perm saturation function [-]
-    pec * ((sw - swi) / (1.0 - sni - swi)) ** (-(1.0 / npe))  #Capillary pressure saturation function [Pa]
+    pec * ((sw - swi) / (1.0 - swi)) ** (-(1.0 / npe))        #Capillary pressure saturation function [Pa]
 
 In this example we consider properties for the sands number 2 to 5 as described in the 
 `11th SPE CSP <https://www.spe.org/en/csp/>`_:

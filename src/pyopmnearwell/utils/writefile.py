@@ -164,6 +164,10 @@ def manage_sections(dic):
     sections = ["geology", "regions"]
     if dic["pvMult"] != 0:
         sections.append("multpv")
+    if dic["model"] == "saltprec":
+        sections.append("permfact")
+        if dic["template"] == "dyncpres":
+            sections.append("pcfact")
     for section in sections:
         var = {"dic": dic}
         filledtemplate: Template = fill_template(

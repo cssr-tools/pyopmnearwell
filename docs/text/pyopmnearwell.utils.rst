@@ -9,6 +9,8 @@ Submodules
 
    pyopmnearwell.utils.formulas
    pyopmnearwell.utils.inputvalues
+   pyopmnearwell.utils.mako
+   pyopmnearwell.utils.plotting
    pyopmnearwell.utils.runs
    pyopmnearwell.utils.units
    pyopmnearwell.utils.writefile

@@ -31,7 +31,7 @@ The current implementation supports the following executable with the argument o
 
 .. code-block:: bash
 
-    pyopmnearwell -i input.txt -o output -p ecl -c compare -m co2store
+    pyopmnearwell -i input.txt -o output -p ecl -g all -z 10 -s log -m co2store
 
 where 
 
@@ -39,6 +39,9 @@ where
 - \-o, \-output: The base name of the :doc:`output folder <./output_folder>` ('output' by default).
 - \-p, \-plotting: Using the 'ecl' or 'opm' Python package to generate the figures ('ecl' by default, '' to skip the plotting).
 - \-c, \-compare: Compare the results from different output folders (write any name to actiate, '' by default).
+- \-g, \-generate: Run the whole framework ('all'), only run flow ('flow'), or only create plots ('plot') ('all' by default).
+- \-z, \-zoom: xlim in meters for the zoomed in plots (20 by default).
+- \-s, \-scale: Scale for the x axis in the figures: 'normal' or 'log' ('normal' by default).
 - \-m, \-model: Simulated model (5th row in the configuration file). This is used for the plotting compare method (it gets overwritten by the configuration file) ('co2store' by default).
 
 Installation
@@ -50,11 +53,13 @@ See the `Github page <https://github.com/daavid00/pyopmnearwell>`_.
     Check the `CI.yml <https://github.com/daavid00/pyopmnearwell/blob/main/.github/workflows/CI.yml>`_ file.
 
 .. note::
-    For MAC users with the latest chip, both **ecl** and **opm** packages are not available via pip install. Then
-    before installation, comment the first line in the requierements.txt file, then proceed with the installation and 
-    after build opm-common from source inside the virtual environment with the flag -DOPM_ENABLE_PYTHON=ON and, finally,
-    add to the python path the folder where you have built it, e.g., by running in the terminal
-    export PYTHONPATH=$PYTHONPATH:/Users/dmar/Github/opm-common/build/python .
+    For macOS users with the latest chips (M1/M2, guessing also M3?), the ecl and opm packages are not available via pip install. 
+    Then before installation, remove ecl and opm from the requierements.txt, then proceed with the Python requirements installation, and 
+    once inside the vpyopmnearwell Python environment, add the flag `-DPYTHON_EXECUTABLE=/Users/dmar/pyopmnearwell/vpyopmnearwell/bin/python` 
+    (by typing `which  python` in the terminal you get your path) to the cmake (lines 27 in the bash scripts), build flow by running the 
+    bash script, and finally, add to the python path the folder where you have built it, e.g., by opening in an editor the 
+    vpyopmnearwell/bin/activate script, pasting the following line (edited with the path where you built opm with Python) 
+    `export PYTHONPATH=$PYTHONPATH:/Users/dmar/pyopmnearwell/build/opm-common/build/python` at the end of the script, and deactivating and activating the virtual environment.
 
 .. warning::
     The H2CH4 template in the h2store model folder is under development and it is based on an input deck available in 

@@ -12,7 +12,7 @@ using the [_OPM-Flow_](https://opm-project.org/?page_id=19) simulator.
 
 ## Installation
 You will first need to install
-* Flow (https://opm-project.org)
+* Flow (https://opm-project.org, Release 2023.10 or current master branches)
 
 You can install the requirements in a virtual environment with the following commands:
 
@@ -33,11 +33,13 @@ pip install -e .
 pip install -r dev-requirements.txt
 ``` 
 
-For MAC users with the latest chips (M1/M2), both ecl and opm packages are not available via pip install. Then
-before installation, comment the first two lines in the requierements.txt file, then proceed with the installation and 
-after build opm-common from source inside the virtual environment with the flag -DOPM_ENABLE_PYTHON=ON and, finally,
-add to the python path the folder where you have built it, e.g., by running in the terminal
-`export PYTHONPATH=$PYTHONPATH:/Users/dmar/Github/opm-common/build/python` .
+For macOS users with the latest chips (M1/M2, guessing also M3?), the ecl and opm packages are not available via pip install. 
+Then before installation, remove ecl and opm from the requierements.txt, then proceed with the Python requirements installation, and 
+once inside the vpyopmnearwell Python environment, add the flag `-DPYTHON_EXECUTABLE=/Users/dmar/pyopmnearwell/vpyopmnearwell/bin/python` 
+(by typing `which  python` in the terminal you get your path) to the cmake (lines 27 in the bash scripts), build flow by running the 
+bash script, and finally, add to the python path the folder where you have built it, e.g., by opening in an editor the 
+vpyopmnearwell/bin/activate script, pasting the following line (edited with the path where you built opm with Python) 
+`export PYTHONPATH=$PYTHONPATH:/Users/dmar/pyopmnearwell/build/opm-common/build/python` at the end of the script, and deactivating and activating the virtual environment.
 
 To build dune and the corresponding OPM master branches from source (e.g., you are a macOS user), you can run the script
 `./build_dune_and_opm-flow.bash`, which in turn should build flow in the folder 

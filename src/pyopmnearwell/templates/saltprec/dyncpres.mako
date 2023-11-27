@@ -70,29 +70,19 @@ EHYSTR
 % endif
 
 SALTSOL
-	${dic['salt_props'][1]} ${dic['salt_props'][2]}/
+${dic['salt_props'][1]} ${dic['salt_props'][2]}/
 /
 
-PERMFACT
-0.0 ${((dic['salt_props'][4] - (dic['salt_props'][4] - dic['salt_props'][6])) / (1 - (dic['salt_props'][4] - dic['salt_props'][6]))) ** 2 * ((1 - dic['salt_props'][3] + dic['salt_props'][3]/(1 + (1/dic['salt_props'][3])/(1/(dic['salt_props'][4] - dic['salt_props'][6]) - 1))**2)) / (1 - dic['salt_props'][3] + dic['salt_props'][3] * ((dic['salt_props'][4] - (dic['salt_props'][4] - dic['salt_props'][6])) / (1 - (dic['salt_props'][4] - dic['salt_props'][6])) / ((dic['salt_props'][4] - (dic['salt_props'][4] - dic['salt_props'][6])) / (1 - (dic['salt_props'][4] - dic['salt_props'][6])) + (1 + (1/dic['salt_props'][3])/(1/(dic['salt_props'][4] - dic['salt_props'][6]) - 1)) - 1)) ** 2)}
-% for poro_fac in np.linspace(dic['salt_props'][4], 1, mt.floor(dic['salt_props'][5])):
-${poro_fac} ${((poro_fac - (dic['salt_props'][4] - dic['salt_props'][6])) / (1 - (dic['salt_props'][4] - dic['salt_props'][6]))) ** 2 * ((1 - dic['salt_props'][3] + dic['salt_props'][3]/(1 + (1/dic['salt_props'][3])/(1/(dic['salt_props'][4] - dic['salt_props'][6]) - 1))**2)) / (1 - dic['salt_props'][3] + dic['salt_props'][3] * ((poro_fac - (dic['salt_props'][4] - dic['salt_props'][6])) / (1 - (dic['salt_props'][4] - dic['salt_props'][6])) / ((poro_fac - (dic['salt_props'][4] - dic['salt_props'][6])) / (1 - (dic['salt_props'][4] - dic['salt_props'][6])) + (1 + (1/dic['salt_props'][3])/(1/(dic['salt_props'][4] - dic['salt_props'][6]) - 1)) - 1)) ** 2)}
-% endfor 
-/
-/
+INCLUDE
+'PERMFACT.INC' /
 
-PCFACT
-0.0 ${(dic['pcfact'][1]/(((dic['pcfact'][1] - (dic['pcfact'][1] - dic['pcfact'][3])) / (1 - (dic['pcfact'][1] - dic['pcfact'][3]))) ** 2 * ((1 - dic['pcfact'][0] + dic['pcfact'][0]/(1 + (1/dic['pcfact'][0])/(1/(dic['pcfact'][1] - dic['pcfact'][3]) - 1))**2)) / (1 - dic['pcfact'][0] + dic['pcfact'][0] * ((dic['pcfact'][1] - (dic['pcfact'][1] - dic['pcfact'][3])) / (1 - (dic['pcfact'][1] - dic['pcfact'][3])) / ((dic['pcfact'][1] - (dic['pcfact'][1] - dic['pcfact'][3])) / (1 - (dic['pcfact'][1] - dic['pcfact'][3])) + (1 + (1/dic['pcfact'][0])/(1/(dic['pcfact'][1] - dic['pcfact'][3]) - 1)) - 1)) ** 2))) ** dic['pcfact'][4]}
-% for poro_fac in np.linspace(dic['pcfact'][1], 1, mt.floor(dic['pcfact'][2])):
-${poro_fac} ${(poro_fac/(((poro_fac - (dic['pcfact'][1] - dic['pcfact'][3])) / (1 - (dic['pcfact'][1] - dic['pcfact'][3]))) ** 2 * ((1 - dic['pcfact'][0] + dic['pcfact'][0]/(1 + (1/dic['pcfact'][0])/(1/(dic['pcfact'][1] - dic['pcfact'][3]) - 1))**2)) / (1 - dic['pcfact'][0] + dic['pcfact'][0] * ((poro_fac - (dic['pcfact'][1] - dic['pcfact'][3])) / (1 - (dic['pcfact'][1] - dic['pcfact'][3])) / ((poro_fac - (dic['pcfact'][1] - dic['pcfact'][3])) / (1 - (dic['pcfact'][1] - dic['pcfact'][3])) + (1 + (1/dic['pcfact'][0])/(1/(dic['pcfact'][1] - dic['pcfact'][3]) - 1)) - 1)) ** 2))) ** dic['pcfact'][4]}
-% endfor  
-/
-/
+INCLUDE
+'PCFACT.INC' /
 ----------------------------------------------------------------------------
 REGIONS
 ----------------------------------------------------------------------------
 INCLUDE
-  'REGIONS.INC' /
+'REGIONS.INC' /
 ----------------------------------------------------------------------------
 SOLUTION
 ---------------------------------------------------------------------------
@@ -108,7 +98,7 @@ RTEMPVD
 ${dic['dims'][2]} ${dic['temperature']} /
 
 RPTRST 
- 'BASIC=2' FLOWS FLORES DEN VISC PCOW PCOG /
+ 'BASIC=2' FLOWS FLORES DEN VISC /
 ----------------------------------------------------------------------------
 SUMMARY
 ----------------------------------------------------------------------------
@@ -191,7 +181,7 @@ RGIP
 SCHEDULE
 ----------------------------------------------------------------------------
 RPTRST
- 'BASIC=2' FLOWS FLORES DEN VISC PCOW PCOG /
+ 'BASIC=2' FLOWS FLORES DEN VISC /
 
 WELSPECS
 % if dic['grid'] == 'core':
