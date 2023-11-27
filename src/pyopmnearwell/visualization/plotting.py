@@ -13,7 +13,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from pyopmnearwell.visualization.reading import read_simulations
-from pyopmnearwell.visualization.additional_plots import final_time_maps
+from pyopmnearwell.visualization.additional_plots import final_time_maps, saltprec_plots
 
 font = {"family": "normal", "weight": "normal", "size": 13}
 matplotlib.rc("font", **font)
@@ -59,11 +59,25 @@ def main():
         default="co2store",
         help="Simulated model (5th word in the configuration file).",
     )
+    parser.add_argument(
+        "-z",
+        "--zoom",
+        default=20,
+        help="xlim for the zoomed in plots",
+    )
+    parser.add_argument(
+        "-s",
+        "--scale",
+        default="normal",
+        help="Normal or log scale for the x axis",
+    )
     cmdargs = vars(parser.parse_known_args()[0])
     dic = {"folders": [cmdargs["folder"].strip()]}
     dic["plot"] = cmdargs["plot"].strip()  # Using ecl or opm
-    dic["compare"] = cmdargs["compare"]  # Name of the compare plot
-    dic["model"] = cmdargs["model"]  # Name of the simulated model
+    dic["compare"] = cmdargs["compare"].strip()  # Name of the compare plot
+    dic["model"] = cmdargs["model"].strip()  # Name of the simulated model
+    dic["scale"] = cmdargs["scale"].strip()  # Scale for the x axis: 'normal' or 'log'
+    dic["zoom"] = float(cmdargs["zoom"])  # xlim in meters for the zoomed in plots
     dic["exe"] = os.getcwd()  # Path to the folder of the input.txt file
     plot_results(dic)
 
@@ -147,7 +161,7 @@ def plot_results(dic):
     final_time_projections_norms(dic)
     final_time_projections_max(dic)
     if dic["model"] == "saltprec":
-        over_time_saltprec(dic)
+        saltprec_plots(dic)
     if dic["plot"] == "ecl":
         all_injectivities(dic)
     # if dic["connections"]:
@@ -160,10 +174,6 @@ def plot_results(dic):
 def connections_injectivities(dic):
     """
     Function to plot the rates over the wells BHP
-
-    Args:
-        dic (dict): Global dictionary with required parameters
-
     """
     quantites = ["rate", "productivity"]
     units = [
@@ -200,10 +210,6 @@ def connections_injectivities(dic):
 def all_injectivities(dic):
     """
     Function to plot the rates over the wells BHP
-
-    Args:
-        dic (dict): Global dictionary with required parameters
-
     """
     quantites = ["pressure", "rate", "injectivity"]
     units = [
@@ -246,10 +252,6 @@ def all_injectivities(dic):
 def capillary_pressure(dic):
     """
     Function to plot the capillary pressure function
-
-    Args:
-        dic (dict): Global dictionary with required parameters
-
     """
     fig, axis = plt.subplots()
     for i, study in enumerate(dic["folders"]):
@@ -329,13 +331,6 @@ def read_table(table, kind):
 def evaluate_projections(dic):
     """
     Function to plot the 1D projected quantities along the z direction
-
-    Args:
-        dic (dict): Global dictionary with required parameters
-
-    Returns:
-        dic (dict): Global dictionary with required parameters
-
     """
     dic["projection"] = [
         "bottom_cells",
@@ -398,10 +393,6 @@ def evaluate_projections(dic):
 def final_time_projections_bottom(dic):
     """
     Function to plot the 1D projected quantities along the z direction
-
-    Args:
-        dic (dict): Global dictionary with required parameters
-
     """
     for j, quantity in enumerate(dic["quantity"]):
         fig, axis = plt.subplots()
@@ -513,29 +504,39 @@ def final_time_projections_bottom(dic):
                         f"{dic[f'{study}_xmidpoints'][-1]:.3E} "
                         + f"{dic[f'{study}_pressure_bottom_cells'][-1]:.3E}"
                     )
-        axis.set_xlabel("Distance from wellbore [m]")
-        axis.set_ylabel(f"{dic['labels'][j]} {dic['units'][j]}")
-        axis.set_title("Bottom cells of the reservoir")
-        axis.legend()
-        if quantity == "permfact":
-            axis.set_ylim([0, 1])
-        fig.savefig(
-            f"{dic['where']}/{quantity}_1D_single_layer.png", bbox_inches="tight"
-        )
-        axis.set_xlim([0, 20])
-        fig.savefig(
-            f"{dic['where']}/{quantity}_1D_single_layer_zoom.png", bbox_inches="tight"
-        )
-        plt.close()
+        finish_plotting(dic, axis, j, fig, quantity)
+
+
+def finish_plotting(dic, axis, j, fig, quantity):
+    """
+    Function to finish the final_time_projections_bottom method
+    """
+    axis.set_xlabel("Distance from wellbore [m]")
+    axis.set_ylabel(f"{dic['labels'][j]} {dic['units'][j]}")
+    axis.set_title("Bottom cells of the reservoir")
+    axis.legend()
+    if dic["scale"] == "log":
+        axis.set_xscale("log")
+    if quantity == "permfact":
+        axis.set_ylim([0, 1])
+    fig.savefig(
+        f"{dic['where']}/{quantity}_1D_single_layer_x{dic['scale']}.png",
+        bbox_inches="tight",
+    )
+    if dic["scale"] == "log":
+        axis.set_xlim(right=dic["zoom"])
+    else:
+        axis.set_xlim([0, dic["zoom"]])
+    fig.savefig(
+        f"{dic['where']}/{quantity}_1D_single_layer_zoom{dic['zoom']}_x{dic['scale']}.png",
+        bbox_inches="tight",
+    )
+    plt.close()
 
 
 def final_time_projections_layered(dic):
     """
     Function to plot the 1D projected quantities along the z direction
-
-    Args:
-        dic (dict): Global dictionary with required parameters
-
     """
     for j, quantity in enumerate(dic["quantity"]):
         fig, axis = plt.subplots()
@@ -570,37 +571,23 @@ def final_time_projections_layered(dic):
         axis.set_xlabel("Distance from wellbore [m]")
         axis.set_ylabel(f"{dic['labels'][j]} {dic['units'][j]}")
         axis.legend()
+        if dic["scale"] == "log":
+            axis.set_xscale("log")
         if quantity == "permfact":
             axis.set_ylim([0, 1])
-        fig.savefig(f"{dic['where']}/{quantity}_1D_layered.png", bbox_inches="tight")
-        axis.set_xlim([0, 20])
         fig.savefig(
-            f"{dic['where']}/{quantity}_1D_layered_zoom.png", bbox_inches="tight"
+            f"{dic['where']}/{quantity}_1D_layered_x{dic['scale']}.png",
+            bbox_inches="tight",
+        )
+        if dic["scale"] == "log":
+            axis.set_xlim(right=dic["zoom"])
+        else:
+            axis.set_xlim([0, dic["zoom"]])
+        fig.savefig(
+            f"{dic['where']}/{quantity}_1D_layered_zoom{dic['zoom']}_x{dic['scale']}.png",
+            bbox_inches="tight",
         )
         plt.close()
-
-
-def over_time_saltprec(dic):
-    """
-    Function to plot the 1D normed quantities along the z direction
-
-    Args:
-        dic (dict): Global dictionary with required parameters
-
-    """
-    fig, axis = plt.subplots()
-    for i, study in enumerate(dic["folders"]):
-        axis.plot(
-            dic[f"{study}_report_time"],
-            dic[f"{study}_totalsaltprec"],
-            label=f"{study}",
-            color=dic["colors"][i],
-        )
-    axis.set_xlabel("Time")
-    axis.set_ylabel("Total precipitated salt [kg]")
-    axis.legend()
-    axis.xaxis.set_tick_params(size=6, rotation=45)
-    fig.savefig(f"{dic['where']}/cumulative_saltprec.png", bbox_inches="tight")
 
 
 def over_time_well_cell(dic):
@@ -697,11 +684,22 @@ def final_time_projections_norms(dic):
         axis.set_xlabel("Distance from wellbore [m]")
         axis.set_ylabel(f"{dic['labels'][j]} {dic['units'][j]}")
         axis.legend()
+        if dic["scale"] == "log":
+            axis.set_xscale("log")
         if quantity == "permfact":
             axis.set_ylim([0, 1])
-        fig.savefig(f"{dic['where']}/{quantity}_1D_norms.png", bbox_inches="tight")
-        axis.set_xlim([0, 20])
-        fig.savefig(f"{dic['where']}/{quantity}_1D_norms_zoom.png", bbox_inches="tight")
+        fig.savefig(
+            f"{dic['where']}/{quantity}_1D_norms_x{dic['scale']}.png",
+            bbox_inches="tight",
+        )
+        if dic["scale"] == "log":
+            axis.set_xlim(right=dic["zoom"])
+        else:
+            axis.set_xlim([0, dic["zoom"]])
+        fig.savefig(
+            f"{dic['where']}/{quantity}_1D_norms_zoom{dic['zoom']}_x{dic['scale']}.png",
+            bbox_inches="tight",
+        )
         plt.close()
 
 
@@ -745,11 +743,21 @@ def final_time_projections_max(dic):
         axis.set_ylabel(f"{dic['labels'][j]} {dic['units'][j]}")
         axis.set_title("Maximum value along the height of the reservoir")
         axis.legend()
+        if dic["scale"] == "log":
+            axis.set_xscale("log")
         if quantity == "permfact":
             axis.set_ylim([0, 1])
-        fig.savefig(f"{dic['where']}/{quantity}_1D_max.png", bbox_inches="tight")
-        axis.set_xlim([0, 20])
-        fig.savefig(f"{dic['where']}/{quantity}_1D_max_zoom.png", bbox_inches="tight")
+        fig.savefig(
+            f"{dic['where']}/{quantity}_1D_max_x{dic['scale']}.png", bbox_inches="tight"
+        )
+        if dic["scale"] == "log":
+            axis.set_xlim(right=dic["zoom"])
+        else:
+            axis.set_xlim([0, dic["zoom"]])
+        fig.savefig(
+            f"{dic['where']}/{quantity}_1D_max_zoom{dic['zoom']}_x{dic['scale']}.png",
+            bbox_inches="tight",
+        )
         plt.close()
 
 

@@ -88,7 +88,7 @@ RTEMPVD
 ${dic['dims'][2]} ${dic['temperature']} /
 
 RPTRST 
- 'BASIC=2' FLOWS FLORES DEN VISC PCOW PCOG /
+ 'BASIC=2' FLOWS FLORES DEN VISC /
 ----------------------------------------------------------------------------
 SUMMARY
 ----------------------------------------------------------------------------
@@ -171,7 +171,7 @@ RGIP
 SCHEDULE
 ----------------------------------------------------------------------------
 RPTRST
- 'BASIC=2' FLOWS FLORES DEN VISC PCOW PCOG /
+ 'BASIC=2' FLOWS FLORES DEN VISC /
 
 WELSPECS
 % if dic['grid'] == 'core':

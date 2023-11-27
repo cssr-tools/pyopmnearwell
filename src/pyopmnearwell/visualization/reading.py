@@ -253,9 +253,6 @@ def read_ecl(dic):
             if str(f).endswith(".UNRST")
         ]
         case = str(pathlib.Path(dic["exe"]) / study / f"output/{deck[0]}")
-        print(study)
-        print(dic["exe"])
-        print(case)
         dic[f"{study}_rst"] = EclFile(case + ".UNRST")
         dic[f"{study}_ini"] = EclFile(case + ".INIT")
         dic[f"{study}_grid"] = EclGrid(case + ".EGRID")

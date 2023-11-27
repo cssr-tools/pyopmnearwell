@@ -42,6 +42,13 @@ def pyopmnearwell():
         help="Generate a common plot for the current folders ('' by default).",
     )
     parser.add_argument(
+        "-g",
+        "--generate",
+        default="all",
+        help="Run the whole framework ('all'), only run flow ('flow'), "
+        "or only create plots ('plot') ('all' by default).",
+    )
+    parser.add_argument(
         "-m",
         "--model",
         default="co2store",
@@ -51,14 +58,29 @@ def pyopmnearwell():
             + "(co2store by default)."
         ),
     )
+    parser.add_argument(
+        "-z",
+        "--zoom",
+        default=20,
+        help="xlim in meters for the zoomed in plots (20 by default)",
+    )
+    parser.add_argument(
+        "-s",
+        "--scale",
+        default="normal",
+        help="Scale for the x axis in the figures: 'normal' or 'log' ('normal' by default)",
+    )
     cmdargs = vars(parser.parse_known_args()[0])
     dic = {
         "pat": os.path.split(os.path.dirname(__file__))[0]
     }  # Path to the pyopmnearwell folder
     dic["exe"] = os.getcwd()  # Path to the folder of the input.txt file
-    dic["fol"] = cmdargs["output"]  # Name for the output folder
-    dic["plot"] = cmdargs["plotting"]  # The python package used for plotting
-    dic["model"] = cmdargs["model"]  # Name of the simulated model
+    dic["fol"] = cmdargs["output"].strip()  # Name for the output folder
+    dic["plot"] = cmdargs["plotting"].strip()  # The python package used for plotting
+    dic["model"] = cmdargs["model"].strip()  # Name of the simulated model
+    dic["generate"] = cmdargs["generate"].strip()  # Parts of the workflow to run
+    dic["scale"] = cmdargs["scale"].strip()  # Scale for the x axis: 'normal' or 'log'
+    dic["zoom"] = float(cmdargs["zoom"])  # xlim in meters for the zoomed in plots
     dic["compare"] = cmdargs[
         "compare"
     ]  # If not empty, then the name of the compare plot (compare).
@@ -67,7 +89,7 @@ def pyopmnearwell():
         plot_results(dic)
         return
 
-    file = cmdargs["input"]  # Name of the input file
+    file = cmdargs["input"].strip()  # Name of the input file
     dic["runname"] = pathlib.Path(file).stem
 
     # Process the input file (open pyopmnearwell.utils.inputvalues to see the
@@ -82,14 +104,15 @@ def pyopmnearwell():
             os.makedirs(os.path.join(dic["exe"], dic["fol"], fil))
     os.chdir(os.path.join(dic["exe"], dic["fol"]))
 
-    # Write used opm related files
-    reservoir_files(dic)
+    if dic["generate"] in ["all", "flow"]:
+        # Write used opm related files
+        reservoir_files(dic)
 
-    # Run the model
-    simulations(dic)
+        # Run the model
+        simulations(dic)
 
     # Make some useful plots after the studies
-    if cmdargs["plotting"] != "off":
+    if cmdargs["plotting"] != "off" and dic["generate"] in ["all", "plot"]:
         plotting(dic)
 
 

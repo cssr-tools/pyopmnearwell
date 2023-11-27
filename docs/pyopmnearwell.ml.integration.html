@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyopmnearwell.ml.integration module &mdash; pyopmnearwell  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pyopmnearwell.ml.kerasify module" href="pyopmnearwell.ml.kerasify.html" />
+    <link rel="prev" title="pyopmnearwell.ml.ensemble module" href="pyopmnearwell.ml.ensemble.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #aaaaaa" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration_file.html">Configuration file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">pyopmnearwell Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="output_folder.html">Output folder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="related.html">Related</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About pyopmnearwell</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #aaaaaa" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyopmnearwell</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="api.html">pyopmnearwell Python API</a></li>
+          <li class="breadcrumb-item"><a href="pyopmnearwell.html">pyopmnearwell package</a></li>
+          <li class="breadcrumb-item"><a href="pyopmnearwell.ml.html">pyopmnearwell.ml package</a></li>
+      <li class="breadcrumb-item active">pyopmnearwell.ml.integration module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/pyopmnearwell.ml.integration.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyopmnearwell.ml.integration">
+<span id="pyopmnearwell-ml-integration-module"></span><h1>pyopmnearwell.ml.integration module<a class="headerlink" href="#module-pyopmnearwell.ml.integration" title="Link to this heading"></a></h1>
+<p>“Run simulations with machine learned well models.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.integration.recompile_flow">
+<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.integration.</span></span><span class="sig-name descname"><span class="pre">recompile_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scalingsfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opm_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">StandardWell_impl_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'co2_3_inputs'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'co2_5_inputs'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'h2o_2_inputs'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'co2_local_stencil'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">StandardWell_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'base'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'local_stencil'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'base'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stencil_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_feature_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.integration.recompile_flow" title="Link to this definition"></a></dt>
+<dd><p>Fill <code class="docutils literal notranslate"><span class="pre">StandardWell_impl</span></code> and recompile <code class="docutils literal notranslate"><span class="pre">flow_gaswater_dissolution_diffuse</span></code>.</p>
+<p>Note: Once scaling layers are implemented directly into OPM, this might be
+deprecated. However, it might still be needed to deal with different stencils and</p>
+<blockquote>
+<div><p>features per cell.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scalingsfile</strong> (<em>pathlib.Path</em>) – Path to the csv file containing the input and
+output scalings for the model.</p></li>
+<li><p><strong>opm_path</strong> (<em>pathlib.Path</em>) – Path to a OPM installation with ml functionality.</p></li>
+<li><p><strong>(</strong><strong>Literal</strong><strong>[</strong><strong>&quot;co2_3_inputs&quot;</strong> (<em>StandardWell_impl_template</em>) – “h2o_2_inputs”, “co2_local_stencil”]): Template for
+<code class="docutils literal notranslate"><span class="pre">StandardWell_impl.hpp</span></code>. Decides the neural network architecture.</p></li>
+<li><p><strong>&quot;co2_5_inputs&quot;</strong> – “h2o_2_inputs”, “co2_local_stencil”]): Template for
+<code class="docutils literal notranslate"><span class="pre">StandardWell_impl.hpp</span></code>. Decides the neural network architecture.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>:param<span class="classifier">“h2o_2_inputs”, “co2_local_stencil”]): Template for</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">StandardWell_impl.hpp</span></code>. Decides the neural network architecture.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>StandardWell_template</strong> (<em>Literal</em><em>[</em><em>&quot;base&quot;</em><em>, </em><em>&quot;local_stencil&quot;</em><em>]</em><em>, </em><em>optional</em>) – Template for</p></li>
+<li><p><strong>&quot;base&quot;.</strong> (<em>StandardWell.hpp. Defaults to</em>) – </p></li>
+<li><p><strong>stencil_size</strong> (<em>int</em><em>, </em><em>optional</em>) – The size of the vertical stencil of the model.
+Defaults to 3.</p></li>
+<li><p><strong>local_feature_names</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – List of local feature names
+that are input to the model. Defaults to Optional.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">scalingsfile</span></code> contains an invalid row.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.integration.run_integration">
+<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.integration.</span></span><span class="sig-name descname"><span class="pre">run_integration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">runspecs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">makofile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.integration.run_integration" title="Link to this definition"></a></dt>
+<dd><p>Runs <code class="docutils literal notranslate"><span class="pre">pyopmnearwell</span></code> simulations for the specified runspecs.</p>
+<p>Note: All “variables” need to</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>runspecs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Contains at least two keys “variables” and
+“constants”. The values of both keys are dictionaries and their union has to
+contain all parameters to fill the simulation template. Each key in the
+“variables”  dictionary is a list and this function loops through all lists
+in parallel and runs a simulation for each.</p></li>
+<li><p><strong>savepath</strong> (<em>str</em>) – Path to save the output files.</p></li>
+<li><p><strong>makofile</strong> (<em>str</em>) – Path to the <code class="docutils literal notranslate"><span class="pre">pyopmnearwell</span></code> deck template for the simulations.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyopmnearwell.ml.ensemble.html" class="btn btn-neutral float-left" title="pyopmnearwell.ml.ensemble module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyopmnearwell.ml.kerasify.html" class="btn btn-neutral float-right" title="pyopmnearwell.ml.kerasify module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, NORCE Norwegian Research Centre AS.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

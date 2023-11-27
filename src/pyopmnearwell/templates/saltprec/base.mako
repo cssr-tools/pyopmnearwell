@@ -73,38 +73,8 @@ SALTSOL
 	${dic['salt_props'][1]} ${dic['salt_props'][2]}/
 /
 
---PERMFACT
---0.0 1.427e-05
---0.8 1.427e-05
---0.81 0.002776688986880076
---0.82 0.011094049904030737
---0.83 0.024915453264443454
---0.84 0.04418300653594782
---0.85 0.06882022471910128
---0.86 0.09873462214411233
---0.87 0.13382018987643707
---0.88 0.17395973154362412
---0.89 0.21902703809913965
---0.9 0.2688888888888889
---0.91 0.3234068723155018
---0.92 0.382439024390244
---0.93 0.44584128755010144
---0.94 0.5134687953555873
---0.95 0.5851769911504421
---0.96 0.6608225905463472
---0.97 0.7402643987874704
---0.98 0.8233639947437581
---0.99 0.9099862935668768
---1.0 1.0 /
---/
-
-PERMFACT
-0.0 ${((dic['salt_props'][4] - (dic['salt_props'][4] - dic['salt_props'][6])) / (1 - (dic['salt_props'][4] - dic['salt_props'][6]))) ** 2 * ((1 - dic['salt_props'][3] + dic['salt_props'][3]/(1 + (1/dic['salt_props'][3])/(1/(dic['salt_props'][4] - dic['salt_props'][6]) - 1))**2)) / (1 - dic['salt_props'][3] + dic['salt_props'][3] * ((dic['salt_props'][4] - (dic['salt_props'][4] - dic['salt_props'][6])) / (1 - (dic['salt_props'][4] - dic['salt_props'][6])) / ((dic['salt_props'][4] - (dic['salt_props'][4] - dic['salt_props'][6])) / (1 - (dic['salt_props'][4] - dic['salt_props'][6])) + (1 + (1/dic['salt_props'][3])/(1/(dic['salt_props'][4] - dic['salt_props'][6]) - 1)) - 1)) ** 2)}
-% for poro_fac in np.linspace(dic['salt_props'][4], 1, mt.floor(dic['salt_props'][5])):
-${poro_fac} ${((poro_fac - (dic['salt_props'][4] - dic['salt_props'][6])) / (1 - (dic['salt_props'][4] - dic['salt_props'][6]))) ** 2 * ((1 - dic['salt_props'][3] + dic['salt_props'][3]/(1 + (1/dic['salt_props'][3])/(1/(dic['salt_props'][4] - dic['salt_props'][6]) - 1))**2)) / (1 - dic['salt_props'][3] + dic['salt_props'][3] * ((poro_fac - (dic['salt_props'][4] - dic['salt_props'][6])) / (1 - (dic['salt_props'][4] - dic['salt_props'][6])) / ((poro_fac - (dic['salt_props'][4] - dic['salt_props'][6])) / (1 - (dic['salt_props'][4] - dic['salt_props'][6])) + (1 + (1/dic['salt_props'][3])/(1/(dic['salt_props'][4] - dic['salt_props'][6]) - 1)) - 1)) ** 2)}
-% endfor /
-/
-
+INCLUDE
+'PERMFACT.INC' /
 ----------------------------------------------------------------------------
 REGIONS
 ----------------------------------------------------------------------------
@@ -125,7 +95,7 @@ RTEMPVD
 ${dic['dims'][2]} ${dic['temperature']} /
 
 RPTRST 
- 'BASIC=2' FLOWS FLORES DEN VISC PCOW PCOG /
+ 'BASIC=2' FLOWS FLORES DEN VISC /
 ----------------------------------------------------------------------------
 SUMMARY
 ----------------------------------------------------------------------------

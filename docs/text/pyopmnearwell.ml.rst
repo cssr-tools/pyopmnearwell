@@ -8,7 +8,10 @@ Submodules
    :maxdepth: 4
 
    pyopmnearwell.ml.data
+   pyopmnearwell.ml.ensemble
+   pyopmnearwell.ml.integration
    pyopmnearwell.ml.kerasify
+   pyopmnearwell.ml.nn
    pyopmnearwell.ml.scaler_layers
 
 Module contents

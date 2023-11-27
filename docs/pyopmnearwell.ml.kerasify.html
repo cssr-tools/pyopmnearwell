@@ -11,17 +11,17 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pyopmnearwell.ml.scaler_layers module" href="pyopmnearwell.ml.scaler_layers.html" />
-    <link rel="prev" title="pyopmnearwell.ml.data module" href="pyopmnearwell.ml.data.html" /> 
+    <link rel="next" title="pyopmnearwell.ml.nn module" href="pyopmnearwell.ml.nn.html" />
+    <link rel="prev" title="pyopmnearwell.ml.integration module" href="pyopmnearwell.ml.integration.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -82,36 +82,37 @@
            <div itemprop="articleBody">
              
   <section id="module-pyopmnearwell.ml.kerasify">
-<span id="pyopmnearwell-ml-kerasify-module"></span><h1>pyopmnearwell.ml.kerasify module<a class="headerlink" href="#module-pyopmnearwell.ml.kerasify" title="Permalink to this heading"></a></h1>
-<p>Transform keras models to an OPM format.</p>
+<span id="pyopmnearwell-ml-kerasify-module"></span><h1>pyopmnearwell.ml.kerasify module<a class="headerlink" href="#module-pyopmnearwell.ml.kerasify" title="Link to this heading"></a></h1>
+<p>Transform keras models to an OPM format. Copied from
+<a class="reference external" href="https://github.com/fractalmanifold/opm-common/blob/cemracs/opm/material/fluidmatrixinteractions/ml_tools/kerasify.py">https://github.com/fractalmanifold/opm-common/blob/cemracs/opm/material/fluidmatrixinteractions/ml_tools/kerasify.py</a>.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.kerasify.export_model">
-<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.kerasify.</span></span><span class="sig-name descname"><span class="pre">export_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.kerasify.export_model" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.kerasify.</span></span><span class="sig-name descname"><span class="pre">export_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.kerasify.export_model" title="Link to this definition"></a></dt>
 <dd><p>Main routine.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.kerasify.write_convolution2d">
-<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.kerasify.</span></span><span class="sig-name descname"><span class="pre">write_convolution2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_activation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.kerasify.write_convolution2d" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.kerasify.</span></span><span class="sig-name descname"><span class="pre">write_convolution2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_activation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.kerasify.write_convolution2d" title="Link to this definition"></a></dt>
 <dd><p>Process the Convolution2D layer.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.kerasify.write_dense">
-<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.kerasify.</span></span><span class="sig-name descname"><span class="pre">write_dense</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_activation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.kerasify.write_dense" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.kerasify.</span></span><span class="sig-name descname"><span class="pre">write_dense</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_activation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.kerasify.write_dense" title="Link to this definition"></a></dt>
 <dd><p>Process the dense layer.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.kerasify.write_floats">
-<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.kerasify.</span></span><span class="sig-name descname"><span class="pre">write_floats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floats</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.kerasify.write_floats" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.kerasify.</span></span><span class="sig-name descname"><span class="pre">write_floats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floats</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.kerasify.write_floats" title="Link to this definition"></a></dt>
 <dd><p>Writes floats to file in 1024 chunks.. prevents memory explosion
 writing very large arrays to disk when calling struct.pack().</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.kerasify.write_lstm">
-<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.kerasify.</span></span><span class="sig-name descname"><span class="pre">write_lstm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_activation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.kerasify.write_lstm" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.kerasify.</span></span><span class="sig-name descname"><span class="pre">write_lstm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_activation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.kerasify.write_lstm" title="Link to this definition"></a></dt>
 <dd><p>Process the LSTM layer.</p>
 </dd></dl>
 
@@ -121,8 +122,8 @@ writing very large arrays to disk when calling struct.pack().</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="pyopmnearwell.ml.data.html" class="btn btn-neutral float-left" title="pyopmnearwell.ml.data module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pyopmnearwell.ml.scaler_layers.html" class="btn btn-neutral float-right" title="pyopmnearwell.ml.scaler_layers module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pyopmnearwell.ml.integration.html" class="btn btn-neutral float-left" title="pyopmnearwell.ml.integration module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyopmnearwell.ml.nn.html" class="btn btn-neutral float-right" title="pyopmnearwell.ml.nn module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
