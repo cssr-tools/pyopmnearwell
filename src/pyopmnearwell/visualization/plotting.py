@@ -160,7 +160,7 @@ def plot_results(dic):
     final_time_projections_layered(dic)
     final_time_projections_norms(dic)
     final_time_projections_max(dic)
-    if dic["model"] == "saltprec":
+    if dic["model"] == "saltprec" and not dic["compare"]:
         saltprec_plots(dic)
     if dic["plot"] == "ecl":
         all_injectivities(dic)

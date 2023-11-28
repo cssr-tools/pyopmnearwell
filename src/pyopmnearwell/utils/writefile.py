@@ -162,7 +162,7 @@ def manage_sections(dic):
 
     """
     sections = ["geology", "regions"]
-    if dic["pvMult"] != 0:
+    if dic["pvMult"] > 0:
         sections.append("multpv")
     if dic["model"] == "saltprec":
         sections.append("permfact")
