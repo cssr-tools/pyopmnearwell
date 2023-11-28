@@ -1,17 +1,17 @@
 """Set the full path to the flow executable and flags"""
-flow --linear-solver=cprw --enable-tuning=true --enable-opm-rst-file=true --enable-well-operability-check=false --min-time-step-before-shutting-problematic-wells-in-days=1e-99
+flow --linear-solver=cprw --newton-min-iterations=5 --enable-tuning=true --enable-opm-rst-file=true --enable-well-operability-check=false --min-time-step-before-shutting-problematic-wells-in-days=1e-99 --linear-solver-ignore-convergence-failure=false
 
 """Set the model parameters"""
 saltprec uniform #Model (co2store/h2store/co2eor/saltprec)
-cake 60      #Grid type (radial/cartesian/cake) and size (width/theta/theta [in degrees])
-10000 44     #Reservoir dimensions [m] (Lenght and height)
-400 22 7.1   #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding
-0.04 0 0     #Well diameter [m], well transmiscibility (0 to use the computed one internally in Flow), and remove the smaller cells than the well diameter
+cake 60    #Grid type (radial/cartesian/cake) and size (width/theta/theta [in degrees])
+500 44       #Reservoir dimensions [m] (length and height)
+100 22 4.25  #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding
+0.05 0 0      #Well diameter [m], well transmiscibility (0 to use the computed one internally in Flow), and remove the smaller cells than the well diameter
 21.3e6 60 0  #Pressure [Pa] on the top, uniform temperature [°], and initial phase in the reservoir (0 wetting, 1 non-wetting)
--1 0         #Pore volume multiplier on the boundary [-] (0 to use well producers instead) and deactivate cross flow within the wellbore (see XFLOW in OPM Manual)
+15988.5 0    #Pore volume multiplier on the boundary [-] (-1 to ignore; 0 to use well producers instead) and deactivate cross flow within the wellbore (see XFLOW in OPM Manual)
 0 2 10       #Activate perforation [-], number of well perforations [-], and number of x-direction cells [-]
-1 0 0        #Number of layers [-], hysteresis (1 to activate), and econ for the producer (for h2 models)
-138 268 2153 0.8 0.8 1001 1.84e-2 #Ini salt conc [kg/m3], salt sol lim [kg/m3], prec salt den [kg/m3], gamma [-], phi_r [-], npoints [-], and threshold [-]  (all entries for saltprec)
+1 0 0        #Number of layers [-], hysteresis (Killough, Carlson, or 0 to neglect it), and econ for the producer (for h2 models)
+138 268 2153 0.8 0.8 1001 1e-3 #Ini salt conc [kg/m3], salt sol lim [kg/m3], prec salt den [kg/m3], gamma [-], phi_r [-], npoints [-], and threshold [-]  (all entries for saltprec)
 0            #The function for the reservoir surface
 
 """Set the saturation functions"""
@@ -29,5 +29,4 @@ PERMX2 150. PERMZ2 150. PORO2 0.20 THIC1 44
 
 """Define the injection values""" 
 """injection time [d], time step size to write results [d], maximum time step [d], injected fluid (0 water, 1 co2), injection rates [kg/day]"""
-5   .1 .01 1 158400.
-360 .1  .1 1 158400.
+365 1 1 1 158400.
