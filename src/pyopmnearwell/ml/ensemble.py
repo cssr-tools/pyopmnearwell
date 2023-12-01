@@ -267,7 +267,7 @@ def setup_ensemble(
                 recalc_grid=recalc_grid,
                 recalc_tables=recalc_tables,
                 recalc_sections=recalc_sections,
-                inc_folder=pathlib.Path("..") / ".." "runfiles_0" / "preprocessing",
+                inc_folder=pathlib.Path("..") / ".." / "runfiles_0" / "preprocessing",
             )
     # pyopmnearwell creates these unneeded folders, so we remove them.
     try:
@@ -326,7 +326,7 @@ def run_ensemble(
             simulation_finished: bool = True
 
             with open_ecl_file(
-                ensemble_path / f"results_{j}" / f"RUN_{j}.UNRST"
+                str(ensemble_path / f"results_{j}" / f"RUN_{j}.UNRST")
             ) as ecl_file:
                 # Skip result, if the simulation did not run to the last time step.
                 if (
