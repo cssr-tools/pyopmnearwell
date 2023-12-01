@@ -73,6 +73,11 @@ SALTSOL
 	${dic['salt_props'][1]} ${dic['salt_props'][2]}/
 /
 
+% if dic["rock_comp"] > 0:
+ROCK
+276.0 ${dic["rock_comp"]} /
+% endif
+
 INCLUDE
 'PERMFACT.INC' /
 ----------------------------------------------------------------------------

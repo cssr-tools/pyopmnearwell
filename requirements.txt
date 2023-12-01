@@ -2,6 +2,7 @@ opm
 ecl
 mako
 matplotlib
+pandas
 scipy
 tensorflow
 keras_tuner
