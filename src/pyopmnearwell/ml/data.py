@@ -6,6 +6,7 @@ from typing import Any
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
+from tqdm import tqdm
 
 from pyopmnearwell.ml import ensemble
 from pyopmnearwell.utils import formulas, units
@@ -43,12 +44,21 @@ class BaseDataset:
         pass
 
     def reduce_data_size(
-        self, feature: np.ndarray, step_size_x: int = 1, step_size_t: int = 1
+        self,
+        feature: np.ndarray,
+        step_size_x: int = 1,
+        step_size_t: int = 1,
+        random: bool = False,
     ) -> np.ndarray:
+        if random:
+            pass
+        # TODO: Choose a random selection of elements for each member, instead of a
+        # fixed stepsize. This needs to be the same for each feature, hence the current
+        # idea does not work.
         return feature[:, ::step_size_t, ::, ::step_size_x]
 
     def get_vertically_averaged_values(
-        self, features: np.ndarray, feature_index
+        self, features: np.ndarray, feature_index, disregard_first_xcell: bool = True
     ) -> np.ndarray:
         """Average features vertically inside each layer.
 
@@ -61,6 +71,7 @@ class BaseDataset:
                 num_xcells)``):
 
         """
+        # Innermost cells (well cells) get disregarded.
         feature: np.ndarray = np.average(features[..., feature_index], axis=-2)[..., 1:]
         assert feature.shape == self.single_feature_shape
         return feature
@@ -69,14 +80,22 @@ class BaseDataset:
         """Get full list of cell radii."""
         cell_center_radii, inner_radii, outer_radii = ensemble.calculate_radii(
             radii_file,
-            num_cells=40,
+            num_cells=self.num_xcells + 1,
             return_outer_inner=True,
             triangle_grid=True,
             theta=math.pi / 3,  # TODO: More flexible
         )
+        # Innermost cells (well cells) get disregarded. If the cell_boundary_radii are
+        # used for integrating, this is actually needed, as the content of the well does
+        # not count towards the well block, hence the well radius should not be
+        # integrated.
+        cell_center_radii = cell_center_radii[1:]
+        inner_radii = inner_radii[1:]
+        outer_radii = outer_radii[1:]
+
         cell_boundary_radii: np.ndarray = np.append(inner_radii, outer_radii[-1])
-        assert cell_center_radii.shape == self.num_xcells
-        assert cell_boundary_radii.shape == self.num_xcells + 1
+        assert cell_center_radii.shape == (self.num_xcells,)
+        assert cell_boundary_radii.shape == (self.num_xcells + 1,)
         return cell_center_radii, cell_boundary_radii
 
     def get_timesteps(self, simulation_length: float) -> np.ndarray:
@@ -102,8 +121,9 @@ class BaseDataset:
 
         Note:
             - Before integrating, the feature is averaged vertically inside each layer.
-            - The integration takes place in 2D, hence it suffices to divide by area and
-            not by  volume.
+            - As the feature is averaged and not summed, the integration takes place in
+              2D with vertically averaged values. Hence it suffices to divide by area
+              and not by  volume.
 
         Args:
             features (np.ndarray): _description_
@@ -117,17 +137,30 @@ class BaseDataset:
 
         """
         # Average along vertical cells in a layer.
-        feature: np.ndarray = np.average(features[..., feature_index], axis=-2)
+        feature: np.ndarray = np.average(features[..., feature_index], axis=-2)[..., 1:]
+
         # Integrate horizontically along layers and divide by equivalent cartesian block
         # area.
-        block_sidelengths: np.ndarray = formulas.cell_size(cell_center_radi)
-        feature = ensemble.integrate_fine_scale_value(
-            feature,
-            cell_boundary_radii,
-            block_sidelengths,
+        block_sidelengths: np.ndarray = formulas.cell_size(cell_center_radii)
+        # feature_lst: list[np.ndarray] = []
+        # for i in range(feature.shape[-1]):
+        #     feature_lst.append(
+        #         ensemble.integrate_fine_scale_value(
+        #             feature[..., : i + 1],
+        #             cell_boundary_radii[: i + 2],
+        #             block_sidelengths[: i + 1],
+        #         )
+        #         / (block_sidelengths[i] ** 2)
+        #     )
+        # averaged_feature: np.ndarray = np.concatenate(feature_lst, axis=-1)
+        # The horizontal dimension is the last axis of each feature, hence we pass
+        # ``axis=-1``.
+        integrated_feature: np.ndarray = ensemble.integrate_fine_scale_value(
+            feature, cell_boundary_radii, block_sidelengths, axis=-1
         ) / (block_sidelengths**2)
-        assert feature.shape == self.single_feature_shape
-        return feature
+
+        assert integrated_feature.shape == self.single_feature_shape
+        return integrated_feature
 
     def get_homogeneous_values(self, features, feature_index):
         """Get a feature that is homogeneous inside a layer.
@@ -144,9 +177,38 @@ class BaseDataset:
                 num_xcells)``):
 
         """
-        feature: np.ndarray = features[..., feature_index][..., 0, :]
+        # Innermost cells (well cells) get disregarded.
+        feature: np.ndarray = features[..., feature_index][..., 0, 1:]
         assert feature.shape == self.single_feature_shape
         return feature
+
+    def get_analytical_PI(
+        self,
+        permeabilities: np.ndarray,
+        radii: np.ndarray,
+        well_radius: float,
+    ) -> np.ndarray:
+        """_summary_
+
+        _extended_summary_
+
+        Args:
+            permeabilities (np.ndarray): Unit has to be [mD]!
+            radii (np.ndarray): _description_
+            well_radius (float): _description_
+
+        Returns:
+            np.ndarray: _description_
+        """
+        analytical_PI: np.ndarray = formulas.peaceman_matrix_WI(
+            k_h=permeabilities
+            * units.MILIDARCY_TO_M2
+            * (self.num_zcells / self.num_layers),
+            r_e=radii,
+            r_w=well_radius,
+        )
+        assert analytical_PI.shape == self.single_feature_shape
+        return analytical_PI
 
     def get_analytical_WI(
         self,
@@ -154,12 +216,33 @@ class BaseDataset:
         saturations: np.ndarray,
         permeabilities: np.ndarray,
         temperature: float,
+        surface_density: float,
         radii: np.ndarray,
+        well_radius: float,
         OPM: pathlib.Path,
     ) -> np.ndarray:
+        """_summary_
+
+        _extended_summary_
+
+        Args:
+            pressures (np.ndarray): _description_
+            saturations (np.ndarray): _description_
+            permeabilities (np.ndarray): Unit has to be [mD]!
+            temperature (float): _description_
+            surface_density (float): _description_
+            radii (np.ndarray): _description_
+            well_radius (float): _description_
+            OPM (pathlib.Path): _description_
+
+        Returns:
+            np.ndarray: _description_
+        """
         densities_lst: list[list[float]] = []
         viscosities_lst: list[list[float]] = []
-        for pressure in pressures.flatten():
+        # Implement progress bar, since this can take some time.
+        pressures_bar = tqdm(pressures.flatten())
+        for pressure in pressures_bar:
             # Evaluate density and viscosity.
             density_tuple: list[float] = []
             viscosity_tuple: list[float] = []
@@ -200,7 +283,7 @@ class BaseDataset:
                 * units.MILIDARCY_TO_M2
                 * (self.num_zcells / self.num_layers),
                 r_e=radii,
-                r_w=0.25,
+                r_w=well_radius,
                 rho_1=densities[..., 0],
                 mu_1=viscosities[..., 0],
                 k_r1=(1 - saturations) ** 2,
@@ -208,31 +291,60 @@ class BaseDataset:
                 mu_2=viscosities[..., 1],
                 k_r2=saturations**2,
             )
-            / runspecs_ensemble["constants"]["SURFACE_DENSITY"]
+            / surface_density
         )
 
-        assert analytical_WI.shape == self.single_feature_shape
+        # TODO: Add this assert again. It's turned off s.t. the analytical WI can be
+        # computed after size reduction of features.
+        # assert analytical_WI.shape == self.single_feature_shape
         return analytical_WI
 
     def get_data_WI(
         self,
         features: np.ndarray,
-        pressures: np.ndarray,
-        pressure_index: int = 0,
-        inj_rate_index: int = 3,
+        pressure_index: int,
+        inj_rate_index: int,
+        angle: float = math.pi / 3,
     ) -> np.ndarray:
-        # Take the pressure values of the well blocks as bhp.
-        bhps: np.ndarray = np.average(features[..., pressure_index], axis=-2)[
-            ..., 0
-        ]  # ``shape = (num_completed_runs, num_timesteps/3, num_layers); unit [bar]
+        """_summary_
 
-        # Get the individual injection rates per second for each cell. Multiply by 6 to account
-        # for the 60° cake and transform to rate per second.
+        Similar functionality to ``ensemble.calculate_WI``, but takes a feature array
+        rather than a data dictionary.
+
+        Note: Pressures get averaged over each layer, injection rates get summed over
+            each layer.
+
+        Args:
+            features (np.ndarray): _description_
+            pressure_index (int): _description_
+            inj_rate_index (int): _description_
+
+        Returns:
+            np.ndarray: _description_
+
+        """
+        # Take the pressure values of the well blocks as bhp.
+        bhps: np.ndarray = np.average(features[..., pressure_index], axis=-2)[..., 0][
+            ..., None
+        ]  # ``shape = (num_completed_runs, num_timesteps, num_layers, 1)``
+
+        # Ge the pressure values of all other blocks.
+        pressures: np.ndarray = np.average(features[..., pressure_index], axis=-2)[
+            ..., 1:
+        ]  # ``shape = (num_completed_runs, num_timesteps, num_layers, num_xcells)``
+
+        # Get the individual injection rates per second for each layer. Sum across a
+        # layer to get the rates for a full layer. Multiply by
+        # ``(math.pi * 2 / angle)`` to transform from a cake of given ``angle`` to a
+        # full radial model and convert to rate per second.
         injection_rate_per_second_per_cell: np.ndarray = (
-            np.average(features[..., inj_rate_index], axis=-2)[..., 0]
-            * 6
+            np.sum(features[..., inj_rate_index], axis=-2)[..., 0]
+            * (math.pi * 2 / angle)
             * units.Q_per_day_to_Q_per_seconds
-        )  # ``shape = (num_completed_runs, num_timesteps/3, num_layers)
+        )[
+            ..., None
+        ]  # ``shape = (num_completed_runs, num_timesteps, num_layers, 1)``
+
         # Check that we do not divide by zero.
         assert np.all(bhps - pressures)
         WI_data: np.ndarray = injection_rate_per_second_per_cell / (bhps - pressures)

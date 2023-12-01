@@ -24,7 +24,7 @@ def pyopmnearwell_correction(theta: ArrayLike = math.pi / 3) -> ArrayLike:
     from a 2D triangle grid to a radial grid.
 
     In pyopmnearwell, when using the `cake` grid, a 2D triangle grid is used. As the
-    scaling for cell volumes between a raidal and a triangular grid is linear, the
+    scaling for cell volumes between a radial and a triangular grid is linear, the
     radial solution can be recovered. This function calculates the ratio
 
     .. math::
@@ -46,7 +46,7 @@ def pyopmnearwell_correction(theta: ArrayLike = math.pi / 3) -> ArrayLike:
     return 2 * np.tan(theta / 2) / theta
 
 
-def equivalent_well_block_radius(delta_x: ArrayLike) -> ArrayLike:
+def equivalent_well_radius(delta_x: ArrayLike) -> ArrayLike:
     """Calculate the equivalent well block radius for a given quadratic cell size.
 
     Args:
@@ -61,7 +61,7 @@ def equivalent_well_block_radius(delta_x: ArrayLike) -> ArrayLike:
 
 
 def cell_size(radii: ArrayLike) -> ArrayLike:
-    """Calculate the cell size for a given equivalent well block radius.
+    """Calculate the size of a quadratic cell for a given equivalent well block radius.
 
     Args:
         delta_x (ArrayLike): _description_
@@ -240,7 +240,7 @@ def co2brinepvt(
     temperature: float,
     phase_property: Literal["density", "viscosity"],
     phase: Literal["CO2", "water"],
-    OPM: pathlib.Path,
+    OPM: str | pathlib.Path,
 ) -> float:
     """Call OPM's ``co2brinepvt`` to calculate density/viscosity.
 
@@ -249,13 +249,13 @@ def co2brinepvt(
         temperature (float): Unit: [K].
         property (Literal["density", "viscosity"]): Phase property to return.
         phase (Literal["CO2", "water"]): Phase of interest.
-        OPM: (pathlib.Path): Path to OPM installation.
+        OPM: (str | pathlib.Path): Path to OPM installation.
 
     Returns:
         quantity (float): Density (unit: [kg/m^3]) or viscosity (unit: [Pa*s])
 
     """
-    CO2BRINEPVT: pathlib.Path = OPM / "build/opm-common/bin/co2brinepvt"
+    CO2BRINEPVT: pathlib.Path = pathlib.Path(OPM) / "build/opm-common/bin/co2brinepvt"
     with subprocess.Popen(
         [
             str(CO2BRINEPVT),

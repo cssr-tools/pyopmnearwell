@@ -55,7 +55,9 @@ def test_peaceman_matrix_WI(
     k_h: ArrayLike, r_e: ArrayLike, r_w: ArrayLike, expected: ArrayLike
 ):
     if expected == ValueError:
-        with pytest.raises(expected)
+        # TODO: Fix this
+        with pytest.raises(expected):
+            result = peaceman_matrix_WI(k_h, r_e, r_w)
     else:
         result = peaceman_matrix_WI(k_h, r_e, r_w)
         assert np.allclose(result, expected, rtol=1e-7)
