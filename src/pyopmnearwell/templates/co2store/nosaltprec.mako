@@ -16,7 +16,6 @@ ${max(dic['noCells'][0],dic['noCells'][1])} ${dic['noCells'][1]} ${dic['noCells'
 WATER
 GAS
 BRINE
-VAPWAT
 CO2STORE
 DISGASW
 
@@ -68,6 +67,10 @@ EHYSTR
   1  3  2* BOTH /
 % endif
 
+% if dic["rock_comp"] > 0:
+ROCK
+276.0 ${dic["rock_comp"]} /
+% endif
 ----------------------------------------------------------------------------
 REGIONS
 ----------------------------------------------------------------------------

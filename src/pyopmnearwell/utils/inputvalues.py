@@ -32,7 +32,7 @@ def process_input(dic, in_file):
     return dic
 
 
-def readthefirstpart(lol, dic):  # pylint: disable=R0915
+def readthefirstpart(lol, dic):
     """
     Function to process the first lines from the configuration file
 
@@ -95,7 +95,6 @@ def readthefirstpart(lol, dic):  # pylint: disable=R0915
         dic["empty_well"] = float((lol[8][0].strip()).split()[3])
     else:
         dic["empty_well"] = 0.0
-
     dic["pressure"] = float((lol[9][0].strip()).split()[0]) / 1.0e5  # Convert to bar
     dic["temperature"] = float((lol[9][0].strip()).split()[1])
     dic["initialphase"] = int((lol[9][0].strip()).split()[2])
@@ -103,18 +102,32 @@ def readthefirstpart(lol, dic):  # pylint: disable=R0915
     dic["xflow"] = int((lol[10][0].strip()).split()[1])  # Cross flow within wellbore
     dic["perforations"] = [int((lol[11][0].strip()).split()[j]) for j in range(3)]
     dic["satnum"] = int((lol[12][0].strip()).split()[0])  # No. saturation regions
-    dic["hysteresis"] = 0  # Hysteresis
+    dic = readhysteresis(lol, dic)
+    dic["econ"] = float((lol[12][0].strip()).split()[2])  # Econ
+    dic["z_xy"] = str(lol[14][0])  # The function for the reservoir surface
+    dic = readsalt(lol, dic)
+    index = 17  # Increase this if more rows are added to the model parameters part
+    return dic, index
+
+
+def readhysteresis(lol, dic):
+    """Read the parameters for the hysteresis"""
+    dic["hysteresis"] = 0
     if ((lol[12][0].strip()).split()[1]).upper() == "CARLSON":
         dic["hysteresis"] = 1
         dic["hyst_model"] = 0
     if ((lol[12][0].strip()).split()[1]).upper() == "KILLOUGH":
         dic["hysteresis"] = 1
         dic["hyst_model"] = 2
-    dic["econ"] = float((lol[12][0].strip()).split()[2])  # Econ
+    return dic
+
+
+def readsalt(lol, dic):
+    """Read the parameters for the salt precipitation simulations"""
     dic["salt_props"] = [float((lol[13][0].strip()).split()[j]) for j in range(7)]
-    dic["z_xy"] = str(lol[14][0])  # The function for the reservoir surface
-    index = 17  # Increase this if more rows are added to the model parameters part
-    return dic, index
+    if dic["template"] == "dyncpres":
+        dic["pcfact"] = [float((lol[13][0].strip()).split()[j]) for j in range(7, 12)]
+    return dic
 
 
 def readthesecondpart(lol, dic, index):
@@ -130,8 +143,11 @@ def readthesecondpart(lol, dic, index):
         dic (dict): Global dictionary with new added parameters
 
     """
-    if dic["template"] == "dyncpres":
-        dic["pcfact"] = [float((lol[13][0].strip()).split()[j]) for j in range(7, 12)]
+    dic["rock_comp"] = 0.0
+    if len(lol[12][0].strip().split()) >= 4 and not lol[12][0].strip().split()[
+        3
+    ].startswith("#"):
+        dic["rock_comp"] = float((lol[12][0].strip()).split()[3])
     dic["krwf"] = str(lol[index][0])  # Wetting rel perm saturation function [-]
     dic["krnf"] = str(lol[index + 1][0])  # Non-wetting rel perm saturation function [-]
     dic["pcwcf"] = str(lol[index + 2][0])  # Capillary pressure saturation function [Pa]

@@ -101,7 +101,6 @@ def saltprec_plots(dic):
     """
     Additional plots for sal precipittaion
     """
-    over_time_saltprec(dic)
     nca_nb(dic)
     factors(dic)
 

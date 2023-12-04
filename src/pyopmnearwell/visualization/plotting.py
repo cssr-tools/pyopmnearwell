@@ -13,7 +13,11 @@ import matplotlib
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from pyopmnearwell.visualization.reading import read_simulations
-from pyopmnearwell.visualization.additional_plots import final_time_maps, saltprec_plots
+from pyopmnearwell.visualization.additional_plots import (
+    final_time_maps,
+    saltprec_plots,
+    over_time_saltprec,
+)
 
 font = {"family": "normal", "weight": "normal", "size": 13}
 matplotlib.rc("font", **font)
@@ -160,8 +164,10 @@ def plot_results(dic):
     final_time_projections_layered(dic)
     final_time_projections_norms(dic)
     final_time_projections_max(dic)
-    if dic["model"] == "saltprec" and not dic["compare"]:
-        saltprec_plots(dic)
+    if dic["model"] == "saltprec":
+        over_time_saltprec(dic)
+        if not dic["compare"]:
+            saltprec_plots(dic)
     if dic["plot"] == "ecl":
         all_injectivities(dic)
     # if dic["connections"]:
@@ -880,22 +886,24 @@ def over_time_well_injectivity(dic):
                 dic[f"{study}_pressure_plot"].append(well_pressure)
             if quantity == "pressure":
                 dic["axis"].plot(
-                    dic[f"{study}_rst_seconds"][1:],
+                    dic[f"{study}_rst_seconds"][1:] / 86400.0,
                     dic[f"{study}_{quantity}_plot"],
                     label=f"well ({study})",
                     color=dic["colors"][k % len(dic["colors"])],
                 )
-                dic["axis"].plot(
-                    dic[f"{study}_rst_seconds"],
-                    [
-                        value[dic[f"{study}_wellid"]] - dic["cp_func"](1)
-                        for value in dic[f"{study}_pressure_array"]
-                    ],
-                    label=f"cell ({study})",
-                    color=dic["colors"][k % len(dic["colors"])],
-                    linestyle="dotted",
-                )
-                dic["axis"].set_xlabel("Time [s]")
+                # dic["axis"].plot(
+                #     dic[f"{study}_rst_seconds"],
+                #     [
+                #         value[dic[f"{study}_wellid"]] - dic["cp_func"](1)
+                #         for value in dic[f"{study}_pressure_array"]
+                #     ],
+                #     label=f"cell ({study})",
+                #     color=dic["colors"][k % len(dic["colors"])],
+                #     linestyle="dotted",
+                # )
+                # dic["axis"].set_xlabel("Time [s]")
+                dic["axis"].set_xlabel("Time [d]")
+                dic["axis"].set_title("Well BHP")
             else:
                 dic["axis"].plot(
                     dic[f"{study}_report_time"][1:],
