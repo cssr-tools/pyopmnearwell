@@ -1,4 +1,4 @@
-name: Run the pyopmnearwell executable
+name: Run pyopmnearwell
 
 on:
  push:
