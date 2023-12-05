@@ -11,7 +11,7 @@ cake 60    #Grid type (radial/cartesian/cake) and size (width/theta/theta [in de
 15988.5 0    #Pore volume multiplier on the boundary [-] (-1 to ignore; 0 to use well producers instead) and deactivate cross flow within the wellbore (see XFLOW in OPM Manual)
 0 2 10       #Activate perforation [-], number of well perforations [-], and number of x-direction cells [-]
 1 0 0        #Number of layers [-], hysteresis (Killough, Carlson, or 0 to neglect it), and econ for the producer (for h2 models)
-138 268 2153 0.8 0.8 1001 1e-3 #Ini salt conc [kg/m3], salt sol lim [kg/m3], prec salt den [kg/m3], gamma [-], phi_r [-], npoints [-], and threshold [-]  (all entries for saltprec)
+138 268 2153 0.8 0.8 1001 1e-3 default #Ini salt conc [kg/m3], salt sol lim [kg/m3], prec salt den [kg/m3], gamma [-], phi_r [-], npoints [-], threshold [-], and expression ('default' to use the relatinonship in Verma and Pruess 1988 and 'power' to use the one described in the OPM Manual in PERMFACT kewword with phi_r=phi_c/phi_0) (all entries for saltprec)
 0            #The function for the reservoir surface
 
 """Set the saturation functions"""

@@ -48,8 +48,8 @@ def main():
     parser.add_argument(
         "-p",
         "--plot",
-        default="ecl",
-        help="Using the 'ecl' or 'opm' python package.",
+        default="resdata",
+        help="Using the 'resdata' or 'opm' python package.",
     )
     parser.add_argument(
         "-c",
@@ -77,7 +77,7 @@ def main():
     )
     cmdargs = vars(parser.parse_known_args()[0])
     dic = {"folders": [cmdargs["folder"].strip()]}
-    dic["plot"] = cmdargs["plot"].strip()  # Using ecl or opm
+    dic["plot"] = cmdargs["plot"].strip()  # Using resdata or opm
     dic["compare"] = cmdargs["compare"].strip()  # Name of the compare plot
     dic["model"] = cmdargs["model"].strip()  # Name of the simulated model
     dic["scale"] = cmdargs["scale"].strip()  # Scale for the x axis: 'normal' or 'log'
@@ -168,7 +168,7 @@ def plot_results(dic):
         over_time_saltprec(dic)
         if not dic["compare"]:
             saltprec_plots(dic)
-    if dic["plot"] == "ecl":
+    if dic["plot"] == "resdata":
         all_injectivities(dic)
     # if dic["connections"]:
     #     connections_injectivities(dic)

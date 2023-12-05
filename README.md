@@ -1,5 +1,5 @@
 [![Build Status](https://github.com/daavid00/pyopmnearwell/actions/workflows/CI.yml/badge.svg)](https://github.com/daavid00/pyopmnearwell/actions/workflows/CI.yml)
-<a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.8%20|%203.9%20|%203.10-blue.svg"></a>
+<a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.8%20|%203.9%20|%203.10%20|%203.11-blue.svg"></a>
 [![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
@@ -33,19 +33,10 @@ pip install -e .
 pip install -r dev-requirements.txt
 ``` 
 
-For macOS users with the latest chips (M1/M2, guessing also M3?), the ecl and opm packages are not available via pip install. 
-Then before installation, remove ecl and opm from the requierements.txt, then proceed with the Python requirements installation, and 
-once inside the vpyopmnearwell Python environment, add the flag `-DPYTHON_EXECUTABLE=/Users/dmar/pyopmnearwell/vpyopmnearwell/bin/python` 
-(by typing `which  python` in the terminal you get your path) to the cmake (lines 27 in the bash scripts), build flow by running the 
-bash script, and finally, add to the python path the folder where you have built it, e.g., by opening in an editor the 
-vpyopmnearwell/bin/activate script, pasting the following line (edited with the path where you built opm with Python) 
-`export PYTHONPATH=$PYTHONPATH:/Users/dmar/pyopmnearwell/build/opm-common/build/python` at the end of the script, and deactivating and activating the virtual environment.
+See the [_CI.yml_](https://github.com/OPM/pyopmnearwell/blob/main/.github/workflows/CI.yml) script 
+for installation of OPM Flow (binary packages) and the pyopmnearwell package. If you are a Linux user (including the windows subsystem for Linux), then you could try to build Flow from the master branches with mpi support, by running the script `./build_opm-flow_mpi.bash`, which in turn should build flow in the folder ./build/opm-simulators/bin/flow. 
 
-To build dune and the corresponding OPM master branches from source (e.g., you are a macOS user), you can run the script
-`./build_dune_and_opm-flow.bash`, which in turn should build flow in the folder 
-./build/opm-simulators/bin/flow (for macOS users the dependecies such as boost can be installed using brew or macports).
-If you are a Linux user (including the windows subsystem for Linux), then you could try to build Flow with mpi support,
-by running the script `./build_dune_and_opm-flow_mpi.bash` instead of `./build_dune_and_opm-flow.bash`.
+For macOS users with the latest chips (M1/M2, guessing also M3?), the ecl, resdata, and opm Python packages are not available via pip install. Then before installation, remove them from the `requirements.txt`, then proceed with the Python requirements installation, install the OPM Flow dependencies (using macports or brew), and once inside the vpyopmnearwell Python environment, run the `./build_opm-flow_macOS.bash`, and deactivate and activate the virtual environment (this script builds OPM Flow as well as the opm Python package, and it exports the required PYTHONPATH).
 
 ## Running pyopmnearwell
 You can run _pyopmnearwell_ as a single command line:
@@ -55,7 +46,8 @@ pyopmnearwell -i some_input.txt -o some_output_folder
 Run `pyopmnearwell --help` to see all possible command line 
 argument options. Inside the `some_input.txt` file you provide the path to the
 flow executable and simulation parameters. See the .txt files in the `examples/`,
-`tests/geometries/`, and `tests/models/` folders.
+`tests/geometries/`, and `tests/models/` folders. For macOS users, then use the flag
+`-p opm` for plotting (resdata is the default one).
 
 ## Getting started
 See the [_documentation_](https://daavid00.github.io/pyopmnearwell/introduction.html).
