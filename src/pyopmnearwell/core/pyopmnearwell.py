@@ -32,8 +32,9 @@ def pyopmnearwell():
     parser.add_argument(
         "-p",
         "--plotting",
-        default="ecl",
-        help="Using the 'ecl' or 'opm' python package or turn plotting 'off' (ecl by default).",
+        default="resdata",
+        help="Using the 'resdata' or 'opm' python package or turn plotting 'off' "
+        "(resdata by default).",
     )
     parser.add_argument(
         "-c",

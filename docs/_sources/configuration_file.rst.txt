@@ -41,7 +41,7 @@ The following input lines are:
     1e10 0        #Pore volume multiplier on the boundary [-] (0 to use well producers instead) and deactivate cross flow within the wellbore (see XFLOW in OPM Manual)
     1 5 6         #Activate perforations [-], number of perforations [-], and lenght [m]
     4 Killough 0  #Number of layers [-], hysteresis (Killough, Carlson, or 0 to neglect it), and econ for the producer (for h2 models)
-    0 0 0 0 0 0 0 #Ini salt conc [kg/m3], salt sol lim [kg/m3], prec salt den [kg/m3], gamma [-], phi_r [-], npoints [-], and threshold [-]  (all entries for saltprec)
+    0 0 0 0 0 0 0 #Ini salt conc [kg/m3], salt sol lim [kg/m3], prec salt den [kg/m3], gamma [-], phi_r [-], npoints [-], threshold [-], and expression ('default' to use the relatinonship in Verma and Pruess 1988 and 'power' to use the one described in the OPM Manual in PERMFACT kewword with phi_r=phi_c/phi_0) (all entries for saltprec)
     2-2*mt.cos((2*mt.pi*x/50)) + 10*(x/100)**2 #The function for the reservoir surface
 
 Here we first select the physical model and the corresponding template. To add additional models (e.g., blackoil), one could look at the 

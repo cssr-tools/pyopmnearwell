@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Configuration file &mdash; pyopmnearwell  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -113,7 +115,7 @@ parallel by adding <strong>mpirun -np N flow …</strong> where N is the number 
 <span class="linenos">11</span><span class="mf">1e10</span> <span class="mi">0</span>        <span class="c1">#Pore volume multiplier on the boundary [-] (0 to use well producers instead) and deactivate cross flow within the wellbore (see XFLOW in OPM Manual)</span>
 <span class="linenos">12</span><span class="mi">1</span> <span class="mi">5</span> <span class="mi">6</span>         <span class="c1">#Activate perforations [-], number of perforations [-], and lenght [m]</span>
 <span class="linenos">13</span><span class="mi">4</span> <span class="n">Killough</span> <span class="mi">0</span>  <span class="c1">#Number of layers [-], hysteresis (Killough, Carlson, or 0 to neglect it), and econ for the producer (for h2 models)</span>
-<span class="linenos">14</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="c1">#Ini salt conc [kg/m3], salt sol lim [kg/m3], prec salt den [kg/m3], gamma [-], phi_r [-], npoints [-], and threshold [-]  (all entries for saltprec)</span>
+<span class="linenos">14</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="c1">#Ini salt conc [kg/m3], salt sol lim [kg/m3], prec salt den [kg/m3], gamma [-], phi_r [-], npoints [-], threshold [-], and expression (&#39;default&#39; to use the relatinonship in Verma and Pruess 1988 and &#39;power&#39; to use the one described in the OPM Manual in PERMFACT kewword with phi_r=phi_c/phi_0) (all entries for saltprec)</span>
 <span class="linenos">15</span><span class="mi">2</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">mt</span><span class="o">.</span><span class="n">cos</span><span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">mt</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="o">/</span><span class="mi">50</span><span class="p">))</span> <span class="o">+</span> <span class="mi">10</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="c1">#The function for the reservoir surface</span>
 </pre></div>
 </div>

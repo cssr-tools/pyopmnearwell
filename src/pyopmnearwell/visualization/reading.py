@@ -12,16 +12,16 @@ import numpy as np
 import pandas as pd
 
 try:
-    from opm.io.ecl import EclFile as EclFileOpm
-    from opm.io.ecl import ERst, ESmry
+    from opm.io.ecl import EclFile as OpmFile
+    from opm.io.ecl import ERst as OpmRestart
+    from opm.io.ecl import ESmry as OpmSummary
 except ImportError:
-    print("The opm Python package was not found, using ecl")
+    print("The opm Python package was not found, using resdata")
 try:
-    from ecl.eclfile import EclFile
-    from ecl.grid import EclGrid
-    from ecl.summary import EclSum
+    from resdata.resfile import ResdataFile
+    from resdata.summary import Summary
 except ImportError:
-    print("The ecl Python package was not found, using opm")
+    print("The resdata Python package was not found, using opm")
 
 
 def read_simulations(dic):
@@ -36,8 +36,8 @@ def read_simulations(dic):
 
     """
     dic["connections"] = []
-    if dic["plot"] == "ecl":
-        dic = read_ecl(dic)
+    if dic["plot"] == "resdata":
+        dic = read_resdata(dic)
     else:
         dic = read_opm(dic)
     return dic
@@ -71,9 +71,9 @@ def read_opm(dic):
             if str(f).endswith(".UNRST")
         ]
         case = str(pathlib.Path(dic["exe"]) / study / f"output/{deck[0]}")
-        dic[f"{study}_rst"] = ERst(case + ".UNRST")
-        dic[f"{study}_ini"] = EclFileOpm(case + ".INIT")
-        dic[f"{study}_smsp"] = ESmry(case + ".SMSPEC")
+        dic[f"{study}_rst"] = OpmRestart(case + ".UNRST")
+        dic[f"{study}_ini"] = OpmFile(case + ".INIT")
+        dic[f"{study}_smsp"] = OpmSummary(case + ".SMSPEC")
         dic[f"{study}_permeability_array"] = [dic[f"{study}_ini"]["PERMX"]]
         dic[f"{study}_porosity_array"] = [dic[f"{study}_ini"]["PORO"]]
         dic[f"{study}_porv_array"] = [dic[f"{study}_ini"]["PORV"]]
@@ -225,9 +225,9 @@ def create_arrays_opm(dic, study):
     return dic
 
 
-def read_ecl(dic):
+def read_resdata(dic):
     """
-    Function to read the output files using the Python ecl package
+    Function to read the output files using the Python resdata package
 
     Args:
         dic (dict): Global dictionary with required parameters
@@ -253,10 +253,9 @@ def read_ecl(dic):
             if str(f).endswith(".UNRST")
         ]
         case = str(pathlib.Path(dic["exe"]) / study / f"output/{deck[0]}")
-        dic[f"{study}_rst"] = EclFile(case + ".UNRST")
-        dic[f"{study}_ini"] = EclFile(case + ".INIT")
-        dic[f"{study}_grid"] = EclGrid(case + ".EGRID")
-        dic[f"{study}_smsp"] = EclSum(case + ".SMSPEC")
+        dic[f"{study}_rst"] = ResdataFile(case + ".UNRST")
+        dic[f"{study}_ini"] = ResdataFile(case + ".INIT")
+        dic[f"{study}_smsp"] = Summary(case + ".SMSPEC")
         if dic[f"{study}_smsp"].has_key("CGIR:INJ0:1,1,1"):
             dic["connections"] = 1
         dic[f"{study}_saturation"] = dic[f"{study}_rst"].iget_kw("SGAS")
@@ -297,7 +296,7 @@ def read_ecl(dic):
         dic[f"{study}_well_pressure"] = dic[f"{study}_smsp"]["WBHP:INJ0"].values
         dic[f"{study}_well_pi"] = dic[f"{study}_smsp"]["WPI:INJ0"].values
         dic = handle_smsp_time(dic, study)
-        dic = create_arrays_ecl(dic, study, salt)
+        dic = create_arrays_resdata(dic, study, salt)
     return dic
 
 
@@ -338,7 +337,7 @@ def handle_smsp_time(dic, study):
     return dic
 
 
-def create_arrays_ecl(dic, study, salt):
+def create_arrays_resdata(dic, study, salt):
     """
     Function to create the required numpy arrays
 

@@ -125,8 +125,11 @@ def readhysteresis(lol, dic):
 def readsalt(lol, dic):
     """Read the parameters for the salt precipitation simulations"""
     dic["salt_props"] = [float((lol[13][0].strip()).split()[j]) for j in range(7)]
+    dic["poro-perm"] = "default"
+    if dic["model"] == "saltprec":
+        dic["poro-perm"] = (lol[13][0].strip()).split()[7]
     if dic["template"] == "dyncpres":
-        dic["pcfact"] = [float((lol[13][0].strip()).split()[j]) for j in range(7, 12)]
+        dic["pcfact"] = [float((lol[13][0].strip()).split()[j]) for j in range(8, 13)]
     return dic
 
 
