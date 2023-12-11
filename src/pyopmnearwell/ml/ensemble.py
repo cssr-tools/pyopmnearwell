@@ -324,6 +324,7 @@ def run_ensemble(
                 for j in range(runspecs["npruns"] * i, runspecs["npruns"] * (i + 1))
             ]
         )
+        # TODO: Possibly better to use subprocess?
         os.system(command + "wait")
         for j in range(runspecs["npruns"] * i, runspecs["npruns"] * (i + 1)):
             simulation_finished: bool = True

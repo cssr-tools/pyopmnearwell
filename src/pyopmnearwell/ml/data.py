@@ -65,6 +65,7 @@ class BaseDataset:
         Args:
             features (np.ndarray): _description_
             feature_index (int): _description_.
+            disregard_first_xcell (bool): __description__. Default is True.
 
         Returns:
             np.ndarray (``shape = (num_ensemble_runs, num_timesteps, num_layers,
@@ -72,8 +73,16 @@ class BaseDataset:
 
         """
         # Innermost cells (well cells) get disregarded.
-        feature: np.ndarray = np.average(features[..., feature_index], axis=-2)[..., 1:]
-        assert feature.shape == self.single_feature_shape
+        feature: np.ndarray = np.average(features[..., feature_index], axis=-2)
+
+        if disregard_first_xcell:
+            feature = feature[..., 1:]
+            assert feature.shape == self.single_feature_shape
+
+        else:
+            assert feature.shape[:-1] == self.single_feature_shape[:-1]
+            assert feature.shape[-1] == self.single_feature_shape[-1] + 1
+
         return feature
 
     def get_radii(self, radii_file: pathlib.Path) -> tuple[np.ndarray, np.ndarray]:
@@ -115,6 +124,7 @@ class BaseDataset:
         cell_center_radii: np.ndarray,
         cell_boundary_radii: np.ndarray,
         feature_index: int,
+        disregard_first_xcell: bool = True,
     ):
         """Integrate feature horizontically along layers and divide by equivalent
         cartesian block area.
@@ -130,6 +140,7 @@ class BaseDataset:
             cell_center_radii (np.ndarray):
             cell_boundary_radii (np.ndarray):
             feature_index (int): _description_. Default is 1.
+            disregard_first_xcell (bool): __description__. Default is True.
 
         Returns:
             np.ndarray (``shape = (num_ensemble_runs, num_timesteps, num_layers,
@@ -137,7 +148,10 @@ class BaseDataset:
 
         """
         # Average along vertical cells in a layer.
-        feature: np.ndarray = np.average(features[..., feature_index], axis=-2)[..., 1:]
+        feature: np.ndarray = np.average(features[..., feature_index], axis=-2)
+
+        if disregard_first_xcell:
+            feature = feature[..., 1:]
 
         # Integrate horizontically along layers and divide by equivalent cartesian block
         # area.
@@ -162,7 +176,9 @@ class BaseDataset:
         assert integrated_feature.shape == self.single_feature_shape
         return integrated_feature
 
-    def get_homogeneous_values(self, features, feature_index):
+    def get_homogeneous_values(
+        self, features, feature_index, disregard_first_xcell: bool = True
+    ):
         """Get a feature that is homogeneous inside a layer.
 
         Note: Since the feature is equal inside a layer, this method takes the first
@@ -171,6 +187,7 @@ class BaseDataset:
         Args:
             features (np.ndarray): _description_
             feature_index (int): _description_.
+            disregard_first_xcell (bool): __description__. Default is True.
 
         Returns:
             np.ndarray (``shape = (num_ensemble_runs, num_timesteps, num_layers,
@@ -178,7 +195,11 @@ class BaseDataset:
 
         """
         # Innermost cells (well cells) get disregarded.
-        feature: np.ndarray = features[..., feature_index][..., 0, 1:]
+        feature: np.ndarray = features[..., feature_index][..., 0, :]
+
+        if disregard_first_xcell:
+            feature = feature[..., 1:]
+
         assert feature.shape == self.single_feature_shape
         return feature
 
