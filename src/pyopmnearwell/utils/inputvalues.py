@@ -29,6 +29,8 @@ def process_input(dic, in_file):
             lol.append(row)
     dic, index = readthefirstpart(lol, dic)
     dic = readthesecondpart(lol, dic, index)
+    dic = readsalt(lol, dic)
+    dic = readco2eor(lol, dic)
     return dic
 
 
@@ -95,9 +97,7 @@ def readthefirstpart(lol, dic):
         dic["empty_well"] = float((lol[8][0].strip()).split()[3])
     else:
         dic["empty_well"] = 0.0
-    dic["pressure"] = float((lol[9][0].strip()).split()[0])
-    if dic["model"] != "co2eor":
-        dic["pressure"] /= 1.0e5  # Convert to bar
+    dic["pressure"] = float((lol[9][0].strip()).split()[0]) / 1.0e5  # Convert to bar
     dic["temperature"] = float((lol[9][0].strip()).split()[1])
     dic["initialphase"] = int((lol[9][0].strip()).split()[2])
     dic["pvMult"] = float((lol[10][0].strip()).split()[0])  # Pore volume multiplier [-]
@@ -107,7 +107,6 @@ def readthefirstpart(lol, dic):
     dic = readhysteresis(lol, dic)
     dic["econ"] = float((lol[12][0].strip()).split()[2])  # Econ
     dic["z_xy"] = str(lol[14][0])  # The function for the reservoir surface
-    dic = readsalt(lol, dic)
     index = 17  # Increase this if more rows are added to the model parameters part
     return dic, index
 
@@ -124,14 +123,28 @@ def readhysteresis(lol, dic):
     return dic
 
 
+def readco2eor(lol, dic):
+    """Read the additional parameters for the co2eor"""
+    if dic["model"] == "co2eor":
+        dic["pressure"] *= 1.0e5  # Back to psia
+        dic["injbhp"] = float((lol[9][0].strip()).split()[1])
+        dic["probhp"] = float((lol[9][0].strip()).split()[2])
+    return dic
+
+
 def readsalt(lol, dic):
     """Read the parameters for the salt precipitation simulations"""
-    dic["salt_props"] = [float((lol[13][0].strip()).split()[j]) for j in range(7)]
-    dic["poro-perm"] = "default"
-    if dic["model"] == "saltprec":
-        dic["poro-perm"] = (lol[13][0].strip()).split()[7]
-    if dic["template"] == "dyncpres":
-        dic["pcfact"] = [float((lol[13][0].strip()).split()[j]) for j in range(8, 13)]
+    if dic["template"] == "salinity":
+        dic["salinity"] = float((lol[13][0].strip()).split()[0])
+    else:
+        dic["salt_props"] = [float((lol[13][0].strip()).split()[j]) for j in range(7)]
+        dic["poro-perm"] = "default"
+        if dic["model"] == "saltprec":
+            dic["poro-perm"] = (lol[13][0].strip()).split()[7]
+        if dic["template"] in ["dyncpres", "dyncpresuniform"]:
+            dic["pcfact"] = [
+                float((lol[13][0].strip()).split()[j]) for j in range(8, 13)
+            ]
     return dic
 
 

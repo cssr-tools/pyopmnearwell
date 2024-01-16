@@ -166,7 +166,7 @@ def manage_sections(dic):
         sections.append("multpv")
     if dic["model"] == "saltprec":
         sections.append("permfact")
-        if dic["template"] == "dyncpres":
+        if dic["template"] in ["dyncpres", "dyncpresuniform"]:
             sections.append("pcfact")
     for section in sections:
         var = {"dic": dic}

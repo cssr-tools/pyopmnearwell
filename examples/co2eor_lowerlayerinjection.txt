@@ -3,15 +3,15 @@ flow --linear-solver=cprw --enable-opm-rst-file=true --enable-tuning=true
 
 """Set the model parameters"""
 co2eor lowerlayerinjection #Model (co2store/h2store) and run name
-cpg3d 3500    #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
-3500 100      #Reservoir dimensions [ft] (length and height)
-21 21 0       #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)
-0.5 0 0       #Well diameter [ft], well transmiscibility (0 to use the computed one internally in Flow), and remove the smaller cells than the well diameter
-4000 0 0      #Pressure [Psia] on the top, uniform temperature [°], and initial phase in the reservoir (0 wetting, 1 non-wetting)
-0 0           #Pore volume multiplier on the boundary [-] (-1 to ignore; 0 to use well producers instead) and deactivate cross flow within the wellbore (see XFLOW in OPM Manual)
-0 0 0         #Activate perforations [-], number of well perforations [-], and length [m]
-3 0 0         #Number of layers [-], hysteresis (Killough, Carlson, or 0 to neglect it), and econ for the producer (for h2 models)
-0 0 0 0 0 0 0 #Ini salt conc [kg/m3], salt sol lim [kg/m3], prec salt den [kg/m3], gamma [-], phi_r [-], npoints [-], and threshold [-]  (all entries for saltprec)
+cpg3d 3500      #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
+3500 100        #Reservoir dimensions [ft] (length and height)
+21 21 0         #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)
+0.5 0 0         #Well diameter [ft], well transmiscibility (0 to use the computed one internally in Flow), and remove the smaller cells than the well diameter
+4000 9000 1500  #Pressure [Psia] on the top, injector max BHP [Psia], and producer min BHP [Psia]
+0 0             #Pore volume multiplier on the boundary [-] (-1 to ignore; 0 to use well producers instead) and deactivate cross flow within the wellbore (see XFLOW in OPM Manual)
+0 0 0           #Activate perforations [-], number of well perforations [-], and length [m]
+3 0 0           #Number of layers [-], hysteresis (Killough, Carlson, or 0 to neglect it), and econ for the producer (for h2 models)
+0 0 0 0 0 0 0   #Ini salt conc [kg/m3], salt sol lim [kg/m3], prec salt den [kg/m3], gamma [-], phi_r [-], npoints [-], and threshold [-]  (all entries for saltprec)
 8325 + (20-20*mt.cos((2*mt.pi*(x+y)/3000)))  #The function for the reservoir surface
 
 """Set the saturation functions"""
