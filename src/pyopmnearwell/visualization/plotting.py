@@ -152,7 +152,8 @@ def plot_results(dic):
     else:
         dic["where"] = "."
     dic = read_simulations(dic)
-    dic = capillary_pressure(dic)
+    if dic["model"] != "co2eor":
+        dic = capillary_pressure(dic)
     dic = over_time_well_injectivity(dic)
     dic = over_time_max_distance(dic)
     if dic["model"] == "h2store":
@@ -862,6 +863,8 @@ def over_time_well_injectivity(dic):
                     ratew = 0
                     raten = 0
                 if well_pressure == 0:
+                    dic[f"{study}_injectivity_plot"].append(0)
+                elif dic["model"] == "co2eor":
                     dic[f"{study}_injectivity_plot"].append(0)
                 else:
                     dic[f"{study}_injectivity_plot"].append(

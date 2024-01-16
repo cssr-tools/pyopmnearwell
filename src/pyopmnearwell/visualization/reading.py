@@ -90,8 +90,12 @@ def read_opm(dic):
             # dic[f"{study}_rhow_ref"] = 0.6785064  # CH4 reference density
             dic[f"{study}_rhow_ref"] = 998.108  # Water reference density
             dic[f"{study}_rhor"] = dic[f"{study}_rhow_ref"]
-        dic[f"{study}_well_pressure"] = dic[f"{study}_smsp"]["WBHP:INJ0"]
-        dic[f"{study}_well_pi"] = dic[f"{study}_smsp"]["WPI:INJ0"]
+        if dic[f"{study}_rst"].count("SSOLVENT", 0):
+            dic[f"{study}_well_pressure"] = dic[f"{study}_smsp"]["WBHP:INJG"]
+            dic[f"{study}_well_pi"] = 0 * dic[f"{study}_smsp"]["WBHP:INJG"]
+        else:
+            dic[f"{study}_well_pressure"] = dic[f"{study}_smsp"]["WBHP:INJ0"]
+            dic[f"{study}_well_pi"] = dic[f"{study}_smsp"]["WPI:INJ0"]
         dic[f"{study}_smsp_seconds"] = 86400 * dic[f"{study}_smsp"]["TIME"]
         dic[f"{study}_report_time"] = dic[f"{study}_smsp"]["YEARS", True]
         dic[f"{study}_report_time"] = np.insert(dic[f"{study}_report_time"], 0, 0)
@@ -209,9 +213,18 @@ def create_arrays_opm(dic, study):
                     dic[f"{study}_denw_array"].append(
                         np.array(dic[f"{study}_rst"]["WAT_DEN", rst])
                     )
-                    dic[f"{study}_concentration_array"].append(
-                        np.array(dic[f"{study}_rhor"] * dic[f"{study}_rst"]["RSW", rst])
-                    )
+                    if dic[f"{study}_rst"].count("SSOLVENT", 0):
+                        dic[f"{study}_concentration_array"].append(
+                            np.array(
+                                dic[f"{study}_rhor"] * dic[f"{study}_rst"]["RS", rst]
+                            )
+                        )
+                    else:
+                        dic[f"{study}_concentration_array"].append(
+                            np.array(
+                                dic[f"{study}_rhor"] * dic[f"{study}_rst"]["RSW", rst]
+                            )
+                        )
                 else:
                     dic[f"{study}_viscw_array"].append(
                         np.array(dic[f"{study}_rst"]["OIL_VISC", rst])
@@ -278,7 +291,10 @@ def read_resdata(dic):
         if dic[f"{study}_rst"].has_kw("SWAT"):
             dic[f"{study}_viscl"] = dic[f"{study}_rst"].iget_kw("WAT_VISC")
             dic[f"{study}_denl"] = dic[f"{study}_rst"].iget_kw("WAT_DEN")
-            dic[f"{study}_rs"] = dic[f"{study}_rst"].iget_kw("RSW")
+            if dic[f"{study}_rst"].has_kw("SSOLVENT"):
+                dic[f"{study}_rs"] = dic[f"{study}_rst"].iget_kw("RS")
+            else:
+                dic[f"{study}_rs"] = dic[f"{study}_rst"].iget_kw("RSW")
             dic[f"{study}_rhon_ref"] = 1.86843  # CO2 reference density
             dic[f"{study}_rhow_ref"] = 998.108  # Water reference density
             dic[f"{study}_rhor"] = dic[f"{study}_rhon_ref"]
@@ -293,8 +309,12 @@ def read_resdata(dic):
             dic[f"{study}_rhor"] = dic[f"{study}_rhow_ref"]
             dic[f"{study}_injection_ratew"] = dic[f"{study}_smsp"]["FOIR"].values
         dic[f"{study}_indicator_array"] = []
-        dic[f"{study}_well_pressure"] = dic[f"{study}_smsp"]["WBHP:INJ0"].values
-        dic[f"{study}_well_pi"] = dic[f"{study}_smsp"]["WPI:INJ0"].values
+        if dic[f"{study}_rst"].has_kw("SSOLVENT"):
+            dic[f"{study}_well_pressure"] = dic[f"{study}_smsp"]["WBHP:INJG"].values
+            dic[f"{study}_well_pi"] = 0 * dic[f"{study}_smsp"]["WBHP:INJG"].values
+        else:
+            dic[f"{study}_well_pressure"] = dic[f"{study}_smsp"]["WBHP:INJ0"].values
+            dic[f"{study}_well_pi"] = dic[f"{study}_smsp"]["WPI:INJ0"].values
         dic = handle_smsp_time(dic, study)
         dic = create_arrays_resdata(dic, study, salt)
     return dic
@@ -312,7 +332,10 @@ def handle_smsp_time(dic, study):
         dic (dict): Global dictionary with new added parameters
 
     """
-    dic[f"{study}_smsp_report_step"] = dic[f"{study}_smsp"]["WBHP:INJ0"].report_step
+    if dic[f"{study}_rst"].has_kw("SSOLVENT"):
+        dic[f"{study}_smsp_report_step"] = dic[f"{study}_smsp"]["WBHP:INJG"].report_step
+    else:
+        dic[f"{study}_smsp_report_step"] = dic[f"{study}_smsp"]["WBHP:INJ0"].report_step
     dic[f"{study}_report_time"] = dic[f"{study}_rst"].dates
     dic[f"{study}_smsp_seconds"] = [
         (dic[f"{study}_smsp"].numpy_dates[i + 1] - dic[f"{study}_smsp"].numpy_dates[i])
