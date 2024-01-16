@@ -286,8 +286,9 @@ def manage_grid(dic):
             dic["xcorc"] = dic["x_n"]
         else:
             dic = crete_3dgrid(dic)
-            for cord in dic["xcorc"]:
-                dic["xcorc"] = np.insert(dic["xcorc"], 0, -cord)
+            if dic["model"] != "co2eor":
+                for cord in dic["xcorc"]:
+                    dic["xcorc"] = np.insert(dic["xcorc"], 0, -cord)
         dxarray = [
             f'{dic["xcorc"][i+1]-dic["xcorc"][i]}' for i in range(len(dic["xcorc"]) - 1)
         ]
@@ -422,7 +423,7 @@ def crete_3dgrid(dic):
     if dic["x_fac"] != 0:
         dic["xcorc"] = np.flip(
             (dic["dims"][0])
-            * (np.exp(np.flip(np.linspace(0, dic["x_fac"], dic["noCells"][0]))) - 1)
+            * (np.exp(np.flip(np.linspace(0, dic["x_fac"], dic["noCells"][0] + 1))) - 1)
             / (np.exp(dic["x_fac"]) - 1)
         )
         if dic["removecells"] == 1:
@@ -449,10 +450,23 @@ def crete_3dgrid(dic):
             dic[f"{name}"] = np.array(dic[f"{name}"])
         dic["xcorc"] = np.delete(dic["xcorc"], 0)
     else:
-        dic["xcorc"] = np.linspace(0, dic["dims"][0], dic["noCells"][0])
+        dic["xcorc"] = np.linspace(0, dic["dims"][0], dic["noCells"][0] + 1)
         if dic["removecells"] == 1:
             dic["xcorc"] = dic["xcorc"][
                 (dic["diameter"] < dic["xcorc"]) | (0 == dic["xcorc"])
             ]
-        dic["xcorc"][0] = 0.25 * dic["xcorc"][1]
+        if dic["model"] != "co2eor":
+            dic["xcorc"][0] = 0.25 * dic["xcorc"][1]
+        else:
+            map_zcords(dic)
     return dic
+
+
+def map_zcords(dic):
+    """Generate the z array with the grid face locations"""
+    dic["zcords"] = [0.0]
+    for i in range(dic["satnum"]):
+        for _ in range(dic["nz_perlayer"][i]):
+            dic["zcords"].append(
+                dic["zcords"][-1] + dic["thickness"][i] / dic["nz_perlayer"][i]
+            )

@@ -95,7 +95,9 @@ def readthefirstpart(lol, dic):
         dic["empty_well"] = float((lol[8][0].strip()).split()[3])
     else:
         dic["empty_well"] = 0.0
-    dic["pressure"] = float((lol[9][0].strip()).split()[0]) / 1.0e5  # Convert to bar
+    dic["pressure"] = float((lol[9][0].strip()).split()[0])
+    if dic["model"] != "co2eor":
+        dic["pressure"] /= 1.0e5  # Convert to bar
     dic["temperature"] = float((lol[9][0].strip()).split()[1])
     dic["initialphase"] = int((lol[9][0].strip()).split()[2])
     dic["pvMult"] = float((lol[10][0].strip()).split()[0])  # Pore volume multiplier [-]

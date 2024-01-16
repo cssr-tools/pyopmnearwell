@@ -10,7 +10,8 @@
 -- simulations. Comput Geosci (2022). https://doi.org/10.1007/s10596-022-10133-x
 
 -- The files have been converted to templates to allow for grid refinment and simulating
--- with different injection strategies.
+-- with different injection strategies. For the original deck, see:
+-- https://github.com/OPM/opm-publications/tree/master/dynamic_blackoil
 -------------------------------------------------------------------------
 RUNSPEC
 -------------------------------------------------------------------------
@@ -38,7 +39,7 @@ START
    1 'JAN' 1987 /
 
 WELLDIMS
-   3 27 2 2 /
+   3 ${dic['noCells'][2]} 2 2 /
 
 UNIFOUT
 -------------------------------------------------------------------------
@@ -46,6 +47,10 @@ GRID
 -------------------------------------------------------------------------
 INIT
 
+% if dic['grid']== 'cpg3d':
+INCLUDE
+  ${dic['grid_file']} /
+%else:
 DX 	
 ${dic['noCells'][0]*dic['noCells'][0]*dic['noCells'][2]}*${dic['dims'][0]/dic['noCells'][0]} /
 
@@ -60,6 +65,7 @@ ${dic['noCells'][0]*dic['noCells'][0]*dic['nz_perlayer'][i]}*${dic["thickness"][
 
 TOPS
 ${dic['noCells'][0]*dic['noCells'][0]}*8325 /
+% endif
 
 PORO
 %for i in range(dic['satnum']):
@@ -234,7 +240,7 @@ RPTRST
 /
 
 EQUIL
-8400 4000 8450 0 8300 0 1 0 0 /
+8400 ${dic["pressure"]} 8450 0 8300 0 1 0 0 /
 
 RSVD
 8300 0.5728
@@ -253,6 +259,8 @@ FOIP
 FGIR
 
 FWIR
+
+FVIT
 
 FGIT
 
@@ -340,15 +348,19 @@ WELSPECS
 	'INJG'	'INJ'	1	1	1*	'GAS' /
 /
 COMPDAT
-	'PROD'	${dic['noCells'][0]}	${dic['noCells'][0]}	${dic['noCells'][2]}	${dic['noCells'][2]}	'OPEN'	1*	1*	0.5  /
-	'INJW'	1	1	1	${dic['noCells'][2]}	'OPEN'	1*	1*	0.5  /
-	'INJG'	1	1	1	${dic['noCells'][2]}	'OPEN'	1*	1*	0.5  /
+	'PROD'	${dic['noCells'][0]}	${dic['noCells'][0]}	${sum(dic['nz_perlayer'])-dic['nz_perlayer'][-1]+1}	${dic['noCells'][2]} 'OPEN' 2* ${dic["diameter"]}  /
+	'INJW'	1	1	1	${dic['nz_perlayer'][0]}	'OPEN'	2*	${dic["diameter"]}  /
+	'INJG'	1	1	1	${dic['nz_perlayer'][0]}	'OPEN'	2*	${dic["diameter"]}  /
 /
 WCONPROD
-'PROD' 'OPEN' 'BHP' 9* 3000 /
+'PROD' 'OPEN' 'BHP' 5* 1500 /
 /
 
 % for j in range(len(dic['inj'])):
+TUNING
+1e-2 ${dic['inj'][j][2]} 1e-10 2* 1e-12/
+/
+/
 WCONINJE
 'INJW' 'WATER' ${'OPEN' if dic['inj'][j][3] == 0 else 'SHUT'}
 'RATE' ${f"{dic['inj'][j][4]}"}  1* 9000/

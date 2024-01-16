@@ -65,8 +65,7 @@ ${dic['noCells'][0]*dic['noCells'][0]*dic['nz_perlayer'][i]}*${dic["thickness"][
 
 TOPS
 ${dic['noCells'][0]*dic['noCells'][0]}*8325 /
-
-%endif
+% endif
 
 PORO
 %for i in range(dic['satnum']):
@@ -349,12 +348,12 @@ WELSPECS
 	'INJG'	'INJ'	1	1	1*	'GAS' /
 /
 COMPDAT
-	'PROD'	${dic['noCells'][0]}	${dic['noCells'][0]}	${sum(dic['nz_perlayer'])-dic['nz_perlayer'][-1]+1}	${dic['noCells'][2]}	'OPEN'	2*	${dic["diameter"]}  10000/
-	'INJW'	1	1	1	${dic['nz_perlayer'][0]}	'OPEN'	2*	${dic["diameter"]}  10000/
-	'INJG'	1	1	1	${dic['nz_perlayer'][0]}	'OPEN'	2*	${dic["diameter"]}  10000/
+	'PROD'	${dic['noCells'][0]}	${dic['noCells'][0]}	${sum(dic['nz_perlayer'])-dic['nz_perlayer'][-1]+1}	${dic['noCells'][2]} 'OPEN' 2* ${dic["diameter"]}  /
+	'INJW'	1	1	${sum(dic['nz_perlayer'])-dic['nz_perlayer'][-1]+1}	${dic['noCells'][2]}	'OPEN'	2*	${dic["diameter"]}  /
+	'INJG'	1	1	${sum(dic['nz_perlayer'])-dic['nz_perlayer'][-1]+1}	${dic['noCells'][2]}	'OPEN'	2*	${dic["diameter"]}  /
 /
 WCONPROD
-'PROD' 'OPEN' 'ORAT' 12000 4* 1500 /
+'PROD' 'OPEN' 'BHP' 5* 1500 /
 /
 
 % for j in range(len(dic['inj'])):
@@ -364,9 +363,9 @@ TUNING
 /
 WCONINJE
 'INJW' 'WATER' ${'OPEN' if dic['inj'][j][3] == 0 else 'SHUT'}
-'RATE' ${f"{dic['inj'][j][4]}"}  1* 4000/
+'RATE' ${f"{dic['inj'][j][4]}"}  1* 9000/
 'INJG' 'GAS' ${'SHUT' if dic['inj'][j][3] == 0 else 'OPEN'}
-'RATE' ${f"{dic['inj'][j][4]}"}  1* 4000/
+'RATE' ${f"{dic['inj'][j][4]}"}  1* 9000/
 /
 
 WSOLVENT
