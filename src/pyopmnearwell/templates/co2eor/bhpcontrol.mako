@@ -353,7 +353,7 @@ COMPDAT
 	'INJG'	1	1	1	${dic['nz_perlayer'][0]}	'OPEN'	2*	${dic["diameter"]}  /
 /
 WCONPROD
-'PROD' 'OPEN' 'BHP' 5* 1500 /
+'PROD' 'OPEN' 'BHP' 5* ${dic["probhp"]} /
 /
 
 % for j in range(len(dic['inj'])):
@@ -363,9 +363,9 @@ TUNING
 /
 WCONINJE
 'INJW' 'WATER' ${'OPEN' if dic['inj'][j][3] == 0 else 'SHUT'}
-'RATE' ${f"{dic['inj'][j][4]}"}  1* 9000/
+'RATE' ${f"{dic['inj'][j][4]}"}  1* ${dic["injbhp"]}/
 'INJG' 'GAS' ${'SHUT' if dic['inj'][j][3] == 0 else 'OPEN'}
-'RATE' ${f"{dic['inj'][j][4]}"}  1* 9000/
+'RATE' ${f"{dic['inj'][j][4]}"}  1* ${dic["injbhp"]}/
 /
 
 WSOLVENT
