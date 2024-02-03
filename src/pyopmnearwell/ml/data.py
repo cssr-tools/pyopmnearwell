@@ -8,6 +8,7 @@ different from the default one. The lines that need to be changed are marked wit
 Deprecated: This module is deprecated in favor of the ``ensemble`` module.
 
 """
+
 from __future__ import annotations
 
 import argparse

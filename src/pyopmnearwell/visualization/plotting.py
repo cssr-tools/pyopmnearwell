@@ -19,21 +19,23 @@ from pyopmnearwell.visualization.additional_plots import (
     over_time_saltprec,
 )
 
-font = {"family": "normal", "weight": "normal", "size": 13}
+font = {"family": "normal", "weight": "normal", "size": 16}
 matplotlib.rc("font", **font)
 plt.rcParams.update(
     {
         "text.usetex": True,
         "font.family": "monospace",
         "legend.columnspacing": 0.9,
-        "legend.handlelength": 1.5,
+        "legend.handlelength": 3.0,
         "legend.fontsize": 12,
         "lines.linewidth": 4,
-        "axes.titlesize": 13,
+        "axes.titlesize": 16,
         "axes.grid": True,
         "figure.figsize": (10, 5),
     }
 )
+
+KMOL_TO_KG = 1e3 * 0.044
 
 
 def main():
@@ -98,7 +100,7 @@ def plot_results(dic):
     dic["rock"] = ["satnum", "permeability", "porosity"]
     dic["rock_units"] = ["[-]", "mD", "[-]"]
     dic["quantity"] = ["pressure", "saturation"]
-    dic["units"] = ["[Bar]", "[-]"]
+    dic["units"], dic["cmaps"] = ["[Bar]", "[-]"], ["seismic", "jet"]
     dic["labels"] = ["Pressure", "Non-wetting saturation"]
     if dic["model"] == "saltprec":
         dic["quantity"].append("salt")
@@ -107,6 +109,12 @@ def plot_results(dic):
         dic["units"].append("[-]")
         dic["labels"].append("Precipitated salt saturation")
         dic["labels"].append("Permeability multiplier")
+        dic["cmaps"].append("coolwarm")
+        dic["cmaps"].append("coolwarm")
+    dic["cmaps"].append("ocean")
+    dic["cmaps"].append("Pastel1")
+    dic["cmaps"].append("Pastel1")
+    dic["cmaps"].append("Pastel1")
     dic["linestyle"] = [
         (0, ()),
         "--",
@@ -146,8 +154,6 @@ def plot_results(dic):
         if "compare" not in dic["folders"]:
             os.system(f"mkdir {dic['exe']}/compare")
         else:
-            os.system(f"rm -rf {dic['exe']}/compare")
-            os.system(f"mkdir {dic['exe']}/compare")
             dic["folders"].remove("compare")
     else:
         dic["where"] = "."
@@ -169,8 +175,8 @@ def plot_results(dic):
         over_time_saltprec(dic)
         if not dic["compare"]:
             saltprec_plots(dic)
-    if dic["plot"] == "resdata":
-        all_injectivities(dic)
+    # if dic["plot"] == "resdata":
+    #     all_injectivities(dic)
     # if dic["connections"]:
     #     connections_injectivities(dic)
     if dic["compare"]:
@@ -210,7 +216,6 @@ def connections_injectivities(dic):
         dic["axis"].legend()
         dic["axis"].xaxis.set_tick_params(size=6, rotation=45)
         dic["fig"].savefig(f"{dic['where']}/c_{quantity}.png", bbox_inches="tight")
-
         plt.close()
 
 
@@ -252,7 +257,6 @@ def all_injectivities(dic):
         dic["axis"].legend()
         dic["axis"].xaxis.set_tick_params(size=6, rotation=45)
         dic["fig"].savefig(f"{dic['where']}/w_{quantity}.png", bbox_inches="tight")
-
         plt.close()
 
 
@@ -347,11 +351,7 @@ def evaluate_projections(dic):
         "min",
         "mean",
     ]
-    dic["well_cell"] = [
-        "wc_max",
-        "wc_min",
-        "wc_mean",
-    ]
+    dic["well_cell"] = ["wc_max", "wc_min", "wc_mean"]
     for quantity in dic["quantity"]:
         for study in dic["folders"]:
             for projection in dic["projection"]:
@@ -629,17 +629,17 @@ def over_time_well_cell(dic):
                 label=f"{study}",
                 color=dic["colors"][i % len(dic["colors"])],
             )
-        axis.set_xlabel("Time")
+        axis.set_xlabel("Time [d]")
         axis.set_ylabel(f"{dic['labels'][j]} {dic['units'][j]}")
         axis.legend()
-        axis.set_title("Along the well cells (x=0)")
+        axis.set_title("Along the well cells")
         axis.xaxis.set_tick_params(size=6, rotation=45)
         if quantity == "permfact":
             axis.set_ylim([0, 1])
         fig.savefig(f"{dic['where']}/well_cell_{quantity}.png", bbox_inches="tight")
-        axism.set_xlabel("Time")
+        axism.set_xlabel("Time [d]")
         axism.set_ylabel(f"{dic['labels'][j]} {dic['units'][j]}")
-        axism.set_title("Mean along the well cells (x=0)")
+        axism.set_title("Mean along the well cells")
         axism.legend()
         axism.xaxis.set_tick_params(size=6, rotation=45)
         if quantity == "permfact":
@@ -812,7 +812,6 @@ def over_time_max_distance(dic):
         f"{dic['where']}/distance_from_well.png", bbox_inches="tight"
     )
     plt.close()
-
     return dic
 
 
@@ -825,13 +824,32 @@ def over_time_well_injectivity(dic):
 
     """
 
-    quantites = ["injectivity", "ratew", "raten", "pressure", "pi"]
+    quantites = [
+        "injectivity",
+        "ratew",
+        "raten",
+        "pressure",
+        "pi",
+        "fpress",
+        "fco2diss",
+    ]
     units = [
         "Injectivity [kg/(Bar day)]",
         "Rate [kg/day]",
         "Rate [kg/day]",
         "Pressure [Bar]",
         "Productivity [sm$^3$/(Bar day)]",
+        "Pressure [Bar]",
+        "Mass [kg]",
+    ]
+    title = [
+        "Well",
+        "Well",
+        "Well",
+        "Well bottomhole pressure",
+        "Well",
+        "Reservoir average value",
+        r"Total dissolved CO$_2$",
     ]
     for i, quantity in enumerate(quantites):
         dic["fig"], dic["axis"] = plt.subplots()
@@ -853,6 +871,8 @@ def over_time_well_injectivity(dic):
             dic[f"{study}_ratew_plot"] = []
             dic[f"{study}_pressure_plot"] = []
             dic[f"{study}_well_pressure_plot"] = []
+            dic[f"{study}_fpress_plot"] = []
+            dic[f"{study}_fco2diss_plot"] = []
             dic[f"{study}_pi_plot"] = []
             for j, nrst in enumerate(dic[f"{study}_smsp_rst"][1:]):
                 ratew = dic[f"{study}_injection_ratew"][nrst] * dic[f"{study}_rhow_ref"]
@@ -862,9 +882,7 @@ def over_time_well_injectivity(dic):
                 if well_pressure == 0:
                     ratew = 0
                     raten = 0
-                if well_pressure == 0:
-                    dic[f"{study}_injectivity_plot"].append(0)
-                elif dic["model"] == "co2eor":
+                if well_pressure == 0 or dic["model"] == "co2eor":
                     dic[f"{study}_injectivity_plot"].append(0)
                 else:
                     dic[f"{study}_injectivity_plot"].append(
@@ -887,41 +905,22 @@ def over_time_well_injectivity(dic):
                 dic[f"{study}_ratew_plot"].append(ratew)
                 dic[f"{study}_raten_plot"].append(raten)
                 dic[f"{study}_pressure_plot"].append(well_pressure)
-            if quantity == "pressure":
-                dic["axis"].plot(
-                    dic[f"{study}_rst_seconds"][1:] / 86400.0,
-                    dic[f"{study}_{quantity}_plot"],
-                    label=f"well ({study})",
-                    color=dic["colors"][k % len(dic["colors"])],
+                dic[f"{study}_fpress_plot"].append(dic[f"{study}_fpress"][nrst])
+                dic[f"{study}_fco2diss_plot"].append(
+                    dic[f"{study}_fco2diss"][nrst] * KMOL_TO_KG
                 )
-                # dic["axis"].plot(
-                #     dic[f"{study}_rst_seconds"],
-                #     [
-                #         value[dic[f"{study}_wellid"]] - dic["cp_func"](1)
-                #         for value in dic[f"{study}_pressure_array"]
-                #     ],
-                #     label=f"cell ({study})",
-                #     color=dic["colors"][k % len(dic["colors"])],
-                #     linestyle="dotted",
-                # )
-                # dic["axis"].set_xlabel("Time [s]")
-                dic["axis"].set_xlabel("Time [d]")
-                dic["axis"].set_title("Well BHP")
-            else:
-                dic["axis"].plot(
-                    dic[f"{study}_report_time"][1:],
-                    dic[f"{study}_{quantity}_plot"],
-                    label=f"{study}",
-                    color=dic["colors"][k % len(dic["colors"])],
-                )
-                dic["axis"].set_xlabel("Time")
+            dic["axis"].plot(
+                dic[f"{study}_rst_seconds"][1:] / (86400.0),
+                dic[f"{study}_{quantity}_plot"],
+                label=f"{study}",
+                color=dic["colors"][k],
+            )
+            dic["axis"].set_xlabel("Time [d]")
+            dic["axis"].set_title(title[i])
         dic["axis"].set_ylabel(units[i])
         dic["axis"].legend()
-        dic["axis"].xaxis.set_tick_params(size=6, rotation=45)
         dic["fig"].savefig(f"{dic['where']}/well_{quantity}.png", bbox_inches="tight")
-
         plt.close()
-
     return dic
 
 
@@ -989,9 +988,7 @@ def over_time_layers(dic):
         dic["fig"].savefig(
             f"{dic['where']}/nearwell_{quantity}.png", bbox_inches="tight"
         )
-
         plt.close()
-
     return dic
 
 

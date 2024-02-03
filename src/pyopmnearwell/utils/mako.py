@@ -1,4 +1,5 @@
 """Helper script for Mako templates."""
+
 from __future__ import annotations
 
 import pathlib

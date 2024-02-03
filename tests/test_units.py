@@ -3,6 +3,7 @@
 The module is tested by checking that the unit conversion are inverses of each other.
 
 """
+
 from __future__ import annotations
 
 import pytest

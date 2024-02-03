@@ -79,6 +79,12 @@ def read_opm(dic):
         dic[f"{study}_porv_array"] = [dic[f"{study}_ini"]["PORV"]]
         dic[f"{study}_satnum_array"] = [dic[f"{study}_ini"]["SATNUM"]]
         dic[f"{study}_injection_raten"] = dic[f"{study}_smsp"]["FGIR"]
+        dic[f"{study}_fco2"] = dic[f"{study}_smsp"]["FGIP"]
+        dic[f"{study}_fpress"] = dic[f"{study}_smsp"]["FPR"]
+        if "FWCD" in dic[f"{study}_smsp"].keys():
+            dic[f"{study}_fco2diss"] = dic[f"{study}_smsp"]["FWCD"]
+        else:
+            dic[f"{study}_fco2diss"] = 0 * dic[f"{study}_fco2"]
         if dic[f"{study}_rst"].count("SWAT", 0):
             dic[f"{study}_injection_ratew"] = dic[f"{study}_smsp"]["FWIR"]
             dic[f"{study}_rhon_ref"] = 1.86843  # CO2 reference density
@@ -275,11 +281,11 @@ def read_resdata(dic):
         if dic[f"{study}_rst"].has_kw("SALTP"):
             dic[f"{study}_salt"] = dic[f"{study}_rst"].iget_kw("SALTP")
             dic[f"{study}_permfact"] = dic[f"{study}_rst"].iget_kw("PERMFACT")
-            salt = 1.0
+            # salt = 1.0
         else:
             dic[f"{study}_salt"] = dic[f"{study}_rst"].iget_kw("PRESSURE")
             dic[f"{study}_permfact"] = dic[f"{study}_rst"].iget_kw("PRESSURE")
-            salt = 0.0
+            # salt = 0.0
         dic[f"{study}_pressure"] = dic[f"{study}_rst"].iget_kw("PRESSURE")
         dic[f"{study}_permeability_array"] = [dic[f"{study}_ini"].iget_kw("PERMX")[0]]
         dic[f"{study}_porosity_array"] = [dic[f"{study}_ini"]["PORO"][0]]
@@ -288,6 +294,12 @@ def read_resdata(dic):
         dic[f"{study}_viscg"] = dic[f"{study}_rst"].iget_kw("GAS_VISC")
         dic[f"{study}_deng"] = dic[f"{study}_rst"].iget_kw("GAS_DEN")
         dic[f"{study}_injection_raten"] = dic[f"{study}_smsp"]["FGIR"].values
+        dic[f"{study}_fpress"] = dic[f"{study}_smsp"]["FPR"].values
+        dic[f"{study}_fco2"] = dic[f"{study}_smsp"]["FGIP"].values
+        if dic[f"{study}_smsp"].has_key("FWCD"):
+            dic[f"{study}_fco2diss"] = dic[f"{study}_smsp"]["FWCD"].values
+        else:
+            dic[f"{study}_fco2diss"] = 0 * dic[f"{study}_fco2"]
         if dic[f"{study}_rst"].has_kw("SWAT"):
             dic[f"{study}_viscl"] = dic[f"{study}_rst"].iget_kw("WAT_VISC")
             dic[f"{study}_denl"] = dic[f"{study}_rst"].iget_kw("WAT_DEN")
@@ -316,7 +328,8 @@ def read_resdata(dic):
             dic[f"{study}_well_pressure"] = dic[f"{study}_smsp"]["WBHP:INJ0"].values
             dic[f"{study}_well_pi"] = dic[f"{study}_smsp"]["WPI:INJ0"].values
         dic = handle_smsp_time(dic, study)
-        dic = create_arrays_resdata(dic, study, salt)
+        # dic = create_arrays_resdata(dic, study, salt)
+        dic = create_arrays_resdata(dic, study)
     return dic
 
 
@@ -360,14 +373,14 @@ def handle_smsp_time(dic, study):
     return dic
 
 
-def create_arrays_resdata(dic, study, salt):
+def create_arrays_resdata(dic, study):
     """
     Function to create the required numpy arrays
 
     Args:
         dic (dict): Global dictionary with required parameters
         str (study): Name of the folder containing the results
-        int (salt): Indicator for salt precipitation
+        int (salt): Indicator for salt precipitation (Add if L396 uncommented)
 
     Returns:
         dic (dict): Global dictionary with new added parameters
@@ -386,11 +399,14 @@ def create_arrays_resdata(dic, study, salt):
                 dic[f"{study}_indicator_array"].append(
                     np.array(dic[f"{study}_saturation"][i]) > dic["sat_thr"]
                 )
-                dic[f"{study}_{quantity}_array"].append(
-                    np.array(
-                        dic[f"{study}_saturation"][i]
-                        * (1.0 - salt * dic[f"{study}_salt"][i])
-                    )
+                # dic[f"{study}_{quantity}_array"].append(
+                #     np.array(
+                #         dic[f"{study}_saturation"][i]
+                #         * (1.0 - salt * dic[f"{study}_salt"][i])
+                #     )
+                # ) Uncomment this to scale the saturation to compare to TOUGH2
+                dic[f"{study}_saturation_array"].append(
+                    np.array(dic[f"{study}_saturation"][i])
                 )
                 dic[f"{study}_viscn_array"].append(np.array(dic[f"{study}_viscg"][i]))
                 dic[f"{study}_denn_array"].append(np.array(dic[f"{study}_deng"][i]))

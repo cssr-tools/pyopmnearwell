@@ -8,12 +8,10 @@ Script to run Flow
 import os
 
 NAMES = [
-    "base_system",
-    "no_adaptive_injection",
-    "no_cp-jfunc_correction",
-    "no_hysteresis",
-    "no_log_extension",
-    "no_salt_precipitation",
+    "well_adaptive_injection",
+    "well_adaptive_injection_no_salt_precipitation",
+    "well_uniform_injection",
+    "well_uniform_injection_no_salt_precipitation",
 ]
 os.system("rm -rf compare")
 nsimulations = len(NAMES)
