@@ -7,7 +7,11 @@ Script to run Flow
 
 import os
 
-NAMES = ["higher_to_lower", "lower_to_higher", "homogeneous"]
+NAMES = [
+    "higher_top_to_lower_bottom_capillary_number",
+    "lower_top_to_higher_bottom_capillary_number",
+    "homogeneous_equivalent_system",
+]
 os.system("rm -rf compare")
 command = ""
 for i, name in enumerate(NAMES):

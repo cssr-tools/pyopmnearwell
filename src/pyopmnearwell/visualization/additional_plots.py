@@ -52,16 +52,12 @@ def final_time_maps(dic):
                 axis.set_title(f"{dic['labels'][j]} [mD]")
             else:
                 axis.set_title(f"{dic['labels'][j]} [-]")
-            # if quantity == "permfact":
-            #    cmap = "jet_r"
-            # else:
-            #    cmap = "jet"
             imag = axis.pcolormesh(
                 dic[f"{study}_xcor"],
                 dic[f"{study}_zcor"],
                 dic[f"{study}_{quantity}_plot"],
                 shading="flat",
-                cmap="jet",
+                cmap=dic["cmaps"][j],
             )
             if quantity == "saturation":
                 maxbar = 1.0
@@ -83,7 +79,7 @@ def final_time_maps(dic):
                 cax=cax,
                 orientation="vertical",
                 ticks=vect,
-                format=lambda x, _: f"{x:.2E}",
+                format=lambda x, _: f"{x:.1E}",
             )
             imag.set_clim(
                 dic[f"{study}_{quantity}_plot"].min(),
