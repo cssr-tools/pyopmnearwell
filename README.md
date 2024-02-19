@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/daavid00/pyopmnearwell/actions/workflows/CI.yml/badge.svg)](https://github.com/daavid00/pyopmnearwell/actions/workflows/CI.yml)
+[![Build Status](https://github.com/cssr-tools/pyopmnearwell/actions/workflows/CI.yml/badge.svg)](https://github.com/cssr-tools/pyopmnearwell/actions/workflows/CI.yml)
 <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.8%20|%203.9%20|%203.10%20|%203.11-blue.svg"></a>
 [![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
@@ -19,7 +19,7 @@ You can install the requirements in a virtual environment with the following com
 
 ```bash
 # Clone the repo
-git clone https://github.com/daavid00/pyopmnearwell.git
+git clone https://github.com/cssr-tools/pyopmnearwell.git
 # Get inside the folder
 cd pyopmnearwell
 # Create virtual environment
@@ -51,7 +51,7 @@ flow executable and simulation parameters. See the .txt files in the `examples/`
 `-p opm` for plotting (resdata is the default one).
 
 ## Getting started
-See the [_documentation_](https://daavid00.github.io/pyopmnearwell/introduction.html).
+See the [_documentation_](https://cssr-tools.github.io/pyopmnearwell/introduction.html).
 
 ## About pyopmnearwell
 The pyopmnearwell package is being funded by the [_HPC Simulation Software for the Gigatonne Storage Challenge project_](https://www.norceresearch.no/en/projects/hpc-simulation-software-for-the-gigatonne-storage-challenge) [project number 622059] and [_Center for Sustainable Subsurface Resources (CSSR)_](https://cssr.no) 

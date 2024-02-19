@@ -87,7 +87,7 @@
              
   <section id="configuration-file">
 <h1>Configuration file<a class="headerlink" href="#configuration-file" title="Link to this heading"></a></h1>
-<p>The following configuration file is available in the <a class="reference external" href="https://github.com/daavid00/pyopmnearwell/blob/main/examples">examples</a> folder
+<p>The following configuration file is available in the <a class="reference external" href="https://github.com/cssr-tools/pyopmnearwell/blob/main/examples">examples</a> folder
 in the GitHub repository and in the <a class="reference internal" href="examples.html"><span class="doc">examples</span></a> documentation section the simulation results are shown.</p>
 <p>The first input parameter in the configuration file is:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="sd">&quot;&quot;&quot;Set the full path to the flow executable and flags&quot;&quot;&quot;</span>
@@ -124,7 +124,7 @@ parallel by adding <strong>mpirun -np N flow …</strong> where N is the number 
 templates, add them to the src/pyopmnearwell/templates folder, and extending the Python scripts in the
 src/pyopmnearwell/utils folder. In the following line we select type of grid and the second entry defines the length of the inlet/outlet tubes for the core,
 theta aperture for the radial/cake/coord2d/tensord2d grids, the width of the cells for the cartesian2d grid, or it is ignored for the 3D cartesian grids (the width and number of cells is set equal to
-the ones in the x directions). See/Run the <a class="reference external" href="https://github.com/daavid00/pyopmnearwell/blob/main/tests/geometries">tests/geometries</a> configuration files for these grids.
+the ones in the x directions). See/Run the <a class="reference external" href="https://github.com/cssr-tools/pyopmnearwell/blob/main/tests/geometries">tests/geometries</a> configuration files for these grids.
 Then we set the length and height of the reservoir (diameter for the core geometry), as well as the number of grid elements in the x and z direction (for the y/theta direction we consider only one
 element, with exception to the core/3D grids where the width and number of cells is set equal to the ones in the z/x directions). The third entry defines the exponential factor for the telescopic serie used to generate the x partition (if
 set to 0 then an equidistance partition is generated).</p>

@@ -15,7 +15,7 @@ Simplified and flexible testing framework for near-well simulations via a
 :doc:`configuration file <./configuration_file>`:
 
 - Set the physical model (current ones are co2store, co2eor, h2store, and saltprec).
-- Choose a `specific template <https://github.com/daavid00/pyopmnearwell/blob/main/src/pyopmnearwell/templates>`_ inside the folder for the chosen physical model.
+- Choose a `specific template <https://github.com/cssr-tools/pyopmnearwell/blob/main/src/pyopmnearwell/templates>`_ inside the folder for the chosen physical model.
 - Define the grid refinment in the x/y and z directions.
 - Define the number of different rocks along the z direction.
 - Define the number of layers (heterogeneity around the well) and its length.
@@ -47,10 +47,10 @@ where
 Installation
 ------------
 
-See the `Github page <https://github.com/daavid00/pyopmnearwell>`_.
+See the `Github page <https://github.com/cssr-tools/pyopmnearwell>`_.
 
 .. tip::
-    Check the `CI.yml <https://github.com/daavid00/pyopmnearwell/blob/main/.github/workflows/CI.yml>`_ file.
+    Check the `CI.yml <https://github.com/cssr-tools/pyopmnearwell/blob/main/.github/workflows/CI.yml>`_ file.
 
 .. warning::
     The H2CH4 template in the h2store model folder is under development and it is based on an input deck available in 
