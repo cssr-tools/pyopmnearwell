@@ -2,7 +2,7 @@
 Configuration file
 ==================
 
-The following configuration file is available in the `examples <https://github.com/daavid00/pyopmnearwell/blob/main/examples>`_ folder 
+The following configuration file is available in the `examples <https://github.com/cssr-tools/pyopmnearwell/blob/main/examples>`_ folder 
 in the GitHub repository and in the :doc:`examples <./examples>` documentation section the simulation results are shown.
 
 The first input parameter in the configuration file is:
@@ -49,7 +49,7 @@ Here we first select the physical model and the corresponding template. To add a
 templates, add them to the src/pyopmnearwell/templates folder, and extending the Python scripts in the 
 src/pyopmnearwell/utils folder. In the following line we select type of grid and the second entry defines the length of the inlet/outlet tubes for the core, 
 theta aperture for the radial/cake/coord2d/tensord2d grids, the width of the cells for the cartesian2d grid, or it is ignored for the 3D cartesian grids (the width and number of cells is set equal to 
-the ones in the x directions). See/Run the `tests/geometries <https://github.com/daavid00/pyopmnearwell/blob/main/tests/geometries>`_ configuration files for these grids.
+the ones in the x directions). See/Run the `tests/geometries <https://github.com/cssr-tools/pyopmnearwell/blob/main/tests/geometries>`_ configuration files for these grids.
 Then we set the length and height of the reservoir (diameter for the core geometry), as well as the number of grid elements in the x and z direction (for the y/theta direction we consider only one
 element, with exception to the core/3D grids where the width and number of cells is set equal to the ones in the z/x directions). The third entry defines the exponential factor for the telescopic serie used to generate the x partition (if 
 set to 0 then an equidistance partition is generated). 

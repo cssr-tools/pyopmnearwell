@@ -5,7 +5,7 @@ Examples
 Water injection
 ---------------
 In this example we consider the configuration file 'h2o.txt' available in the 
-examples folder (`link to the file <https://github.com/daavid00/pyopmnearwell/blob/main/examples/h2o.txt>`_), where
+examples folder (`link to the file <https://github.com/cssr-tools/pyopmnearwell/blob/main/examples/h2o.txt>`_), where
 the co2store model is used and only water is injected in a radial grid.
 
 If the generated files are to be saved in a folder called 'h2o_radial', then this is achieved by the following command:

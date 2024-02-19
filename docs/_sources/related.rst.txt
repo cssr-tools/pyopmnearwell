@@ -3,16 +3,16 @@ Related
 =======
 
 Below are some packages following the same configuration-file-to-postprocessing-folder approach; 
-check them out :).
+check them out 🙂.
 
 **********
-pyopmcsp11
+pyopmspe11
 **********
 
-.. image:: ./figs/pyopmcsp11.gif
+.. image:: ./figs/pyopmspe11.gif
     :scale: 50%
 
-`A Python framework using OPM Flow for the CSP11 benchmark project <https://github.com/daavid00/pyopmcsp11>`_.
+`A Python framework using OPM Flow for the CSP SPE11 benchmark project <https://github.com/OPM/pyopmspe11>`_.
 
 ********
 expreccs
@@ -21,7 +21,7 @@ expreccs
 .. image:: ./figs/expreccs.gif
     :scale: 50%
 
-`Expansion of ResourCes for CO2 Storage on the Horda Platform <https://github.com/daavid00/expreccs>`_.
+`Expansion of ResourCes for CO2 Storage on the Horda Platform <https://github.com/cssr-tools/expreccs>`_.
 
 *******
 ad-micp
@@ -39,4 +39,4 @@ pymm
 .. image:: ./figs/pymm.gif
     :scale: 15%
 
-`An open-source image-based framework for CFD in microsystems <https://github.com/daavid00/pymm>`_.
+`An open-source image-based framework for CFD in microsystems <https://github.com/cssr-tools/pymm>`_.
