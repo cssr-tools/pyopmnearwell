@@ -34,7 +34,7 @@ pip install -e .
 pip install -r dev-requirements.txt
 ``` 
 
-See the [_CI.yml_](https://github.com/OPM/pyopmnearwell/blob/main/.github/workflows/CI.yml) script 
+See the [_CI.yml_](https://github.com/cssr-tools/pyopmnearwell/blob/main/.github/workflows/CI.yml) script 
 for installation of OPM Flow (binary packages) and the pyopmnearwell package. If you are a Linux user (including the windows subsystem for Linux), then you could try to build Flow from the master branches with mpi support, by running the script `./build_opm-flow_mpi.bash`, which in turn should build flow in the folder ./build/opm-simulators/bin/flow. 
 
 For macOS users with the latest chips (M1/M2, guessing also M3?), the ecl, resdata, and opm Python packages are not available via pip install. Then before installation, remove them from the `requirements.txt`, then proceed with the Python requirements installation, install the OPM Flow dependencies (using macports or brew), and once inside the vpyopmnearwell Python environment, run the `./build_opm-flow_macOS.bash`, and deactivate and activate the virtual environment (this script builds OPM Flow as well as the opm Python package, and it exports the required PYTHONPATH).
