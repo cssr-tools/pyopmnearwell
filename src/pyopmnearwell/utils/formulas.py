@@ -1,5 +1,11 @@
 # pylint: skip-file
-"""Provide useful mathematical formulas for reservoir modelling."""
+"""Provide useful mathematical formulas for reservoir modelling.
+
+TODO: The typing is off in this module. Instead of returning an ArrayLike, most
+functions should return an np.ndarray, however that does not work when a float is passed
+as then an np.float64 or similar is returned. Not sure how to fix this.
+
+"""
 
 import math
 import os
@@ -46,7 +52,7 @@ def pyopmnearwell_correction(theta: ArrayLike = math.pi / 3) -> ArrayLike:
     return 2 * np.tan(theta / 2) / theta
 
 
-def equivalent_well_radius(delta_x: ArrayLike) -> ArrayLike:
+def equivalent_well_radius(delta_x: ArrayLike) -> np.ndarray:
     """Calculate the equivalent well block radius for a given quadratic cell size.
 
     Args:
@@ -101,10 +107,10 @@ def peaceman_matrix_WI(  # pylint: disable=C0103
     k_h = np.asarray(k_h)
     r_e = np.asarray(r_e)
     r_w = np.asarray(r_w)
-    if np.any(r_w == 0):
-        raise ValueError("r_w cannot be zero.")
-    if np.any(r_e < 0) or np.any(r_w < 0):
-        raise ValueError("r_e and r_w cannot be negative.")
+    if np.any(r_w <= 0):
+        raise ValueError("r_w must be positive.")
+    if np.any(r_e <= r_w):
+        raise ValueError("r_e must greater than r_w.")
     WI = (2 * math.pi * k_h) / (np.log(r_e / r_w))
     return WI
 
@@ -133,7 +139,6 @@ def peaceman_WI(  # pylint: disable=C0103
     """
     rho = np.asarray(rho)
     mu = np.asarray(mu)
-
     WI = peaceman_matrix_WI(k_h, r_e, r_w)
     return WI * rho / mu
 
@@ -192,7 +197,8 @@ def two_phase_peaceman_WI(  # pylint: disable=C0103
 
     total_mobility: ArrayLike = (k_r1 * rho_1) / mu_1 + (k_r2 * rho_2) / mu_2
     WI = peaceman_matrix_WI(k_h, r_e, r_w)
-    return WI * total_mobility
+    # Ignore unsupported operand types for *. Fixing this would be quite complex.
+    return WI * total_mobility  # type: ignore
 
 
 def data_WI(

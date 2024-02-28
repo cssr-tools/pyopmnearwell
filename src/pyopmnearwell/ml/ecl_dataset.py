@@ -1,3 +1,4 @@
+# pylint: disable=fixme
 """This module provides functionality to parse ``*.UNRST`` files for given keywords and
 transform the extracted values into a tensorflow dataset.
 
@@ -8,6 +9,7 @@ different from the default one. The lines that need to be changed are marked wit
 Deprecated: This module is deprecated in favor of the ``ensemble`` module.
 
 """
+
 from __future__ import annotations
 
 import argparse
@@ -43,6 +45,7 @@ class EclDataSet:  # pylint: disable=R0902
 
     """
 
+    # TODO: The next two are class attributes! This should be changed to instance.
     features: tf.Tensor
     """Stores all inputs of the dataset.
 
@@ -224,8 +227,8 @@ def main(args):  # pylint: disable=W0621
     dataset = tf.data.Dataset.from_generator(
         data,
         output_signature=(
-            tf.TensorSpec.from_tensor(data[0][0]),
-            tf.TensorSpec.from_tensor(data[0][1]),
+            tf.TensorSpec.from_tensor(data[0][0]),  # type: ignore
+            tf.TensorSpec.from_tensor(data[0][1]),  # type: ignore
         ),
     )
     # Manually set the dataset cardinality.

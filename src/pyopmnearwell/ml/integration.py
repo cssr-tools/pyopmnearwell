@@ -27,10 +27,24 @@ dirname: pathlib.Path = pathlib.Path(__file__).parent
 def recompile_flow(
     scalingsfile: pathlib.Path,
     opm_path: pathlib.Path,
-    StandardWell_impl_template: Literal[
-        "co2_3_inputs", "co2_5_inputs", "h2o_2_inputs", "co2_local_stencil"
-    ],
-    StandardWell_template: Literal["base", "local_stencil"] = "base",
+    StandardWell_impl_template: (
+        Literal[
+            "co2_3_inputs",
+            "co2_5_inputs",
+            "h2o_2_inputs",
+            "co2_local_stencil",
+            "example_1_h2o",
+        ]
+        | pathlib.Path
+    ),
+    StandardWell_template: (
+        Literal[
+            "base",
+            "local_stencil",
+            "example_1_h2o",
+        ]
+        | pathlib.Path
+    ) = "base",
     stencil_size: int = 3,
     local_feature_names: Optional[list[str]] = None,
 ) -> None:
@@ -45,10 +59,10 @@ def recompile_flow(
             output scalings for the model.
         opm_path (pathlib.Path): Path to a OPM installation with ml functionality.
         StandardWell_impl_template (Literal["co2_3_inputs", "co2_5_inputs",
-            "h2o_2_inputs", "co2_local_stencil"]): Template for
+            "h2o_2_inputs", "co2_local_stencil"] | pathlib.Path): Template for
             ``StandardWell_impl.hpp``. Decides the neural network architecture.
-        StandardWell_template (Literal["base", "local_stencil"], optional): Template for
-        ``StandardWell.hpp``. Defaults to "base".
+        StandardWell_template (Literal["base", "local_stencil"]  | pathlib.Path,
+            optional): Template for ``StandardWell.hpp``. Defaults to "base".
         stencil_size (int, optional): The size of the vertical stencil of the model.
             Defaults to 3.
         local_feature_names (Optional[list[str]], optional): List of local feature names
@@ -71,7 +85,19 @@ def recompile_flow(
     opm_well_path: pathlib.Path = (
         opm_path / "opm-simulators" / "opm" / "simulators" / "wells"
     )
+
+    # Get paths for ``standardwell.hpp`` and ``standwardwell_impl.cpp`` templates if not
+    # already given as path.
+    # TODO: Remove the templates from pyopmnearwell and get rid of the literal option.
     template_path: pathlib.Path = dirname / ".." / "templates"
+    if not isinstance(StandardWell_impl_template, pathlib.Path):
+        StandardWell_impl_template = (
+            template_path / "standardwell_impl" / f"{StandardWell_impl_template}.mako"
+        )
+    if not isinstance(StandardWell_template, pathlib.Path):
+        StandardWell_template = (
+            template_path / "standardwell" / f"{StandardWell_template}.hpp"
+        )
 
     # Get the scaling and write it to the C++ mako that integrates nn into OPM.
     feature_min: list[float] = []
@@ -112,19 +138,13 @@ def recompile_flow(
         "stencil_size": stencil_size,
         "cell_feature_names": local_feature_names,
     }
-    filledtemplate: str = fill_template(
-        var,
-        filename=str(
-            template_path / "standardwell_impl" / f"{StandardWell_impl_template}.mako"
-        ),
-    )
+
+    # Fill templates and copy into OPM installation.
+    filledtemplate: str = fill_template(var, filename=str(StandardWell_impl_template))
     with (opm_well_path / "StandardWell_impl.hpp").open("w", encoding="utf-8") as file:
         file.write(filledtemplate)
 
-    shutil.copyfile(
-        template_path / "standardwell" / f"{StandardWell_template}.hpp",
-        opm_well_path / "StandardWell.hpp",
-    )
+    shutil.copyfile(StandardWell_template, opm_well_path / "StandardWell.hpp")
 
     # Recompile flow.
     os.chdir(opm_path / "build" / "opm-simulators")
@@ -136,7 +156,7 @@ def run_integration(
 ) -> None:
     """Runs ``pyopmnearwell`` simulations for the specified runspecs.
 
-    Note: All "variables" need to
+    Note: All "variables" in runspecs need to have the same number of values.
 
     Args:
         runspecs (dict[str, Any]): Contains at least two keys "variables" and
@@ -176,7 +196,8 @@ def run_integration(
             print(exceptions.text_error_template().render())
             raise error
         with (savepath / f"run_{i}.txt").open("w", encoding="utf-8") as file:
-            file.write(filledtemplate)
+            # We assume that filledtemplate is a string and ignore Pylance complaining.
+            file.write(filledtemplate)  # type: ignore
 
         # Use our pyopmnearwell friend to run the 3D simulations and compare the
         # results.

@@ -1,11 +1,11 @@
-"""
+# pylint: disable=missing-function-docstring, fixme
+"""Tests for the ``pyopmnearwell.ml.analysis`` module.
+
 
 TODO: Set ``mock_model`` to a linear model and check that the relations betweens outputs
 and inputs of ``sensitivity_analysis`` are also linear.
 
 """
-
-import pathlib
 
 import numpy as np
 import pytest
@@ -14,8 +14,8 @@ from tensorflow import keras
 from pyopmnearwell.ml.analysis import plot_analysis, sensitivity_analysis
 
 
-@pytest.fixture
-def mock_model() -> keras.Model:
+@pytest.fixture(name="mock_model")
+def fixture_mock_model() -> keras.Model:
     # Create a mock model for testing
     model = keras.Sequential()
     model.add(keras.layers.Dense(1, input_shape=(2,)))
@@ -23,18 +23,18 @@ def mock_model() -> keras.Model:
     return model
 
 
-@pytest.fixture(params=[1, 10])
-def resolution_1(request) -> int:
+@pytest.fixture(params=[1, 10], name="resolution_1")
+def fixture_resolution_1(request) -> int:
     return request.param
 
 
-@pytest.fixture(params=[1, 10])
-def resolution_2(request) -> int:
+@pytest.fixture(params=[1, 10], name="resolution_2")
+def fixture_resolution_2(request) -> int:
     return request.param
 
 
-@pytest.fixture
-def run_sensitivity_analysis(
+@pytest.fixture(name="run_sensitivity_analysis")
+def fixture_run_sensitivity_analysis(
     mock_model: keras.Model, resolution_1: int, resolution_2: int
 ) -> tuple[np.ndarray, np.ndarray]:
     return sensitivity_analysis(mock_model, resolution_1, resolution_2)
@@ -81,7 +81,7 @@ def test_plot_analysis(
     """Test the plot_analysis function.
 
     Args:
-        run_sensitivity_analysis (tuple[np.ndarray, np.ndarray]): Output from
+        sensitivity_analysis_results (tuple[np.ndarray, np.ndarray]): Output from
             ``run_sensitivity_analysis``.
         tmp_path (pathlib.Path):
 

@@ -1,23 +1,33 @@
-import math
-import os
-import pathlib
-from typing import Any
+# pylint: disable=fixme
+"""Functionality to upscale data from an ensemble run on a radial grid to a cartesian
+grid.
 
-import matplotlib.pyplot as plt
+"""
+
+import math
+import pathlib
+from abc import ABC, abstractmethod
+
 import numpy as np
-from matplotlib import cm
 from tqdm import tqdm
 
 from pyopmnearwell.ml import ensemble
 from pyopmnearwell.utils import formulas, units
 
 
-class BaseDataset:
-    """Provide methods to create a dataset from ensemble dataset.
+class BaseUpscaler(ABC):
+    """Extract and upscale data from an array of ensemble data.
 
-    This base class provides several methods to obtain features from a dataset and reduce
-    dimensions. This is done by averaging/summing/etc. values along all vertical cells
-    inside layer and by taking only some timesteps/horizontal cells.
+    This base class provides several methods to extract features from fine-scale radial
+    simulations and upscale to coarse cartesian cells. Depending on the type of data,
+    this is done by averaging/summing/etc. values along all cells that correspond to a
+    coarse cell.
+
+    Additionally, the sparsity of the dataset can be increased by taking only some
+    timesteps/horizontal cells.
+
+    The upscaled data is usually provided in form of two ``np.ndarrays``, one for
+    features and one for targets.
 
     Subclasses need to implement ``__init__`` and (if needed) ``create_ds`` methods.
 
@@ -31,17 +41,20 @@ class BaseDataset:
 
     """
 
+    # TODO: These are class attributes! This should be changed to instance.
     num_timesteps: int
     num_layers: int
     num_zcells: int
     num_xcells: int
     single_feature_shape: tuple
 
-    def __init__(self):
-        pass
+    @abstractmethod
+    def __init__(self):  # pylint: disable=missing-function-docstring
+        return
 
-    def create_ds(self):
-        pass
+    @abstractmethod
+    def create_ds(self):  # pylint: disable=missing-function-docstring
+        return
 
     def reduce_data_size(
         self,
@@ -50,11 +63,25 @@ class BaseDataset:
         step_size_t: int = 1,
         random: bool = False,
     ) -> np.ndarray:
+        """Reduce the size of the input feature array by selecting elements with a
+        fixed step size.
+
+        Args:
+            feature (np.ndarray): The input feature array.
+            step_size_x (int, optional): The step size for the x-axis. Defaults to 1.
+            step_size_t (int, optional): The step size for the t-axis. Defaults to 1.
+            random (bool, optional): If True, select elements randomly instead of using
+                a fixed step size. Defaults to False. Not implemented yet.
+
+        Returns:
+            np.ndarray: The reduced feature array.
+
+        """
+        # TODO: Add option to have a random selection of elements for each member,
+        # instead of a fixed stepsize. This needs to be the same for each feature, hence
+        # the current idea does not work.
         if random:
             pass
-        # TODO: Choose a random selection of elements for each member, instead of a
-        # fixed stepsize. This needs to be the same for each feature, hence the current
-        # idea does not work.
         return feature[:, ::step_size_t, ::, ::step_size_x]
 
     def get_vertically_averaged_values(
@@ -118,7 +145,7 @@ class BaseDataset:
         assert timesteps.shape == self.num_timesteps
         return timesteps
 
-    def get_horizontically_integrated_values(
+    def get_horizontically_integrated_values(  # pylint: disable=too-many-arguments
         self,
         features: np.ndarray,
         cell_center_radii: np.ndarray,
@@ -155,7 +182,7 @@ class BaseDataset:
 
         # Integrate horizontically along layers and divide by equivalent cartesian block
         # area.
-        block_sidelengths: np.ndarray = formulas.cell_size(cell_center_radii)
+        block_sidelengths: np.ndarray = formulas.cell_size(cell_center_radii)  # type: ignore
         # feature_lst: list[np.ndarray] = []
         # for i in range(feature.shape[-1]):
         #     feature_lst.append(
@@ -203,9 +230,10 @@ class BaseDataset:
         assert feature.shape == self.single_feature_shape
         return feature
 
-    def get_analytical_PI(
+    def get_analytical_PI(  # pylint: disable=invalid-name
         self,
         permeabilities: np.ndarray,
+        cell_heights: np.ndarray,
         radii: np.ndarray,
         well_radius: float,
     ) -> np.ndarray:
@@ -214,23 +242,23 @@ class BaseDataset:
         _extended_summary_
 
         Args:
-            permeabilities (np.ndarray): Unit has to be [mD]!
+            permeabilities (np.ndarray): Unit has to be [m^2]!
+            cell_heights (np.ndarray): Unit [m].
             radii (np.ndarray): _description_
             well_radius (float): _description_
 
         Returns:
             np.ndarray: _description_
         """
-        analytical_PI: np.ndarray = formulas.peaceman_matrix_WI(
-            k_h=permeabilities
-            * units.MILIDARCY_TO_M2
-            * (self.num_zcells / self.num_layers),
+        analytical_PI: np.ndarray = formulas.peaceman_matrix_WI(  # type: ignore
+            k_h=permeabilities * cell_heights,
             r_e=radii,
             r_w=well_radius,
         )
         assert analytical_PI.shape == self.single_feature_shape
         return analytical_PI
 
+    # pylint: disable-next=invalid-name, too-many-arguments, too-many-locals
     def get_analytical_WI(
         self,
         pressures: np.ndarray,
@@ -240,6 +268,7 @@ class BaseDataset:
         surface_density: float,
         radii: np.ndarray,
         well_radius: float,
+        # pylint: disable-next=invalid-name
         OPM: pathlib.Path,
     ) -> np.ndarray:
         """_summary_
@@ -258,6 +287,7 @@ class BaseDataset:
 
         Returns:
             np.ndarray: _description_
+
         """
         densities_lst: list[list[float]] = []
         viscosities_lst: list[list[float]] = []
@@ -274,7 +304,7 @@ class BaseDataset:
                         pressure=pressure,
                         temperature=temperature + units.CELSIUS_TO_KELVIN,
                         phase_property="density",
-                        phase=phase,
+                        phase=phase,  # type: ignore
                         OPM=OPM,
                     )
                 )
@@ -284,7 +314,7 @@ class BaseDataset:
                         pressure=pressure,
                         temperature=temperature + units.CELSIUS_TO_KELVIN,
                         phase_property="viscosity",
-                        phase=phase,
+                        phase=phase,  # type: ignore
                         OPM=OPM,
                     )
                 )
@@ -298,11 +328,16 @@ class BaseDataset:
 
         # Calculate the well index from Peaceman. The analytical well index is in [m*s],
         # hence we need to devide by surface density to transform to [m^4*s/kg].
-        analytical_WI: np.ndarray = (
-            formulas.two_phase_peaceman_WI(
+        # pylint: disable-next=invalid-name
+        analytical_WI: np.ndarray = (  # type: ignore
+            # Ignore unsupported operand types for *. Fixing this would be quite
+            # complex.
+            formulas.two_phase_peaceman_WI(  # type: ignore
                 k_h=permeabilities
                 * units.MILIDARCY_TO_M2
-                * (self.num_zcells / self.num_layers),
+                * (
+                    self.num_zcells / self.num_layers
+                ),  # TODO: This is FALSE, it must be height instead!
                 r_e=radii,
                 r_w=well_radius,
                 rho_1=densities[..., 0],
@@ -320,20 +355,26 @@ class BaseDataset:
         # assert analytical_WI.shape == self.single_feature_shape
         return analytical_WI
 
-    def get_data_WI(
+    def get_data_WI(  # pylint: disable=invalid-name
         self,
         features: np.ndarray,
         pressure_index: int,
         inj_rate_index: int,
         angle: float = math.pi / 3,
     ) -> np.ndarray:
-        """_summary_
+        """Calculate data-driven WI from pressure and flow rate.
 
-        Similar functionality to ``ensemble.calculate_WI``, but takes a feature array
-        rather than a data dictionary.
+        Similar functionality to ``ensemble.calculate_WI``, but can additionally treat
+        multiple vertical cells in a layer correctly.
 
-        Note: Pressures get averaged over each layer, injection rates get summed over
-            each layer.
+        Note:
+            - Pressures get averaged over each layer, injection rates get summed over
+              each layer.
+            - The method automatically scales the near-well injection rate from the cake
+              grid with angle ``angle`` to a 360° well. Furthermore, the rate is scaled
+              from rate-per-day (which the results are in) to rate-per-second, which OPM
+              Flow uses internally for the WI.
+
 
         Args:
             features (np.ndarray): _description_
@@ -344,12 +385,12 @@ class BaseDataset:
             np.ndarray: _description_
 
         """
-        # Take the pressure values of the well blocks as bhp.
+        # Take the pressure values of the well blocks as bhp. Average along each layer.
         bhps: np.ndarray = np.average(features[..., pressure_index], axis=-2)[..., 0][
             ..., None
         ]  # ``shape = (num_completed_runs, num_timesteps, num_layers, 1)``
 
-        # Ge the pressure values of all other blocks.
+        # Ge the pressure values of all other blocks. Average along each layer.
         pressures: np.ndarray = np.average(features[..., pressure_index], axis=-2)[
             ..., 1:
         ]  # ``shape = (num_completed_runs, num_timesteps, num_layers, num_xcells)``

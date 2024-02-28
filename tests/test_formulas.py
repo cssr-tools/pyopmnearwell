@@ -49,18 +49,32 @@ from pyopmnearwell.utils.formulas import (
                 ]
             ),
         ),
+        (1e-12, 0.0, 1.0, ValueError),
+        (1e-12, 1.0, 0.0, ValueError),
+        (1e-12, 1.0, -5.5, ValueError),
+        (
+            np.array([1e-12, 1e-11, 1e-10]),
+            np.array([100.0, 200.0, 300.0]),
+            np.array([1.0, 0.5, 0.0]),
+            ValueError,
+        ),
+        (
+            np.array([1e-12, 1e-11, 1e-10]),
+            np.array([100.0, 0.5, 300.0]),
+            np.array([1.0, 0.5, 1.0]),
+            ValueError,
+        ),
     ],
 )
 def test_peaceman_matrix_WI(
-    k_h: ArrayLike, r_e: ArrayLike, r_w: ArrayLike, expected: ArrayLike
+    k_h: ArrayLike, r_e: ArrayLike, r_w: ArrayLike, expected: ArrayLike | ValueError
 ):
-    if expected == ValueError:
-        # TODO: Fix this
-        with pytest.raises(expected):
+    if expected is ValueError:
+        with pytest.raises(ValueError):
             result = peaceman_matrix_WI(k_h, r_e, r_w)
     else:
         result = peaceman_matrix_WI(k_h, r_e, r_w)
-        assert np.allclose(result, expected, rtol=1e-7)
+        assert np.allclose(result, expected, rtol=1e-7)  # type: ignore
 
 
 @pytest.mark.parametrize(

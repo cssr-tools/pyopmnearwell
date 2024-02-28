@@ -88,15 +88,6 @@ def readthefirstpart(lol, dic):
         (lol[8][0].strip()).split()[1]
     )  # Well connection transmissibility factor [mD m]
     dic["removecells"] = int((lol[8][0].strip()).split()[2])  # Remove small cells
-
-    # Empty well, the permeability is set high and the injection takes part at the upper
-    # boundary of the well cells.
-    if len(lol[8][0].strip().split()) >= 4 and not lol[8][0].strip().split()[
-        3
-    ].startswith("#"):
-        dic["empty_well"] = float((lol[8][0].strip()).split()[3])
-    else:
-        dic["empty_well"] = 0.0
     dic["pressure"] = float((lol[9][0].strip()).split()[0]) / 1.0e5  # Convert to bar
     dic["temperature"] = float((lol[9][0].strip()).split()[1])
     dic["initialphase"] = int((lol[9][0].strip()).split()[2])
