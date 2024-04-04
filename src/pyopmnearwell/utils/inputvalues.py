@@ -134,7 +134,7 @@ def readco2eor(lol, dic):
 
 def readsalt(lol, dic):
     """Read the parameters for the salt precipitation simulations"""
-    if dic["template"] == "salinity":
+    if dic["template"] in ["salinity", "salinity_uniform_inj"]:
         dic["salinity"] = float((lol[13][0].strip()).split()[0])
     else:
         dic["salt_props"] = [float((lol[13][0].strip()).split()[j]) for j in range(7)]
