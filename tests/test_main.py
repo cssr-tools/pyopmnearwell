@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2023 NORCE
 # SPDX-License-Identifier: GPL-3.0
-
+# pylint: disable=missing-function-docstring
 """Test the main framework."""
 
 

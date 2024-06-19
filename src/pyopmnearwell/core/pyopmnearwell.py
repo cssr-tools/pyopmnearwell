@@ -5,7 +5,6 @@
 import argparse
 import os
 import pathlib
-import sys
 
 from pyopmnearwell.utils.inputvalues import process_input
 from pyopmnearwell.utils.runs import plotting, simulations
@@ -13,7 +12,7 @@ from pyopmnearwell.utils.writefile import reservoir_files
 from pyopmnearwell.visualization.plotting import plot_results
 
 
-def pyopmnearwell(args):
+def pyopmnearwell():
     """Main function"""
     parser = argparse.ArgumentParser(
         description="Main script to run a near-well system with OPM Flow."
@@ -120,4 +119,4 @@ def pyopmnearwell(args):
 
 def main():
     """Main function"""
-    pyopmnearwell(sys.argv)
+    pyopmnearwell()

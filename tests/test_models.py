@@ -16,6 +16,7 @@ dirname: pathlib.Path = pathlib.Path(__file__).parent
         ("co2eor", "output/CO2EOR.UNRST"),
         ("co2store", "postprocessing/pressure_2D.png"),
         ("h2store", "postprocessing/pressure_2D.png"),
+        ("saltprec", "postprocessing/cumulative_saltprec.png"),
     ],
     indirect=["run_models"],
 )
