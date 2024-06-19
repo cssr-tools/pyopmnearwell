@@ -24,10 +24,12 @@ def test_models(run_models: tuple[str, pathlib.Path], expected: str) -> None:
     """Check that pyopmnearwell runs for the co2core, co2eor, co2store, and
     h2store decks in ```models``.
 
-    Parameters:
-        run_models: Output from the ``conftest.fixture_run_models`` fixture.
-            Tuple containing the model name and the run path.
-        expected: A file that should exist after pyopmnearwell was successfully run.
+    Args:
+        run_models (tuple[str, pathlib.Path]): Output from the
+            ``conftest.fixture_run_models`` fixture. Tuple containing the model name and
+            the run path.
+        expected (str): A file that should exist after pyopmnearwell was successfully
+            run.
 
     """
     model, run_path = run_models

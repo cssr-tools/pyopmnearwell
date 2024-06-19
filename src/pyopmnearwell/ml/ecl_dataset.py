@@ -147,18 +147,18 @@ class EclDataSet:  # pylint: disable=R0902
         tensors.
 
 
-        Parameters:
-            ecl_file: _description_
+        Args:
+            ecl_file (EclFile): _description_
 
         Raises:
             KeyError: If ``ecl_file`` does not have either of the keywords in
                 ``self.input_kws`` or ``self.target_kws``
 
         Returns:
-            A tuple containing the input and target tensor. The former has shape
-            ``(ecl_file.num_report_steps(), num_cells, len(input_kws))``, while the
-            latter has shape
-            ``(ecl_file.num_report_steps(), num_cells, len(target_kws))``.
+            tuple[tf.Tensor, tf.Tensor]: A tuple containing the input and target tensor.
+                The former has shape ``(ecl_file.num_report_steps(), num_cells,
+                len(input_kws))``, while the latter has shape
+                ``(ecl_file.num_report_steps(), num_cells, len(target_kws))``.
 
         """
         # Only add the datapoint if all input features and targets are

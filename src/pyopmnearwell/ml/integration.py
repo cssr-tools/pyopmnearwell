@@ -21,30 +21,12 @@ from pyopmnearwell.utils.mako import fill_template
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-dirname: pathlib.Path = pathlib.Path(__file__).parent
-
 
 def recompile_flow(
     scalingsfile: pathlib.Path,
     opm_path: pathlib.Path,
-    StandardWell_impl_template: (
-        Literal[
-            "co2_3_inputs",
-            "co2_5_inputs",
-            "h2o_2_inputs",
-            "co2_local_stencil",
-            "example_1_h2o",
-        ]
-        | pathlib.Path
-    ),
-    StandardWell_template: (
-        Literal[
-            "base",
-            "local_stencil",
-            "example_1_h2o",
-        ]
-        | pathlib.Path
-    ) = "base",
+    StandardWell_impl_template: pathlib.Path,
+    StandardWell_template: pathlib.Path,
     stencil_size: int = 3,
     local_feature_names: Optional[list[str]] = None,
 ) -> None:
@@ -58,11 +40,9 @@ def recompile_flow(
         scalingsfile (pathlib.Path): Path to the csv file containing the input and
             output scalings for the model.
         opm_path (pathlib.Path): Path to a OPM installation with ml functionality.
-        StandardWell_impl_template (Literal["co2_3_inputs", "co2_5_inputs",
-            "h2o_2_inputs", "co2_local_stencil"] | pathlib.Path): Template for
+        StandardWell_impl_template (pathlib.Path): Template for
             ``StandardWell_impl.hpp``. Decides the neural network architecture.
-        StandardWell_template (Literal["base", "local_stencil"]  | pathlib.Path,
-            optional): Template for ``StandardWell.hpp``. Defaults to "base".
+        StandardWell_template (pathlib.Path): Template for ``StandardWell.hpp``.
         stencil_size (int, optional): The size of the vertical stencil of the model.
             Defaults to 3.
         local_feature_names (Optional[list[str]], optional): List of local feature names
@@ -85,19 +65,6 @@ def recompile_flow(
     opm_well_path: pathlib.Path = (
         opm_path / "opm-simulators" / "opm" / "simulators" / "wells"
     )
-
-    # Get paths for ``standardwell.hpp`` and ``standwardwell_impl.cpp`` templates if not
-    # already given as path.
-    # TODO: Remove the templates from pyopmnearwell and get rid of the literal option.
-    template_path: pathlib.Path = dirname / ".." / "templates"
-    if not isinstance(StandardWell_impl_template, pathlib.Path):
-        StandardWell_impl_template = (
-            template_path / "standardwell_impl" / f"{StandardWell_impl_template}.mako"
-        )
-    if not isinstance(StandardWell_template, pathlib.Path):
-        StandardWell_template = (
-            template_path / "standardwell" / f"{StandardWell_template}.hpp"
-        )
 
     # Get the scaling and write it to the C++ mako that integrates nn into OPM.
     feature_min: list[float] = []

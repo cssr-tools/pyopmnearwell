@@ -70,9 +70,22 @@ def test_EclFile_to_datapoint(
 ) -> None:
     """Test the ``EclFile_to_datapoint`` method.
 
-    Parameters:
-        ECL_dummmy_file: _description_
-        Ecl_data_set: _description_
+    This function tests the functionality of the ``EclFile_to_datapoint`` method in the
+    ``EclDataSet`` class. It verifies whether the method correctly converts an EclFile
+    object into a feature and target datapoint.
+
+
+    Args:
+        Ecl_data_set (EclDataSet): An instance of the EclDataSet class.
+        Ecl_dummy_file (EclFile): An EclFile object to be converted.
+        EclKW_pressure (np.ndarray): The expected pressure values of the converted
+            datapoint.
+        EclKW_saturation (np.ndarray): The expected saturation values of the converted
+            datapoint.
+
+    Returns:
+        None
+
     """
     feature, target = Ecl_data_set.EclFile_to_datapoint(Ecl_dummy_file)
     assert np.allclose(feature, EclKW_pressure)
@@ -82,8 +95,8 @@ def test_EclFile_to_datapoint(
 def test_ECLDataSet_read_data(Ecl_data_set: EclDataSet) -> None:
     """Test that ``EclDataSet.read_data`` runs without any error.
 
-    Parameters:
-        Ecl_data_set: _description_
+    Args:
+        Ecl_data_set (EclDataSet): _description_
 
     """
     Ecl_data_set.read_data()
@@ -92,8 +105,8 @@ def test_ECLDataSet_read_data(Ecl_data_set: EclDataSet) -> None:
 def test_ECLDataSet_on_epoch_end(Ecl_data_set: EclDataSet) -> None:
     """Test that ``EclDataSet.on_epoch_end`` runs without any error.
 
-    Parameters:
-        Ecl_data_set: _description_
+    Args:
+        Ecl_data_set (EclDataSet): _description_
 
     """
     Ecl_data_set.read_data()
