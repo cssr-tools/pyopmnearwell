@@ -2,7 +2,16 @@
 # SPDX-FileCopyrightText: 2023 UiB
 # SPDX-License-Identifier: GPL-3.0
 # pylint: skip-file
-""""Run simulations with machine learned well models."""
+""""Run simulations with machine learned well models. 
+
+Check the https://github.com/cssr-tools/ML_near_well/ repo for examples on how to use
+the ``recompile_flow`` and ``run_integration`` functions.
+
+``recompile_flow`` can only used for well models at the moment, however the
+functionality could easily be extended to replace other parts of the OPM simulator
+before recompiling.
+
+"""
 
 from __future__ import annotations
 
