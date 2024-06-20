@@ -13,4 +13,4 @@ def test_plot_all(run_main: pathlib.Path) -> None:
     """See visualization/plotting.py"""
     os.chdir(run_main)
     main()
-    assert (run_main / "pressure.csv").exists
+    assert (run_main / "pressure.csv").exists()

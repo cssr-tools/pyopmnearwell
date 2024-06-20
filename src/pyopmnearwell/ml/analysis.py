@@ -90,6 +90,7 @@ def sensitivity_analysis(
             fixed_inputs: np.ndarray = np.linspace(min_values, max_values, resolution_1)
         elif mode == "random_uniform":
             # Get uniform distribution on [0,1) and scale to (min_value, max_value).
+            # pylint: disable-next=possibly-used-before-assignment
             fixed_inputs = rng.uniform(
                 min_values, max_values, size=(resolution_1, num_inputs)
             )

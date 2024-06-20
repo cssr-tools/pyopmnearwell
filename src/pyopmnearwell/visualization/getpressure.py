@@ -6,8 +6,9 @@ Script to return the interpolated pressure
 """
 
 import argparse
-import os
 import csv
+import os
+
 import numpy as np
 from scipy.interpolate import interp1d
 
@@ -47,6 +48,7 @@ def main():
     interp_func = interp1d(xvalue, yvalue, fill_value="extrapolate")
     print(f"Distance : {distance} [m]")
     print(f"Pressure : {interp_func(distance)} [bar]")
+    # pylint: disable-next=possibly-used-before-assignment
     print(f"WI computed : {q_rate/(p_well-interp_func(distance))} [kg/(Bar day)]")
 
 

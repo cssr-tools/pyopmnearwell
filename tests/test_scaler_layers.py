@@ -57,6 +57,8 @@ def fixture_fitted_model(
                 MinMaxUnScalerLayer(feature_range=feature_ranges),
             ]
         )
+
+    # pylint: disable-next=possibly-used-before-assignment
     model.get_layer(model.layers[0].name).adapt(data=data)  # type: ignore
     return model
 

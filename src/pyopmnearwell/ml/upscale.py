@@ -9,7 +9,15 @@ import pathlib
 from abc import ABC, abstractmethod
 
 import numpy as np
-from tqdm import tqdm
+
+# ``tqdm`` is not a dependency. Up to the user to install it.
+try:
+    # Avoid some mypy trouble.
+    import tqdm.autonotebook as tqdm  # type: ignore
+except ImportError:
+    _IS_TQDM_AVAILABLE: bool = False
+else:
+    _IS_TQDM_AVAILABLE = True
 
 from pyopmnearwell.ml import ensemble
 from pyopmnearwell.utils import formulas, units
@@ -291,8 +299,13 @@ class BaseUpscaler(ABC):
         """
         densities_lst: list[list[float]] = []
         viscosities_lst: list[list[float]] = []
-        # Implement progress bar, since this can take some time.
-        pressures_bar = tqdm(pressures.flatten())
+        # ``formulas.co2brinepvt`` calls CO2BRINEPVT from OPM Flow for each pressure,
+        # which is quite inefficient. If tqdm is available, we show a progress bar.
+        if _IS_TQDM_AVAILABLE:
+            pressures_bar = tqdm.tqdm(pressures.flatten())
+        else:
+            pressures_bar = pressures.flatten()
+
         for pressure in pressures_bar:
             # Evaluate density and viscosity.
             density_tuple: list[float] = []
