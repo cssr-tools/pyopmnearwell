@@ -40,7 +40,11 @@ def safu_evaluation():
         "w",
         encoding="utf8",
     ) as file:
+    % if dic["template"] in ["gaswater", "biofilm"]:
+        file.write("SGWFN\n")
+    % else:
         file.write("SGOF\n")
+    % endif
         for j, para in enumerate(safu):
             if j > 0:
                 if safu[j-1] == para:
