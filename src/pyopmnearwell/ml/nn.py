@@ -586,6 +586,7 @@ def build_model(
     hp: keras_tuner.HyperParameters,
     ninputs: int,
     noutputs: int,
+    lr_tune: float = 0.1,
 ) -> tf.Module:
     """Build and compile a FCNN with the given hyperparameters.
 
@@ -623,7 +624,7 @@ def build_model(
     )
     model.compile(
         loss=loss,
-        optimizer=tf.keras.optimizers.Adam(learning_rate=0.1),
+        optimizer=tf.keras.optimizers.Adam(learning_rate=lr_tune),
     )
     return model
 
@@ -638,6 +639,7 @@ def tune(
     max_trials: int = 5,
     executions_per_trial: int = 1,
     sample_weight: ArrayLike = np.array([1.0]),
+    lr_tune: float = 0.1,
     **kwargs,
 ) -> tuple[keras.Model, keras_tuner.Tuner]:
     """
@@ -667,7 +669,12 @@ def tune(
     """
     # Define the tuner and start a search.
     tuner = keras_tuner.RandomSearch(
-        hypermodel=partial(build_model, ninputs=ninputs, noutputs=noutputs),
+        hypermodel=partial(
+            build_model,
+            ninputs=ninputs,
+            noutputs=noutputs,
+            lr_tune=lr_tune,
+        ),
         objective=objective,
         max_trials=max_trials,
         executions_per_trial=executions_per_trial,
