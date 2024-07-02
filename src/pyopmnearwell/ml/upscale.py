@@ -90,11 +90,11 @@ class BaseUpscaler(ABC):
     """
 
     @abstractmethod
-    def __init__(self):  # pylint: disable=missing-function-docstring
+    def __init__(self: Upscaler):  # pylint: disable=missing-function-docstring
         return
 
     @abstractmethod
-    def create_ds(self):  # pylint: disable=missing-function-docstring
+    def create_ds(self: Upscaler):  # pylint: disable=missing-function-docstring
         return
 
     def reduce_data_size(
