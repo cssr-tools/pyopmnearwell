@@ -1,17 +1,16 @@
 # SPDX-FileCopyrightText: 2023 NORCE
 # SPDX-License-Identifier: GPL-3.0
 
-"""Test the plotting script"""
+"""Test the plotting script."""
 
 import os
+import pathlib
+
 from pyopmnearwell.visualization.plotting import main
 
 
-def test_plot_all():
+def test_plot_all(run_main: pathlib.Path) -> None:
     """See visualization/plotting.py"""
-    cwd = os.getcwd()
-    os.chdir(f"{os.getcwd()}/tests/models")
+    os.chdir(run_main)
     main()
-    assert os.path.exists("pressure.csv")
-    os.system("rm -rf *.csv *.png")
-    os.chdir(cwd)
+    assert (run_main / "pressure.csv").exists()

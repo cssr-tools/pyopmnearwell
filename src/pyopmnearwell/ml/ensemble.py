@@ -44,12 +44,20 @@ FLAGS = (
 
 
 def create_ensemble(
-    runspecs: dict[str, Any], efficient_sampling: Optional[list[str]] = None
+    runspecs: dict[str, Any],
+    efficient_sampling: Optional[list[str]] = None,
+    seed: Optional[int] = None,
 ) -> list[dict[str, Any]]:
     """Create an ensemble.
 
-    Note: It is assumed that the user provides the variables in the correct units for
-    pyopmnearwell.
+    Note:
+        - It is assumed that the user provides the variables in the correct units for
+          pyopmnearwell.
+        - If the variable name starts with ``"PERM"`` or ``"LOG"``, the distribution for
+          random sampling is log uniform.
+        - If the variable name starts with ``"INT"``, the distribution for random
+          sampling is uniform on integers.
+        - Else, the distribution for random sampling is uniformly distributed.
 
     Args:
         runspecs (dict[str, Any]): Dictionary with at least the following keys:
@@ -70,6 +78,8 @@ def create_ensemble(
             vertical permeabilities. Only 10 layers with 10 samples generate a grid of
             10^10 values. By sampling directly instead of generating the grid first, it
             is possible to deal with the complexity.
+        seed: (Optional[int]): Seed for the ``np.random.Generator``. Is passed to
+            ``memory_efficient_sample`` as well. Default is ``None``.
 
     Note: The ensemble is generated as the cartesian product of all variable ranges. The
         total number of ensemble members is thus the product of all individual
@@ -90,17 +100,23 @@ def create_ensemble(
 
     variables: dict[str, np.ndarray] = OrderedDict()
 
+    rng: np.random.Generator = np.random.default_rng(seed=seed)
+
     # Generate random value ranges for all variables.
     logger.info("Generating value ranges for all variables")
     for variable, (min_val, max_val, npoints) in runspecs["variables"].items():
-        if variable.startswith("PERM"):
-            # Generate a log uniform distribution for permeabilities.
+        if variable.startswith("PERM") or variable.startswith("LOG"):
+            # Generate a log uniform distribution for permeabilities and other values
+            # that should be log uniform sampled.
             variables[variable] = np.exp(
-                np.random.uniform(math.log(min_val), math.log(max_val), npoints)
+                rng.uniform(math.log(min_val), math.log(max_val), npoints)
             )
+        elif variable.startswith("INT"):
+            # Generate a uniform distribution on integers.
+            variables[variable] = rng.integers(min_val, max_val, npoints)
         else:
             # Generate a uniform distribution for all other variables.
-            variables[variable] = np.random.uniform(min_val, max_val, npoints)
+            variables[variable] = rng.uniform(min_val, max_val, npoints)
     constants: dict[str, float] = runspecs["constants"]
 
     # Differentiate between variables whose data ranges are sampled memory efficiently
@@ -138,6 +154,7 @@ def create_ensemble(
         sampled_variables: np.ndarray | list = memory_efficient_sample(
             np.array(list(variables_to_sample.values())),
             num_members=runspecs["npoints"],
+            seed=seed,
         )
     else:
         sampled_variables = []
@@ -156,15 +173,15 @@ def create_ensemble(
         ensemble.append(member)
 
     # Sample a subset of the ensemble if the ensemble size is larger than wanted.
-    ensemble_size: int = np.prod(
-        [npoints for _, __, npoints in runspecs["variables"].values()]
+    ensemble_size: int = int(
+        np.prod([npoints for _, __, npoints in runspecs["variables"].values()])
     )
     if runspecs["npoints"] < ensemble_size:
         logger.info(
             "Sample size is larger than ensemble size. Randomly selecting a subset"
         )
 
-        idx = np.random.randint(
+        idx = rng.integers(
             len(ensemble),
             size=runspecs["npoints"],
         )
@@ -180,7 +197,9 @@ def create_ensemble(
     return ensemble
 
 
-def memory_efficient_sample(variables: np.ndarray, num_members: int) -> np.ndarray:
+def memory_efficient_sample(
+    variables: np.ndarray, num_members: int, seed: Optional[int] = None
+) -> np.ndarray:
     """Sample all variables individually.
 
     Note: Requires that all variables arrays have the same length.
@@ -188,40 +207,43 @@ def memory_efficient_sample(variables: np.ndarray, num_members: int) -> np.ndarr
     Args:
         variables (np.ndarray), (``shape=(num_variables, len_variables)``): _description_
         num_members (int): _description_
+        seed: (Optional[int]): Seed for the ``np.random.Generator``. Default is
+            ``None``.
 
     Returns:
         np.ndarray (``shape=()``):
 
     """
-    indices: np.ndarray = np.random.randint(
+    rng: np.random.Generator = np.random.default_rng(seed=seed)
+    indices: np.ndarray = rng.integers(
         0, variables.shape[-1], size=(variables.shape[0], num_members)
     )
     return variables[np.arange(variables.shape[0])[..., None], indices]
 
 
 def setup_ensemble(
-    ensemble_path: pathlib.Path,
+    ensemble_path: str | pathlib.Path,
     ensemble: list[dict[str, Any]],
     makofile: str | pathlib.Path,
-    recalc_grid: bool = False,
-    recalc_tables: bool = False,
-    recalc_sections: bool = False,
+    **kwargs,
 ) -> None:
     """Create a deck file for each ensemble member.
 
     Args:
-        ensemble_path (pathlib.Path): The path to the ensemble directory.
+        ensemble_path (str | pathlib.Path): The path to the ensemble directory.
         ensemble (list[dict[str, Any]]): A list of dictionaries containing the
             parameters for each ensemble member. Usually generated by
             ``create_ensemble``.
         makofile (str | pathlib.Path): The path to the Mako template file for the
             pyopmnearwell deck for ensemble members.
-        recalc_grid (bool, optional): Whether to recalculate ``GRID.INC`` for each
-            ensemble member. Defaults to False.
-        recalc_tables (bool, optional): Whether to recalculate ``TABLES.INC`` for each
-            ensemble member. Defaults to False.
-        recalc_sections (bool, optional): Whether to recalculate ``GEOLOGY.INC`` and
-            ``REGIONS.INC`` for each ensemble member. Defaults to False.
+        **kwargs: kwargs are passed to ``reservoir_files``. Possible kwargs are:
+            - recalc_grid (bool, optional): Whether to recalculate ``GRID.INC`` for each
+                ensemble member. Defaults to False.
+            - recalc_tables (bool, optional): Whether to recalculate ``TABLES.INC`` for
+                each ensemble member. Defaults to False.
+            - recalc_sections (bool, optional): Whether to recalculate ``GEOLOGY.INC``
+                and ``REGIONS.INC`` for each ensemble member. Defaults to False.
+
     Raises:
         Exception: If there is an error rendering the Mako template.
 
@@ -231,6 +253,12 @@ def setup_ensemble(
     """
     # Ensure ``ensemble_path`` is a ``Path`` object.
     ensemble_path = pathlib.Path(ensemble_path)
+
+    # Update kwargs with the (future) relative path to the first  first ensemble member
+    # from any other ensemble member.
+    kwargs.update(
+        {"inc_folder": pathlib.Path("..") / ".." / "runfiles_0" / "preprocessing"}
+    )
 
     logger.info(f"Filling templates for {len(ensemble)} members")
     mytemplate: Template = Template(filename=str(makofile))
@@ -246,7 +274,8 @@ def setup_ensemble(
         (ensemble_path / f"runfiles_{i}" / "jobs").mkdir(exist_ok=True)
 
         lol = []
-        for row in csv.reader(filledtemplate.split("\n"), delimiter="#"):
+        # Ignore Pylance complaining that the argument might be ``list[bool]``
+        for row in csv.reader(filledtemplate.split("\n"), delimiter="#"):  # type: ignore
             lol.append(row)
         dic, index = readthefirstpart(
             lol,
@@ -264,10 +293,11 @@ def setup_ensemble(
         else:
             reservoir_files(
                 dic,
-                recalc_grid=recalc_grid,
-                recalc_tables=recalc_tables,
-                recalc_sections=recalc_sections,
-                inc_folder=pathlib.Path("..") / ".." / "runfiles_0" / "preprocessing",
+                **kwargs,
+                # recalc_grid=recalc_grid,
+                # recalc_tables=recalc_tables,
+                # recalc_sections=recalc_sections,
+                # inc_folder=pathlib.Path("..") / ".." / "runfiles_0" / "preprocessing",
             )
     # pyopmnearwell creates these unneeded folders, so we remove them.
     try:
@@ -278,26 +308,63 @@ def setup_ensemble(
     logger.info(f"Filled templates for {len(ensemble)} members")
 
 
+def get_flags(
+    makofile: str | pathlib.Path,
+) -> str:
+    """Extract OPM Flow run flags from a makofile.
+
+
+    Args:
+        makofile (str | pathlib.Path): Path to the makofile.
+
+    Returns:
+        str: All flags that are passed to OPM Flow.
+
+    """
+    # Ensure ``makofile`` is a ``Path`` object.
+    makofile = pathlib.Path(makofile)
+    with makofile.open("r") as f:
+        # Second line has command line arguments.
+        next(iter(f))
+        line: str = next(iter(f))
+        # Strip first argument, which is just the ``flow`` command.
+        command_line_args: list[str] = line.split(" ")[1:]
+        # Strip the newline at the end.
+        return (" ").join(command_line_args).rstrip()
+
+
 def run_ensemble(
     flow_path: str | pathlib.Path,
-    ensemble_path: pathlib.Path,
+    ensemble_path: str | pathlib.Path,
     runspecs: dict[str, Any],
     ecl_keywords: list[str],
     init_keywords: list[str],
     summary_keywords: list[str],
     num_report_steps: Optional[int] = None,
+    keep_result_files: bool = False,
+    **kwargs,
 ) -> dict[str, Any]:
-    """Run OPM flow for each ensemble member and store data.
+    """Run OPM Flow for each ensemble member and store data.
+
+    Note: The initial time step (i.e., t=0) is always disregarded.
 
     Args:
-        flow_path (_type_): _description_
-        ensemble_path (pathlib.Path): _description_
+        flow_path (str | pathlib.Path): _description_
+        ensemble_path (str | pathlib.Path): _description_
         runspecs (dict[str, Any]): _description_
         ecl_keywords (list[str]): _description_
         init_keywords (list[str]): _description_
         summary_keywords (list[str]): _description_
-        num_report_steps (Optional[int], optional): Disregard an ensemble simulation, if
+        num_report_steps (Optional[int], optional): Disregard an ensemble simulation if
             it did not run to the last report step. Defaults to None.
+        keep_result_files (bool): Keep result files of all ensemble members, not
+            only the first one. Defaults to False.
+        **kwargs: Possible parameters are:
+            - step_size_time (int): Save data only for every ``step_size_time`` report
+              step. Default is 1.
+            - step_size_cell (int): Save data only for every ``step_size_cell`` grid
+              cell. Default is 1.
+            - flags (str): Flags to run OPM Flow with.
 
     Returns:
         dict[str, Any]: _description_
@@ -311,16 +378,22 @@ def run_ensemble(
     }
     num_disregarded_runs: int = 0
 
+    # Get **kwargs that determine how many report steps and cells shall be skipped when
+    # extracting the data.
+    step_size_time: int = kwargs.get("step_size_time", 1)
+    step_size_cell: int = kwargs.get("step_size_cell", 1)
+
     for i in range(round(runspecs["npoints"] / runspecs["npruns"])):
         command = " ".join(
             [
                 f"{flow_path}"
                 + f" {ensemble_path / f'runfiles_{j}' / 'preprocessing' / f'RUN_{j}.DATA'}"
                 + f" --output-dir={ensemble_path / f'results_{j}'}"
-                + f" {FLAGS} & "
+                + f" {kwargs.get('flags', '')} & "
                 for j in range(runspecs["npruns"] * i, runspecs["npruns"] * (i + 1))
             ]
         )
+        # TODO: Possibly better to use subprocess?
         os.system(command + "wait")
         for j in range(runspecs["npruns"] * i, runspecs["npruns"] * (i + 1)):
             simulation_finished: bool = True
@@ -340,12 +413,15 @@ def run_ensemble(
                 # though `ecl_file.num_report_steps()` is nonzero.
                 member_data: dict[str, np.ndarray] = {}
                 for keyword in ecl_keywords:
-                    # Append the data corresponding to the keyword for all report steps
-                    # and cells. Disregard the zeroth time step.
-                    member_data[keyword] = np.array(ecl_file.iget_kw(keyword))[1:, ...]
+                    # Append the data corresponding to the keyword for all chosen report
+                    # steps and cells. Disregard the zeroth time step.
+                    member_data[keyword] = np.array(ecl_file.iget_kw(keyword))[
+                        1::step_size_time, ::step_size_cell
+                    ]
                     if (
                         num_report_steps is not None
-                        and member_data[keyword].shape[0] < num_report_steps
+                        and member_data[keyword].shape[0]
+                        < num_report_steps // step_size_time
                     ):
                         simulation_finished = False
 
@@ -358,37 +434,44 @@ def run_ensemble(
                 for keyword in ecl_keywords:
                     data[keyword].append(member_data[keyword])
 
-                with open_ecl_file(
-                    ensemble_path / f"results_{j}" / f"RUN_{j}.INIT"
-                ) as init_file:
-                    for keyword in init_keywords:
-                        # Append the data corresponding to the keyword for all cells.
-                        data[keyword].append(np.array(init_file.iget_kw(keyword)))
+                # Get additional data from init and summary file.
+                if len(init_keywords) > 0:
+                    with open_ecl_file(
+                        str(ensemble_path / f"results_{j}" / f"RUN_{j}.INIT")
+                    ) as init_file:
+                        for keyword in init_keywords:
+                            # Append the data corresponding to the keyword for all chosen
+                            # cells.
+                            # NOTE: The array has shape ``[1, num_cells]``, hence no axis
+                            # needs to be added.
+                            data[keyword].append(
+                                np.array(init_file.iget_kw(keyword))[::step_size_cell]
+                            )
 
-                summary_file: EclSum = EclSum(
-                    ensemble_path / f"results_{j}" / f"RUN_{j}.SMSPEC"
-                )
-                for keyword in summary_keywords:
-                    # Append the data corresponding to the keyword for all report steps
-                    # (not for all time steps). The ``*.SMSPEC`` file does not include
-                    # the zeroth report step. Add a dimension to make it
-                    # broadcastable to data from the ``*.UNRST`` and ``*.INIT`` files.
-                    data[keyword].append(
-                        np.array(
-                            summary_file.get_values(keyword, report_only=True)[
-                                ..., None
-                            ]
-                        )
+                if len(summary_keywords):
+                    summary_file: EclSum = EclSum(
+                        str(ensemble_path / f"results_{j}" / f"RUN_{j}.SMSPEC")
                     )
-                # NOTE: There does not seem to be a way to close an ``EclSum`` object.
-                # Also, there is no context manager.
+                    for keyword in summary_keywords:
+                        # Append the data corresponding to the keyword for all chosen report
+                        # steps (not for all time steps). The ``*.SMSPEC`` file does not
+                        # include the zeroth report step. Add a dimension to make the array
+                        # broadcastable to data from the ``*.UNRST`` and ``*.INIT`` files.
+                        data[keyword].append(
+                            np.array(
+                                summary_file.get_values(keyword, report_only=True)
+                            )[::step_size_time, None]
+                        )
+                    # NOTE: There does not seem to be a way to close an ``EclSum``
+                    # object. Also, there is no context manager.
 
             else:
                 num_disregarded_runs += 1
                 logger.info(f"Disregarded ensemble run {j}")
+
             # Remove the run files and result folder (except for the first one that
             # remains to check if everything went right).
-            if j > 0:
+            if not keep_result_files and j > 0:
                 shutil.rmtree(ensemble_path / f"results_{j}")
                 shutil.rmtree(ensemble_path / f"runfiles_{j}")
         logger.info(f"Disregarded {num_disregarded_runs} of {runspecs['npoints']} runs")
@@ -457,85 +540,69 @@ def calculate_radii(
 
 
 def calculate_WI(
-    data: dict[str, Any],
-    runspecs: dict[str, Any],
-    num_zcells: int,
+    pressures: np.ndarray,
+    injection_rates: float | np.ndarray,
 ) -> tuple[np.ndarray, list[int]]:
     r"""Calculate the well index (WI) for a given dataset.
 
-    The well index (WI) is calculated using the following formula:
 
+    The well index (WI) is calculated using the following formula:
     .. math::
         WI = \frac{q}{{p_w - p_{gb}}}
 
-    Note: In 3D this will more probably than not fail.
+    Note:
+        - The unit of ``WI_array`` will depend on the units of ``pressures`` and
+          ``injection_rates``.
+        - In 3D this might fail. The user is responsible to fix the array shapes before
+          passing to this function.
 
     Args:
-        data (dict[str, Any]): Data generated by ``run_ensemble``.
-        runspecs (dict[str, Any]): Must contain a key "INJECTION_RATE_PER_SECOND". Unit
-        [m^3/s].
+        pressures (np.ndarray): First axis are the ensemble members. Last axis is
+            assumed to be the x-axis. Must contain the well cells (i.e., well pressures
+            values) at ``pressures[...,0]``.
+        injection_rates (float | np.ndarray): Injection rate. If an ``np.ndarray``, it
+            must have shape broadcastable to ``pressures.shape``.
+
 
     Returns:
-        WI_array (numpy.ndarray): ``shape=(,num_cells - 1)``
-            An array of well index values for each data point in the dataset. In the
-            correct unit for OPM. Unit [m^4*s/kg].
+        WI_array (numpy.ndarray): ``shape=(...,num_x_cells - 1)``
+            An array of well index values for each data point in the dataset.
         failed_indices (list[int]): Indices for the ensemble members where WI could not
-        be computed. E.g., if the simmulation went wrong and the pressure difference is
-        zero.
+            be computed. E.g., if the simmulation went wrong and the pressure difference
+            is zero.
 
     Raises:
         ValueError: If no data is found for the 'pressure' keyword in the dataset.
+
     """
-    # Transform pressure values from [bar] (unit in *.UNRST files) to [Pa] (unit to
-    # calculate the WI and internally used by OPM).
-    pressure_data = (
-        np.array(data["PRESSURE"]) * units.BAR_TO_PASCAL
-    )  # ``shape=(runspecs["npoints"], num_time_data - 1, num_grid_cell_data)``;
-    # unit [Pa]
-    if len(pressure_data) == 0:
-        raise ValueError("No data found for the 'pressure' keyword.")
 
     # Calculate WI for each ensemble member.
     WI_values: list[np.ndarray] = []
     failed_indices: list[int] = []
-    for i, member_pressure_data in enumerate(pressure_data):
-        p_w = member_pressure_data[
-            ..., 0 :: int(member_pressure_data.shape[-1] / num_zcells)
-        ]  # Bottom hole pressure extracted at the well blocks.
+    if isinstance(injection_rates, float):
+        injection_rates = np.full((pressures.shape[0],), injection_rates)
+
+    for i, (member_pressure, member_injection_rate) in enumerate(
+        zip(pressures, injection_rates)  # type: ignore
+    ):
+        p_w = member_pressure[
+            ..., 0
+        ]  # Bottom hole/well pressure extracted at the well cells.
         p_gb = np.delete(
-            member_pressure_data,
-            np.arange(
-                0,
-                member_pressure_data.shape[-1],
-                int(member_pressure_data.shape[-1] / num_zcells),
-            ),
-            axis=-1,
+            member_pressure, 0, axis=-1
         )  # Cell pressures of all but the well blocks.
         try:
-            if "INJECTION_RATE_PER_SECOND" in runspecs["constants"]:
-                # Injection rate is constant for all ensemble members.
-                WI = runspecs["constants"]["INJECTION_RATE_PER_SECOND"] / (
-                    np.tile(p_w, int(member_pressure_data.shape[-1] / num_zcells) - 1)
-                    - p_gb
-                )  # ``shape=(runspecs["npoints"], num_time_data - 1, num_grid_cell_data)``;
-                # unit [m^4*s/kg]
-            elif "INJECTION_RATE_PER_SECOND" in data:
-                # Get i-th injection rate in the ensemble.
-                WI = data["INJECTION_RATE_PER_SECOND"][i] / (
-                    np.tile(p_w, int(member_pressure_data.shape[-1] / num_zcells) - 1)
-                    - p_gb
-                )  # ``shape=(runspecs["npoints"], num_time_data - 1, num_grid_cell_data)``;
-                # unit [m^4*s/kg]
-            if np.any(np.isnan(WI)):
-                raise ValueError("WI is nan.")
+            WI: np.ndarray = member_injection_rate / (p_w - p_gb)
+            if np.any(np.logical_or(np.isnan(WI), np.isinf(WI))):
+                raise ValueError("WI is nan/inf.")
             WI_values.append(WI)
         except ValueError:
             failed_indices.append(i)
 
     return (
-        np.array(WI_values),
+        np.array(WI_values),  # ``shape=(...,num_x_cells - 1)``
         failed_indices,
-    )  # ``shape=(,num_cells - 1)``; ; unit [m^4*s/kg]
+    )
 
 
 def extract_features(
@@ -543,7 +610,7 @@ def extract_features(
     keywords: list[str],
     keyword_scalings: Optional[dict[str, float]] = None,
 ) -> np.ndarray:
-    r"""Extract features into a numpy array.
+    r"""Extract features from a ``run_ensemble`` run into a numpy array.
 
     Note: The features are in the units used in ``*.UNRST`` and ``*.SMSPEC`` files. The
     user is responsible for transforming them to the units needed. This may depend on
@@ -562,11 +629,11 @@ def extract_features(
         keyword_scalings (Optional[dict[str, float]]): Scalings for the features.
 
     Returns:
-        feature_array: (numpy.ndarray): ``shape=(,num_cells - 1)``
-            An array of input features each data point in the dataset.
+        feature_array: (numpy.ndarray): ``shape=(ensemble_size, num_report_steps, num_cells, num_features)``
+            An array of input features for each data point in the dataset.
 
     Raises:
-        ValueError: If no data is found for the 'pressure' keyword in the dataset.
+        ValueError: If no data is found for one of the keywords.
 
     """
     if keyword_scalings is None:
@@ -594,34 +661,58 @@ def extract_features(
 def integrate_fine_scale_value(
     radial_values: np.ndarray,
     radii: np.ndarray,
-    block_sidelength: float,
+    block_sidelengths: float | np.ndarray,
     axis: int = -1,
 ) -> np.ndarray:
-    """Integrate a fine scale value across all radial cells lying in a square grid
+    """Integrate a fine scale value across all radial cells covering a square grid
     block.
+
+    This function correctly takes only fractions of the integrated values for radial
+    cells that are only partially inside the square block.
 
     Args:
         radial_values (np.ndarray): Cell values for the radial cells.
         radii (np.ndarray): Array of radii for inner and outer radius of the radial
-        cells.
-        block_sidelength (float): The sidelength of the square grid block.
+        cells. Has to be ordered from low to high.
+        block_sidelengths (float | np.ndarray): The sidelengths of the square grid
+            blocks. The length of this array determines the new length of the integrated
+            axis.
+            # TODO: Update the tests for this new functionality, i.e., that
+            block_sidelengths determins the return shape.
         axis (int): Axis to integrate along.
 
     Returns:
         float: The integrated value of fine-scale data.
 
+    Raise:
+        ValueError: If the radial cells do not cover the square grid block.
+
     """
+    if isinstance(block_sidelengths, float):
+        block_sidelengths = np.array([block_sidelengths])
+
+    # Return 0 for empty radial_values.
+    # TODO: Should this be changed to raise an error as well, if block_sidelength > 0?
     if radial_values.shape[0] > 0:
         assert radial_values.shape[axis] == radii.shape[0] - 1
     else:
         return np.zeros_like(radial_values)
 
+    if np.any(np.sqrt(2 * block_sidelengths**2) > 2 * radii[-1]):
+        raise ValueError(
+            "The disks defined by the radii do not cover all square blocks."
+        )
+
+    integrated_values_lst: list[np.ndarray] = []
     # Ignore mypy complaining. ``area_squaredcircle`` returns an np.ndarray in this
     # case. This can be removed, once the typing in ``formulas.py`` is more strict.
-    cell_areas: np.ndarray = area_squaredcircle(  # type: ignore
-        radii[1::], block_sidelength
-    ) - area_squaredcircle(radii[:-1:], block_sidelength)
-    return np.sum(radial_values * cell_areas, axis=axis)
+    # For some reason Pylance thinks that ``block_sidelengths`` is ``int``. Ignore this.
+    for block_sidelength in block_sidelengths:  # type: ignore
+        cell_areas: np.ndarray = area_squaredcircle(  # type: ignore
+            radii[1::], block_sidelength
+        ) - area_squaredcircle(radii[:-1:], block_sidelength)
+        integrated_values_lst.append(np.sum(radial_values * cell_areas, axis=axis))
+    return np.stack(integrated_values_lst, axis=axis)
 
 
 def store_dataset(

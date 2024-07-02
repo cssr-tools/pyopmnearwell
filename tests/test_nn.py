@@ -1,4 +1,5 @@
-# pylint: skip-file
+# pylint: disable=missing-function-docstring,fixme
+"""Tests for the ``pyopmnearwell.ml.nn`` module."""
 from __future__ import annotations
 
 import csv
@@ -15,15 +16,20 @@ from tensorflow import keras
 from pyopmnearwell.ml.ensemble import store_dataset
 from pyopmnearwell.ml.nn import scale_and_evaluate, scale_and_prepare_dataset
 
+rng: np.random.Generator = np.random.default_rng()
 
-@pytest.fixture
-def identity_nn() -> keras.Model:
+
+@pytest.fixture(name="identity_nn")
+def fixture_identity_nn() -> keras.Model:
     model: keras.Model = keras.Sequential([keras.layers.Identity()])
     return model
 
 
-@pytest.fixture(params=[[[1, 2]], [[3.2, -5.8]], [[-12.3, 14.58]], [[-5, -20.5]]])
-def feature_batch(request) -> np.ndarray:
+@pytest.fixture(
+    params=[[[1, 2]], [[3.2, -5.8]], [[-12.3, 14.58]], [[-5, -20.5]]],
+    name="feature_batch",
+)
+def fixture_feature_batch(request) -> np.ndarray:
     return np.array(request.param)
 
 
@@ -56,14 +62,15 @@ def feature_batch(request) -> np.ndarray:
             "output_1": (-40559.5, 1.0),
             "output_2": (-600.5, 2292),
         },
-    ]
+    ],
+    name="scalings",
 )
-def scalings(request) -> dict[str, tuple[float, float]]:
+def fixture_scalings(request) -> dict[str, tuple[float, float]]:
     return request.param
 
 
-@pytest.fixture
-def write_scalings(
+@pytest.fixture(name="write_scalings")
+def fixture_write_scalings(
     scalings: dict[str, tuple[float, float]],
     tmp_path_factory,
 ) -> pathlib.Path:
@@ -78,6 +85,8 @@ def write_scalings(
     return dirname
 
 
+# TODO: Add tests with multidimensional input and output.
+# pylint: disable-next=too-many-locals
 def test_scale_and_evaluate(
     identity_nn: keras.Model,
     feature_batch: tf.Tensor,
@@ -98,7 +107,7 @@ def test_scale_and_evaluate(
     target_range: tuple[float, float] = scalings.get("target_range", (-1, 1))
 
     for i, (feature_min, feature_max), (target_min, target_max) in zip(
-        range(output_batch.shape[-1]), feature_scalings, output_scalings
+        range(output_batch.shape[-1]), feature_scalings, output_scalings  # type: ignore
     ):
         std_feature: np.ndarray = (feature_batch[..., i] - feature_min) / (
             feature_max - feature_min
@@ -119,36 +128,39 @@ def test_scale_and_evaluate(
         assert_allclose(output_batch[..., i], unscaled_output, rtol=1e-4)
 
 
-@pytest.fixture(params=[1, 5, 20])
-def feature_names(request) -> list[str]:
+@pytest.fixture(params=[1, 5, 20], name="feature_names")
+def fixture_feature_names(request) -> list[str]:
     return [f"feat_{i}" for i in range(request.param)]
 
 
-@pytest.fixture(params=[100, 1000])
-def data(request, feature_names: list[str]) -> tuple[np.ndarray, np.ndarray]:
+@pytest.fixture(params=[100, 1000], name="data")
+def fixture_data(request, feature_names: list[str]) -> tuple[np.ndarray, np.ndarray]:
     """Create data with sorted targets. This allows for comparing the different shuffle
     options."""
-    features: np.ndarray = np.random.rand(request.param, len(feature_names))
-    targets: np.ndarray = np.sort(np.random.rand(request.param, 1), axis=0)
+    features: np.ndarray = rng.random((request.param, len(feature_names)))
+    targets: np.ndarray = np.sort(rng.random((request.param, 1)), axis=0)
     return features, targets
 
 
-@pytest.fixture
-def dataset(
+@pytest.fixture(name="dataset")
+def fixture_dataset(
     data: tuple[np.ndarray, np.ndarray], tmp_path: pathlib.Path
 ) -> pathlib.Path:
     features, targets = data
     return store_dataset(features, targets, tmp_path / "dataset")
 
 
-@pytest.fixture
-def target_scaler(data: tuple[np.ndarray, np.ndarray]) -> MinMaxScaler:
+@pytest.fixture(name="target_scaler")
+def fixture_target_scaler(data: tuple[np.ndarray, np.ndarray]) -> MinMaxScaler:
     scaler = MinMaxScaler(feature_range=(0, 1))
     scaler.fit(data[1])
     return scaler
 
 
+# TODO: Add tests with multidimensional input and output. Make sure this works correctly
+# with all shuffling.
 @pytest.mark.parametrize("shuffle", ["first", "last", "false"])
+# pylint: disable-next=too-many-locals,too-many-statements
 def test_scale_and_prepare_dataset(
     shuffle: Literal["first", "last", "false"],
     dataset: pathlib.Path,
@@ -227,6 +239,8 @@ def test_scale_and_prepare_dataset(
     unshuffled_test_targets = target_scaler.transform(unshuffled_test_targets)
 
     # Check that the dataset is shuffled correctly.
+    # There is a small chance this will fail for shuffle == "first" and shuffle ==
+    # "last", when shuffling returns the original order by accident.
     if shuffle == "first":
         assert_raises(
             AssertionError, assert_allclose, train[1], unshuffled_train_targets
@@ -252,8 +266,6 @@ def test_scale_and_prepare_dataset(
             np.sort(test[1], axis=0),
             unshuffled_test_targets,
         )
-    # In general, there is a small chance this test (and also suffle == "first") will
-    # fail, when the shuffling returns the original order.
     elif shuffle == "last":
         assert_raises(
             AssertionError, assert_allclose, train[1], unshuffled_train_targets
