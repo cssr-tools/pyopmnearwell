@@ -45,7 +45,7 @@ class EclDataSet:  # pylint: disable=R0902
 
     """
 
-    # TODO: The next two are class attributes! This should be changed to instance.
+    # Typing for instance attributes.
     features: tf.Tensor
     """Stores all inputs of the dataset.
 

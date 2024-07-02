@@ -7,6 +7,7 @@ grid.
 import math
 import pathlib
 from abc import ABC, abstractmethod
+from typing import Protocol
 
 import numpy as np
 
@@ -21,6 +22,45 @@ else:
 
 from pyopmnearwell.ml import ensemble
 from pyopmnearwell.utils import formulas, units
+
+
+class Upscaler(Protocol):
+    """Protocol class for upscalers.
+
+    This class is used for typing of abstract attributes of ``BaseUpscaler``. MyPy will
+    check if subclasses of ``BaseUpscaler`` implement the following instance attributes:
+    - ``num_timesteps``
+    - ``num_layers``
+    - ``num_zcells``
+    - ``num_xcells``
+    - ``single_feature_shape``
+    However, in comparison to missing abstract functions, no runtime error will be
+    raised if they are missing.
+
+    See, e.g., https://stackoverflow.com/a/75253719 for an explanation.
+
+    Note: As of now (Python 3.11), each instance method of ``BaseUpscaler`` or a
+        subclass making use of one of the attributes, needs to have its self argumented
+        annotated with ``Upscaler``. In future python versions it should be possible to
+        use ``class BaseUpscaler[Upscaler](ABC):...`` instead and remove these
+        annotations.
+
+    """
+
+    @property
+    def num_timesteps(self) -> int: ...
+
+    @property
+    def num_layers(self) -> int: ...
+
+    @property
+    def num_zcells(self) -> int: ...
+
+    @property
+    def num_xcells(self) -> int: ...
+
+    @property
+    def single_feature_shape(self) -> tuple: ...
 
 
 class BaseUpscaler(ABC):
@@ -49,13 +89,6 @@ class BaseUpscaler(ABC):
 
     """
 
-    # TODO: These are class attributes! This should be changed to instance.
-    num_timesteps: int
-    num_layers: int
-    num_zcells: int
-    num_xcells: int
-    single_feature_shape: tuple
-
     @abstractmethod
     def __init__(self):  # pylint: disable=missing-function-docstring
         return
@@ -65,7 +98,7 @@ class BaseUpscaler(ABC):
         return
 
     def reduce_data_size(
-        self,
+        self: Upscaler,
         feature: np.ndarray,
         step_size_x: int = 1,
         step_size_t: int = 1,
@@ -93,7 +126,10 @@ class BaseUpscaler(ABC):
         return feature[:, ::step_size_t, ::, ::step_size_x]
 
     def get_vertically_averaged_values(
-        self, features: np.ndarray, feature_index, disregard_first_xcell: bool = True
+        self: Upscaler,
+        features: np.ndarray,
+        feature_index,
+        disregard_first_xcell: bool = True,
     ) -> np.ndarray:
         """Average features vertically inside each layer.
 
@@ -120,7 +156,9 @@ class BaseUpscaler(ABC):
 
         return feature
 
-    def get_radii(self, radii_file: pathlib.Path) -> tuple[np.ndarray, np.ndarray]:
+    def get_radii(
+        self: Upscaler, radii_file: pathlib.Path
+    ) -> tuple[np.ndarray, np.ndarray]:
         """Get full list of cell radii."""
         cell_center_radii, inner_radii, outer_radii = ensemble.calculate_radii(
             radii_file,
@@ -142,7 +180,7 @@ class BaseUpscaler(ABC):
         assert cell_boundary_radii.shape == (self.num_xcells + 1,)
         return cell_center_radii, cell_boundary_radii
 
-    def get_timesteps(self, simulation_length: float) -> np.ndarray:
+    def get_timesteps(self: Upscaler, simulation_length: float) -> np.ndarray:
         """_summary_
 
         Returns:
@@ -154,7 +192,7 @@ class BaseUpscaler(ABC):
         return timesteps
 
     def get_horizontically_integrated_values(  # pylint: disable=too-many-arguments
-        self,
+        self: Upscaler,
         features: np.ndarray,
         cell_center_radii: np.ndarray,
         cell_boundary_radii: np.ndarray,
@@ -212,7 +250,7 @@ class BaseUpscaler(ABC):
         return integrated_feature
 
     def get_homogeneous_values(
-        self, features, feature_index, disregard_first_xcell: bool = True
+        self: Upscaler, features, feature_index, disregard_first_xcell: bool = True
     ):
         """Get a feature that is homogeneous inside a layer.
 
@@ -239,7 +277,7 @@ class BaseUpscaler(ABC):
         return feature
 
     def get_analytical_PI(  # pylint: disable=invalid-name
-        self,
+        self: Upscaler,
         permeabilities: np.ndarray,
         cell_heights: np.ndarray,
         radii: np.ndarray,
@@ -268,7 +306,7 @@ class BaseUpscaler(ABC):
 
     # pylint: disable-next=invalid-name, too-many-arguments, too-many-locals
     def get_analytical_WI(
-        self,
+        self: Upscaler,
         pressures: np.ndarray,
         saturations: np.ndarray,
         permeabilities: np.ndarray,
@@ -369,7 +407,7 @@ class BaseUpscaler(ABC):
         return analytical_WI
 
     def get_data_WI(  # pylint: disable=invalid-name
-        self,
+        self: Upscaler,
         features: np.ndarray,
         pressure_index: int,
         inj_rate_index: int,
