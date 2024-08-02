@@ -1,10 +1,9 @@
-ecl
 resdata
 opm
 mako
 matplotlib
 pandas
 scipy
-tensorflow
+tensorflow==2.13.0
 keras_tuner
 scikit-learn

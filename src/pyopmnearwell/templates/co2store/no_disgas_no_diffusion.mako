@@ -192,8 +192,7 @@ COMPDAT
 % if dic['grid'] == 'core':
 'INJ0' 1 ${1+mt.floor(dic['noCells'][2]/2)} ${1+mt.floor(dic['noCells'][2]/2)} ${1+mt.floor(dic['noCells'][2]/2)} 'OPEN' 1* ${dic["jfactor"]} /
 % else:
---'INJ0' ${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${max(1, 1+mt.floor(dic['noCells'][1]/2))} 1 ${dic['noCells'][2]} 'OPEN' 1* ${dic["jfactor"]*2*mt.pi*dic['rock'][0][0]*dic['dims'][2]/dic['noCells'][2]} /
-'INJ0' ${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${max(1, 1+mt.floor(dic['noCells'][1]/2))} 1 ${dic['noCells'][2]} 'OPEN' 1* ${dic["jfactor"]} /
+'INJ0' ${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${max(1, 1+mt.floor(dic['noCells'][1]/2))} 1 ${dic['noCells'][2]} 'OPEN' 1* ${dic["jfactor"]} ${dic['diameter']}/
 
 % endif
 % endif
@@ -222,7 +221,7 @@ WCONINJE
 % else:
 'INJ0' 'WATER' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'}
 'RATE' ${f"{dic['inj'][j][4] / 998.108 : E}"}  1* 400/
-%endif
+% endif
 /
 % if dic["pvMult"] == 0 or dic['grid']== 'core': 
 WCONPROD
@@ -233,9 +232,17 @@ WCONPROD
 'PRO3' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'} 'BHP' 5* ${dic['pressure']}/
 % else:
 'PRO0' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'} 'BHP' 5* ${dic['pressure']}/
-%endif
+% endif
 /
-%endif
+% endif
+-- Close the specified connections
+% if len(dic['inj'][j]) >= 6:
+WELOPEN
+% for i in range(1, dic['noCells'][2] + 1):
+'INJ0' ${'SHUT' if i in dic['inj'][j][5:] else 'OPEN'} 0 0 ${i} /
+% endfor
+/
+% endif
 TSTEP
 ${mt.floor(dic['inj'][j][0]/dic['inj'][j][1])}*${dic['inj'][j][1]}
 /

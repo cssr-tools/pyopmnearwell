@@ -1,15 +1,14 @@
 # SPDX-FileCopyrightText: 2023 NORCE
 # SPDX-License-Identifier: GPL-3.0
 
-"""Test the comparison script"""
+"""Test the comparison script."""
 
 import os
+import pathlib
 
 
-def test_plot_comparison():
+def test_plot_comparison(run_all_models: pathlib.Path) -> None:
     """See visualization/plotting.py"""
-    cwd = os.getcwd()
-    os.chdir(f"{os.getcwd()}/tests/models")
-    os.system("pyopmnearwell -c compare")
-    assert os.path.exists("compare/well_pressure.png")
-    os.chdir(cwd)
+    os.chdir(run_all_models)
+    os.system("pyopmnearwell -c compare -p resdata")
+    assert (run_all_models / "compare" / "well_pressure.png").exists()

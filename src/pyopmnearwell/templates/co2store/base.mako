@@ -242,6 +242,14 @@ WCONPROD
 %endif
 /
 %endif
+-- Close the specified connections
+% if len(dic['inj'][j]) >= 6:
+WELOPEN
+% for i in range(1, dic['noCells'][2] + 1):
+'INJ0' ${'SHUT' if i in dic['inj'][j][5:] else 'OPEN'} 0 0 ${i} /
+% endfor
+/
+% endif
 TSTEP
 ${mt.floor(dic['inj'][j][0]/dic['inj'][j][1])}*${dic['inj'][j][1]}
 /

@@ -5,6 +5,7 @@
 import argparse
 import os
 import pathlib
+from typing import Any
 
 from pyopmnearwell.utils.inputvalues import process_input
 from pyopmnearwell.utils.runs import plotting, simulations
@@ -72,7 +73,7 @@ def pyopmnearwell():
         help="Scale for the x axis in the figures: 'normal' or 'log' ('normal' by default)",
     )
     cmdargs = vars(parser.parse_known_args()[0])
-    dic = {
+    dic: dict[str, Any] = {
         "pat": os.path.split(os.path.dirname(__file__))[0]
     }  # Path to the pyopmnearwell folder
     dic["exe"] = os.getcwd()  # Path to the folder of the input.txt file

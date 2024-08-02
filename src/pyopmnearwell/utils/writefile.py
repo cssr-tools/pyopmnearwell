@@ -20,25 +20,24 @@ from pyopmnearwell.utils.mako import fill_template
 
 def reservoir_files(
     dic,
-    recalc_grid: bool = True,
-    recalc_tables: bool = True,
-    recalc_sections: bool = True,
-    inc_folder: pathlib.Path = pathlib.Path(""),
+    **kwargs,
 ):
     """
     Function to write opm-related files by running mako templates
 
     Args:
         dic (dict): Global dictionary with required parameters
-        recalc_grid (bool): Whether to recalculate the ``GRID.INC``file. Intended for
-            ensemble runs, where the saturation functions/geography/etc. do not need to
-            be recalculated for each ensemble member. Defaults to True.
-        recalc_tables (bool): Whether to recalculate the ``TABLES.INC``file. Defaults to
-            True.
-        recalc_sections (bool): Whether to recalculate the ``GEOLOGY.INC`` and
-            ``REGIONS.INC`` files. Defaults to True.
-        inc_folder (pathlib.Path): If any of the mentioned files is not recalculated,
-            they are taken from this folder. Defaults to ``pathlib.Path("")``.
+        **kwargs: Possible kwargs are:
+            - recalc_grid (bool): Whether to recalculate the ``GRID.INC``file. Intended
+                for ensemble runs, where the saturation functions/geography/etc. do not
+                need to be recalculated for each ensemble member. Defaults to True.
+            - recalc_tables (bool): Whether to recalculate the ``TABLES.INC``file.
+                Defaults to True.
+            - recalc_sections (bool): Whether to recalculate the ``GEOLOGY.INC`` and
+                ``REGIONS.INC`` files. Defaults to True.
+            - inc_folder (pathlib.Path): If any of the mentioned files is not
+                recalculated, they are taken from this folder. Defaults to
+                ``pathlib.Path("")``.
 
     Note:
         - All of the ``recalc_*`` options only work for
@@ -49,8 +48,8 @@ def reservoir_files(
         dic (dict): Global dictionary with new added parameters
 
     """
-    # Ensure ``inc_folder`` is a ``Path`` objects.
-    inc_folder = pathlib.Path(inc_folder)
+    # Get ``inc_folder`` and ensure it is a ``Path`` objects.
+    inc_folder = pathlib.Path(kwargs.get("inc_folder", pathlib.Path("")))
 
     # default values
     dic.update(
@@ -90,11 +89,10 @@ def reservoir_files(
         dic["xcor"] = dic["xcor"][
             (0.5 * dic["diameter"] < dic["xcor"]) | (0 == dic["xcor"])
         ]
-        # dic["xcor"] = np.insert(dic["xcor"], 1, 0.5 * dic["diameter"])
     dic["noCells"][0] = len(dic["xcor"]) - 1
 
     # Either calculate the grid or update the links to all grid files.
-    if recalc_grid:
+    if kwargs.get("recalc_grid", True):
         if dic["grid"] == "core":
             dic = handle_core(dic)
         else:
@@ -110,11 +108,14 @@ def reservoir_files(
         )
 
     # If the tables are not recalculated, update the link to the tables file.
-    if not recalc_tables:
+    # TODO: Hiding the default value in ``.get`` is dangerous, as this is accessed
+    # multiple times. Possibly its better to introduce a local variable or update the
+    # dictionary at the start of the funciton.
+    if not kwargs.get("recalc_tables", True):
         dic.update({"tables_file": f"'{inc_folder / 'TABLES.INC'}'"})
 
     # If the sections are not recalculated, update the link to all section files.
-    if not recalc_sections:
+    if not kwargs.get("recalc_sections", True):
         dic.update(
             {
                 "geology_file": f"'{inc_folder / 'GEOLOGY.INC'}'",
@@ -131,7 +132,7 @@ def reservoir_files(
         dic["layers"] += dic["z_centers"] > sum(dic["thickness"][: i + 1])
 
     var = {"dic": dic}
-    filledtemplate: Template = fill_template(
+    filledtemplate: str = fill_template(
         var,
         filename=os.path.join(
             dic["pat"], "templates", dic["model"], f"{dic['template']}.mako"
@@ -147,9 +148,9 @@ def reservoir_files(
     ) as file:
         file.write(filledtemplate)
     if dic["model"] != "co2eor":
-        if recalc_tables:
+        if kwargs.get("recalc_tables", True):
             manage_tables(dic)
-        if recalc_sections:
+        if kwargs.get("recalc_sections", True):
             manage_sections(dic)
 
 
@@ -170,7 +171,7 @@ def manage_sections(dic):
             sections.append("pcfact")
     for section in sections:
         var = {"dic": dic}
-        filledtemplate: Template = fill_template(
+        filledtemplate: str = fill_template(
             var,
             filename=os.path.join(dic["pat"], "templates", "common", f"{section}.mako"),
         )
@@ -202,7 +203,7 @@ def manage_tables(dic):
     else:
         filename = f"{dic['pat']}/templates/common/saturation_functions_format_1.mako"
     var = {"dic": dic}
-    filledtemplate: Template = fill_template(var, filename=filename)
+    filledtemplate: str = fill_template(var, filename=filename)
     with open(
         os.path.join(dic["exe"], dic["fol"], "jobs", "saturation_functions.py"),
         "w",
@@ -274,7 +275,7 @@ def manage_grid(dic):
                 else:
                     lol.append(row[0])
         var = {"dic": dic}
-        filledtemplate: Template = fill_template(var, text="\n".join(lol))
+        filledtemplate: str = fill_template(var, text="\n".join(lol))
         with open(
             os.path.join(dic["exe"], dic["fol"], "preprocessing", "GRID.INC"),
             "w",
@@ -285,7 +286,7 @@ def manage_grid(dic):
         if dic["grid"] == "coord3d":
             dic["xcorc"] = dic["x_n"]
         else:
-            dic = crete_3dgrid(dic)
+            dic = create_3dgrid(dic)
             if dic["model"] != "co2eor":
                 for cord in dic["xcorc"]:
                     dic["xcorc"] = np.insert(dic["xcorc"], 0, -cord)
@@ -372,7 +373,7 @@ def d3_grids(dic, dxarray):
                 else:
                     lol.append(row[0])
         var = {"dic": dic}
-        filledtemplate: Template = fill_template(var, text="\n".join(lol))
+        filledtemplate: str = fill_template(var, text="\n".join(lol))
         with open(
             f"{dic['exe']}/{dic['fol']}/preprocessing/GRID.INC",
             "w",
@@ -409,7 +410,7 @@ def d3_grids(dic, dxarray):
     return dic
 
 
-def crete_3dgrid(dic):
+def create_3dgrid(dic):
     """
     Function to handle the first part of the 3d grids
 

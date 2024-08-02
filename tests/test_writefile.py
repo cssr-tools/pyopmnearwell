@@ -1,4 +1,6 @@
-# pylint: skip-file
+# pylint: disable=missing-function-docstring
+"""Test the ``pyopmnearwell.utils.writefile`` module."""
+
 from __future__ import annotations
 
 import pathlib
@@ -6,28 +8,7 @@ from typing import Any
 
 import pytest
 
-from pyopmnearwell.utils.inputvalues import process_input
 from pyopmnearwell.utils.writefile import reservoir_files
-
-dirname: pathlib.Path = pathlib.Path(__file__).parent
-
-
-@pytest.fixture
-def input_dict(tmp_path: pathlib.Path) -> dict[str, Any]:
-    """Manually do what ``pyopmnearwell.py`` does."""
-    # Create run folders.
-    for name in ["preprocessing", "jobs", "output", "postprocessing"]:
-        (tmp_path / "output" / name).mkdir(parents=True, exist_ok=True)
-    # Read input deck.
-    base_dict: dict[str, Any] = {
-        "pat": dirname / ".." / "src" / "pyopmnearwell",
-        "exe": tmp_path,
-        "fol": "output",
-        "runname": "test_run",
-        "model": "co2store",
-        "plot": "ecl",
-    }
-    return process_input(base_dict, dirname / "models" / "co2store.txt")
 
 
 @pytest.mark.parametrize("recalc_grid", [True, False])
@@ -39,7 +20,12 @@ def test_reservoir_files(
     recalc_tables: bool,
     recalc_sections: bool,
 ) -> None:
-    reservoir_files(input_dict, recalc_grid, recalc_tables, recalc_sections)
+    reservoir_files(
+        input_dict,
+        recalc_grid=recalc_grid,
+        recalc_tables=recalc_tables,
+        recalc_sections=recalc_sections,
+    )
 
     # Check that the expected files were created.
     preprocessing_fol: pathlib.Path = (

@@ -20,7 +20,8 @@ def test_save_fig_and_data(tmp_path: pathlib.Path):
     save_fig_and_data(fig, tmp_path / "test")
 
     # Check that the figure was saved correctly
-    assert (tmp_path / "test.png").is_file()
+    assert (tmp_path / "test.svg").is_file()
+    assert (tmp_path / "test.pickle").is_file()
 
     # Check that the data was saved correctly
     # # TODO: Fix this.
