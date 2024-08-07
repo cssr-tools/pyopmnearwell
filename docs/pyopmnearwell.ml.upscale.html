@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyopmnearwell.ml.upscale module &mdash; pyopmnearwell  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pyopmnearwell.ml.utils module" href="pyopmnearwell.ml.utils.html" />
+    <link rel="prev" title="pyopmnearwell.ml.scaler_layers module" href="pyopmnearwell.ml.scaler_layers.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #aaaaaa" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration_file.html">Configuration file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">pyopmnearwell Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="output_folder.html">Output folder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="related.html">Related</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About pyopmnearwell</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #aaaaaa" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyopmnearwell</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="api.html">pyopmnearwell Python API</a></li>
+          <li class="breadcrumb-item"><a href="pyopmnearwell.html">pyopmnearwell package</a></li>
+          <li class="breadcrumb-item"><a href="pyopmnearwell.ml.html">pyopmnearwell.ml package</a></li>
+      <li class="breadcrumb-item active">pyopmnearwell.ml.upscale module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/pyopmnearwell.ml.upscale.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyopmnearwell.ml.upscale">
+<span id="pyopmnearwell-ml-upscale-module"></span><h1>pyopmnearwell.ml.upscale module<a class="headerlink" href="#module-pyopmnearwell.ml.upscale" title="Link to this heading"></a></h1>
+<p>Functionality to upscale data from an ensemble run on a radial grid to a cartesian
+grid.</p>
+<p>Note: pylint: no-member is disabled, because it complains about the <code class="docutils literal notranslate"><span class="pre">BaseUpscaler</span></code>
+missing instance attributes, which are taken care of by the <code class="docutils literal notranslate"><span class="pre">Upscaler</span></code> protocol.
+pylint: pointless-string-statement is disabled, as it complains an attribute docstring
+in the <code class="docutils literal notranslate"><span class="pre">Upscaler</span></code> protocol.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.BaseUpscaler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.upscale.</span></span><span class="sig-name descname"><span class="pre">BaseUpscaler</span></span><a class="headerlink" href="#pyopmnearwell.ml.upscale.BaseUpscaler" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Extract and upscale data from an array of ensemble data.</p>
+<p>This base class provides several methods to extract features from fine-scale radial
+simulations and upscale to coarse cartesian cells. Depending on the type of data,
+this is done by averaging/summing/etc. values along all cells that correspond to a
+coarse cell.</p>
+<p>Additionally, the sparsity of the dataset can be increased by taking only some
+timesteps/horizontal cells.</p>
+<p>The upscaled data is usually provided in form of two <code class="docutils literal notranslate"><span class="pre">np.ndarrays</span></code>, one for
+features and one for targets.</p>
+<p>Subclasses need to implement <code class="docutils literal notranslate"><span class="pre">__init__</span></code> and (if needed) <code class="docutils literal notranslate"><span class="pre">create_ds</span></code> methods.</p>
+<p>The feature array will have shape <code class="docutils literal notranslate"><span class="pre">(num_ensemble_runs,</span> <span class="pre">num_timesteps/step_size_t,</span>
+<span class="pre">num_layers,</span> <span class="pre">num_xcells/step_size_x,</span> <span class="pre">num_features)</span></code>.
+The target array will have shape <code class="docutils literal notranslate"><span class="pre">(num_ensemble_runs,</span> <span class="pre">num_timesteps/step_size_t,</span>
+<span class="pre">num_layers,</span> <span class="pre">num_xcells/step_size_x,</span> <span class="pre">1)</span></code></p>
+<dl class="simple">
+<dt>Note: All methods assume that all cells have the same height. if this is not the</dt><dd><p>case, the methods must be overridden.</p>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyopmnearwell.ml.upscale.BaseUpscaler.get_analytical_PI" title="pyopmnearwell.ml.upscale.BaseUpscaler.get_analytical_PI"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_analytical_PI</span></code></a>(permeabilities, ...)</p></td>
+<td><p>_summary_</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyopmnearwell.ml.upscale.BaseUpscaler.get_analytical_WI" title="pyopmnearwell.ml.upscale.BaseUpscaler.get_analytical_WI"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_analytical_WI</span></code></a>(pressures, saturations, ...)</p></td>
+<td><p>_summary_</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyopmnearwell.ml.upscale.BaseUpscaler.get_data_WI" title="pyopmnearwell.ml.upscale.BaseUpscaler.get_data_WI"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_WI</span></code></a>(features, pressure_index, ...[, ...])</p></td>
+<td><p>Calculate data-driven WI from pressure and flow rate.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyopmnearwell.ml.upscale.BaseUpscaler.get_homogeneous_values" title="pyopmnearwell.ml.upscale.BaseUpscaler.get_homogeneous_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_homogeneous_values</span></code></a>(features, feature_index)</p></td>
+<td><p>Get a feature that is homogeneous inside a layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyopmnearwell.ml.upscale.BaseUpscaler.get_horizontically_integrated_values" title="pyopmnearwell.ml.upscale.BaseUpscaler.get_horizontically_integrated_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_horizontically_integrated_values</span></code></a>(...[, ...])</p></td>
+<td><p>Integrate feature horizontically along layers and divide by equivalent cartesian block area.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyopmnearwell.ml.upscale.BaseUpscaler.get_radii" title="pyopmnearwell.ml.upscale.BaseUpscaler.get_radii"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_radii</span></code></a>(radii_file)</p></td>
+<td><p>Get full list of cell radii.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyopmnearwell.ml.upscale.BaseUpscaler.get_timesteps" title="pyopmnearwell.ml.upscale.BaseUpscaler.get_timesteps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_timesteps</span></code></a>(simulation_length)</p></td>
+<td><p>_summary_</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyopmnearwell.ml.upscale.BaseUpscaler.get_vertically_averaged_values" title="pyopmnearwell.ml.upscale.BaseUpscaler.get_vertically_averaged_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_vertically_averaged_values</span></code></a>(features, ...)</p></td>
+<td><p>Average features vertically inside each layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyopmnearwell.ml.upscale.BaseUpscaler.reduce_data_size" title="pyopmnearwell.ml.upscale.BaseUpscaler.reduce_data_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reduce_data_size</span></code></a>(feature[, step_size_x, ...])</p></td>
+<td><p>Reduce the size of the input feature array by selecting elements with a fixed step size.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>create_ds</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.BaseUpscaler._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.BaseUpscaler._abc_impl" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.BaseUpscaler.create_ds">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_ds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.upscale.BaseUpscaler.create_ds" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.BaseUpscaler.get_analytical_PI">
+<span class="sig-name descname"><span class="pre">get_analytical_PI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">permeabilities</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_heights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radii</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.upscale.BaseUpscaler.get_analytical_PI" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<p>_extended_summary_</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>permeabilities (np.ndarray): Unit has to be [m^2]!
+cell_heights (np.ndarray): Unit [m].
+radii (np.ndarray): _description_
+well_radius (float): _description_</p>
+</dd>
+<dt>Returns:</dt><dd><p>np.ndarray: _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.BaseUpscaler.get_analytical_WI">
+<span class="sig-name descname"><span class="pre">get_analytical_WI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pressures</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saturations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permeabilities</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surface_density</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radii</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">OPM</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.upscale.BaseUpscaler.get_analytical_WI" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<p>_extended_summary_</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>pressures (np.ndarray): _description_
+saturations (np.ndarray): _description_
+permeabilities (np.ndarray): Unit has to be [mD]!
+temperature (float): _description_
+surface_density (float): _description_
+radii (np.ndarray): _description_
+well_radius (float): _description_
+OPM (pathlib.Path): _description_</p>
+</dd>
+<dt>Returns:</dt><dd><p>np.ndarray: _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.BaseUpscaler.get_data_WI">
+<span class="sig-name descname"><span class="pre">get_data_WI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inj_rate_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0471975511965976</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.upscale.BaseUpscaler.get_data_WI" title="Link to this definition"></a></dt>
+<dd><p>Calculate data-driven WI from pressure and flow rate.</p>
+<p>Similar functionality to <code class="docutils literal notranslate"><span class="pre">ensemble.calculate_WI</span></code>, but can additionally treat
+multiple vertical cells in a layer correctly.</p>
+<dl class="simple">
+<dt>Note:</dt><dd><ul class="simple">
+<li><p>Pressures get averaged over each layer, injection rates get summed over
+each layer.</p></li>
+<li><p>The method automatically scales the near-well injection rate from the cake
+grid with angle <code class="docutils literal notranslate"><span class="pre">angle</span></code> to a 360° well. Furthermore, the rate is scaled
+from rate-per-day (which the results are in) to rate-per-second, which OPM
+Flow uses internally for the WI.</p></li>
+</ul>
+</dd>
+<dt>Args:</dt><dd><p>features (np.ndarray): _description_
+pressure_index (int): _description_
+inj_rate_index (int): _description_</p>
+</dd>
+<dt>Returns:</dt><dd><p>np.ndarray: _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.BaseUpscaler.get_homogeneous_values">
+<span class="sig-name descname"><span class="pre">get_homogeneous_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disregard_first_xcell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.upscale.BaseUpscaler.get_homogeneous_values" title="Link to this definition"></a></dt>
+<dd><p>Get a feature that is homogeneous inside a layer.</p>
+<p>Note: Since the feature is equal inside a layer, this method takes the first
+value for each layer.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>features (np.ndarray): _description_
+feature_index (int): _description_.
+disregard_first_xcell (bool): __description__. Default is True.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>np.ndarray (<a href="#id1"><span class="problematic" id="id2">``</span></a>shape = (num_ensemble_runs, num_timesteps, num_layers,</dt><dd><p>num_xcells)``):</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.BaseUpscaler.get_horizontically_integrated_values">
+<span class="sig-name descname"><span class="pre">get_horizontically_integrated_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_center_radii</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_boundary_radii</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disregard_first_xcell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.upscale.BaseUpscaler.get_horizontically_integrated_values" title="Link to this definition"></a></dt>
+<dd><p>Integrate feature horizontically along layers and divide by equivalent
+cartesian block area.</p>
+<dl class="simple">
+<dt>Note:</dt><dd><ul class="simple">
+<li><p>Before integrating, the feature is averaged vertically inside each layer.</p></li>
+<li><p>As the feature is averaged and not summed, the integration takes place in
+2D with vertically averaged values. Hence it suffices to divide by area
+and not by  volume.</p></li>
+</ul>
+</dd>
+<dt>Args:</dt><dd><p>features (np.ndarray): _description_
+cell_center_radii (np.ndarray):
+cell_boundary_radii (np.ndarray):
+feature_index (int): _description_. Default is 1.
+disregard_first_xcell (bool): __description__. Default is True.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>np.ndarray (<a href="#id3"><span class="problematic" id="id4">``</span></a>shape = (num_ensemble_runs, num_timesteps, num_layers,</dt><dd><p>num_xcells)``): Features values average for each cell.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.BaseUpscaler.get_radii">
+<span class="sig-name descname"><span class="pre">get_radii</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radii_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyopmnearwell.ml.upscale.BaseUpscaler.get_radii" title="Link to this definition"></a></dt>
+<dd><p>Get full list of cell radii.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.BaseUpscaler.get_timesteps">
+<span class="sig-name descname"><span class="pre">get_timesteps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simulation_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.upscale.BaseUpscaler.get_timesteps" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>np.ndarray (<a href="#id5"><span class="problematic" id="id6">``</span></a>shape = (num_timesteps,) <a href="#id7"><span class="problematic" id="id8">``</span></a>): Unit: [d].</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.BaseUpscaler.get_vertically_averaged_values">
+<span class="sig-name descname"><span class="pre">get_vertically_averaged_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disregard_first_xcell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.upscale.BaseUpscaler.get_vertically_averaged_values" title="Link to this definition"></a></dt>
+<dd><p>Average features vertically inside each layer.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>features (np.ndarray): _description_
+feature_index (int): _description_.
+disregard_first_xcell (bool): __description__. Default is True.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>np.ndarray (<a href="#id9"><span class="problematic" id="id10">``</span></a>shape = (num_ensemble_runs, num_timesteps, num_layers,</dt><dd><p>num_xcells)``):</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.BaseUpscaler.reduce_data_size">
+<span class="sig-name descname"><span class="pre">reduce_data_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_size_x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_size_t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.upscale.BaseUpscaler.reduce_data_size" title="Link to this definition"></a></dt>
+<dd><p>Reduce the size of the input feature array by selecting elements with a
+fixed step size.</p>
+<dl>
+<dt>Args:</dt><dd><p>feature (np.ndarray): The input feature array.
+step_size_x (int, optional): The step size for the x-axis. Defaults to 1.
+step_size_t (int, optional): The step size for the t-axis. Defaults to 1.
+random (bool, optional): If True, select elements randomly instead of using</p>
+<blockquote>
+<div><p>a fixed step size. Defaults to False. Not implemented yet.</p>
+</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><p>np.ndarray: The reduced feature array.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.Upscaler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.upscale.</span></span><span class="sig-name descname"><span class="pre">Upscaler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Protocol</span></code></p>
+<p>Protocol class for upscalers.</p>
+<p>This class is used for typing of abstract attributes of <code class="docutils literal notranslate"><span class="pre">BaseUpscaler</span></code>. MyPy will
+check if subclasses of <code class="docutils literal notranslate"><span class="pre">BaseUpscaler</span></code> implement the following instance attributes:
+- <code class="docutils literal notranslate"><span class="pre">num_timesteps</span></code>
+- <code class="docutils literal notranslate"><span class="pre">num_layers</span></code>
+- <code class="docutils literal notranslate"><span class="pre">num_zcells</span></code>
+- <code class="docutils literal notranslate"><span class="pre">num_xcells</span></code>
+- <code class="docutils literal notranslate"><span class="pre">single_feature_shape</span></code>
+However, in comparison to missing abstract functions, no runtime error will be
+raised if they are missing.</p>
+<p>See, e.g., <a class="reference external" href="https://stackoverflow.com/a/75253719">https://stackoverflow.com/a/75253719</a> for an explanation.</p>
+<dl class="simple">
+<dt>Note: As of now (Python 3.11), each instance method of <code class="docutils literal notranslate"><span class="pre">BaseUpscaler</span></code> or a</dt><dd><p>subclass making use of one of the attributes, needs to have its self argumented
+annotated with <code class="docutils literal notranslate"><span class="pre">Upscaler</span></code>. In future python versions it should be possible to
+use <code class="docutils literal notranslate"><span class="pre">class</span> <span class="pre">BaseUpscaler[Upscaler](ABC):...</span></code> instead and remove these
+annotations.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>angle</strong></dt><dd></dd>
+<dt><strong>num_layers</strong></dt><dd></dd>
+<dt><strong>num_timesteps</strong></dt><dd></dd>
+<dt><strong>num_xcells</strong></dt><dd></dd>
+<dt><strong>num_zcells</strong></dt><dd></dd>
+<dt><strong>single_feature_shape</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.Upscaler._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler._abc_impl" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.Upscaler._is_protocol">
+<span class="sig-name descname"><span class="pre">_is_protocol</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler._is_protocol" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.Upscaler.angle">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">angle</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler.angle" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.Upscaler.num_layers">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_layers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler.num_layers" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.Upscaler.num_timesteps">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_timesteps</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler.num_timesteps" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.Upscaler.num_xcells">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_xcells</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler.num_xcells" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.Upscaler.num_zcells">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_zcells</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler.num_zcells" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.Upscaler.single_feature_shape">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">single_feature_shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler.single_feature_shape" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyopmnearwell.ml.scaler_layers.html" class="btn btn-neutral float-left" title="pyopmnearwell.ml.scaler_layers module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyopmnearwell.ml.utils.html" class="btn btn-neutral float-right" title="pyopmnearwell.ml.utils module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, NORCE Norwegian Research Centre AS.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

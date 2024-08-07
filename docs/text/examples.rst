@@ -75,3 +75,11 @@ The following are some of the plots created by the **pyopmnearwell** executable:
     
     Permeability (top), CO2 injection schedule (middle), and saturation values over time on the cells along the well location
     at three different locations (bottom). 
+
+Publications
+------------
+For the simulation results published in `this paper <https://onepetro.org/SPEBERG/proceedings/24BERG/1-24BERG/D011S012R010/544194>`_ 
+about the impact of intermittency on salt precipitation during CO2 injection, see/run 
+`these configuration files <https://github.com/cssr-tools/pyopmnearwell/blob/main/publications>`_.
+
+For a study where **pyopmnearwell** is used to generated a machine-learned near-well model, `click here <https://github.com/cssr-tools/ML_near_well>`_. 

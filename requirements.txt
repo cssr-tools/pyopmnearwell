@@ -1,9 +1,0 @@
-resdata
-opm
-mako
-matplotlib
-pandas
-scipy
-tensorflow==2.13.0
-keras_tuner
-scikit-learn

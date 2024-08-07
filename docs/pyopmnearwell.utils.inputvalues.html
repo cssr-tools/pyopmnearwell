@@ -16,7 +16,7 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
@@ -48,6 +48,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_file.html">Configuration file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">pyopmnearwell Python API</a></li>
@@ -90,18 +91,11 @@
 <dt class="sig sig-object py" id="pyopmnearwell.utils.inputvalues.process_input">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.inputvalues.</span></span><span class="sig-name descname"><span class="pre">process_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.inputvalues.process_input" title="Link to this definition"></a></dt>
 <dd><p>Function to process the input file</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p></li>
-<li><p><strong>in_file</strong> (<em>str</em>) – Name of the input text file</p></li>
-</ul>
+<dl class="simple">
+<dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters
+in_file (str): Name of the input text file</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Global dictionary with new added parameters</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dic (dict)</p>
+<dt>Returns:</dt><dd><p>dic (dict): Global dictionary with new added parameters</p>
 </dd>
 </dl>
 </dd></dl>
@@ -128,19 +122,12 @@
 <dt class="sig sig-object py" id="pyopmnearwell.utils.inputvalues.readthefirstpart">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.inputvalues.</span></span><span class="sig-name descname"><span class="pre">readthefirstpart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.inputvalues.readthefirstpart" title="Link to this definition"></a></dt>
 <dd><p>Function to process the first lines from the configuration file</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>lol</strong> (<em>list</em>) – List of lines read from the input file</p></li>
-<li><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p></li>
-</ul>
+<dl class="simple">
+<dt>Args:</dt><dd><p>lol (list): List of lines read from the input file
+dic (dict): Global dictionary with required parameters</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Global dictionary with new added parameters
+<dt>Returns:</dt><dd><p>dic (dict): Global dictionary with new added parameters
 inc (int): Number of line in the input file</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dic (dict)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -149,19 +136,12 @@ inc (int): Number of line in the input file</p>
 <dt class="sig sig-object py" id="pyopmnearwell.utils.inputvalues.readthesecondpart">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.inputvalues.</span></span><span class="sig-name descname"><span class="pre">readthesecondpart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.inputvalues.readthesecondpart" title="Link to this definition"></a></dt>
 <dd><p>Function to process the remaining lines in the configuration file</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>lol</strong> (<em>list</em>) – List of lines read from the input file</p></li>
-<li><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p></li>
-<li><p><strong>inc</strong> (<em>int</em>) – Number of line in the input file</p></li>
-</ul>
+<dl class="simple">
+<dt>Args:</dt><dd><p>lol (list): List of lines read from the input file
+dic (dict): Global dictionary with required parameters
+inc (int): Number of line in the input file</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Global dictionary with new added parameters</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dic (dict)</p>
+<dt>Returns:</dt><dd><p>dic (dict): Global dictionary with new added parameters</p>
 </dd>
 </dl>
 </dd></dl>

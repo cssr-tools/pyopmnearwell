@@ -15,7 +15,7 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
@@ -45,6 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_file.html">Configuration file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">pyopmnearwell Python API</a></li>
@@ -89,6 +90,7 @@
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
@@ -104,10 +106,18 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyopmnearwell.ml.scaler_layers.html#pyopmnearwell.ml.scaler_layers.MinMaxScalerLayer._abc_impl">_abc_impl (pyopmnearwell.ml.scaler_layers.MinMaxScalerLayer attribute)</a>
+
+      <ul>
+        <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler._abc_impl">(pyopmnearwell.ml.upscale.BaseUpscaler attribute)</a>
 </li>
+        <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.Upscaler._abc_impl">(pyopmnearwell.ml.upscale.Upscaler attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyopmnearwell.ml.scaler_layers.html#pyopmnearwell.ml.scaler_layers.ScalerLayer._adapt">_adapt() (pyopmnearwell.ml.scaler_layers.ScalerLayer method)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.Upscaler._is_protocol">_is_protocol (pyopmnearwell.ml.upscale.Upscaler attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -117,9 +127,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyopmnearwell.ml.scaler_layers.html#pyopmnearwell.ml.scaler_layers.ScalerLayer.adapt">adapt() (pyopmnearwell.ml.scaler_layers.ScalerLayer method)</a>
 </li>
+      <li><a href="pyopmnearwell.visualization.plotting.html#pyopmnearwell.visualization.plotting.all_injectivities">all_injectivities() (in module pyopmnearwell.visualization.plotting)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyopmnearwell.visualization.plotting.html#pyopmnearwell.visualization.plotting.all_injectivities">all_injectivities() (in module pyopmnearwell.visualization.plotting)</a>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.Upscaler.angle">angle (pyopmnearwell.ml.upscale.Upscaler property)</a>
 </li>
       <li><a href="pyopmnearwell.utils.formulas.html#pyopmnearwell.utils.formulas.area_squaredcircle">area_squaredcircle() (in module pyopmnearwell.utils.formulas)</a>
 </li>
@@ -129,6 +141,8 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler">BaseUpscaler (class in pyopmnearwell.ml.upscale)</a>
+</li>
       <li><a href="pyopmnearwell.utils.units.html#pyopmnearwell.utils.units.BOLTZMANN_CONSTANT">BOLTZMANN_CONSTANT (in module pyopmnearwell.utils.units)</a>
 </li>
   </ul></td>
@@ -143,6 +157,10 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.calculate_radii">calculate_radii() (in module pyopmnearwell.ml.ensemble)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.calculate_WI">calculate_WI() (in module pyopmnearwell.ml.ensemble)</a>
+</li>
       <li><a href="pyopmnearwell.ml.scaler_layers.html#pyopmnearwell.ml.scaler_layers.MinMaxScalerLayer.call">call() (pyopmnearwell.ml.scaler_layers.MinMaxScalerLayer method)</a>
 
       <ul>
@@ -159,11 +177,15 @@
 </li>
       <li><a href="pyopmnearwell.visualization.plotting.html#pyopmnearwell.visualization.plotting.connections_injectivities">connections_injectivities() (in module pyopmnearwell.visualization.plotting)</a>
 </li>
+      <li><a href="pyopmnearwell.utils.writefile.html#pyopmnearwell.utils.writefile.create_3dgrid">create_3dgrid() (in module pyopmnearwell.utils.writefile)</a>
+</li>
       <li><a href="pyopmnearwell.visualization.reading.html#pyopmnearwell.visualization.reading.create_arrays_opm">create_arrays_opm() (in module pyopmnearwell.visualization.reading)</a>
 </li>
       <li><a href="pyopmnearwell.visualization.reading.html#pyopmnearwell.visualization.reading.create_arrays_resdata">create_arrays_resdata() (in module pyopmnearwell.visualization.reading)</a>
 </li>
-      <li><a href="pyopmnearwell.utils.writefile.html#pyopmnearwell.utils.writefile.crete_3dgrid">crete_3dgrid() (in module pyopmnearwell.utils.writefile)</a>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.create_ds">create_ds() (pyopmnearwell.ml.upscale.BaseUpscaler method)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.create_ensemble">create_ensemble() (in module pyopmnearwell.ml.ensemble)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -187,13 +209,17 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyopmnearwell.utils.formulas.html#pyopmnearwell.utils.formulas.equivalent_well_block_radius">equivalent_well_block_radius() (in module pyopmnearwell.utils.formulas)</a>
+      <li><a href="pyopmnearwell.ml.utils.html#pyopmnearwell.ml.utils.enable_determinism">enable_determinism() (in module pyopmnearwell.ml.utils)</a>
+</li>
+      <li><a href="pyopmnearwell.utils.formulas.html#pyopmnearwell.utils.formulas.equivalent_well_radius">equivalent_well_radius() (in module pyopmnearwell.utils.formulas)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyopmnearwell.visualization.plotting.html#pyopmnearwell.visualization.plotting.evaluate_projections">evaluate_projections() (in module pyopmnearwell.visualization.plotting)</a>
 </li>
       <li><a href="pyopmnearwell.ml.kerasify.html#pyopmnearwell.ml.kerasify.export_model">export_model() (in module pyopmnearwell.ml.kerasify)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.extract_features">extract_features() (in module pyopmnearwell.ml.ensemble)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -203,14 +229,16 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyopmnearwell.visualization.additional_plots.html#pyopmnearwell.visualization.additional_plots.factors">factors() (in module pyopmnearwell.visualization.additional_plots)</a>
 </li>
+      <li><a href="pyopmnearwell.ml.resdata_dataset.html#pyopmnearwell.ml.resdata_dataset.ResDataSet.features">features (pyopmnearwell.ml.resdata_dataset.ResDataSet attribute)</a>
+</li>
       <li><a href="pyopmnearwell.utils.mako.html#pyopmnearwell.utils.mako.fill_template">fill_template() (in module pyopmnearwell.utils.mako)</a>
 </li>
       <li><a href="pyopmnearwell.visualization.additional_plots.html#pyopmnearwell.visualization.additional_plots.final_time_maps">final_time_maps() (in module pyopmnearwell.visualization.additional_plots)</a>
 </li>
-      <li><a href="pyopmnearwell.visualization.plotting.html#pyopmnearwell.visualization.plotting.final_time_projections_bottom">final_time_projections_bottom() (in module pyopmnearwell.visualization.plotting)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyopmnearwell.visualization.plotting.html#pyopmnearwell.visualization.plotting.final_time_projections_bottom">final_time_projections_bottom() (in module pyopmnearwell.visualization.plotting)</a>
+</li>
       <li><a href="pyopmnearwell.visualization.plotting.html#pyopmnearwell.visualization.plotting.final_time_projections_layered">final_time_projections_layered() (in module pyopmnearwell.visualization.plotting)</a>
 </li>
       <li><a href="pyopmnearwell.visualization.plotting.html#pyopmnearwell.visualization.plotting.final_time_projections_max">final_time_projections_max() (in module pyopmnearwell.visualization.plotting)</a>
@@ -225,10 +253,34 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.get_analytical_PI">get_analytical_PI() (pyopmnearwell.ml.upscale.BaseUpscaler method)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.get_analytical_WI">get_analytical_WI() (pyopmnearwell.ml.upscale.BaseUpscaler method)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.get_data_WI">get_data_WI() (pyopmnearwell.ml.upscale.BaseUpscaler method)</a>
+</li>
       <li><a href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.get_FCNN">get_FCNN() (in module pyopmnearwell.ml.nn)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.get_flags">get_flags() (in module pyopmnearwell.ml.ensemble)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.get_GRU">get_GRU() (in module pyopmnearwell.ml.nn)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.get_homogeneous_values">get_homogeneous_values() (pyopmnearwell.ml.upscale.BaseUpscaler method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.get_horizontically_integrated_values">get_horizontically_integrated_values() (pyopmnearwell.ml.upscale.BaseUpscaler method)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.get_LSTM">get_LSTM() (in module pyopmnearwell.ml.nn)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.get_radii">get_radii() (pyopmnearwell.ml.upscale.BaseUpscaler method)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.get_RNN">get_RNN() (in module pyopmnearwell.ml.nn)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.get_timesteps">get_timesteps() (pyopmnearwell.ml.upscale.BaseUpscaler method)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.get_vertically_averaged_values">get_vertically_averaged_values() (pyopmnearwell.ml.upscale.BaseUpscaler method)</a>
+</li>
       <li><a href="pyopmnearwell.ml.scaler_layers.html#pyopmnearwell.ml.scaler_layers.ScalerLayer.get_weights">get_weights() (pyopmnearwell.ml.scaler_layers.ScalerLayer method)</a>
 </li>
       <li><a href="pyopmnearwell.utils.units.html#pyopmnearwell.utils.units.GRAVITATIONAL_ACCELERATION">GRAVITATIONAL_ACCELERATION (in module pyopmnearwell.utils.units)</a>
@@ -245,9 +297,19 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.handle_zeros_in_scale">handle_zeros_in_scale() (in module pyopmnearwell.ml.nn)</a>
+</li>
       <li><a href="pyopmnearwell.utils.formulas.html#pyopmnearwell.utils.formulas.hydrostatic_fluid">hydrostatic_fluid() (in module pyopmnearwell.utils.formulas)</a>
 </li>
       <li><a href="pyopmnearwell.utils.formulas.html#pyopmnearwell.utils.formulas.hydrostatic_gas">hydrostatic_gas() (in module pyopmnearwell.utils.formulas)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.integrate_fine_scale_value">integrate_fine_scale_value() (in module pyopmnearwell.ml.ensemble)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -258,6 +320,8 @@
       <li><a href="pyopmnearwell.core.pyopmnearwell.html#pyopmnearwell.core.pyopmnearwell.main">main() (in module pyopmnearwell.core.pyopmnearwell)</a>
 
       <ul>
+        <li><a href="pyopmnearwell.ml.resdata_dataset.html#pyopmnearwell.ml.resdata_dataset.main">(in module pyopmnearwell.ml.resdata_dataset)</a>
+</li>
         <li><a href="pyopmnearwell.visualization.getpressure.html#pyopmnearwell.visualization.getpressure.main">(in module pyopmnearwell.visualization.getpressure)</a>
 </li>
         <li><a href="pyopmnearwell.visualization.plotting.html#pyopmnearwell.visualization.plotting.main">(in module pyopmnearwell.visualization.plotting)</a>
@@ -270,6 +334,8 @@
       <li><a href="pyopmnearwell.utils.writefile.html#pyopmnearwell.utils.writefile.manage_tables">manage_tables() (in module pyopmnearwell.utils.writefile)</a>
 </li>
       <li><a href="pyopmnearwell.utils.writefile.html#pyopmnearwell.utils.writefile.map_zcords">map_zcords() (in module pyopmnearwell.utils.writefile)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.memory_efficient_sample">memory_efficient_sample() (in module pyopmnearwell.ml.ensemble)</a>
 </li>
       <li><a href="pyopmnearwell.ml.scaler_layers.html#pyopmnearwell.ml.scaler_layers.ScalerLayer.min">min (pyopmnearwell.ml.scaler_layers.ScalerLayer attribute)</a>
 </li>
@@ -289,13 +355,23 @@
 </li>
         <li><a href="pyopmnearwell.ml.html#module-pyopmnearwell.ml">pyopmnearwell.ml</a>
 </li>
+        <li><a href="pyopmnearwell.ml.analysis.html#module-pyopmnearwell.ml.analysis">pyopmnearwell.ml.analysis</a>
+</li>
+        <li><a href="pyopmnearwell.ml.ensemble.html#module-pyopmnearwell.ml.ensemble">pyopmnearwell.ml.ensemble</a>
+</li>
         <li><a href="pyopmnearwell.ml.integration.html#module-pyopmnearwell.ml.integration">pyopmnearwell.ml.integration</a>
 </li>
         <li><a href="pyopmnearwell.ml.kerasify.html#module-pyopmnearwell.ml.kerasify">pyopmnearwell.ml.kerasify</a>
 </li>
         <li><a href="pyopmnearwell.ml.nn.html#module-pyopmnearwell.ml.nn">pyopmnearwell.ml.nn</a>
 </li>
+        <li><a href="pyopmnearwell.ml.resdata_dataset.html#module-pyopmnearwell.ml.resdata_dataset">pyopmnearwell.ml.resdata_dataset</a>
+</li>
         <li><a href="pyopmnearwell.ml.scaler_layers.html#module-pyopmnearwell.ml.scaler_layers">pyopmnearwell.ml.scaler_layers</a>
+</li>
+        <li><a href="pyopmnearwell.ml.upscale.html#module-pyopmnearwell.ml.upscale">pyopmnearwell.ml.upscale</a>
+</li>
+        <li><a href="pyopmnearwell.ml.utils.html#module-pyopmnearwell.ml.utils">pyopmnearwell.ml.utils</a>
 </li>
         <li><a href="pyopmnearwell.utils.html#module-pyopmnearwell.utils">pyopmnearwell.utils</a>
 </li>
@@ -332,12 +408,24 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyopmnearwell.visualization.additional_plots.html#pyopmnearwell.visualization.additional_plots.nca_nb">nca_nb() (in module pyopmnearwell.visualization.additional_plots)</a>
 </li>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.Upscaler.num_layers">num_layers (pyopmnearwell.ml.upscale.Upscaler property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.Upscaler.num_timesteps">num_timesteps (pyopmnearwell.ml.upscale.Upscaler property)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.Upscaler.num_xcells">num_xcells (pyopmnearwell.ml.upscale.Upscaler property)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.Upscaler.num_zcells">num_zcells (pyopmnearwell.ml.upscale.Upscaler property)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyopmnearwell.ml.resdata_dataset.html#pyopmnearwell.ml.resdata_dataset.ResDataSet.on_epoch_end">on_epoch_end() (pyopmnearwell.ml.resdata_dataset.ResDataSet method)</a>
+</li>
       <li><a href="pyopmnearwell.visualization.plotting.html#pyopmnearwell.visualization.plotting.over_time_layers">over_time_layers() (in module pyopmnearwell.visualization.plotting)</a>
 </li>
       <li><a href="pyopmnearwell.visualization.plotting.html#pyopmnearwell.visualization.plotting.over_time_max_distance">over_time_max_distance() (in module pyopmnearwell.visualization.plotting)</a>
@@ -356,7 +444,11 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyopmnearwell.utils.formulas.html#pyopmnearwell.utils.formulas.peaceman_matrix_WI">peaceman_matrix_WI() (in module pyopmnearwell.utils.formulas)</a>
+</li>
       <li><a href="pyopmnearwell.utils.formulas.html#pyopmnearwell.utils.formulas.peaceman_WI">peaceman_WI() (in module pyopmnearwell.utils.formulas)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.analysis.html#pyopmnearwell.ml.analysis.plot_analysis">plot_analysis() (in module pyopmnearwell.ml.analysis)</a>
 </li>
       <li><a href="pyopmnearwell.visualization.plotting.html#pyopmnearwell.visualization.plotting.plot_results">plot_results() (in module pyopmnearwell.visualization.plotting)</a>
 </li>
@@ -395,6 +487,20 @@
 </li>
       </ul></li>
       <li>
+    pyopmnearwell.ml.analysis
+
+      <ul>
+        <li><a href="pyopmnearwell.ml.analysis.html#module-pyopmnearwell.ml.analysis">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyopmnearwell.ml.ensemble
+
+      <ul>
+        <li><a href="pyopmnearwell.ml.ensemble.html#module-pyopmnearwell.ml.ensemble">module</a>
+</li>
+      </ul></li>
+      <li>
     pyopmnearwell.ml.integration
 
       <ul>
@@ -416,10 +522,33 @@
 </li>
       </ul></li>
       <li>
+    pyopmnearwell.ml.resdata_dataset
+
+      <ul>
+        <li><a href="pyopmnearwell.ml.resdata_dataset.html#module-pyopmnearwell.ml.resdata_dataset">module</a>
+</li>
+      </ul></li>
+      <li>
     pyopmnearwell.ml.scaler_layers
 
       <ul>
         <li><a href="pyopmnearwell.ml.scaler_layers.html#module-pyopmnearwell.ml.scaler_layers">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyopmnearwell.ml.upscale
+
+      <ul>
+        <li><a href="pyopmnearwell.ml.upscale.html#module-pyopmnearwell.ml.upscale">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    pyopmnearwell.ml.utils
+
+      <ul>
+        <li><a href="pyopmnearwell.ml.utils.html#module-pyopmnearwell.ml.utils">module</a>
 </li>
       </ul></li>
       <li>
@@ -436,8 +565,6 @@
         <li><a href="pyopmnearwell.utils.formulas.html#module-pyopmnearwell.utils.formulas">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyopmnearwell.utils.inputvalues
 
@@ -523,6 +650,8 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyopmnearwell.ml.resdata_dataset.html#pyopmnearwell.ml.resdata_dataset.ResDataSet.read_data">read_data() (pyopmnearwell.ml.resdata_dataset.ResDataSet method)</a>
+</li>
       <li><a href="pyopmnearwell.visualization.reading.html#pyopmnearwell.visualization.reading.read_opm">read_opm() (in module pyopmnearwell.visualization.reading)</a>
 </li>
       <li><a href="pyopmnearwell.visualization.reading.html#pyopmnearwell.visualization.reading.read_resdata">read_resdata() (in module pyopmnearwell.visualization.reading)</a>
@@ -535,17 +664,25 @@
 </li>
       <li><a href="pyopmnearwell.utils.inputvalues.html#pyopmnearwell.utils.inputvalues.readhysteresis">readhysteresis() (in module pyopmnearwell.utils.inputvalues)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyopmnearwell.utils.inputvalues.html#pyopmnearwell.utils.inputvalues.readsalt">readsalt() (in module pyopmnearwell.utils.inputvalues)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyopmnearwell.utils.inputvalues.html#pyopmnearwell.utils.inputvalues.readthefirstpart">readthefirstpart() (in module pyopmnearwell.utils.inputvalues)</a>
 </li>
       <li><a href="pyopmnearwell.utils.inputvalues.html#pyopmnearwell.utils.inputvalues.readthesecondpart">readthesecondpart() (in module pyopmnearwell.utils.inputvalues)</a>
 </li>
       <li><a href="pyopmnearwell.ml.integration.html#pyopmnearwell.ml.integration.recompile_flow">recompile_flow() (in module pyopmnearwell.ml.integration)</a>
 </li>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.reduce_data_size">reduce_data_size() (pyopmnearwell.ml.upscale.BaseUpscaler method)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.resdata_dataset.html#pyopmnearwell.ml.resdata_dataset.ResDataSet.ResdataFile_to_datapoint">ResdataFile_to_datapoint() (pyopmnearwell.ml.resdata_dataset.ResDataSet method)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.resdata_dataset.html#pyopmnearwell.ml.resdata_dataset.ResDataSet">ResDataSet (class in pyopmnearwell.ml.resdata_dataset)</a>
+</li>
       <li><a href="pyopmnearwell.utils.writefile.html#pyopmnearwell.utils.writefile.reservoir_files">reservoir_files() (in module pyopmnearwell.utils.writefile)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.run_ensemble">run_ensemble() (in module pyopmnearwell.ml.ensemble)</a>
 </li>
       <li><a href="pyopmnearwell.ml.integration.html#pyopmnearwell.ml.integration.run_integration">run_integration() (in module pyopmnearwell.ml.integration)</a>
 </li>
@@ -563,17 +700,27 @@
 </li>
       <li><a href="pyopmnearwell.ml.scaler_layers.html#pyopmnearwell.ml.scaler_layers.ScalerLayer.scalar">scalar (pyopmnearwell.ml.scaler_layers.ScalerLayer attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.scale_and_evaluate">scale_and_evaluate() (in module pyopmnearwell.ml.nn)</a>
 </li>
       <li><a href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.scale_and_prepare_dataset">scale_and_prepare_dataset() (in module pyopmnearwell.ml.nn)</a>
 </li>
       <li><a href="pyopmnearwell.ml.scaler_layers.html#pyopmnearwell.ml.scaler_layers.ScalerLayer">ScalerLayer (class in pyopmnearwell.ml.scaler_layers)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyopmnearwell.ml.analysis.html#pyopmnearwell.ml.analysis.sensitivity_analysis">sensitivity_analysis() (in module pyopmnearwell.ml.analysis)</a>
+</li>
+      <li><a href="pyopmnearwell.utils.plotting.html#pyopmnearwell.utils.plotting.set_latex_params">set_latex_params() (in module pyopmnearwell.utils.plotting)</a>
+</li>
       <li><a href="pyopmnearwell.ml.scaler_layers.html#pyopmnearwell.ml.scaler_layers.ScalerLayer.set_weights">set_weights() (pyopmnearwell.ml.scaler_layers.ScalerLayer method)</a>
 </li>
+      <li><a href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.setup_ensemble">setup_ensemble() (in module pyopmnearwell.ml.ensemble)</a>
+</li>
       <li><a href="pyopmnearwell.utils.runs.html#pyopmnearwell.utils.runs.simulations">simulations() (in module pyopmnearwell.utils.runs)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.Upscaler.single_feature_shape">single_feature_shape (pyopmnearwell.ml.upscale.Upscaler property)</a>
+</li>
+      <li><a href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.store_dataset">store_dataset() (in module pyopmnearwell.ml.ensemble)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -581,6 +728,8 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyopmnearwell.ml.resdata_dataset.html#pyopmnearwell.ml.resdata_dataset.ResDataSet.targets">targets (pyopmnearwell.ml.resdata_dataset.ResDataSet attribute)</a>
+</li>
       <li><a href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.train">train() (in module pyopmnearwell.ml.nn)</a>
 </li>
   </ul></td>
@@ -596,6 +745,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyopmnearwell.utils.units.html#pyopmnearwell.utils.units.UNIVERSAL_GAS_CONSTANT">UNIVERSAL_GAS_CONSTANT (in module pyopmnearwell.utils.units)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.Upscaler">Upscaler (class in pyopmnearwell.ml.upscale)</a>
 </li>
   </ul></td>
 </tr></table>

@@ -10,9 +10,9 @@ import math as mt
 import numpy as np
 import pandas as pd
 import itertools
-from ecl.summary import EclSum
-from ecl.eclfile import EclFile
-from ecl.grid import EclGrid
+from resdata.summary import Summary
+from resdata.resfile import ResdataFile
+from resdata.grid import Grid
 from mako.template import Template
 import matplotlib.pyplot as plt
 
@@ -79,10 +79,10 @@ for i in range(mt.floor(nsimulations / NPRUNS)):
         zcord = np.load(f"./co2_{NPRUNS*i+j}/output/zspace.npy")
         z_centers = 0.5 * (zcord[1:] + zcord[:-1])
         nz_cells = len(z_centers)
-        smspec = EclSum(f"./co2_{NPRUNS*i+j}/output/CO2_{NPRUNS*i+j}.SMSPEC")
-        unrst = EclFile(f"./co2_{NPRUNS*i+j}/output/CO2_{NPRUNS*i+j}.UNRST")
-        init = EclFile(f"./co2_{NPRUNS*i+j}/output/CO2_{NPRUNS*i+j}.INIT")
-        grid = EclGrid(f"./co2_{NPRUNS*i+j}/output/CO2_{NPRUNS*i+j}.EGRID")
+        smspec = Summary(f"./co2_{NPRUNS*i+j}/output/CO2_{NPRUNS*i+j}.SMSPEC")
+        unrst = ResdataFile(f"./co2_{NPRUNS*i+j}/output/CO2_{NPRUNS*i+j}.UNRST")
+        init = ResdataFile(f"./co2_{NPRUNS*i+j}/output/CO2_{NPRUNS*i+j}.INIT")
+        grid = Grid(f"./co2_{NPRUNS*i+j}/output/CO2_{NPRUNS*i+j}.EGRID")
         phiv = np.array(init.iget_kw("PORV")[0][:])
         sgas = np.array(unrst.iget_kw("SGAS")[-1][:])
         r_s = np.array(unrst.iget_kw("RSW")[-1][:])
@@ -115,10 +115,10 @@ for j in range(remaining):
     zcord = np.load(f"./co2_{finished+j}/output/zspace.npy")
     z_centers = 0.5 * (zcord[1:] + zcord[:-1])
     nz_cells = len(z_centers)
-    smspec = EclSum(f"./co2_{finished+j}/output/CO2_{finished+j}.SMSPEC")
-    unrst = EclFile(f"./co2_{finished+j}/output/CO2_{finished+j}.UNRST")
-    init = EclFile(f"./co2_{finished+j}/output/CO2_{finished+j}.INIT")
-    grid = EclGrid(f"./co2_{finished+j}/output/CO2_{finished+j}.EGRID")
+    smspec = Summary(f"./co2_{finished+j}/output/CO2_{finished+j}.SMSPEC")
+    unrst = ResdataFile(f"./co2_{finished+j}/output/CO2_{finished+j}.UNRST")
+    init = ResdataFile(f"./co2_{finished+j}/output/CO2_{finished+j}.INIT")
+    grid = Grid(f"./co2_{finished+j}/output/CO2_{finished+j}.EGRID")
     phiv = np.array(init.iget_kw("PORV")[0][:])
     sgas = np.array(unrst.iget_kw("SGAS")[-1][:])
     r_s = np.array(unrst.iget_kw("RSW")[-1][:])

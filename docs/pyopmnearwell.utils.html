@@ -16,14 +16,15 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="pyopmnearwell.utils.formulas module" href="pyopmnearwell.utils.formulas.html" />
-    <link rel="prev" title="pyopmnearwell.ml.scaler_layers module" href="pyopmnearwell.ml.scaler_layers.html" /> 
+    <link rel="prev" title="pyopmnearwell.ml.utils module" href="pyopmnearwell.ml.utils.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -48,6 +49,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_file.html">Configuration file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">pyopmnearwell Python API</a></li>
@@ -93,10 +95,11 @@
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.utils.formulas.html#pyopmnearwell.utils.formulas.cell_size"><code class="docutils literal notranslate"><span class="pre">cell_size()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.utils.formulas.html#pyopmnearwell.utils.formulas.co2brinepvt"><code class="docutils literal notranslate"><span class="pre">co2brinepvt()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.utils.formulas.html#pyopmnearwell.utils.formulas.data_WI"><code class="docutils literal notranslate"><span class="pre">data_WI()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.utils.formulas.html#pyopmnearwell.utils.formulas.equivalent_well_block_radius"><code class="docutils literal notranslate"><span class="pre">equivalent_well_block_radius()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.utils.formulas.html#pyopmnearwell.utils.formulas.equivalent_well_radius"><code class="docutils literal notranslate"><span class="pre">equivalent_well_radius()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.utils.formulas.html#pyopmnearwell.utils.formulas.hydrostatic_fluid"><code class="docutils literal notranslate"><span class="pre">hydrostatic_fluid()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.utils.formulas.html#pyopmnearwell.utils.formulas.hydrostatic_gas"><code class="docutils literal notranslate"><span class="pre">hydrostatic_gas()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.utils.formulas.html#pyopmnearwell.utils.formulas.peaceman_WI"><code class="docutils literal notranslate"><span class="pre">peaceman_WI()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.utils.formulas.html#pyopmnearwell.utils.formulas.peaceman_matrix_WI"><code class="docutils literal notranslate"><span class="pre">peaceman_matrix_WI()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.utils.formulas.html#pyopmnearwell.utils.formulas.pyopmnearwell_correction"><code class="docutils literal notranslate"><span class="pre">pyopmnearwell_correction()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.utils.formulas.html#pyopmnearwell.utils.formulas.two_phase_peaceman_WI"><code class="docutils literal notranslate"><span class="pre">two_phase_peaceman_WI()</span></code></a></li>
 </ul>
@@ -116,6 +119,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pyopmnearwell.utils.plotting.html">pyopmnearwell.utils.plotting module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.utils.plotting.html#pyopmnearwell.utils.plotting.save_fig_and_data"><code class="docutils literal notranslate"><span class="pre">save_fig_and_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.utils.plotting.html#pyopmnearwell.utils.plotting.set_latex_params"><code class="docutils literal notranslate"><span class="pre">set_latex_params()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pyopmnearwell.utils.runs.html">pyopmnearwell.utils.runs module</a><ul>
@@ -130,7 +134,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pyopmnearwell.utils.writefile.html">pyopmnearwell.utils.writefile module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.utils.writefile.html#pyopmnearwell.utils.writefile.crete_3dgrid"><code class="docutils literal notranslate"><span class="pre">crete_3dgrid()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.utils.writefile.html#pyopmnearwell.utils.writefile.create_3dgrid"><code class="docutils literal notranslate"><span class="pre">create_3dgrid()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.utils.writefile.html#pyopmnearwell.utils.writefile.d3_grids"><code class="docutils literal notranslate"><span class="pre">d3_grids()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.utils.writefile.html#pyopmnearwell.utils.writefile.handle_core"><code class="docutils literal notranslate"><span class="pre">handle_core()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.utils.writefile.html#pyopmnearwell.utils.writefile.manage_grid"><code class="docutils literal notranslate"><span class="pre">manage_grid()</span></code></a></li>
@@ -152,7 +156,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="pyopmnearwell.ml.scaler_layers.html" class="btn btn-neutral float-left" title="pyopmnearwell.ml.scaler_layers module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyopmnearwell.ml.utils.html" class="btn btn-neutral float-left" title="pyopmnearwell.ml.utils module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="pyopmnearwell.utils.formulas.html" class="btn btn-neutral float-right" title="pyopmnearwell.utils.formulas module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

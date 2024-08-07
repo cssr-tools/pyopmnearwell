@@ -13,7 +13,7 @@ import os
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-from ecl.eclfile import EclFile
+from resdata.resfile import ResdataFile
 from mako.template import Template
 
 np.random.seed(7)
@@ -109,7 +109,7 @@ for i in range(round(nradis * NPOINTS / NPRUNS)):
                 * BOFAC
                 / VISCOSCITY
             )
-        rst = EclFile(f"./co2_{NPRUNS*i+j}/output/CO2_{NPRUNS*i+j}.UNRST")
+        rst = ResdataFile(f"./co2_{NPRUNS*i+j}/output/CO2_{NPRUNS*i+j}.UNRST")
         pressure = np.array(rst.iget_kw("PRESSURE")[-1])
         pw = pressure[0]
         cell_pressures = pressure[len(pressure) - len(r_e[-1]) :]

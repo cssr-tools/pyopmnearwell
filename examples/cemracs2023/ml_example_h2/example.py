@@ -7,7 +7,7 @@ Script to run Flow for a random input variable
 
 import os
 import numpy as np
-from ecl.summary import EclSum
+from resdata.summary import Summary
 from mako.template import Template
 import matplotlib.pyplot as plt
 
@@ -43,7 +43,7 @@ for i in range(round(npoints / npruns)):
         + f"pyopmnearwell -i h2_{npruns*i+4}.txt -o h2_{npruns*i+4} -p '' & wait"
     )
     for j in range(npruns):
-        smspec = EclSum(f"./h2_{npruns*i+j}/output/H2_{npruns*i+j}.SMSPEC")
+        smspec = Summary(f"./h2_{npruns*i+j}/output/H2_{npruns*i+j}.SMSPEC")
         ratio_fgpt_to_fgit.append(smspec["FGPT"].values[-1]/smspec["FGIT"].values[-1])
         wbhp.append(max(smspec["WBHP:PRO0"].values))
         fgit.append(smspec["FGIT"].values[-1])

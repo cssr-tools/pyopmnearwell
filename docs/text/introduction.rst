@@ -7,7 +7,7 @@ Introduction
 
 This documentation describes the content of the **pyopmnearwell** package.
 The numerical studies are performed using the 
-`Flow <https://opm-project.org/?page_id=19>`_ simulator.
+`OPM Flow <https://opm-project.org/?page_id=19>`_ simulator.
 
 Concept
 -------
@@ -43,14 +43,6 @@ where
 - \-z, \-zoom: xlim in meters for the zoomed in plots (20 by default).
 - \-s, \-scale: Scale for the x axis in the figures: 'normal' or 'log' ('normal' by default).
 - \-m, \-model: Simulated model (5th row in the configuration file). This is used for the plotting compare method (it gets overwritten by the configuration file) ('co2store' by default).
-
-Installation
-------------
-
-See the `Github page <https://github.com/cssr-tools/pyopmnearwell>`_.
-
-.. tip::
-    Check the `CI.yml <https://github.com/cssr-tools/pyopmnearwell/blob/main/.github/workflows/CI.yml>`_ file.
 
 .. warning::
     The H2CH4 template in the h2store model folder is under development and it is based on an input deck available in 

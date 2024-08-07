@@ -16,7 +16,7 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
@@ -48,6 +48,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_file.html">Configuration file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">pyopmnearwell Python API</a></li>
@@ -92,23 +93,17 @@
 <dd><p>Fill a Mako template with the given variables.</p>
 <p>The template is either loaded from a file or passed as a string. If rendering the
 template raises an error, render the error s.t. it can be easily debugged.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>var</strong> (<em>dict</em>) – A dictionary containing the variables to be used in the template.</p></li>
-<li><p><strong>filename</strong> (<em>Optional</em><em>[</em><em>str</em><em> | </em><em>pathlib.Path</em><em>]</em><em>, </em><em>optional</em>) – The path to the template
-file. Defaults to None.</p></li>
-<li><p><strong>text</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – The text of the template. Defaults to None.</p></li>
-</ul>
+<dl>
+<dt>Args:</dt><dd><p>var (dict): A dictionary containing the variables to be used in the template.
+filename (Optional[str | pathlib.Path], optional): The path to the template</p>
+<blockquote>
+<div><p>file. Defaults to None.</p>
+</div></blockquote>
+<p>text (Optional[str], optional): The text of the template. Defaults to None.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The filled template as a string.</p>
+<dt>Returns:</dt><dd><p>str: The filled template as a string.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>Error</strong> – When the template cannot be filled.</p>
+<dt>Raises:</dt><dd><p>Error: When the template cannot be filled.</p>
 </dd>
 </dl>
 </dd></dl>

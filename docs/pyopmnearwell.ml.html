@@ -16,13 +16,14 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pyopmnearwell.ml.data module" href="pyopmnearwell.ml.data.html" />
+    <link rel="next" title="pyopmnearwell.ml.analysis module" href="pyopmnearwell.ml.analysis.html" />
     <link rel="prev" title="pyopmnearwell.core.pyopmnearwell module" href="pyopmnearwell.core.pyopmnearwell.html" /> 
 </head>
 
@@ -48,6 +49,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_file.html">Configuration file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">pyopmnearwell Python API</a></li>
@@ -88,8 +90,24 @@
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="pyopmnearwell.ml.data.html">pyopmnearwell.ml.data module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pyopmnearwell.ml.ensemble.html">pyopmnearwell.ml.ensemble module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyopmnearwell.ml.analysis.html">pyopmnearwell.ml.analysis module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.analysis.html#pyopmnearwell.ml.analysis.plot_analysis"><code class="docutils literal notranslate"><span class="pre">plot_analysis()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.analysis.html#pyopmnearwell.ml.analysis.sensitivity_analysis"><code class="docutils literal notranslate"><span class="pre">sensitivity_analysis()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyopmnearwell.ml.ensemble.html">pyopmnearwell.ml.ensemble module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.calculate_WI"><code class="docutils literal notranslate"><span class="pre">calculate_WI()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.calculate_radii"><code class="docutils literal notranslate"><span class="pre">calculate_radii()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.create_ensemble"><code class="docutils literal notranslate"><span class="pre">create_ensemble()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.extract_features"><code class="docutils literal notranslate"><span class="pre">extract_features()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.get_flags"><code class="docutils literal notranslate"><span class="pre">get_flags()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.integrate_fine_scale_value"><code class="docutils literal notranslate"><span class="pre">integrate_fine_scale_value()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.memory_efficient_sample"><code class="docutils literal notranslate"><span class="pre">memory_efficient_sample()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.run_ensemble"><code class="docutils literal notranslate"><span class="pre">run_ensemble()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.setup_ensemble"><code class="docutils literal notranslate"><span class="pre">setup_ensemble()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.ensemble.html#pyopmnearwell.ml.ensemble.store_dataset"><code class="docutils literal notranslate"><span class="pre">store_dataset()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="pyopmnearwell.ml.integration.html">pyopmnearwell.ml.integration module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.integration.html#pyopmnearwell.ml.integration.recompile_flow"><code class="docutils literal notranslate"><span class="pre">recompile_flow()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.integration.html#pyopmnearwell.ml.integration.run_integration"><code class="docutils literal notranslate"><span class="pre">run_integration()</span></code></a></li>
@@ -106,11 +124,27 @@
 <li class="toctree-l1"><a class="reference internal" href="pyopmnearwell.ml.nn.html">pyopmnearwell.ml.nn module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.build_model"><code class="docutils literal notranslate"><span class="pre">build_model()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.get_FCNN"><code class="docutils literal notranslate"><span class="pre">get_FCNN()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.get_GRU"><code class="docutils literal notranslate"><span class="pre">get_GRU()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.get_LSTM"><code class="docutils literal notranslate"><span class="pre">get_LSTM()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.get_RNN"><code class="docutils literal notranslate"><span class="pre">get_RNN()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.handle_zeros_in_scale"><code class="docutils literal notranslate"><span class="pre">handle_zeros_in_scale()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.save_tune_results"><code class="docutils literal notranslate"><span class="pre">save_tune_results()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.scale_and_evaluate"><code class="docutils literal notranslate"><span class="pre">scale_and_evaluate()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.scale_and_prepare_dataset"><code class="docutils literal notranslate"><span class="pre">scale_and_prepare_dataset()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.train"><code class="docutils literal notranslate"><span class="pre">train()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.nn.html#pyopmnearwell.ml.nn.tune"><code class="docutils literal notranslate"><span class="pre">tune()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyopmnearwell.ml.resdata_dataset.html">pyopmnearwell.ml.resdata_dataset module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.resdata_dataset.html#pyopmnearwell.ml.resdata_dataset.ResDataSet"><code class="docutils literal notranslate"><span class="pre">ResDataSet</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.resdata_dataset.html#pyopmnearwell.ml.resdata_dataset.ResDataSet.ResdataFile_to_datapoint"><code class="docutils literal notranslate"><span class="pre">ResDataSet.ResdataFile_to_datapoint()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.resdata_dataset.html#pyopmnearwell.ml.resdata_dataset.ResDataSet.features"><code class="docutils literal notranslate"><span class="pre">ResDataSet.features</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.resdata_dataset.html#pyopmnearwell.ml.resdata_dataset.ResDataSet.on_epoch_end"><code class="docutils literal notranslate"><span class="pre">ResDataSet.on_epoch_end()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.resdata_dataset.html#pyopmnearwell.ml.resdata_dataset.ResDataSet.read_data"><code class="docutils literal notranslate"><span class="pre">ResDataSet.read_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.resdata_dataset.html#pyopmnearwell.ml.resdata_dataset.ResDataSet.targets"><code class="docutils literal notranslate"><span class="pre">ResDataSet.targets</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.resdata_dataset.html#pyopmnearwell.ml.resdata_dataset.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pyopmnearwell.ml.scaler_layers.html">pyopmnearwell.ml.scaler_layers module</a><ul>
@@ -137,6 +171,38 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="pyopmnearwell.ml.upscale.html">pyopmnearwell.ml.upscale module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler"><code class="docutils literal notranslate"><span class="pre">BaseUpscaler</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler._abc_impl"><code class="docutils literal notranslate"><span class="pre">BaseUpscaler._abc_impl</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.create_ds"><code class="docutils literal notranslate"><span class="pre">BaseUpscaler.create_ds()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.get_analytical_PI"><code class="docutils literal notranslate"><span class="pre">BaseUpscaler.get_analytical_PI()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.get_analytical_WI"><code class="docutils literal notranslate"><span class="pre">BaseUpscaler.get_analytical_WI()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.get_data_WI"><code class="docutils literal notranslate"><span class="pre">BaseUpscaler.get_data_WI()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.get_homogeneous_values"><code class="docutils literal notranslate"><span class="pre">BaseUpscaler.get_homogeneous_values()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.get_horizontically_integrated_values"><code class="docutils literal notranslate"><span class="pre">BaseUpscaler.get_horizontically_integrated_values()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.get_radii"><code class="docutils literal notranslate"><span class="pre">BaseUpscaler.get_radii()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.get_timesteps"><code class="docutils literal notranslate"><span class="pre">BaseUpscaler.get_timesteps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.get_vertically_averaged_values"><code class="docutils literal notranslate"><span class="pre">BaseUpscaler.get_vertically_averaged_values()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.BaseUpscaler.reduce_data_size"><code class="docutils literal notranslate"><span class="pre">BaseUpscaler.reduce_data_size()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.Upscaler"><code class="docutils literal notranslate"><span class="pre">Upscaler</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.Upscaler._abc_impl"><code class="docutils literal notranslate"><span class="pre">Upscaler._abc_impl</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.Upscaler._is_protocol"><code class="docutils literal notranslate"><span class="pre">Upscaler._is_protocol</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.Upscaler.angle"><code class="docutils literal notranslate"><span class="pre">Upscaler.angle</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.Upscaler.num_layers"><code class="docutils literal notranslate"><span class="pre">Upscaler.num_layers</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.Upscaler.num_timesteps"><code class="docutils literal notranslate"><span class="pre">Upscaler.num_timesteps</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.Upscaler.num_xcells"><code class="docutils literal notranslate"><span class="pre">Upscaler.num_xcells</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.Upscaler.num_zcells"><code class="docutils literal notranslate"><span class="pre">Upscaler.num_zcells</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyopmnearwell.ml.upscale.html#pyopmnearwell.ml.upscale.Upscaler.single_feature_shape"><code class="docutils literal notranslate"><span class="pre">Upscaler.single_feature_shape</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyopmnearwell.ml.utils.html">pyopmnearwell.ml.utils module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyopmnearwell.ml.utils.html#pyopmnearwell.ml.utils.enable_determinism"><code class="docutils literal notranslate"><span class="pre">enable_determinism()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </div>
 </section>
@@ -150,7 +216,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="pyopmnearwell.core.pyopmnearwell.html" class="btn btn-neutral float-left" title="pyopmnearwell.core.pyopmnearwell module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pyopmnearwell.ml.data.html" class="btn btn-neutral float-right" title="pyopmnearwell.ml.data module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pyopmnearwell.ml.analysis.html" class="btn btn-neutral float-right" title="pyopmnearwell.ml.analysis module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -9,7 +9,7 @@ import os
 import math as mt
 import argparse
 import numpy as np
-from ecl.summary import EclSum
+from resdata.summary import Summary
 from mako.template import Template
 import matplotlib.pyplot as plt
 
@@ -103,7 +103,7 @@ for i in range(mt.floor(nsimulations / NPRUNS)):
     command += 'wait'
     os.system(command)
     for j in range(NPRUNS):
-        smspec = EclSum(f"./co2eor_{NPRUNS*i+j}/output/CO2EOR_{NPRUNS*i+j}.SMSPEC")
+        smspec = Summary(f"./co2eor_{NPRUNS*i+j}/output/CO2EOR_{NPRUNS*i+j}.SMSPEC")
         fvit.append(smspec["FWIT"].values[-1]+smspec["FGIT"].values[-1] / STB_BBL)
         fvpt.append(smspec["FOPT"].values[-1]+smspec["FWPT"].values[-1] + smspec["FGPT"].values[-1] / STB_BBL)
         fvit_fvpt.append(fvit[-1]-fvpt[-1])
@@ -120,7 +120,7 @@ for i in range(remaining):
 command += 'wait'
 os.system(command)
 for j in range(remaining):
-    smspec = EclSum(f"./co2eor_{finished+j}/output/CO2EOR_{finished+j}.SMSPEC")
+    smspec = Summary(f"./co2eor_{finished+j}/output/CO2EOR_{finished+j}.SMSPEC")
     fvit.append(smspec["FWIT"].values[-1]+smspec["FGIT"].values[-1] / STB_BBL)
     fvpt.append(smspec["FOPT"].values[-1]+smspec["FWPT"].values[-1] + smspec["FGPT"].values[-1] / STB_BBL)
     fvit_fvpt.append(fvit[-1]-fvpt[-1])

@@ -8,7 +8,7 @@ Script to run Flow for a random input variable
 import os
 import math as mt
 import numpy as np
-from ecl.summary import EclSum
+from resdata.summary import Summary
 from mako.template import Template
 import matplotlib.pyplot as plt
 
@@ -43,7 +43,7 @@ for i in range(mt.floor(nsimulations / npruns)):
         + f"pyopmnearwell -i h2_{npruns*i+4}.txt -o h2_{npruns*i+4} -p '' & wait"
     )
     for j in range(npruns):
-        smspec = EclSum(f"./h2_{npruns*i+j}/output/H2_{npruns*i+j}.SMSPEC")
+        smspec = Summary(f"./h2_{npruns*i+j}/output/H2_{npruns*i+j}.SMSPEC")
         fgit_fgpt.append(smspec["FGIT"].values[-1] - smspec["FGPT"].values[-1])
         fgit.append(smspec["FGIT"].values[-1])
         fgpt.append(smspec["FGPT"].values[-1])
@@ -54,7 +54,7 @@ for i in range(remaining):
     os.system(
         f"pyopmnearwell -i h2_{finished+i}.txt -o h2_{finished+i} -p '' & wait"
     )
-    smspec = EclSum(f"./h2_{finished+i}/output/H2_{finished+i}.SMSPEC")
+    smspec = Summary(f"./h2_{finished+i}/output/H2_{finished+i}.SMSPEC")
     fgit_fgpt.append(smspec["FGIT"].values[-1] - smspec["FGPT"].values[-1])
     fgit.append(smspec["FGIT"].values[-1])
     fgpt.append(smspec["FGPT"].values[-1])
