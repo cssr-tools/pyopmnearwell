@@ -16,14 +16,14 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pyopmnearwell.utils package" href="pyopmnearwell.utils.html" />
-    <link rel="prev" title="pyopmnearwell.ml.nn module" href="pyopmnearwell.ml.nn.html" /> 
+    <link rel="next" title="pyopmnearwell.ml.upscale module" href="pyopmnearwell.ml.upscale.html" />
+    <link rel="prev" title="pyopmnearwell.ml.resdata_dataset module" href="pyopmnearwell.ml.resdata_dataset.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -48,6 +48,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_file.html">Configuration file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">pyopmnearwell Python API</a></li>
@@ -94,6 +95,189 @@
 <p>See
 <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html">https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html</a>
 for an explanation of the transform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">activity_regularizer</span></code></dt><dd><p>Optional regularizer function for the output of this layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_dtype</span></code></dt><dd><p>The dtype of the layer’s computations.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></dt><dd><p>The dtype of the layer weights.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype_policy</span></code></dt><dd><p>The dtype policy associated with this layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">dynamic</span></code></dt><dd><p>Whether the layer is dynamic (eager-only); set in the constructor.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">inbound_nodes</span></code></dt><dd><p>Return Functional API nodes upstream of this layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">input</span></code></dt><dd><p>Retrieves the input tensor(s) of a layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_mask</span></code></dt><dd><p>Retrieves the input mask tensor(s) of a layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_shape</span></code></dt><dd><p>Retrieves the input shape(s) of a layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_spec</span></code></dt><dd><p><cite>InputSpec</cite> instance(s) describing the input format for this layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_adapted</span></code></dt><dd><p>Whether the layer has been fit to data already.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">losses</span></code></dt><dd><p>List of losses added using the <cite>add_loss()</cite> API.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">metrics</span></code></dt><dd><p>List of metrics added using the <cite>add_metric()</cite> API.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></dt><dd><p>Name of the layer (string), set in the constructor.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">name_scope</span></code></dt><dd><p>Returns a <cite>tf.name_scope</cite> instance for this class.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">non_trainable_variables</span></code></dt><dd><p>Sequence of non-trainable variables owned by this module and its submodules.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">non_trainable_weights</span></code></dt><dd><p>List of all non-trainable weights tracked by this layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">outbound_nodes</span></code></dt><dd><p>Return Functional API nodes downstream of this layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">output</span></code></dt><dd><p>Retrieves the output tensor(s) of a layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_mask</span></code></dt><dd><p>Retrieves the output mask tensor(s) of a layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_shape</span></code></dt><dd><p>Retrieves the output shape(s) of a layer.</p>
+</dd>
+<dt><strong>stateful</strong></dt><dd></dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">streaming</span></code></dt><dd><p>Whether <cite>adapt</cite> can be called twice without resetting the state.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">submodules</span></code></dt><dd><p>Sequence of all sub-modules.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">supports_masking</span></code></dt><dd><p>Whether this layer supports computing a mask using <cite>compute_mask</cite>.</p>
+</dd>
+<dt><strong>trainable</strong></dt><dd></dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">trainable_variables</span></code></dt><dd><p>Sequence of trainable variables owned by this module and its submodules.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">trainable_weights</span></code></dt><dd><p>List of all trainable weights tracked by this layer.</p>
+</dd>
+<dt><strong>updates</strong></dt><dd></dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">variable_dtype</span></code></dt><dd><p>Alias of <cite>Layer.dtype</cite>, the dtype of the weights.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">variables</span></code></dt><dd><p>Returns the list of all layer variables/weights.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></dt><dd><p>Returns the list of all layer variables/weights.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(*args, **kwargs)</p></td>
+<td><p>Wraps <cite>call</cite>, applying pre- and post-processing steps.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">adapt</span></code>(data)</p></td>
+<td><p>Fit the layer to the min and max of the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_loss</span></code>(losses, **kwargs)</p></td>
+<td><p>Add loss tensor(s), potentially dependent on layer inputs.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_metric</span></code>(value[, name])</p></td>
+<td><p>Adds metric tensor to the layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_update</span></code>(updates)</p></td>
+<td><p>Add update op(s), potentially dependent on layer inputs.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_variable</span></code>(*args, **kwargs)</p></td>
+<td><p>Deprecated, do NOT use! Alias for <cite>add_weight</cite>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_weight</span></code>([name, shape, dtype, ...])</p></td>
+<td><p>Adds a new variable to the layer.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply</span></code>(inputs, *args, **kwargs)</p></td>
+<td><p>Deprecated, do NOT use!</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">build</span></code>(input_shape)</p></td>
+<td><p>Initialize <code class="docutils literal notranslate"><span class="pre">data_min</span></code> and <code class="docutils literal notranslate"><span class="pre">data_max</span></code> with the default values if they have not been initialized yet.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_from_config</span></code>(config)</p></td>
+<td><p>Builds the layer's states with the supplied config dict.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyopmnearwell.ml.scaler_layers.MinMaxScalerLayer.call" title="pyopmnearwell.ml.scaler_layers.MinMaxScalerLayer.call"><code class="xref py py-obj docutils literal notranslate"><span class="pre">call</span></code></a>(inputs)</p></td>
+<td><p>This is where the layer's logic lives.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compile</span></code>([run_eagerly, steps_per_execution])</p></td>
+<td><p>Configures the layer for <cite>adapt</cite>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_mask</span></code>(inputs[, mask])</p></td>
+<td><p>Computes an output mask tensor.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_output_shape</span></code>(input_shape)</p></td>
+<td><p>Computes the output shape of the layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_output_signature</span></code>(input_signature)</p></td>
+<td><p>Compute the output tensor signature of the layer based on the inputs.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_params</span></code>()</p></td>
+<td><p>Count the total number of scalars composing the weights.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">finalize_state</span></code>()</p></td>
+<td><p>Finalizes the layers state after updating layer weights.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_config</span></code>(config)</p></td>
+<td><p>Creates a layer from its config.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_build_config</span></code>()</p></td>
+<td><p>Returns a dictionary with the layer's input shape.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_config</span></code>()</p></td>
+<td><p>Returns the config of the layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_input_at</span></code>(node_index)</p></td>
+<td><p>Retrieves the input tensor(s) of a layer at a given node.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_input_mask_at</span></code>(node_index)</p></td>
+<td><p>Retrieves the input mask tensor(s) of a layer at a given node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_input_shape_at</span></code>(node_index)</p></td>
+<td><p>Retrieves the input shape(s) of a layer at a given node.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_losses_for</span></code>(inputs)</p></td>
+<td><p>Deprecated, do NOT use!</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_output_at</span></code>(node_index)</p></td>
+<td><p>Retrieves the output tensor(s) of a layer at a given node.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_output_mask_at</span></code>(node_index)</p></td>
+<td><p>Retrieves the output mask tensor(s) of a layer at a given node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_output_shape_at</span></code>(node_index)</p></td>
+<td><p>Retrieves the output shape(s) of a layer at a given node.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_updates_for</span></code>(inputs)</p></td>
+<td><p>Deprecated, do NOT use!</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_weights</span></code>()</p></td>
+<td><p>Return parameters of the scaling.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_own_variables</span></code>(store)</p></td>
+<td><p>Loads the state of the layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_adapt_function</span></code>()</p></td>
+<td><p>Creates a function to execute one step of <cite>adapt</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_state</span></code>(layers)</p></td>
+<td><p>Merge the statistics of multiple preprocessing layers.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_state</span></code>()</p></td>
+<td><p>Resets the statistics of the preprocessing layer.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_own_variables</span></code>(store)</p></td>
+<td><p>Saves the state of the layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_weights</span></code>(weights)</p></td>
+<td><p>Set parameters of the scaling.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_state</span></code>(data)</p></td>
+<td><p>Accumulates statistics for the preprocessing layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">with_name_scope</span></code>(method)</p></td>
+<td><p>Decorator to automatically enter the module name scope.</p></td>
+</tr>
+</tbody>
+</table>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.scaler_layers.MinMaxScalerLayer._abc_impl">
 <span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.MinMaxScalerLayer._abc_impl" title="Link to this definition"></a></dt>
@@ -111,17 +295,15 @@ invocation, wrapping the creation of variables or other resources in
 <div><p>in <cite>__init__()</cite>, or in the <cite>build()</cite> method that is</p>
 </div></blockquote>
 <p>called automatically before <cite>call()</cite> executes for the first time.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>inputs</strong> – <p>Input tensor, or dict/list/tuple of input tensors.
-The first positional <cite>inputs</cite> argument is subject to special rules:
+<dl>
+<dt>Args:</dt><dd><dl>
+<dt>inputs: Input tensor, or dict/list/tuple of input tensors.</dt><dd><p>The first positional <cite>inputs</cite> argument is subject to special rules:
 - <cite>inputs</cite> must be explicitly passed. A layer cannot have zero</p>
 <blockquote>
 <div><p>arguments, and <cite>inputs</cite> cannot be provided via the default value
 of a keyword argument.</p>
 </div></blockquote>
-<ul>
+<ul class="simple">
 <li><p>NumPy array or Python scalar values in <cite>inputs</cite> get cast as
 tensors.</p></li>
 <li><p>Keras mask metadata is only collected from <cite>inputs</cite>.</p></li>
@@ -137,28 +319,26 @@ only.</p></li>
 TF.js, etc is only supported for <cite>inputs</cite> and not for tensors in
 positional and keyword arguments.</p></li>
 </ul>
-</p></li>
-<li><p><strong>*args</strong> – Additional positional arguments. May contain tensors, although
-this is not recommended, for the reasons above.</p></li>
-<li><p><strong>**kwargs</strong> – <p>Additional keyword arguments. May contain tensors, although
-this is not recommended, for the reasons above.
+</dd>
+<dt><a href="#id1"><span class="problematic" id="id2">*</span></a>args: Additional positional arguments. May contain tensors, although</dt><dd><p>this is not recommended, for the reasons above.</p>
+</dd>
+<dt><a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: Additional keyword arguments. May contain tensors, although</dt><dd><p>this is not recommended, for the reasons above.
 The following optional keyword arguments are reserved:
 - <cite>training</cite>: Boolean scalar tensor of Python boolean indicating</p>
 <blockquote>
 <div><p>whether the <cite>call</cite> is meant for training or inference.</p>
 </div></blockquote>
-<ul>
+<ul class="simple">
 <li><p><cite>mask</cite>: Boolean input mask. If the layer’s <cite>call()</cite> method takes a
 <cite>mask</cite> argument, its default value will be set to the mask
 generated for <cite>inputs</cite> by the previous layer (if <cite>input</cite> did come
 from a layer that generated a corresponding mask, i.e. if it came
 from a Keras layer with masking support).</p></li>
 </ul>
-</p></li>
-</ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A tensor or list/tuple of tensors.</p>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>A tensor or list/tuple of tensors.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -173,6 +353,161 @@ from a Keras layer with masking support).</p></li>
 <p>See
 <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html">https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html</a>
 for an explanation of the transformation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">activity_regularizer</span></code></dt><dd><p>Optional regularizer function for the output of this layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_dtype</span></code></dt><dd><p>The dtype of the layer’s computations.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></dt><dd><p>The dtype of the layer weights.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype_policy</span></code></dt><dd><p>The dtype policy associated with this layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">dynamic</span></code></dt><dd><p>Whether the layer is dynamic (eager-only); set in the constructor.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">inbound_nodes</span></code></dt><dd><p>Return Functional API nodes upstream of this layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">input</span></code></dt><dd><p>Retrieves the input tensor(s) of a layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_mask</span></code></dt><dd><p>Retrieves the input mask tensor(s) of a layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_shape</span></code></dt><dd><p>Retrieves the input shape(s) of a layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_spec</span></code></dt><dd><p><cite>InputSpec</cite> instance(s) describing the input format for this layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">losses</span></code></dt><dd><p>List of losses added using the <cite>add_loss()</cite> API.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">metrics</span></code></dt><dd><p>List of metrics added using the <cite>add_metric()</cite> API.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></dt><dd><p>Name of the layer (string), set in the constructor.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">name_scope</span></code></dt><dd><p>Returns a <cite>tf.name_scope</cite> instance for this class.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">non_trainable_variables</span></code></dt><dd><p>Sequence of non-trainable variables owned by this module and its submodules.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">non_trainable_weights</span></code></dt><dd><p>List of all non-trainable weights tracked by this layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">outbound_nodes</span></code></dt><dd><p>Return Functional API nodes downstream of this layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">output</span></code></dt><dd><p>Retrieves the output tensor(s) of a layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_mask</span></code></dt><dd><p>Retrieves the output mask tensor(s) of a layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_shape</span></code></dt><dd><p>Retrieves the output shape(s) of a layer.</p>
+</dd>
+<dt><strong>stateful</strong></dt><dd></dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">submodules</span></code></dt><dd><p>Sequence of all sub-modules.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">supports_masking</span></code></dt><dd><p>Whether this layer supports computing a mask using <cite>compute_mask</cite>.</p>
+</dd>
+<dt><strong>trainable</strong></dt><dd></dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">trainable_variables</span></code></dt><dd><p>Sequence of trainable variables owned by this module and its submodules.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">trainable_weights</span></code></dt><dd><p>List of all trainable weights tracked by this layer.</p>
+</dd>
+<dt><strong>updates</strong></dt><dd></dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">variable_dtype</span></code></dt><dd><p>Alias of <cite>Layer.dtype</cite>, the dtype of the weights.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">variables</span></code></dt><dd><p>Returns the list of all layer variables/weights.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></dt><dd><p>Returns the list of all layer variables/weights.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(*args, **kwargs)</p></td>
+<td><p>Wraps <cite>call</cite>, applying pre- and post-processing steps.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">adapt</span></code>(data)</p></td>
+<td><p>Fit the layer to the min and max of the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_loss</span></code>(losses, **kwargs)</p></td>
+<td><p>Add loss tensor(s), potentially dependent on layer inputs.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_metric</span></code>(value[, name])</p></td>
+<td><p>Adds metric tensor to the layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_update</span></code>(updates)</p></td>
+<td><p>Add update op(s), potentially dependent on layer inputs.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_variable</span></code>(*args, **kwargs)</p></td>
+<td><p>Deprecated, do NOT use! Alias for <cite>add_weight</cite>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_weight</span></code>([name, shape, dtype, ...])</p></td>
+<td><p>Adds a new variable to the layer.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">build</span></code>(input_shape)</p></td>
+<td><p>Initialize <code class="docutils literal notranslate"><span class="pre">data_min</span></code> and <code class="docutils literal notranslate"><span class="pre">data_max</span></code> with the default values if they have not been initialized yet.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_from_config</span></code>(config)</p></td>
+<td><p>Builds the layer's states with the supplied config dict.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyopmnearwell.ml.scaler_layers.MinMaxUnScalerLayer.call" title="pyopmnearwell.ml.scaler_layers.MinMaxUnScalerLayer.call"><code class="xref py py-obj docutils literal notranslate"><span class="pre">call</span></code></a>(inputs)</p></td>
+<td><p>This is where the layer's logic lives.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_mask</span></code>(inputs[, mask])</p></td>
+<td><p>Computes an output mask tensor.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_output_shape</span></code>(input_shape)</p></td>
+<td><p>Computes the output shape of the layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_output_signature</span></code>(input_signature)</p></td>
+<td><p>Compute the output tensor signature of the layer based on the inputs.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_params</span></code>()</p></td>
+<td><p>Count the total number of scalars composing the weights.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">finalize_state</span></code>()</p></td>
+<td><p>Finalizes the layers state after updating layer weights.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_config</span></code>(config)</p></td>
+<td><p>Creates a layer from its config.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_build_config</span></code>()</p></td>
+<td><p>Returns a dictionary with the layer's input shape.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_config</span></code>()</p></td>
+<td><p>Returns the config of the layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_input_at</span></code>(node_index)</p></td>
+<td><p>Retrieves the input tensor(s) of a layer at a given node.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_input_mask_at</span></code>(node_index)</p></td>
+<td><p>Retrieves the input mask tensor(s) of a layer at a given node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_input_shape_at</span></code>(node_index)</p></td>
+<td><p>Retrieves the input shape(s) of a layer at a given node.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_output_at</span></code>(node_index)</p></td>
+<td><p>Retrieves the output tensor(s) of a layer at a given node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_output_mask_at</span></code>(node_index)</p></td>
+<td><p>Retrieves the output mask tensor(s) of a layer at a given node.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_output_shape_at</span></code>(node_index)</p></td>
+<td><p>Retrieves the output shape(s) of a layer at a given node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_weights</span></code>()</p></td>
+<td><p>Return parameters of the scaling.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_own_variables</span></code>(store)</p></td>
+<td><p>Loads the state of the layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_own_variables</span></code>(store)</p></td>
+<td><p>Saves the state of the layer.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_weights</span></code>(weights)</p></td>
+<td><p>Set parameters of the scaling.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">with_name_scope</span></code>(method)</p></td>
+<td><p>Decorator to automatically enter the module name scope.</p></td>
+</tr>
+</tbody>
+</table>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.scaler_layers.MinMaxUnScalerLayer.call">
 <span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.MinMaxUnScalerLayer.call" title="Link to this definition"></a></dt>
@@ -185,17 +520,15 @@ invocation, wrapping the creation of variables or other resources in
 <div><p>in <cite>__init__()</cite>, or in the <cite>build()</cite> method that is</p>
 </div></blockquote>
 <p>called automatically before <cite>call()</cite> executes for the first time.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>inputs</strong> – <p>Input tensor, or dict/list/tuple of input tensors.
-The first positional <cite>inputs</cite> argument is subject to special rules:
+<dl>
+<dt>Args:</dt><dd><dl>
+<dt>inputs: Input tensor, or dict/list/tuple of input tensors.</dt><dd><p>The first positional <cite>inputs</cite> argument is subject to special rules:
 - <cite>inputs</cite> must be explicitly passed. A layer cannot have zero</p>
 <blockquote>
 <div><p>arguments, and <cite>inputs</cite> cannot be provided via the default value
 of a keyword argument.</p>
 </div></blockquote>
-<ul>
+<ul class="simple">
 <li><p>NumPy array or Python scalar values in <cite>inputs</cite> get cast as
 tensors.</p></li>
 <li><p>Keras mask metadata is only collected from <cite>inputs</cite>.</p></li>
@@ -211,28 +544,26 @@ only.</p></li>
 TF.js, etc is only supported for <cite>inputs</cite> and not for tensors in
 positional and keyword arguments.</p></li>
 </ul>
-</p></li>
-<li><p><strong>*args</strong> – Additional positional arguments. May contain tensors, although
-this is not recommended, for the reasons above.</p></li>
-<li><p><strong>**kwargs</strong> – <p>Additional keyword arguments. May contain tensors, although
-this is not recommended, for the reasons above.
+</dd>
+<dt><a href="#id5"><span class="problematic" id="id6">*</span></a>args: Additional positional arguments. May contain tensors, although</dt><dd><p>this is not recommended, for the reasons above.</p>
+</dd>
+<dt><a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs: Additional keyword arguments. May contain tensors, although</dt><dd><p>this is not recommended, for the reasons above.
 The following optional keyword arguments are reserved:
 - <cite>training</cite>: Boolean scalar tensor of Python boolean indicating</p>
 <blockquote>
 <div><p>whether the <cite>call</cite> is meant for training or inference.</p>
 </div></blockquote>
-<ul>
+<ul class="simple">
 <li><p><cite>mask</cite>: Boolean input mask. If the layer’s <cite>call()</cite> method takes a
 <cite>mask</cite> argument, its default value will be set to the mask
 generated for <cite>inputs</cite> by the previous layer (if <cite>input</cite> did come
 from a layer that generated a corresponding mask, i.e. if it came
 from a Keras layer with masking support).</p></li>
 </ul>
-</p></li>
-</ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A tensor or list/tuple of tensors.</p>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>A tensor or list/tuple of tensors.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -244,6 +575,161 @@ from a Keras layer with masking support).</p></li>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.scaler_layers.</span></span><span class="sig-name descname"><span class="pre">ScalerLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Layer</span></code></p>
 <p>MixIn to provide functionality for the Scaler Layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">activity_regularizer</span></code></dt><dd><p>Optional regularizer function for the output of this layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_dtype</span></code></dt><dd><p>The dtype of the layer’s computations.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></dt><dd><p>The dtype of the layer weights.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype_policy</span></code></dt><dd><p>The dtype policy associated with this layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">dynamic</span></code></dt><dd><p>Whether the layer is dynamic (eager-only); set in the constructor.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">inbound_nodes</span></code></dt><dd><p>Return Functional API nodes upstream of this layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">input</span></code></dt><dd><p>Retrieves the input tensor(s) of a layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_mask</span></code></dt><dd><p>Retrieves the input mask tensor(s) of a layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_shape</span></code></dt><dd><p>Retrieves the input shape(s) of a layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_spec</span></code></dt><dd><p><cite>InputSpec</cite> instance(s) describing the input format for this layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">losses</span></code></dt><dd><p>List of losses added using the <cite>add_loss()</cite> API.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">metrics</span></code></dt><dd><p>List of metrics added using the <cite>add_metric()</cite> API.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></dt><dd><p>Name of the layer (string), set in the constructor.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">name_scope</span></code></dt><dd><p>Returns a <cite>tf.name_scope</cite> instance for this class.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">non_trainable_variables</span></code></dt><dd><p>Sequence of non-trainable variables owned by this module and its submodules.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">non_trainable_weights</span></code></dt><dd><p>List of all non-trainable weights tracked by this layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">outbound_nodes</span></code></dt><dd><p>Return Functional API nodes downstream of this layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">output</span></code></dt><dd><p>Retrieves the output tensor(s) of a layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_mask</span></code></dt><dd><p>Retrieves the output mask tensor(s) of a layer.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_shape</span></code></dt><dd><p>Retrieves the output shape(s) of a layer.</p>
+</dd>
+<dt><strong>stateful</strong></dt><dd></dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">submodules</span></code></dt><dd><p>Sequence of all sub-modules.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">supports_masking</span></code></dt><dd><p>Whether this layer supports computing a mask using <cite>compute_mask</cite>.</p>
+</dd>
+<dt><strong>trainable</strong></dt><dd></dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">trainable_variables</span></code></dt><dd><p>Sequence of trainable variables owned by this module and its submodules.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">trainable_weights</span></code></dt><dd><p>List of all trainable weights tracked by this layer.</p>
+</dd>
+<dt><strong>updates</strong></dt><dd></dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">variable_dtype</span></code></dt><dd><p>Alias of <cite>Layer.dtype</cite>, the dtype of the weights.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">variables</span></code></dt><dd><p>Returns the list of all layer variables/weights.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></dt><dd><p>Returns the list of all layer variables/weights.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(*args, **kwargs)</p></td>
+<td><p>Wraps <cite>call</cite>, applying pre- and post-processing steps.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer.adapt" title="pyopmnearwell.ml.scaler_layers.ScalerLayer.adapt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adapt</span></code></a>(data)</p></td>
+<td><p>Fit the layer to the min and max of the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_loss</span></code>(losses, **kwargs)</p></td>
+<td><p>Add loss tensor(s), potentially dependent on layer inputs.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_metric</span></code>(value[, name])</p></td>
+<td><p>Adds metric tensor to the layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_update</span></code>(updates)</p></td>
+<td><p>Add update op(s), potentially dependent on layer inputs.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_variable</span></code>(*args, **kwargs)</p></td>
+<td><p>Deprecated, do NOT use! Alias for <cite>add_weight</cite>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_weight</span></code>([name, shape, dtype, ...])</p></td>
+<td><p>Adds a new variable to the layer.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer.build" title="pyopmnearwell.ml.scaler_layers.ScalerLayer.build"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build</span></code></a>(input_shape)</p></td>
+<td><p>Initialize <code class="docutils literal notranslate"><span class="pre">data_min</span></code> and <code class="docutils literal notranslate"><span class="pre">data_max</span></code> with the default values if they have not been initialized yet.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_from_config</span></code>(config)</p></td>
+<td><p>Builds the layer's states with the supplied config dict.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">call</span></code>(inputs, *args, **kwargs)</p></td>
+<td><p>This is where the layer's logic lives.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_mask</span></code>(inputs[, mask])</p></td>
+<td><p>Computes an output mask tensor.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_output_shape</span></code>(input_shape)</p></td>
+<td><p>Computes the output shape of the layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_output_signature</span></code>(input_signature)</p></td>
+<td><p>Compute the output tensor signature of the layer based on the inputs.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_params</span></code>()</p></td>
+<td><p>Count the total number of scalars composing the weights.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">finalize_state</span></code>()</p></td>
+<td><p>Finalizes the layers state after updating layer weights.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_config</span></code>(config)</p></td>
+<td><p>Creates a layer from its config.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_build_config</span></code>()</p></td>
+<td><p>Returns a dictionary with the layer's input shape.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_config</span></code>()</p></td>
+<td><p>Returns the config of the layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_input_at</span></code>(node_index)</p></td>
+<td><p>Retrieves the input tensor(s) of a layer at a given node.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_input_mask_at</span></code>(node_index)</p></td>
+<td><p>Retrieves the input mask tensor(s) of a layer at a given node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_input_shape_at</span></code>(node_index)</p></td>
+<td><p>Retrieves the input shape(s) of a layer at a given node.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_output_at</span></code>(node_index)</p></td>
+<td><p>Retrieves the output tensor(s) of a layer at a given node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_output_mask_at</span></code>(node_index)</p></td>
+<td><p>Retrieves the output mask tensor(s) of a layer at a given node.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_output_shape_at</span></code>(node_index)</p></td>
+<td><p>Retrieves the output shape(s) of a layer at a given node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer.get_weights" title="pyopmnearwell.ml.scaler_layers.ScalerLayer.get_weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_weights</span></code></a>()</p></td>
+<td><p>Return parameters of the scaling.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_own_variables</span></code>(store)</p></td>
+<td><p>Loads the state of the layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_own_variables</span></code>(store)</p></td>
+<td><p>Saves the state of the layer.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer.set_weights" title="pyopmnearwell.ml.scaler_layers.ScalerLayer.set_weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_weights</span></code></a>(weights)</p></td>
+<td><p>Set parameters of the scaling.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">with_name_scope</span></code>(method)</p></td>
+<td><p>Decorator to automatically enter the module name scope.</p></td>
+</tr>
+</tbody>
+</table>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.scaler_layers.ScalerLayer._adapt">
 <span class="sig-name descname"><span class="pre">_adapt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer._adapt" title="Link to this definition"></a></dt>
@@ -254,14 +740,11 @@ from a Keras layer with masking support).</p></li>
 <span class="sig-name descname"><span class="pre">adapt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">complex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">complex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer.adapt" title="Link to this definition"></a></dt>
 <dd><p>Fit the layer to the min and max of the data. This is done individually for
 each input feature.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>So far, this is only tested for 1 dimensional input and output. For higher
+<dl class="simple">
+<dt>Note:</dt><dd><p>So far, this is only tested for 1 dimensional input and output. For higher
 dimensional input and output some functionality might need to be added.</p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> – _description_</p>
+</dd>
+<dt>Args:</dt><dd><p>data: _description_</p>
 </dd>
 </dl>
 </dd></dl>
@@ -271,9 +754,8 @@ dimensional input and output some functionality might need to be added.</p>
 <span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer.build" title="Link to this definition"></a></dt>
 <dd><p>Initialize <code class="docutils literal notranslate"><span class="pre">data_min</span></code> and <code class="docutils literal notranslate"><span class="pre">data_max</span></code> with the default values if they have
 not been initialized yet.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>input_shape</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em>) – _description_</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>input_shape (tuple[int, …]): _description_</p>
 </dd>
 </dl>
 </dd></dl>
@@ -292,13 +774,9 @@ not been initialized yet.</p>
 <dt class="sig sig-object py" id="pyopmnearwell.ml.scaler_layers.ScalerLayer.get_weights">
 <span class="sig-name descname"><span class="pre">get_weights</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">complex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">complex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer.get_weights" title="Link to this definition"></a></dt>
 <dd><p>Return parameters of the scaling.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List with three elements in the following order:
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[ArrayLike]: List with three elements in the following order:
 <code class="docutils literal notranslate"><span class="pre">self.data_min</span></code>, <code class="docutils literal notranslate"><span class="pre">self.data_max</span></code>, <code class="docutils literal notranslate"><span class="pre">self.feature_range</span></code></p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>list[ArrayLike]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -317,17 +795,11 @@ not been initialized yet.</p>
 <dt class="sig sig-object py" id="pyopmnearwell.ml.scaler_layers.ScalerLayer.set_weights">
 <span class="sig-name descname"><span class="pre">set_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">complex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">complex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer.set_weights" title="Link to this definition"></a></dt>
 <dd><p>Set parameters of the scaling.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>weights</strong> (<em>list</em><em>[</em><em>ArrayLike</em><em>]</em>) – List with three elements in the following order:</p></li>
-<li><p><strong>data_min</strong> – </p></li>
-<li><p><strong>data_max</strong> – </p></li>
-<li><p><strong>feature_range</strong> – </p></li>
-</ul>
+<dl class="simple">
+<dt>Args:</dt><dd><p>weights (list[ArrayLike]): List with three elements in the following order:
+<code class="docutils literal notranslate"><span class="pre">data_min</span></code>, <code class="docutils literal notranslate"><span class="pre">data_max</span></code>, <code class="docutils literal notranslate"><span class="pre">feature_range</span></code></p>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">feature_range[0]</span> <span class="pre">&gt;=</span> <span class="pre">feature_range[1]</span></code>.</p>
+<dt>Raises:</dt><dd><p>ValueError: If <code class="docutils literal notranslate"><span class="pre">feature_range[0]</span> <span class="pre">&gt;=</span> <span class="pre">feature_range[1]</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -340,8 +812,8 @@ not been initialized yet.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="pyopmnearwell.ml.nn.html" class="btn btn-neutral float-left" title="pyopmnearwell.ml.nn module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pyopmnearwell.utils.html" class="btn btn-neutral float-right" title="pyopmnearwell.utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pyopmnearwell.ml.resdata_dataset.html" class="btn btn-neutral float-left" title="pyopmnearwell.ml.resdata_dataset module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyopmnearwell.ml.upscale.html" class="btn btn-neutral float-right" title="pyopmnearwell.ml.upscale module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

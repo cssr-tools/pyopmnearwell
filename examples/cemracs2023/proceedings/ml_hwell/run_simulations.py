@@ -9,8 +9,8 @@ import os
 import math as mt
 import numpy as np
 import pandas as pd
-from ecl.summary import EclSum
-from ecl.eclfile import EclFile
+from resdata.summary import Summary
+from resdata.resfile import ResdataFile
 from mako.template import Template
 import matplotlib.pyplot as plt
 
@@ -52,8 +52,8 @@ for n in range(mt.floor(NSEASON*len(times) / NPRUNS)-1, mt.floor(NSEASON*len(tim
     command += 'wait'
     os.system(command)
     for j in range(NPRUNS):
-        smspec = EclSum(f"./h2_{NPRUNS*n+j}/output/H2_{NPRUNS*n+j}.SMSPEC")
-        rst = EclFile(f"./h2_{NPRUNS*n+j}/output/H2_{NPRUNS*n+j}.UNRST")
+        smspec = Summary(f"./h2_{NPRUNS*n+j}/output/H2_{NPRUNS*n+j}.SMSPEC")
+        rst = ResdataFile(f"./h2_{NPRUNS*n+j}/output/H2_{NPRUNS*n+j}.UNRST")
         smsp_report_step = smspec.report_step
         report_time = rst.dates
         smsp_seconds = [(smspec.numpy_dates[i + 1] - smspec.numpy_dates[i]) / np.timedelta64(1, "s") for i in range(len(smspec.numpy_dates) - 1)]

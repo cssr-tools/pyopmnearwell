@@ -8,9 +8,9 @@ Script to run Flow for a random input variable
 import os
 import numpy as np
 import pandas as pd
-from ecl.summary import EclSum
-from ecl.eclfile import EclFile
-from ecl.grid import EclGrid
+from resdata.grid import Grid
+from resdata.resfile import ResdataFile
+from resdata.summary import Summary
 from mako.template import Template
 import matplotlib.pyplot as plt
 
@@ -57,10 +57,10 @@ for i in range(round(npoints / npruns)):
         zcord = np.load(f"./co2_{npruns*i+j}/output/zspace.npy")
         z_centers = 0.5 * (zcord[1:] + zcord[:-1])
         nz_cells = len(z_centers)
-        smspec = EclSum(f"./co2_{npruns*i+j}/output/CO2_{npruns*i+j}.SMSPEC")
-        unrst = EclFile(f"./co2_{npruns*i+j}/output/CO2_{npruns*i+j}.UNRST")
-        init = EclFile(f"./co2_{npruns*i+j}/output/CO2_{npruns*i+j}.INIT")
-        grid = EclGrid(f"./co2_{npruns*i+j}/output/CO2_{npruns*i+j}.EGRID")
+        smspec = Summary(f"./co2_{npruns*i+j}/output/CO2_{npruns*i+j}.SMSPEC")
+        unrst = ResdataFile(f"./co2_{npruns*i+j}/output/CO2_{npruns*i+j}.UNRST")
+        init = ResdataFile(f"./co2_{npruns*i+j}/output/CO2_{npruns*i+j}.INIT")
+        grid = Grid(f"./co2_{npruns*i+j}/output/CO2_{npruns*i+j}.EGRID")
         phiv = np.array(init.iget_kw("PORV")[0][:])
         sgas = np.array(unrst.iget_kw("SGAS")[-1][:])
         r_s = np.array(unrst.iget_kw("RSW")[-1][:])

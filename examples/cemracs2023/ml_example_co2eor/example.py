@@ -7,7 +7,7 @@ Script to run Flow for a random input variable
 
 import os
 import numpy as np
-from ecl.summary import EclSum
+from resdata.summary import Summary
 from mako.template import Template
 import matplotlib.pyplot as plt
 
@@ -41,7 +41,7 @@ for i in range(round(npoints / npruns)):
         + f"pyopmnearwell -i co2eor_{npruns*i+4}.txt -o co2eor_{npruns*i+4} -p '' & wait"
     )
     for j in range(npruns):
-        smspec = EclSum(f"./co2eor_{npruns*i+j}/output/CO2EOR_{npruns*i+j}.SMSPEC")
+        smspec = Summary(f"./co2eor_{npruns*i+j}/output/CO2EOR_{npruns*i+j}.SMSPEC")
         ratio_oil_to_injected_volumes.append(smspec["FOPT"].values[-1]/(smspec["FGIT"].values[-1]+smspec["FWIT"].values[-1]))
         os.system(f"rm -rf co2eor_{npruns*i+j} co2eor_{npruns*i+j}.txt")
 

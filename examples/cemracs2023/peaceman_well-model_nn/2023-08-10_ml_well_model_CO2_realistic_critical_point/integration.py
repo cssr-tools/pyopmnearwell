@@ -12,7 +12,7 @@ from typing import Any
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-from ecl.eclfile import EclFile
+from resdata.resfile import ResdataFile
 from mako.template import Template
 
 # Path to the simulation *.makos.

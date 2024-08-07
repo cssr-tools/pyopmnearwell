@@ -9,7 +9,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from ecl.summary import EclSum
+from resdata.summary import Summary
 from mako.template import Template
 
 npoints, npruns = 20, 5
@@ -53,7 +53,7 @@ for i in range(round(npoints / npruns)):
         + f" RESERVOIR{npruns*i+4}.DATA --output-dir=results{npruns*i+4} {FLAGS} & wait"
     )
     for j in range(npruns):
-        smspec = EclSum(f"results{npruns*i+j}/RESERVOIR{npruns*i+j}.SMSPEC")
+        smspec = Summary(f"results{npruns*i+j}/RESERVOIR{npruns*i+j}.SMSPEC")
         fgpt.append(smspec["FGPT"].values[-1])
         os.system(f"rm -rf results{npruns*i+j} RESERVOIR{npruns*i+j}.DATA")
 

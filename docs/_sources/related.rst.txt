@@ -14,6 +14,23 @@ pyopmspe11
 
 `A Python framework using OPM Flow for the CSP SPE11 benchmark project <https://github.com/OPM/pyopmspe11>`_.
 
+******
+pycopm
+******
+
+.. image:: ./figs/pycopm.gif
+    :scale: 60%
+
+`Simplified and flexible framework for coarsening geological models <https://github.com/cssr-tools/pycopm>`_.
+
+*****
+plopm
+*****
+
+.. image:: ./figs/plopm.png
+
+`Quick generation of PNG figures from a simulation model given any 2D slide <https://github.com/cssr-tools/plopm>`_.
+
 ********
 expreccs
 ********

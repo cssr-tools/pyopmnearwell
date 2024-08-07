@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyopmnearwell.ml.data module &mdash; pyopmnearwell  documentation</title>
+  <title>pyopmnearwell.ml.utils module &mdash; pyopmnearwell  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -16,14 +16,14 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pyopmnearwell.ml.ensemble module" href="pyopmnearwell.ml.ensemble.html" />
-    <link rel="prev" title="pyopmnearwell.ml package" href="pyopmnearwell.ml.html" /> 
+    <link rel="next" title="pyopmnearwell.utils package" href="pyopmnearwell.utils.html" />
+    <link rel="prev" title="pyopmnearwell.ml.upscale module" href="pyopmnearwell.ml.upscale.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -48,6 +48,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_file.html">Configuration file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">pyopmnearwell Python API</a></li>
@@ -73,9 +74,9 @@
           <li class="breadcrumb-item"><a href="api.html">pyopmnearwell Python API</a></li>
           <li class="breadcrumb-item"><a href="pyopmnearwell.html">pyopmnearwell package</a></li>
           <li class="breadcrumb-item"><a href="pyopmnearwell.ml.html">pyopmnearwell.ml package</a></li>
-      <li class="breadcrumb-item active">pyopmnearwell.ml.data module</li>
+      <li class="breadcrumb-item active">pyopmnearwell.ml.utils module</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/pyopmnearwell.ml.data.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/pyopmnearwell.ml.utils.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -83,16 +84,32 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="pyopmnearwell-ml-data-module">
-<h1>pyopmnearwell.ml.data module<a class="headerlink" href="#pyopmnearwell-ml-data-module" title="Link to this heading"></a></h1>
+  <section id="module-pyopmnearwell.ml.utils">
+<span id="pyopmnearwell-ml-utils-module"></span><h1>pyopmnearwell.ml.utils module<a class="headerlink" href="#module-pyopmnearwell.ml.utils" title="Link to this heading"></a></h1>
+<p>Utilility functions for the ensemble and ML capabilities.</p>
+<p>Note: <code class="docutils literal notranslate"><span class="pre">ml.ensemble</span></code> makes use of <code class="docutils literal notranslate"><span class="pre">np.random.default_rng</span></code>, which ignores the global
+seed of <code class="docutils literal notranslate"><span class="pre">numpy</span></code>. Make sure to set them locally for full determinism.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyopmnearwell.ml.utils.enable_determinism">
+<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.utils.</span></span><span class="sig-name descname"><span class="pre">enable_determinism</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.utils.enable_determinism" title="Link to this definition"></a></dt>
+<dd><p>Set a seed for python, numpy, and tensorflow and enable deterministic behavior.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>seed: (Optional[int]): Seed for the <code class="docutils literal notranslate"><span class="pre">np.random.Generator</span></code>. Default is</dt><dd><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="pyopmnearwell.ml.html" class="btn btn-neutral float-left" title="pyopmnearwell.ml package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pyopmnearwell.ml.ensemble.html" class="btn btn-neutral float-right" title="pyopmnearwell.ml.ensemble module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pyopmnearwell.ml.upscale.html" class="btn btn-neutral float-left" title="pyopmnearwell.ml.upscale module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyopmnearwell.utils.html" class="btn btn-neutral float-right" title="pyopmnearwell.utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

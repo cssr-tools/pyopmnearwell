@@ -10,7 +10,7 @@ import math as mt
 import argparse
 import numpy as np
 import itertools
-from ecl.summary import EclSum
+from resdata.summary import Summary
 from mako.template import Template
 import matplotlib.pyplot as plt
 
@@ -80,7 +80,7 @@ for i in range(mt.floor(nsimulations / NPRUNS)):
     command += 'wait'
     os.system(command)
     for j in range(NPRUNS):
-        smspec = EclSum(f"./h2_{NPRUNS*i+j}/output/H2_{NPRUNS*i+j}.SMSPEC")
+        smspec = Summary(f"./h2_{NPRUNS*i+j}/output/H2_{NPRUNS*i+j}.SMSPEC")
         fgit.append(smspec["FGIT"].values[-1])
         fgpt.append(smspec["FGPT"].values[-1])
         fgit_fgpt.append(smspec["FGIT"].values[-1] - smspec["FGPT"].values[-1])
@@ -93,7 +93,7 @@ for i in range(remaining):
 command += 'wait'
 os.system(command)
 for i in range(remaining):
-    smspec = EclSum(f"./h2_{finished+i}/output/H2_{finished+i}.SMSPEC")
+    smspec = Summary(f"./h2_{finished+i}/output/H2_{finished+i}.SMSPEC")
     fgit.append(smspec["FGIT"].values[-1])
     fgpt.append(smspec["FGPT"].values[-1])
     fgit_fgpt.append(smspec["FGIT"].values[-1] - smspec["FGPT"].values[-1])

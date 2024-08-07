@@ -7,7 +7,5 @@ include src/pyopmnearwell/templates/co2store/*
 include src/pyopmnearwell/templates/common/*
 include src/pyopmnearwell/templates/h2store/*
 include src/pyopmnearwell/templates/saltprec/*
-include src/pyopmnearwell/templates/standardwell/*
-include src/pyopmnearwell/templates/standardwell_impl/*
 include src/pyopmnearwell/utils/*
 include src/pyopmnearwell/visualization/*
