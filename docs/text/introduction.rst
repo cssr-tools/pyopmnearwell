@@ -35,14 +35,14 @@ The current implementation supports the following executable with the argument o
 
 where 
 
-- \-i, \-input: The base name of the :doc:`configuration file <./configuration_file>` ('input.txt' by default).
-- \-o, \-output: The base name of the :doc:`output folder <./output_folder>` ('output' by default).
-- \-p, \-plotting: Using the 'resdata' or 'opm' Python package to generate the figures ('resdata' by default, 'off' to skip the plotting).
-- \-c, \-compare: Compare the results from different output folders (write any name to actiate, '' by default).
-- \-g, \-generate: Run the whole framework ('all'), only run flow ('flow'), or only create plots ('plot') ('all' by default).
-- \-z, \-zoom: xlim in meters for the zoomed in plots (20 by default).
-- \-s, \-scale: Scale for the x axis in the figures: 'normal' or 'log' ('normal' by default).
-- \-m, \-model: Simulated model (5th row in the configuration file). This is used for the plotting compare method (it gets overwritten by the configuration file) ('co2store' by default).
+- \-i: The base name of the :doc:`configuration file <./configuration_file>` ('input.txt' by default).
+- \-o: The base name of the :doc:`output folder <./output_folder>` ('output' by default).
+- \-p: Using the 'resdata' or 'opm' Python package to generate the figures ('resdata' by default, 'off' to skip the plotting).
+- \-c: Compare the results from different output folders (write any name to actiate, '' by default).
+- \-g: Run the whole framework ('all'), only run flow ('flow'), or only create plots ('plot') ('all' by default).
+- \-z: xlim in meters for the zoomed in plots (20 by default).
+- \-s: Scale for the x axis in the figures: 'normal' or 'log' ('normal' by default).
+- \-m: Simulated model (5th row in the configuration file). This is used for the plotting compare method (it gets overwritten by the configuration file) ('co2store' by default).
 
 .. warning::
     The H2CH4 template in the h2store model folder is under development and it is based on an input deck available in 

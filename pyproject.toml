@@ -44,5 +44,5 @@ Homepage = "https://cssr-tools.github.io/pyopmnearwell"
 Repository = "https://github.com/cssr-tools/pyopmnearwell"
 
 [tool.setuptools]
-packages = ["pyopmnearwell"]
+packages.find.where = ["src"]
 platforms = ["all"]
