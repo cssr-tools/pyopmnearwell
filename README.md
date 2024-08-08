@@ -41,7 +41,7 @@ pip install -e .
 pip install -r dev-requirements.txt
 ``` 
 
-See the [_installation_](https://cssr-tools.github.io/pyopmnearwell/examples.html) for further details on building OPM Flow from the master branches
+See the [_installation_](https://cssr-tools.github.io/pyopmnearwell/installation.html) for further details on building OPM Flow from the master branches
 in Linux, Windows, and macOS.
 
 ## Running pyopmnearwell
@@ -51,8 +51,8 @@ pyopmnearwell -i some_input.txt -o some_output_folder
 ```
 Run `pyopmnearwell --help` to see all possible command line 
 argument options. Inside the `some_input.txt` file you provide the path to the
-flow executable and simulation parameters. See the .txt files in the `examples/`,
-`tests/geometries/`, and `tests/models/` folders. 
+flow executable and simulation parameters. See the .txt files in the [_examples_](https://github.com/cssr-tools/pyopmnearwell/tree/main/examples),
+[_tests/geometries/_](https://github.com/cssr-tools/pyopmnearwell/tree/main/tests/geometries), and [_tests/models/_](https://github.com/cssr-tools/pyopmnearwell/tree/main/tests/models) folders. 
 
 ## Getting started
 See the [_examples_](https://cssr-tools.github.io/pyopmnearwell/examples.html) in the [_documentation_](https://cssr-tools.github.io/pyopmnearwell/introduction.html).
