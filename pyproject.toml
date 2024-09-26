@@ -30,7 +30,7 @@ dependencies = [
     "matplotlib",
     "pandas",
     "scipy",
-    "tensorflow==2.13.0",
+    "tensorflow",
     "keras_tuner",
     "scikit-learn"
 ]

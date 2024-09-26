@@ -61,7 +61,7 @@ class ResDataSet:  # pylint: disable=R0902
 
     """
 
-    def __init__(  # pylint: disable=R0913
+    def __init__(  # pylint: disable=R0913, too-many-positional-arguments
         self,
         path: str,
         input_kws: list[str],

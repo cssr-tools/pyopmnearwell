@@ -201,7 +201,7 @@ class BaseUpscaler(ABC):
         assert timesteps.shape == self.num_timesteps
         return timesteps
 
-    def get_horizontically_integrated_values(  # pylint: disable=too-many-arguments
+    def get_horizontically_integrated_values(  # pylint: disable=too-many-positional-arguments, too-many-arguments
         self: Upscaler,
         features: np.ndarray,
         cell_center_radii: np.ndarray,
@@ -314,7 +314,7 @@ class BaseUpscaler(ABC):
         assert analytical_PI.shape == self.single_feature_shape
         return analytical_PI
 
-    # pylint: disable-next=invalid-name, too-many-arguments, too-many-locals
+    # pylint: disable-next=invalid-name, too-many-positional-arguments, too-many-locals, too-many-arguments
     def get_analytical_WI(
         self: Upscaler,
         pressures: np.ndarray,
