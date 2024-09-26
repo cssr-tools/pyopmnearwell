@@ -6,12 +6,12 @@ import csv
 import pathlib
 from typing import Literal
 
+import keras
 import numpy as np
 import pytest
 import tensorflow as tf
 from numpy.testing import assert_allclose, assert_raises
 from sklearn.preprocessing import MinMaxScaler
-from tensorflow import keras
 
 from pyopmnearwell.ml.ensemble import store_dataset
 from pyopmnearwell.ml.nn import scale_and_evaluate, scale_and_prepare_dataset

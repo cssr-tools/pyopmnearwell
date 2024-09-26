@@ -7,9 +7,9 @@ and inputs of ``sensitivity_analysis`` are also linear.
 
 """
 
+import keras
 import numpy as np
 import pytest
-from tensorflow import keras
 
 from pyopmnearwell.ml.analysis import plot_analysis, sensitivity_analysis
 

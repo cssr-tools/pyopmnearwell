@@ -12,9 +12,9 @@ import math
 import pathlib
 from typing import Literal, Optional
 
+import keras
 import numpy as np
 from matplotlib import pyplot as plt
-from tensorflow import keras
 
 from pyopmnearwell.utils import plotting
 
