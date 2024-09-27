@@ -4,6 +4,8 @@ Warning: Tensorflow 2.17 and Keras 3.0 introduce many pylint errors, hence we di
 linting completely. It is possible that the module is not functional at the moment.
 """
 
+# pylint: skip-file
+
 from __future__ import annotations
 
 from typing import Optional, Sequence, Union
@@ -12,11 +14,6 @@ import keras
 import numpy as np
 import tensorflow as tf
 from numpy.typing import ArrayLike
-from tensorflow.python.keras.engine.base_preprocessing_layer import (  # pylint: disable=E0611
-    PreprocessingLayer,
-)
-
-# pylint: skip-file
 
 
 class ScalerLayer(keras.layers.Layer):
