@@ -18,11 +18,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 from pyopmnearwell.ml.scaler_layers import MinMaxScalerLayer, MinMaxUnScalerLayer
 
-# Skip all tests until the issues are fixed.
-pytest.skip(allow_module_level=True)
-
 rng: np.random.Generator = np.random.default_rng()
-
 
 layers: list[str] = ["scaler", "unscaler"]
 feature_ranges: list[tuple[float, float]] = [(0.0, 1.0), (-3.7, 0.0), (-5.0, 4.0)]
@@ -36,8 +32,7 @@ def fixture_layers_and_feature_ranges(request) -> tuple[str, tuple[float, float]
 
 
 @pytest.fixture(
-    params=[rng.uniform(-500, 500, (5, 1)) for _ in range(5)]
-    + [rng.uniform(-500, 500, (5, 10)) for _ in range(5)],
+    params=[rng.uniform(-500, 500, (5, 1)) for _ in range(5)],
     name="data",
 )
 def fixture_data(request) -> np.ndarray:
@@ -52,22 +47,20 @@ def fixture_fitted_model(
     # pylint: disable=redefined-outer-name
     feature_ranges: tuple[float, float] = layers_and_feature_ranges[1]
     if layer == "scaler":
-        model: keras.Model = keras.Sequential(
-            [
-                keras.layers.Input([10]),
-                MinMaxScalerLayer(feature_range=feature_ranges),
-            ]
-        )
+        scalerlayer = MinMaxScalerLayer(feature_range=feature_ranges)
+
     elif layer == "unscaler":
-        model = keras.Sequential(
-            [
-                keras.layers.Input([10]),
-                MinMaxUnScalerLayer(feature_range=feature_ranges),
-            ]
-        )
+        scalerlayer = MinMaxUnScalerLayer(feature_range=feature_ranges)
 
     # pylint: disable-next=possibly-used-before-assignment
-    model.get_layer(model.layers[0].name).adapt(data=data)  # type: ignore
+    scalerlayer.adapt(data=data)  # type: ignore
+
+    model = keras.Sequential(
+        [
+            keras.layers.Input([1]),
+            scalerlayer,
+        ]
+    )
     return model
 
 
@@ -81,34 +74,41 @@ def fixture_fitted_scaler(
 
 
 def test_save_scaler_layer(fitted_model: keras.Model, tmp_path: pathlib.Path) -> None:
-    fitted_model.save(tmp_path / "model.pb")
-    assert (tmp_path / "model.pb").exists()
+    fitted_model.save(tmp_path / "model.keras")
+    assert (tmp_path / "model.keras").exists()
 
     # Load the saved model
     loaded_model: keras.Model = keras.models.load_model(  # type: ignore
-        tmp_path / "model.pb", compile=False
+        tmp_path / "model.keras",
+        compile=False,
+        custom_objects={
+            "MinMaxUnScalerLayer": MinMaxUnScalerLayer,
+            "MinMaxScalerLayer": MinMaxScalerLayer,
+        },
     )
 
-    # Check if all parameters are equal for both models
-    for weight1, weight2 in zip(
-        fitted_model.layers[0].get_weights(), loaded_model.layers[0].get_weights()
-    ):
-        assert np.array_equal(weight1, weight2)
+    # Check if both model have the same is_adapted state
+    assert fitted_model.layers[0].is_adapted == loaded_model.layers[0].is_adapted
+
+    # Check if all parameters from ScalerLayer layer are equal for both models
+    data_min1, data_max1, feature_ranges1 = fitted_model.layers[0].get_weights()
+    data_min2, data_max2, feature_ranges2 = loaded_model.layers[0].get_weights()
+
+    assert np.array(data_min1[0]) == np.array(data_min2[0])
+    assert np.array(data_max1[0]) == np.array(data_max2[0])
+    assert np.array_equal(feature_ranges1, feature_ranges2)
 
 
 @pytest.mark.parametrize(
     "model_input",
-    [rng.uniform(-500, 500, (5, 1)) for _ in range(5)]
-    + [rng.uniform(-500, 500, (5, 10)) for _ in range(5)],
+    [rng.uniform(-500, 500, (5, 1)) for _ in range(5)],
 )
 def test_minmax_scaler_layer(
     model_input: np.ndarray,
     fitted_model: keras.Model,
     fitted_scaler: MinMaxScaler,
 ) -> None:
-    # Skip tests if the input data has different shape than the fitted model/scaler.
-    if model_input.shape[1] != fitted_model.layers[0].get_weights()[0].shape[0]:
-        pytest.skip()
+
     scaled: np.ndarray = fitted_model(model_input)
     if fitted_model.layers[0].name == "MinMaxScalerLayer":
         assert np.allclose(scaled, fitted_scaler.transform(model_input), rtol=1e-3)
@@ -116,3 +116,52 @@ def test_minmax_scaler_layer(
         assert np.allclose(
             scaled, fitted_scaler.inverse_transform(model_input), rtol=1e-3
         )
+
+
+@pytest.mark.parametrize("input_shape", [(1, 10), (2, 20), (10, 15)])
+def test_minmaxscaler_with_multiple_features_and_samples(input_shape):
+    data = [rng.uniform(-500, 500, input_shape)]
+
+    scalerlayer = MinMaxScalerLayer()
+    unscalerlayer = MinMaxUnScalerLayer()
+
+    scalerlayer.adapt(data)
+    unscalerlayer.adapt(data)
+
+    model = keras.Sequential(
+        [keras.layers.Input([input_shape[1]]), scalerlayer, unscalerlayer]
+    )
+
+    pred = model(data)
+    # Check if model is identity
+    assert np.allclose(pred, data, rtol=1e-3)
+    # Check if all features have their own min and max. Data is shape (Ndata, Nfeatures) and min is shape (1, Nfeatures)
+    assert scalerlayer.data_min.shape[1] == input_shape[1]
+    assert scalerlayer.data_max.shape[1] == input_shape[1]
+
+
+@pytest.mark.parametrize(
+    "feature_ranges",
+    [[(0.0, 1.0), (2.0, 3.0), (4.0, 5.0)], [(-1.0, 0.0), (-2.0, 0)], [(0.0, 1.0)]],
+)
+def test_minmaxscaler_with_multiple_features_ranges(feature_ranges):
+    data = [rng.uniform(-500, 500, (10, len(feature_ranges)))]
+
+    scalerlayer = MinMaxScalerLayer(feature_range=feature_ranges)
+    unscalerlayer = MinMaxUnScalerLayer(feature_range=feature_ranges)
+
+    scalerlayer.adapt(data)
+    unscalerlayer.adapt(data)
+
+    model = keras.Sequential(
+        [keras.layers.Input([len(feature_ranges)]), scalerlayer, unscalerlayer]
+    )
+
+    pred = model(data)
+    # Check if model is identity
+    assert np.allclose(pred, data, rtol=1e-3)
+
+    # Check that feature_ranges have correct shape
+    assert len(scalerlayer.feature_range) == len(feature_ranges)
+    for fr1, fr2 in zip(scalerlayer.feature_range, feature_ranges):
+        assert fr1[0] == fr2[0] and fr1[1] == fr2[1]
