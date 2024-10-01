@@ -18,6 +18,8 @@ from sklearn.preprocessing import MinMaxScaler
 
 from pyopmnearwell.ml.scaler_layers import MinMaxScalerLayer, MinMaxUnScalerLayer
 
+# pylint: skip-file
+
 rng: np.random.Generator = np.random.default_rng()
 
 layers: list[str] = ["scaler", "unscaler"]

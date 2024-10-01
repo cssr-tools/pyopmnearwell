@@ -4,8 +4,6 @@ Warning: Tensorflow 2.17 and Keras 3.0 introduce many pylint errors, hence we di
 linting completely. It is possible that the module is not functional at the moment.
 """
 
-# pylint: skip-file
-
 from __future__ import annotations
 
 from typing import Optional, Sequence, Union
@@ -15,6 +13,7 @@ import numpy as np
 import tensorflow as tf
 from numpy.typing import ArrayLike
 
+# pylint: skip-file
 
 class ScalerLayer(keras.layers.Layer):
     """MixIn to provide functionality for the Scaler Layer."""
