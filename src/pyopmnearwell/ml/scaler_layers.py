@@ -14,6 +14,7 @@ import numpy as np
 import tensorflow as tf
 from numpy.typing import ArrayLike
 
+
 class ScalerLayer(keras.layers.Layer):
     """MixIn to provide functionality for the Scaler Layer."""
 
