@@ -36,30 +36,30 @@ class ScalerLayer(keras.layers.Layer):
             # One feature range for all features
             if feature_range[0] >= feature_range[1]:
                 raise ValueError("Feature range must be strictly increasing.")
-            self.feature_range: tf.Tensor = tf.convert_to_tensor(
+            self.feature_range_: tf.Tensor = tf.convert_to_tensor(
                 feature_range, dtype=tf.float32
             )
         elif isinstance(feature_range, (list, np.ndarray)):
             for fr in feature_range:
                 if fr[0] >= fr[1]:
                     raise ValueError("Feature range must be strictly increasing.")
-            self.feature_range: tf.Tensor = tf.convert_to_tensor(
+            self.feature_range_: tf.Tensor = tf.convert_to_tensor(
                 feature_range, dtype=tf.float32
             )
 
         elif isinstance(feature_range, dict):
             # feature_range is a dict when it comes from config loading
-            self.feature_range: tf.Tensor = tf.convert_to_tensor(
+            self.feature_range_: tf.Tensor = tf.convert_to_tensor(
                 feature_range["config"]["value"], dtype=feature_range["config"]["dtype"]
             )
 
-        self.data_min = data_min
-        self.data_max = data_max
+        self.data_min_ = data_min
+        self.data_max_ = data_max
         self._is_adapted: bool = False
 
         if data_min is not None and data_max is not None:
-            self.data_min = tf.convert_to_tensor(data_min, dtype=tf.float32)
-            self.data_max = tf.convert_to_tensor(data_max, dtype=tf.float32)
+            self.data_min_ = tf.convert_to_tensor(data_min, dtype=tf.float32)
+            self.data_max_ = tf.convert_to_tensor(data_max, dtype=tf.float32)
             self._adapt()
 
     def build(self, input_shape: tuple[int, ...]) -> None:
@@ -72,11 +72,11 @@ class ScalerLayer(keras.layers.Layer):
         """
         if not self._is_adapted:
             is_adapted = True
-            if self.data_min is None and self.data_max is None:
+            if self.data_min_ is None and self.data_max_ is None:
                 is_adapted = False
             # ``data_min`` and ``data_max`` have the same shape as one input tensor.
-            self.data_min = tf.zeros(input_shape[1:])
-            self.data_max = tf.ones(input_shape[1:])
+            self.data_min_ = tf.zeros(input_shape[1:])
+            self.data_max_ = tf.ones(input_shape[1:])
             self._adapt()
             if not is_adapted:
                 self._is_adapted = False
@@ -86,10 +86,10 @@ class ScalerLayer(keras.layers.Layer):
 
         Returns:
             list[ArrayLike]: List with three elements in the following order:
-            ``self.data_min``, ``self.data_max``, ``self.feature_range``
+            ``self.data_min_``, ``self.data_max_``, ``self.feature_range_``
 
         """
-        return [self.data_min, self.data_max, self.feature_range]
+        return [self.data_min_, self.data_max_, self.feature_range_]
 
     def set_weights(self, weights: list[ArrayLike]) -> None:
         """Set parameters of the scaling.
@@ -102,11 +102,11 @@ class ScalerLayer(keras.layers.Layer):
             ValueError: If ``feature_range[0] >= feature_range[1]``.
 
         """
-        self.feature_range = tf.convert_to_tensor(weights[2], dtype=tf.float32)
-        if self.feature_range[0] >= self.feature_range[1]:
+        self.feature_range_ = tf.convert_to_tensor(weights[2], dtype=tf.float32)
+        if self.feature_range_[0] >= self.feature_range_[1]:
             raise ValueError("Feature range must be strictly increasing.")
-        self.data_min = tf.convert_to_tensor(weights[0], dtype=tf.float32)
-        self.data_max = tf.convert_to_tensor(weights[1], dtype=tf.float32)
+        self.data_min_ = tf.convert_to_tensor(weights[0], dtype=tf.float32)
+        self.data_max_ = tf.convert_to_tensor(weights[1], dtype=tf.float32)
 
     def adapt(self, data: ArrayLike) -> None:
         """Fit the layer to the min and max of the data. This is done individually for
@@ -121,31 +121,43 @@ class ScalerLayer(keras.layers.Layer):
 
         """
         data = tf.convert_to_tensor(data, dtype=tf.float32)
-        self.data_min = tf.math.reduce_min(data, axis=0)
-        self.data_max = tf.math.reduce_max(data, axis=0)
+        self.data_min_ = tf.math.reduce_min(data, axis=0)
+        self.data_max_ = tf.math.reduce_max(data, axis=0)
         self._adapt()
 
     def _adapt(self) -> None:
-        if tf.math.reduce_any(self.data_min > self.data_max):
+        if tf.math.reduce_any(self.data_min_ > self.data_max_):
             raise RuntimeError(
-                f"""self.data_min {self.data_min} cannot be larger than self.data_max
-                {self.data_max} for any element."""
+                f"""self.data_min_ {self.data_min_} cannot be larger than self.data_max_
+                {self.data_max_} for any element."""
             )
         self.scalar = tf.where(
-            self.data_max > self.data_min,
-            self.data_max - self.data_min,
-            tf.ones_like(self.data_min),
+            self.data_max_ > self.data_min_,
+            self.data_max_ - self.data_min_,
+            tf.ones_like(self.data_min_),
         )
         self.min = tf.where(
-            self.data_max > self.data_min,
-            self.data_min,
-            tf.zeros_like(self.data_min),
+            self.data_max_ > self.data_min_,
+            self.data_min_,
+            tf.zeros_like(self.data_min_),
         )
         self._is_adapted = True
 
     @property
     def is_adapted(self):
         return self._is_adapted
+
+    @property
+    def feature_range(self):
+        return self.feature_range_
+
+    @property
+    def data_min(self):
+        return self.data_min_
+
+    @property
+    def data_max(self):
+        return self.data_max_
 
 
 class MinMaxScalerLayer(
@@ -187,18 +199,18 @@ class MinMaxScalerLayer(
         # Ensure the dtype is correct.
         inputs = tf.convert_to_tensor(inputs, dtype=tf.float32)
 
-        feature_ranges = tf.convert_to_tensor(self.feature_range, dtype=tf.float32)
+        feature_ranges = tf.convert_to_tensor(self.feature_range_, dtype=tf.float32)
         # If only one feature range is given for multiple features --> broadcast
         if len(feature_ranges.shape) == 1:
             if len(inputs.shape) > 1:
                 feature_ranges = tf.expand_dims(feature_ranges, axis=0)
                 feature_ranges = tf.tile(feature_ranges, [tf.shape(inputs)[1], 1])
-                self.feature_range = feature_ranges
+                self.feature_range_ = feature_ranges
 
         scaled_data = (inputs - self.min) / self.scalar
         return (
-            scaled_data * (self.feature_range[:, 1] - self.feature_range[:, 0])
-        ) + self.feature_range[:, 0]
+            scaled_data * (self.feature_range_[:, 1] - self.feature_range_[:, 0])
+        ) + self.feature_range_[:, 0]
 
     def compute_output_shape(self, input_shape):
         """Calculate the output shape."""
@@ -209,15 +221,15 @@ class MinMaxScalerLayer(
         config = super(MinMaxScalerLayer, self).get_config()
         config.update(
             {
-                "feature_range": self.feature_range,
+                "feature_range": self.feature_range_,
                 "data_min": (
-                    self.data_min.numpy().tolist()
-                    if self.data_min is not None
+                    self.data_min_.numpy().tolist()
+                    if self.data_min_ is not None
                     else None
                 ),
                 "data_max": (
-                    self.data_max.numpy().tolist()
-                    if self.data_max is not None
+                    self.data_max_.numpy().tolist()
+                    if self.data_max_ is not None
                     else None
                 ),
             }
@@ -269,7 +281,7 @@ class MinMaxUnScalerLayer(ScalerLayer, tf.keras.layers.Layer):
                 the layer or set the ``data_min`` and ``data_max`` values manually."""
             )
         # Ensure the dtype is correct.
-        feature_ranges = tf.convert_to_tensor(self.feature_range, dtype=tf.float32)
+        feature_ranges = tf.convert_to_tensor(self.feature_range_, dtype=tf.float32)
         inputs = tf.convert_to_tensor(inputs, dtype=tf.float32)
 
         # If only one feature is given for multiple features --> broadcast
@@ -277,10 +289,10 @@ class MinMaxUnScalerLayer(ScalerLayer, tf.keras.layers.Layer):
             if len(inputs.shape) > 1:
                 feature_ranges = tf.expand_dims(feature_ranges, axis=0)
                 feature_ranges = tf.tile(feature_ranges, [tf.shape(inputs)[1], 1])
-                self.feature_range = feature_ranges
+                self.feature_range_ = feature_ranges
 
-        unscaled_data = (inputs - self.feature_range[:, 0]) / (
-            self.feature_range[:, 1] - self.feature_range[:, 0]
+        unscaled_data = (inputs - self.feature_range_[:, 0]) / (
+            self.feature_range_[:, 1] - self.feature_range_[:, 0]
         )
         return unscaled_data * self.scalar + self.min
 
@@ -293,15 +305,15 @@ class MinMaxUnScalerLayer(ScalerLayer, tf.keras.layers.Layer):
         config = super(MinMaxUnScalerLayer, self).get_config()
         config.update(
             {
-                "feature_range": self.feature_range,
+                "feature_range": self.feature_range_,
                 "data_min": (
-                    self.data_min.numpy().tolist()
-                    if self.data_min is not None
+                    self.data_min_.numpy().tolist()
+                    if self.data_min_ is not None
                     else None
                 ),
                 "data_max": (
-                    self.data_max.numpy().tolist()
-                    if self.data_max is not None
+                    self.data_max_.numpy().tolist()
+                    if self.data_max_ is not None
                     else None
                 ),
             }
