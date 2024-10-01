@@ -15,6 +15,7 @@ from numpy.typing import ArrayLike
 
 # pylint: skip-file
 
+
 class ScalerLayer(keras.layers.Layer):
     """MixIn to provide functionality for the Scaler Layer."""
 
