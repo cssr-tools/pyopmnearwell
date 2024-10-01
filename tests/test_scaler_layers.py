@@ -1,5 +1,6 @@
 # pylint: skip-file
 # pylint: disable=missing-function-docstring
+# type: ignore
 """Test the ``ml.scaler_layers`` module.
 
 Warning: Tensorflow 2.17 and Keras 3.0 make all tests fail, hence we disable them

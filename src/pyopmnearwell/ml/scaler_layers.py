@@ -1,4 +1,5 @@
 # pylint: skip-file
+# type: ignore
 """Provide MinMax scaler layers for tensorflow.keras.
 
 Warning: Tensorflow 2.17 and Keras 3.0 introduce many pylint errors, hence we disable
