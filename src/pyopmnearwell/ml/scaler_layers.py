@@ -1,3 +1,4 @@
+# pylint: skip-file
 """Provide MinMax scaler layers for tensorflow.keras.
 
 Warning: Tensorflow 2.17 and Keras 3.0 introduce many pylint errors, hence we disable
@@ -12,9 +13,6 @@ import keras
 import numpy as np
 import tensorflow as tf
 from numpy.typing import ArrayLike
-
-# pylint: skip-file
-
 
 class ScalerLayer(keras.layers.Layer):
     """MixIn to provide functionality for the Scaler Layer."""

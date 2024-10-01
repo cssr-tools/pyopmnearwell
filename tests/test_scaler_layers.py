@@ -1,3 +1,4 @@
+# pylint: skip-file
 # pylint: disable=missing-function-docstring
 """Test the ``ml.scaler_layers`` module.
 
@@ -17,8 +18,6 @@ import pytest
 from sklearn.preprocessing import MinMaxScaler
 
 from pyopmnearwell.ml.scaler_layers import MinMaxScalerLayer, MinMaxUnScalerLayer
-
-# pylint: skip-file
 
 rng: np.random.Generator = np.random.default_rng()
 
