@@ -285,8 +285,10 @@ def setup_ensemble(
                 "fol": pathlib.Path(ensemble_path.name) / f"runfiles_{i}",
             },
         )
-        dic = readthesecondpart(lol, dic, index)
+        readthesecondpart(lol, dic, index)
         dic.update({"runname": f"RUN_{i}"})
+        dic["fprep"] = f"{dic['exe']}/{dic['fol']}/preprocessing"
+        dic["foutp"] = f"{dic['exe']}/{dic['fol']}/output"
         # Always calculate geology, grid, tables, etc. for the first ensemble member.
         if i == 0:
             reservoir_files(dic)

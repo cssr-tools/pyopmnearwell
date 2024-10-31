@@ -48,6 +48,7 @@ def pyopmnearwell():
         "--generate",
         default="all",
         help="Run the whole framework ('all'), only run flow ('flow'), "
+        ", only write the deck and run flow together in the output folder ('single'), "
         "or only create plots ('plot') ('all' by default).",
     )
     parser.add_argument(
@@ -101,12 +102,18 @@ def pyopmnearwell():
     # Make the output folders
     if not os.path.exists(os.path.join(dic["exe"], dic["fol"])):
         os.makedirs(os.path.join(dic["exe"], dic["fol"]))
-    for fil in ["preprocessing", "jobs", "output", "postprocessing"]:
-        if not os.path.exists(os.path.join(dic["exe"], dic["fol"], fil)):
-            os.makedirs(os.path.join(dic["exe"], dic["fol"], fil))
+    if dic["generate"] == "single":
+        dic["fprep"] = f"{dic['exe']}/{dic['fol']}"
+        dic["foutp"] = f"{dic['exe']}/{dic['fol']}"
+    else:
+        dic["fprep"] = f"{dic['exe']}/{dic['fol']}/preprocessing"
+        dic["foutp"] = f"{dic['exe']}/{dic['fol']}/output"
+        for fil in ["preprocessing", "jobs", "output", "postprocessing"]:
+            if not os.path.exists(os.path.join(dic["exe"], dic["fol"], fil)):
+                os.makedirs(os.path.join(dic["exe"], dic["fol"], fil))
     os.chdir(os.path.join(dic["exe"], dic["fol"]))
 
-    if dic["generate"] in ["all", "flow"]:
+    if dic["generate"] in ["all", "flow", "single"]:
         # Write used opm related files
         reservoir_files(dic)
 
