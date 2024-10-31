@@ -8,18 +8,18 @@ import matplotlib
 FLOW = "/Users/dmar/Github/opm/build/opm-simulators/bin/flow"
 QRATEW = 15000 # Injection rates [stb]
 QRATEG = 15000 # Injection rates [Mscf] * 5.6146e-3
-TPERIOD = 30 # Duration of one period in days
+TPERIOD = 80 # Duration of one period in days
 NSCHED = 8  # Number of changues in the schedule
-NPRUNS = 5 # Number of parallel simulations
+NPRUNS = 10 # Number of parallel simulations
 
 folders = sorted([name for name in os.listdir(".") if os.path.isdir(name)])
-#cwd = os.getcwd()
-#for folder in folders:
-#    os.chdir(f"{cwd}/{folder}")
-#    subprocess.run(
-#        ["python3", "run_simulations.py", "-f", f"{FLOW}", "-q", f"{QRATEW}", "-g", f"{QRATEG}", "-t", f"{TPERIOD}", "-n", f"{NSCHED}", "-p", f"{NPRUNS}"], check=True
-#    )
-#os.chdir(f"{cwd}")
+cwd = os.getcwd()
+for folder in folders:
+   os.chdir(f"{cwd}/{folder}")
+   subprocess.run(
+       ["python3", "run_simulations.py", "-f", f"{FLOW}", "-q", f"{QRATEW}", "-g", f"{QRATEG}", "-t", f"{TPERIOD}", "-n", f"{NSCHED}", "-p", f"{NPRUNS}"], check=True
+   )
+os.chdir(f"{cwd}")
 colors = matplotlib.colormaps["tab20"]
 markers = ['o', 'v', '^', '<', '>', 'D', '1', '2', '3', '4', '8', 's', 'p', '*', 'h', 'H', '+', 'x', 'D', 'd', '|', '_', 'P', 'X']
 
@@ -33,26 +33,15 @@ for j,(quantity, description) in enumerate(zip(quantities,descriptions)):
         schedules = np.load(f'{folder}/schedules.npy')
         #names = np.load(f'{folder}/names.npy')
         data = np.load(f'{folder}/{quantity}.npy')
-        if folder == 'water_gas_twicek':
-            axis.plot(
-                [0,1,2,3,4,6,7],
-                [data[nn] for nn in [0,1,2,3,4,6,7]],
-                color=colors(i),
-                linestyle="",
-                marker=markers[i],
-                markersize=7,
-                label=folder,
-            )
-        else:
-            axis.plot(
-                range(len(schedules)),
-                data,
-                color=colors(i),
-                linestyle="",
-                marker=markers[i],
-                markersize=7,
-                label=folder,
-            )
+        axis.plot(
+            range(len(schedules)),
+            data,
+            color=colors(i),
+            linestyle="",
+            marker=markers[i],
+            markersize=7,
+            label=folder,
+        )
     #if len(schedules) <= 27:
     #axis.set_xticks(np.round(np.linspace(0, len(schedules)-1, len(schedules)), 2))
     #axis.set_xticklabels([name[0:6]+'...' for name in names], rotation=270)

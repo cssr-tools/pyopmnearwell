@@ -5,14 +5,12 @@ Introduction
 .. image:: ./figs/introduction.gif
     :scale: 50%
 
-This documentation describes the content of the **pyopmnearwell** package.
-The numerical studies are performed using the 
-`OPM Flow <https://opm-project.org/?page_id=19>`_ simulator.
+This documentation describes the **pyopmnearwell** package hosted in `https://github.com/cssr-tools/pyopmnearwell <https://github.com/cssr-tools/pyopmnearwell>`_.
 
 Concept
 -------
 Simplified and flexible testing framework for near-well simulations via a
-:doc:`configuration file <./configuration_file>`:
+:doc:`configuration file <./configuration_file>` using the `OPM Flow simulator <https://opm-project.org/?page_id=19>`_:
 
 - Set the physical model (current ones are co2store, co2eor, h2store, and saltprec).
 - Choose a `specific template <https://github.com/cssr-tools/pyopmnearwell/blob/main/src/pyopmnearwell/templates>`_ inside the folder for the chosen physical model.
@@ -31,18 +29,19 @@ The current implementation supports the following executable with the argument o
 
 .. code-block:: bash
 
-    pyopmnearwell -i input.txt -o output -p resdata -g all -z 10 -s log -m co2store
+    pyopmnearwell -i input.txt -o output -p resdata -c '' -g all -w yes -z 10 -s log -m co2store
 
 where 
 
-- \-i: The base name of the :doc:`configuration file <./configuration_file>` ('input.txt' by default).
-- \-o: The base name of the :doc:`output folder <./output_folder>` ('output' by default).
-- \-p: Using the 'resdata' or 'opm' Python package to generate the figures ('resdata' by default, 'off' to skip the plotting).
-- \-c: Compare the results from different output folders (write any name to actiate, '' by default).
-- \-g: Run the whole framework ('all'), only run flow ('flow'), or only create plots ('plot') ('all' by default).
-- \-z: xlim in meters for the zoomed in plots (20 by default).
-- \-s: Scale for the x axis in the figures: 'normal' or 'log' ('normal' by default).
-- \-m: Simulated model (5th row in the configuration file). This is used for the plotting compare method (it gets overwritten by the configuration file) ('co2store' by default).
+-i  The base name of the :doc:`configuration file <./configuration_file>` ('input.txt' by default).
+-o  The base name of the :doc:`output folder <./output_folder>` ('output' by default).
+-p  Using the 'resdata' or 'opm' Python package to generate the figures ('resdata' by default, 'off' to skip the plotting).
+-c  Compare the results from different output folders (write any name to actiate, '' by default).
+-g  Run the whole framework ('all'), only run flow ('flow'), only write the deck and run flow together in the output folder ('single'), or only create plots ('plot') ('all' by default).
+-w  Write cell values, i.e., EGRID, INIT, UNRST ('yes' by default).
+-z  xlim in meters for the zoomed in plots (20 by default).
+-s  Scale for the x axis in the figures: 'normal' or 'log' ('normal' by default).
+-m  Simulated model (5th row in the configuration file). This is used for the plotting compare method (it gets overwritten by the configuration file) ('co2store' by default).
 
 .. warning::
     The H2CH4 template in the h2store model folder is under development and it is based on an input deck available in 

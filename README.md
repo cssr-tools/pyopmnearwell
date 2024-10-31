@@ -47,15 +47,29 @@ in Linux, Windows, and macOS.
 ## Running pyopmnearwell
 You can run _pyopmnearwell_ as a single command line:
 ```
-pyopmnearwell -i some_input.txt -o some_output_folder
+pyopmnearwell -i configuration_file.txt
 ```
 Run `pyopmnearwell --help` to see all possible command line 
-argument options. Inside the `some_input.txt` file you provide the path to the
+argument options. Inside the `configuration_file.txt` file you provide the path to the
 flow executable and simulation parameters. See the .txt files in the [_examples_](https://github.com/cssr-tools/pyopmnearwell/tree/main/examples),
 [_tests/geometries/_](https://github.com/cssr-tools/pyopmnearwell/tree/main/tests/geometries), and [_tests/models/_](https://github.com/cssr-tools/pyopmnearwell/tree/main/tests/models) folders. 
 
 ## Getting started
 See the [_examples_](https://cssr-tools.github.io/pyopmnearwell/examples.html) in the [_documentation_](https://cssr-tools.github.io/pyopmnearwell/introduction.html).
+
+## Citing
+If you would like to cite this repository:
+
+* Landa-Marbán, D. and von Schultzendorff, P.M. 2023. Pyopmnearwell: A framework to simulate near well dynamics using OPM Flow. V2023.10. https://doi.org/10.5281/zenodo.10266791.
+
+## Publications
+The following is a list of manuscripts in which _pyopmnearwell_ is used:
+
+1. Landa-Marbán, D., Zamani, N., Sandve, T.H., Gasda, S.E., 2024. Impact of Intermittency on Salt Precipitation During CO2 Injection, presented at SPE
+Norway Subsurface Conference, Bergen, Norway, April 2024. doi: 10.2118/218477-MS.   
+1. von Schultzendorff, P., Sandve, T.H., Kane, B., Landa-Marbán, D., Both, J.W., Nordbotten, J.M., 2024. A Machine-Learned Near-Well Model in OPM Flow, presented at ECMOR 2024, European Association of Geoscientists & Engineers, Sep. 2024, pp. 1–23. doi: 10.3997/2214-4609.202437033.
+1. Lliguizaca, J.R., Landa-Marbán, D., Gasda, S.E., Sandve, T.H., Alcorn, Z.P., 2024. Data-Driven Predictions of CO2 EOR Numerical Studies Using Machine Learning in an Open-Source Framework, presented at SPE Norway Subsurface Conference, Bergen, Norway, April 2024. doi: 10.2118/218441-MS.
+1. Mushabe, R., Minougou, J.D., Landa-Marbán, D., Kane, B., Sandve, T.H., Submitted. Predicting Ultimate Hydrogen Production and Residual Volume during Cyclic Underground Hydrogen Storage in Porous Media using Machine Learning.
 
 ## About pyopmnearwell
 The pyopmnearwell package is being funded by the [_HPC Simulation Software for the Gigatonne Storage Challenge project_](https://www.norceresearch.no/en/projects/hpc-simulation-software-for-the-gigatonne-storage-challenge) [project number 622059] and [_Center for Sustainable Subsurface Resources (CSSR)_](https://cssr.no) 

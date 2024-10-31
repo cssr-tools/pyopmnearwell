@@ -45,7 +45,12 @@ UNIFOUT
 -------------------------------------------------------------------------
 GRID
 -------------------------------------------------------------------------
+% if dic['write'] == 'yes':
 INIT
+% else:
+GRIDFILE                               
+0 0 /
+% endif
 
 % if dic['grid']== 'cpg3d':
 INCLUDE
@@ -235,9 +240,11 @@ SOF3
 -------------------------------------------------------------------------
 SOLUTION
 -------------------------------------------------------------------------
+% if dic['write'] == 'yes':
 RPTRST
 'BASIC=2' DENG DENO DENW BO BG BW KRG KRO KRW PCOW PCOG VGAS VOIL VWAT
 /
+% endif
 
 EQUIL
 8400 ${dic["pressure"]} 8450 0 8300 0 1 0 0 /
@@ -339,9 +346,11 @@ WWPT
 -------------------------------------------------------------------------
 SCHEDULE
 -------------------------------------------------------------------------
+% if dic['write'] == 'yes':
 RPTRST
 'BASIC=2' DENG DENO DENW  BO BG BW KRG KRO KRW PCOW PCOG VGAS VOIL VWAT
 /
+% endif
 WELSPECS
 	'PROD'	'G1'	${dic['noCells'][0]}	${dic['noCells'][0]}	1*	'OIL' /
 	'INJW'	'INJ'	1	1	1*	'WATER' /

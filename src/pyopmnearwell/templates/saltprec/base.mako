@@ -49,6 +49,12 @@ UNIFOUT
 ----------------------------------------------------------------------------
 GRID
 ----------------------------------------------------------------------------
+% if dic['write'] == 'yes':
+INIT
+% else:
+GRIDFILE                               
+0 0 /
+% endif
 INCLUDE
   'GEOLOGY.INC' /
 % if dic["pvMult"] > 0:
@@ -98,9 +104,10 @@ ${dic['dims'][2]} ${dic['salt_props'][0]} /
 RTEMPVD
 0   ${dic['temperature']}
 ${dic['dims'][2]} ${dic['temperature']} /
-
+% if dic['write'] == 'yes':
 RPTRST 
  'BASIC=2' FLOWS FLORES DEN VISC /
+% endif
 ----------------------------------------------------------------------------
 SUMMARY
 ----------------------------------------------------------------------------
@@ -182,8 +189,10 @@ RGIP
 ----------------------------------------------------------------------------
 SCHEDULE
 ----------------------------------------------------------------------------
+% if dic['write'] == 'yes':
 RPTRST
  'BASIC=2' FLOWS FLORES DEN VISC PCOW PCOG /
+% endif
 
 WELSPECS
 % if dic['grid'] == 'core':
