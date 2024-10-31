@@ -64,7 +64,8 @@ def reservoir_files(
             "regions_file": "REGIONS.INC",
         }
     )
-
+    if not "fprep" in dic:
+        dic["fprep"] = f"{dic['exe']}/{dic['fol']}/preprocessing"
     # Generation of the x-dir spatial discretization using a telescopic function.
     if dic["x_fac"] != 0:
         dic["xcor"] = np.flip(
@@ -138,11 +139,8 @@ def reservoir_files(
             dic["pat"], "templates", dic["model"], f"{dic['template']}.mako"
         ),
     )
-
     with open(
-        os.path.join(
-            dic["exe"], dic["fol"], "preprocessing", f"{dic['runname'].upper()}.DATA"
-        ),
+        os.path.join(dic["fprep"], f"{dic['runname'].upper()}.DATA"),
         "w",
         encoding="utf-8",
     ) as file:
@@ -176,12 +174,7 @@ def manage_sections(dic):
             filename=os.path.join(dic["pat"], "templates", "common", f"{section}.mako"),
         )
         with open(
-            os.path.join(
-                dic["exe"],
-                dic["fol"],
-                "preprocessing",
-                f"{section.upper()}.INC",
-            ),
+            os.path.join(dic["fprep"], f"{section.upper()}.INC"),
             "w",
             encoding="utf-8",
         ) as file:
@@ -244,7 +237,7 @@ def manage_grid(dic):
         dxarray.insert(0, "DX")
         dxarray.append("/")
         with open(
-            os.path.join(dic["exe"], dic["fol"], "preprocessing", "DX.INC"),
+            os.path.join(dic["fprep"], "DX.INC"),
             "w",
             encoding="utf8",
         ) as file:
@@ -256,7 +249,7 @@ def manage_grid(dic):
         dxarray.insert(0, "DRV")
         dxarray.append("/")
         with open(
-            os.path.join(dic["exe"], dic["fol"], "preprocessing", "DRV.INC"),
+            os.path.join(dic["fprep"], "DRV.INC"),
             "w",
             encoding="utf8",
         ) as file:
@@ -277,7 +270,7 @@ def manage_grid(dic):
         var = {"dic": dic}
         filledtemplate: str = fill_template(var, text="\n".join(lol))
         with open(
-            os.path.join(dic["exe"], dic["fol"], "preprocessing", "GRID.INC"),
+            os.path.join(dic["fprep"], "GRID.INC"),
             "w",
             encoding="utf8",
         ) as file:
@@ -375,7 +368,7 @@ def d3_grids(dic, dxarray):
         var = {"dic": dic}
         filledtemplate: str = fill_template(var, text="\n".join(lol))
         with open(
-            f"{dic['exe']}/{dic['fol']}/preprocessing/GRID.INC",
+            f"{dic['fprep']}/GRID.INC",
             "w",
             encoding="utf8",
         ) as file:
@@ -394,7 +387,7 @@ def d3_grids(dic, dxarray):
         dxarray.insert(0, "DX")
         dxarray.append("/")
         with open(
-            f"{dic['exe']}/{dic['fol']}/preprocessing/DX.INC",
+            f"{dic['fprep']}/DX.INC",
             "w",
             encoding="utf8",
         ) as file:
@@ -402,7 +395,7 @@ def d3_grids(dic, dxarray):
         dyarray.insert(0, "DY")
         dyarray.append("/")
         with open(
-            f"{dic['exe']}/{dic['fol']}/preprocessing/DY.INC",
+            f"{dic['fprep']}/DY.INC",
             "w",
             encoding="utf8",
         ) as file:
