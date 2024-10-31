@@ -52,6 +52,12 @@ def pyopmnearwell():
         "or only create plots ('plot') ('all' by default).",
     )
     parser.add_argument(
+        "-w",
+        "--write",
+        default="yes",
+        help="Write cell values, i.e., EGRID, INIT, UNRST ('yes' by default).",
+    )
+    parser.add_argument(
         "-m",
         "--model",
         default="co2store",
@@ -82,6 +88,7 @@ def pyopmnearwell():
     dic["plot"] = cmdargs["plotting"].strip()  # The python package used for plotting
     dic["model"] = cmdargs["model"].strip()  # Name of the simulated model
     dic["generate"] = cmdargs["generate"].strip()  # Parts of the workflow to run
+    dic["write"] = cmdargs["write"].strip()  # Write EGRID, INIT, and UNRST
     dic["scale"] = cmdargs["scale"].strip()  # Scale for the x axis: 'normal' or 'log'
     dic["zoom"] = float(cmdargs["zoom"])  # xlim in meters for the zoomed in plots
     dic["compare"] = cmdargs[

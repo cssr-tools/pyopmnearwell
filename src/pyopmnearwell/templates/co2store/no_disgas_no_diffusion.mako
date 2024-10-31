@@ -45,6 +45,12 @@ UNIFOUT
 ----------------------------------------------------------------------------
 GRID
 ----------------------------------------------------------------------------
+% if dic['write'] == 'yes':
+INIT
+% else:
+GRIDFILE                               
+0 0 /
+% endif
 INCLUDE
   ${dic['geology_file']} /
 % if dic["pvMult"] > 0:
@@ -81,9 +87,10 @@ ${dic['dims'][2]} ${dic['temperature']} /
 
 RVW
   ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*.0 /
-
+% if dic['write'] == 'yes':
 RPTRST 
  'BASIC=2' FLOWS FLORES DEN VISC /
+% endif
 ----------------------------------------------------------------------------
 SUMMARY
 ----------------------------------------------------------------------------
@@ -159,9 +166,10 @@ WPI
 ----------------------------------------------------------------------------
 SCHEDULE
 ----------------------------------------------------------------------------
+% if dic['write'] == 'yes':
 RPTRST
  'BASIC=2' FLOWS FLORES DEN VISC /
-
+% endif
 WELSPECS
 % if dic['grid'] == 'core':
 'INJ0' 'G1' 1 ${1+mt.floor(dic['noCells'][2]/2)} 1* ${'GAS' if dic['inj'][0][3] > 0 else 'WATER'} 3* ${'NO' if dic["xflow"] > 0 else ''} /

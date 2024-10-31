@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
@@ -6,18 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Introduction &mdash; pyopmnearwell  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -87,14 +85,13 @@
              
   <section id="introduction">
 <h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h1>
-<a class="reference internal image-reference" href="_images/introduction.gif"><img alt="_images/introduction.gif" src="_images/introduction.gif" style="width: 778.0px; height: 324.0px;" /></a>
-<p>This documentation describes the content of the <strong>pyopmnearwell</strong> package.
-The numerical studies are performed using the
-<a class="reference external" href="https://opm-project.org/?page_id=19">OPM Flow</a> simulator.</p>
+<a class="reference internal image-reference" href="_images/introduction.gif"><img alt="_images/introduction.gif" src="_images/introduction.gif" style="width: 778.0px; height: 324.0px;" />
+</a>
+<p>This documentation describes the <strong>pyopmnearwell</strong> package hosted in <a class="reference external" href="https://github.com/cssr-tools/pyopmnearwell">https://github.com/cssr-tools/pyopmnearwell</a>.</p>
 <section id="concept">
 <h2>Concept<a class="headerlink" href="#concept" title="Link to this heading"></a></h2>
 <p>Simplified and flexible testing framework for near-well simulations via a
-<a class="reference internal" href="configuration_file.html"><span class="doc">configuration file</span></a>:</p>
+<a class="reference internal" href="configuration_file.html"><span class="doc">configuration file</span></a> using the <a class="reference external" href="https://opm-project.org/?page_id=19">OPM Flow simulator</a>:</p>
 <ul class="simple">
 <li><p>Set the physical model (current ones are co2store, co2eor, h2store, and saltprec).</p></li>
 <li><p>Choose a <a class="reference external" href="https://github.com/cssr-tools/pyopmnearwell/blob/main/src/pyopmnearwell/templates">specific template</a> inside the folder for the chosen physical model.</p></li>
@@ -110,20 +107,39 @@ The numerical studies are performed using the
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
 <p>The current implementation supports the following executable with the argument options:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pyopmnearwell<span class="w"> </span>-i<span class="w"> </span>input.txt<span class="w"> </span>-o<span class="w"> </span>output<span class="w"> </span>-p<span class="w"> </span>resdata<span class="w"> </span>-g<span class="w"> </span>all<span class="w"> </span>-z<span class="w"> </span><span class="m">10</span><span class="w"> </span>-s<span class="w"> </span>log<span class="w"> </span>-m<span class="w"> </span>co2store
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pyopmnearwell<span class="w"> </span>-i<span class="w"> </span>input.txt<span class="w"> </span>-o<span class="w"> </span>output<span class="w"> </span>-p<span class="w"> </span>resdata<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-g<span class="w"> </span>all<span class="w"> </span>-w<span class="w"> </span>yes<span class="w"> </span>-z<span class="w"> </span><span class="m">10</span><span class="w"> </span>-s<span class="w"> </span>log<span class="w"> </span>-m<span class="w"> </span>co2store
 </pre></div>
 </div>
 <p>where</p>
-<ul class="simple">
-<li><p>-i: The base name of the <a class="reference internal" href="configuration_file.html"><span class="doc">configuration file</span></a> (‘input.txt’ by default).</p></li>
-<li><p>-o: The base name of the <a class="reference internal" href="output_folder.html"><span class="doc">output folder</span></a> (‘output’ by default).</p></li>
-<li><p>-p: Using the ‘resdata’ or ‘opm’ Python package to generate the figures (‘resdata’ by default, ‘off’ to skip the plotting).</p></li>
-<li><p>-c: Compare the results from different output folders (write any name to actiate, ‘’ by default).</p></li>
-<li><p>-g: Run the whole framework (‘all’), only run flow (‘flow’), or only create plots (‘plot’) (‘all’ by default).</p></li>
-<li><p>-z: xlim in meters for the zoomed in plots (20 by default).</p></li>
-<li><p>-s: Scale for the x axis in the figures: ‘normal’ or ‘log’ (‘normal’ by default).</p></li>
-<li><p>-m: Simulated model (5th row in the configuration file). This is used for the plotting compare method (it gets overwritten by the configuration file) (‘co2store’ by default).</p></li>
-</ul>
+<dl class="option-list">
+<dt><kbd><span class="option">-i</span></kbd></dt>
+<dd><p>The base name of the <a class="reference internal" href="configuration_file.html"><span class="doc">configuration file</span></a> (‘input.txt’ by default).</p>
+</dd>
+<dt><kbd><span class="option">-o</span></kbd></dt>
+<dd><p>The base name of the <a class="reference internal" href="output_folder.html"><span class="doc">output folder</span></a> (‘output’ by default).</p>
+</dd>
+<dt><kbd><span class="option">-p</span></kbd></dt>
+<dd><p>Using the ‘resdata’ or ‘opm’ Python package to generate the figures (‘resdata’ by default, ‘off’ to skip the plotting).</p>
+</dd>
+<dt><kbd><span class="option">-c</span></kbd></dt>
+<dd><p>Compare the results from different output folders (write any name to actiate, ‘’ by default).</p>
+</dd>
+<dt><kbd><span class="option">-g</span></kbd></dt>
+<dd><p>Run the whole framework (‘all’), only run flow (‘flow’), only write the deck and run flow together in the output folder (‘single’), or only create plots (‘plot’) (‘all’ by default).</p>
+</dd>
+<dt><kbd><span class="option">-w</span></kbd></dt>
+<dd><p>Write cell values, i.e., EGRID, INIT, UNRST (‘yes’ by default).</p>
+</dd>
+<dt><kbd><span class="option">-z</span></kbd></dt>
+<dd><p>xlim in meters for the zoomed in plots (20 by default).</p>
+</dd>
+<dt><kbd><span class="option">-s</span></kbd></dt>
+<dd><p>Scale for the x axis in the figures: ‘normal’ or ‘log’ (‘normal’ by default).</p>
+</dd>
+<dt><kbd><span class="option">-m</span></kbd></dt>
+<dd><p>Simulated model (5th row in the configuration file). This is used for the plotting compare method (it gets overwritten by the configuration file) (‘co2store’ by default).</p>
+</dd>
+</dl>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>The H2CH4 template in the h2store model folder is under development and it is based on an input deck available in

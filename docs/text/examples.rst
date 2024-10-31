@@ -74,7 +74,13 @@ The following are some of the plots created by the **pyopmnearwell** executable:
 .. figure:: figs/nearwell_saturation.png
     
     Permeability (top), CO2 injection schedule (middle), and saturation values over time on the cells along the well location
-    at three different locations (bottom). 
+    at three different locations (bottom).
+
+CCUS (machine learning)
+-----------------------
+See `this folder <https://github.com/cssr-tools/pyopmnearwell/tree/main/examples/cemracs2023/ml_example_co2eor>`_ for an example of
+how to use **pyopmnearwell** to generate data for different input parameters (e.g., injection rates) and read the data (e.g., 
+production volumes). This example could be used as a starting point for the ones interested in ML. 
 
 Publications
 ------------

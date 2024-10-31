@@ -3,7 +3,6 @@ import math as mt
 %>
 -- Copyright (C) 2023 NORCE
 
-INIT
 % if dic['grid']== 'cartesian2d':
 INCLUDE
 ${dic['dx_file']} /
