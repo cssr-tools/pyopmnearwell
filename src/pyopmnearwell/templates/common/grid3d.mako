@@ -18,7 +18,7 @@ ${f"{dic['xcorc'][i] : E}"} ${f"{dic['xcorc'][j] : E}"} 0 ${f"{dic['xcorc'][i] :
 % endfor
 /
 ZCORN
-% if dic["model"] == "co2eor":
+% if dic["model"] in ["co2eor", "foam"]:
 % for j in range(dic['noCells'][1]):
 % for i in range(dic['noCells'][0]):
  ${f"{0 + mainfold(dic['xcorc'][i], dic['xcorc'][j]): E}"} ${f"{0 + mainfold(dic['xcorc'][i+1], dic['xcorc'][j]): E}"}
