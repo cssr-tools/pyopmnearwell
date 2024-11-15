@@ -30,7 +30,7 @@ def process_input(dic, in_file):
     dic, index = readthefirstpart(lol, dic)
     dic = readthesecondpart(lol, dic, index)
     dic = readsalt(lol, dic)
-    dic = readco2eor(lol, dic)
+    dic = readco2eorfoam(lol, dic)
     return dic
 
 
@@ -114,9 +114,9 @@ def readhysteresis(lol, dic):
     return dic
 
 
-def readco2eor(lol, dic):
-    """Read the additional parameters for the co2eor"""
-    if dic["model"] == "co2eor":
+def readco2eorfoam(lol, dic):
+    """Read the additional parameters for the co2eor/foam"""
+    if dic["model"] in ["co2eor", "foam"]:
         dic["pressure"] *= 1.0e5  # Back to psia
         dic["injbhp"] = float((lol[9][0].strip()).split()[1])
         dic["probhp"] = float((lol[9][0].strip()).split()[2])
@@ -199,7 +199,7 @@ def readthesecondpart(lol, dic, index):
         )
         if i < dic["satnum"]:
             dic["thickness"].append(float(row[7]))
-            if dic["model"] == "co2eor" or dic["model"] == "co2eormodified":
+            if dic["model"] in ["co2eor", "co2eormodified", "foam"]:
                 dic["nz_perlayer"].append(int(row[9]))
     index += 3 + dic["satnum"] + dic["perforations"][0]
     column = []

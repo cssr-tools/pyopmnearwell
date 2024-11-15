@@ -147,7 +147,7 @@ def reservoir_files(
         encoding="utf-8",
     ) as file:
         file.write(filledtemplate)
-    if dic["model"] != "co2eor":
+    if dic["model"] not in ["co2eor", "foam"]:
         if kwargs.get("recalc_tables", True):
             manage_tables(dic)
         if kwargs.get("recalc_sections", True):
@@ -282,7 +282,7 @@ def manage_grid(dic):
             dic["xcorc"] = dic["x_n"]
         else:
             dic = create_3dgrid(dic)
-            if dic["model"] != "co2eor":
+            if dic["model"] not in ["co2eor", "foam"]:
                 for cord in dic["xcorc"]:
                     dic["xcorc"] = np.insert(dic["xcorc"], 0, -cord)
         dxarray = [
@@ -451,7 +451,7 @@ def create_3dgrid(dic):
             dic["xcorc"] = dic["xcorc"][
                 (dic["diameter"] < dic["xcorc"]) | (0 == dic["xcorc"])
             ]
-        if dic["model"] != "co2eor":
+        if dic["model"] not in ["co2eor", "foam"]:
             dic["xcorc"][0] = 0.25 * dic["xcorc"][1]
         else:
             map_zcords(dic)
