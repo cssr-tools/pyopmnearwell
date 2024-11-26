@@ -67,7 +67,7 @@ def reservoir_files(
     if not "fprep" in dic:
         dic["fprep"] = f"{dic['exe']}/{dic['fol']}/preprocessing"
     if not "write" in dic:
-        dic["write"] = "yes"
+        dic["write"] = 1
     # Generation of the x-dir spatial discretization using a telescopic function.
     if dic["x_fac"] != 0:
         dic["xcor"] = np.flip(

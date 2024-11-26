@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2023 NORCE
 # SPDX-License-Identifier: GPL-3.0
+# pylint: disable=R0915
 
 """"Script to plot OPM Flow results."""
 
@@ -18,8 +19,6 @@ from pyopmnearwell.visualization.additional_plots import (
     saltprec_plots,
 )
 from pyopmnearwell.visualization.reading import read_simulations
-
-set_latex_params()
 
 KMOL_TO_KG = 1e3 * 0.044
 
@@ -63,6 +62,12 @@ def main():
         default="normal",
         help="Normal or log scale for the x axis",
     )
+    parser.add_argument(
+        "-l",
+        "--latex",
+        default=0,
+        help="Set to 1 to use LaTeX formatting (0' by default).",
+    )
     cmdargs = vars(parser.parse_known_args()[0])
     dic = {"folders": [cmdargs["folder"].strip()]}
     dic["plot"] = cmdargs["plot"].strip()  # Using resdata or opm
@@ -71,6 +76,7 @@ def main():
     dic["scale"] = cmdargs["scale"].strip()  # Scale for the x axis: 'normal' or 'log'
     dic["zoom"] = float(cmdargs["zoom"])  # xlim in meters for the zoomed in plots
     dic["exe"] = os.getcwd()  # Path to the folder of the input.txt file
+    dic["latex"] = int(cmdargs["latex"])  # LaTeX formatting
     plot_results(dic)
 
 
@@ -82,6 +88,7 @@ def plot_results(dic):
         dic (dict): Global dictionary with required parameters
 
     """
+    set_latex_params(dic["latex"])
     dic["sat_thr"] = 5e-2  # Threshold for the non-wetting saturation
     dic["rock"] = ["satnum", "permeability", "porosity"]
     dic["rock_units"] = ["[-]", "mD", "[-]"]
@@ -143,15 +150,15 @@ def plot_results(dic):
             dic["folders"].remove("compare")
     else:
         dic["where"] = "."
-    dic = read_simulations(dic)
+    read_simulations(dic)
     if dic["model"] not in ["co2eor", "foam"]:
-        dic = capillary_pressure(dic)
-    dic = over_time_well_injectivity(dic)
-    dic = over_time_max_distance(dic)
+        capillary_pressure(dic)
+    over_time_well_injectivity(dic)
+    over_time_max_distance(dic)
     if dic["model"] == "h2store":
         return
-    dic = over_time_layers(dic)
-    dic = evaluate_projections(dic)
+    over_time_layers(dic)
+    evaluate_projections(dic)
     over_time_well_cell(dic)
     final_time_projections_bottom(dic)
     final_time_projections_layered(dic)
@@ -284,7 +291,6 @@ def capillary_pressure(dic):
     axis.legend()
     axis.set_xlim([0, 1])
     fig.savefig(f"{dic['where']}/capillary_pressure.png", bbox_inches="tight")
-    return dic
 
 
 def read_table(table, kind):
@@ -369,7 +375,7 @@ def evaluate_projections(dic):
                         dic[f"{study}_{quantity}_array"][nrst][k]
                         for k in range(
                             dic[f"{study}_wellid"],
-                            dic[f"{study}_nx"]
+                            max(dic[f"{study}_nx"], dic[f"{study}_ny"])
                             * dic[f"{study}_ny"]
                             * dic[f"{study}_nz"],
                             dic[f"{study}_ny"]
@@ -380,7 +386,6 @@ def evaluate_projections(dic):
                 dic[f"{study}_{quantity}_wc_max"].append(temp.max())
                 dic[f"{study}_{quantity}_wc_min"].append(temp.min())
                 dic[f"{study}_{quantity}_wc_mean"].append(temp.mean())
-    return dic
 
 
 def final_time_projections_bottom(dic):
@@ -409,7 +414,7 @@ def final_time_projections_bottom(dic):
                     dic[f"{study}_xmidpoints"],
                     [
                         dic[f"{study}_{quantity}_array"][-1][
-                            dic[f"{study}_wellid"] + i * (2 * dic[f"{study}_nx"] - 1)
+                            dic[f"{study}_wellid"] + i * (2 * dic[f"{study}_nx"])
                         ]
                         for i in range(len(dic[f"{study}_xmidpoints"]))
                     ],
@@ -554,7 +559,7 @@ def final_time_projections_layered(dic):
                     dic[f"{study}_xmidpoints"],
                     [
                         dic[f"{study}_{quantity}_array"][-1][
-                            dic[f"{study}_wellid"] + i * (2 * dic[f"{study}_nx"] - 1)
+                            dic[f"{study}_wellid"] + i * (2 * dic[f"{study}_nx"])
                         ]
                         for i in range(len(dic[f"{study}_xmidpoints"]))
                     ],
@@ -667,7 +672,7 @@ def final_time_projections_norms(dic):
                     dic[f"{study}_xmidpoints"],
                     [
                         dic[f"{study}_{quantity}_array"][-1][
-                            dic[f"{study}_wellid"] + i * (2 * dic[f"{study}_nx"] - 1)
+                            dic[f"{study}_wellid"] + i * (2 * dic[f"{study}_nx"])
                         ]
                         for i in range(len(dic[f"{study}_xmidpoints"]))
                     ],
@@ -725,7 +730,7 @@ def final_time_projections_max(dic):
                     dic[f"{study}_xmidpoints"],
                     [
                         dic[f"{study}_{quantity}_array"][-1][
-                            dic[f"{study}_wellid"] + i * (2 * dic[f"{study}_nx"] - 1)
+                            dic[f"{study}_wellid"] + i * (2 * dic[f"{study}_nx"])
                         ]
                         for i in range(len(dic[f"{study}_xmidpoints"]))
                     ],
@@ -798,7 +803,6 @@ def over_time_max_distance(dic):
         f"{dic['where']}/distance_from_well.png", bbox_inches="tight"
     )
     plt.close()
-    return dic
 
 
 def over_time_well_injectivity(dic):
@@ -907,7 +911,6 @@ def over_time_well_injectivity(dic):
         dic["axis"].legend()
         dic["fig"].savefig(f"{dic['where']}/well_{quantity}.png", bbox_inches="tight")
         plt.close()
-    return dic
 
 
 def over_time_layers(dic):
@@ -975,7 +978,6 @@ def over_time_layers(dic):
             f"{dic['where']}/nearwell_{quantity}.png", bbox_inches="tight"
         )
         plt.close()
-    return dic
 
 
 if __name__ == "__main__":

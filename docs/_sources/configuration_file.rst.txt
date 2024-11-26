@@ -3,7 +3,7 @@ Configuration file
 ==================
 
 The following configuration file is available in the `examples <https://github.com/cssr-tools/pyopmnearwell/blob/main/examples>`_ folder 
-in the GitHub repository and in the :doc:`examples <./examples>` documentation section the simulation results are shown.
+in the GitHub repository as co2.txt and in the :doc:`examples <./examples>` documentation section the simulation results are shown.
 
 The first input parameter in the configuration file is:
 

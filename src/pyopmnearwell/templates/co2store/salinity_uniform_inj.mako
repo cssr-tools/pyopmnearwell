@@ -46,7 +46,7 @@ UNIFOUT
 ----------------------------------------------------------------------------
 GRID
 ----------------------------------------------------------------------------
-% if dic['write'] == 'yes':
+% if dic['write'] == 1:
 INIT
 % else:
 GRIDFILE                               
@@ -93,7 +93,7 @@ EQUIL
 RTEMPVD
 0   ${dic['temperature']}
 ${dic['dims'][2]} ${dic['temperature']} /
-% if dic['write'] == 'yes':
+% if dic['write'] == 1:
 RPTRST 
  'BASIC=2' FLOWS FLORES DEN VISC /
 % endif
@@ -178,7 +178,7 @@ RGIP
 ----------------------------------------------------------------------------
 SCHEDULE
 ----------------------------------------------------------------------------
-% if dic['write'] == 'yes':
+% if dic['write'] == 1:
 RPTRST
  'BASIC=2' FLOWS FLORES DEN VISC PCOW PCOG /
 % endif

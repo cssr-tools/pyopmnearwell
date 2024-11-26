@@ -5,6 +5,7 @@
 import argparse
 import os
 import pathlib
+import warnings
 from typing import Any
 
 from pyopmnearwell.utils.inputvalues import process_input
@@ -14,7 +15,7 @@ from pyopmnearwell.visualization.plotting import plot_results
 
 
 def pyopmnearwell():
-    """Main function"""
+    """Main function for the pyopmnearwell executable"""
     parser = argparse.ArgumentParser(
         description="Main script to run a near-well system with OPM Flow."
     )
@@ -52,10 +53,10 @@ def pyopmnearwell():
         "or only create plots ('plot') ('all' by default).",
     )
     parser.add_argument(
-        "-w",
-        "--write",
-        default="yes",
-        help="Write cell values, i.e., EGRID, INIT, UNRST ('yes' by default).",
+        "-v",
+        "--vectors",
+        default=1,
+        help="Write cell values, i.e., EGRID, INIT, UNRST ('1' by default).",
     )
     parser.add_argument(
         "-m",
@@ -79,7 +80,21 @@ def pyopmnearwell():
         default="normal",
         help="Scale for the x axis in the figures: 'normal' or 'log' ('normal' by default)",
     )
+    parser.add_argument(
+        "-w",
+        "--warnings",
+        default=0,
+        help="Set to 1 to print warnings ('0' by default).",
+    )
+    parser.add_argument(
+        "-l",
+        "--latex",
+        default=1,
+        help="Set to 0 to not use LaTeX formatting ('1' by default).",
+    )
     cmdargs = vars(parser.parse_known_args()[0])
+    if int(cmdargs["warnings"]) == 0:
+        warnings.warn = lambda *args, **kwargs: None
     dic: dict[str, Any] = {
         "pat": os.path.split(os.path.dirname(__file__))[0]
     }  # Path to the pyopmnearwell folder
@@ -88,9 +103,10 @@ def pyopmnearwell():
     dic["plot"] = cmdargs["plotting"].strip()  # The python package used for plotting
     dic["model"] = cmdargs["model"].strip()  # Name of the simulated model
     dic["generate"] = cmdargs["generate"].strip()  # Parts of the workflow to run
-    dic["write"] = cmdargs["write"].strip()  # Write EGRID, INIT, and UNRST
+    dic["write"] = int(cmdargs["vectors"])  # Write EGRID, INIT, and UNRST
     dic["scale"] = cmdargs["scale"].strip()  # Scale for the x axis: 'normal' or 'log'
     dic["zoom"] = float(cmdargs["zoom"])  # xlim in meters for the zoomed in plots
+    dic["latex"] = int(cmdargs["latex"])  # LaTeX formatting
     dic["compare"] = cmdargs[
         "compare"
     ]  # If not empty, then the name of the compare plot (compare).

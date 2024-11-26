@@ -12,6 +12,7 @@ Welcome to pyopmnearwell's documentation!
    examples
    api
    output_folder
+   contributing
    related
    about
 

@@ -35,7 +35,7 @@ for i in range(mt.floor(len(GRATES) / NPRUNS)):
     command = ""
     for j in range(NPRUNS):
         if DELETE == 1:
-            command += f"pyopmnearwell -i co2eor_{NPRUNS*i+j}.txt -o co2eor_{NPRUNS*i+j} -g single -w no & "
+            command += f"pyopmnearwell -i co2eor_{NPRUNS*i+j}.txt -o co2eor_{NPRUNS*i+j} -g single -v 0 & "
         else:
             command += f"pyopmnearwell -i co2eor_{NPRUNS*i+j}.txt -o co2eor_{NPRUNS*i+j} -g single & "
     command += "wait"
@@ -50,7 +50,7 @@ remaining = len(GRATES) - finished
 command = ""
 for i in range(remaining):
     if DELETE == 1:
-        command += f"pyopmnearwell -i co2eor_{finished+i}.txt -o co2eor_{finished+i} -g single -w no & "
+        command += f"pyopmnearwell -i co2eor_{finished+i}.txt -o co2eor_{finished+i} -g single -v 0 & "
     else:
         command += f"pyopmnearwell -i co2eor_{finished+i}.txt -o co2eor_{finished+i} -g single & "
 command += "wait"

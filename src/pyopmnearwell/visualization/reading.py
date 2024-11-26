@@ -10,18 +10,15 @@ import pathlib
 
 import numpy as np
 import pandas as pd
+from resdata.resfile import ResdataFile
+from resdata.summary import Summary
 
 try:
     from opm.io.ecl import EclFile as OpmFile
     from opm.io.ecl import ERst as OpmRestart
     from opm.io.ecl import ESmry as OpmSummary
 except ImportError:
-    print("The opm Python package was not found, using resdata")
-try:
-    from resdata.resfile import ResdataFile
-    from resdata.summary import Summary
-except ImportError:
-    print("The resdata Python package was not found, using opm")
+    pass
 
 
 def read_simulations(dic):

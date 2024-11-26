@@ -2,8 +2,7 @@
 Related
 =======
 
-Below are some packages following the same configuration-file-to-postprocessing-folder approach; 
-check them out 🙂.
+Below are some tools that might be of interest; check them out 🙂.
 
 **********
 pyopmspe11
@@ -38,7 +37,7 @@ expreccs
 .. image:: ./figs/expreccs.gif
     :scale: 50%
 
-`Expansion of ResourCes for CO2 Storage on the Horda Platform <https://github.com/cssr-tools/expreccs>`_.
+`A Python framework using OPM Flow to simulate regional and site reservoirs for CO2 storage <https://github.com/cssr-tools/expreccs>`_.
 
 *******
 ad-micp

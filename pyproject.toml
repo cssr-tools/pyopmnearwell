@@ -9,7 +9,7 @@ authors= [{ name = "David Landa-Marbán", email = "dmar@norceresearch.no" },
           {name = "Peter Moritz von Schultzendorff", email = "peter.schultzendorff@uib.no"}]
 maintainers = [{ name = "David Landa-Marbán", email = "dmar@norceresearch.no" },
           {name = "Peter Moritz von Schultzendorff", email = "peter.schultzendorff@uib.no"}]
-version = "2024.04"
+dynamic = ["version"]
 readme = {file = "README.md", content-type = "text/markdown"}
 license = {text = "GPL-3.0"}
 keywords = ["co2", "dynamics", "hydrogen", "opm", "wells", "salt-precipitation", "corner-point-grid"]
@@ -19,8 +19,6 @@ classifiers = [
     "Natural Language :: English",
     "Topic :: Scientific/Engineering",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Operating System :: OS Independent"
 ]
@@ -34,7 +32,10 @@ dependencies = [
     "keras_tuner",
     "scikit-learn"
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.12"
+
+[tool.setuptools.dynamic]
+version = {attr = "pyopmnearwell.__version__"}
 
 [project.scripts]
 pyopmnearwell = "pyopmnearwell.core.pyopmnearwell:main"

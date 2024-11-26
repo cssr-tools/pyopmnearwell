@@ -74,6 +74,7 @@ def plotting(dic):
         f"-m {dic['model']}",
         f"-s {dic['scale']}",
         f"-z {dic['zoom']}",
+        f"-l {dic['latex']}",
     ]
     print(" ".join(plot_exe))
     plot_results(dic)
