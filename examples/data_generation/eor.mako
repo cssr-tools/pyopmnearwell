@@ -3,7 +3,7 @@ ${flow} --enable-opm-rst-file=true
 
 """Set the model parameters"""
 ${eor} bhpcontrol #Model (co2store/h2store/co2eor/saltprec/foam) and name of the template file (see src/pyopmnearwell/templates/)
-cartesian3d 3500  #Grid type (core/radial/cake/cartesian2d/cartesian/cpg3d/coord2d/coord3d/tensor2d/tensor3d) and size (input/output pipe length[m]/theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
+cartesian   3500  #Grid type (core/radial/cake/cartesian2d/cartesian/cpg3d/coord2d/coord3d/tensor2d/tensor3d) and size (input/output pipe length[m]/theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
 3500 100          #Reservoir dimensions [ft] (length and height)
 7 3 0             #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)
 0.5 0 0           #Well diameter [ft], well transmiscibility (0 to use the computed one internally in Flow), and remove the smaller cells than the well diameter

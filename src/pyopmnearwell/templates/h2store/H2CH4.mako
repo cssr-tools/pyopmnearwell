@@ -45,7 +45,7 @@ UNIFOUT
 ----------------------------------------------------------------------------
 GRID
 ----------------------------------------------------------------------------
-% if dic['write'] == 'yes':
+% if dic['write'] == 1:
 INIT
 % else:
 GRIDFILE                               
@@ -141,7 +141,7 @@ ${dic['dims'][2]} 0.0 /
 
 RV
 ${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*0.0 /
-% if dic['write'] == 'yes':
+% if dic['write'] == 1:
 RPTRST 
  'BASIC=2' FLOWS FLORES DEN VISC /
 % endif
@@ -230,7 +230,7 @@ WPI
 ----------------------------------------------------------------------------
 SCHEDULE
 ----------------------------------------------------------------------------
-% if dic['write'] == 'yes':
+% if dic['write'] == 1:
 RPTRST
  'BASIC=2' FLOWS FLORES DEN VISC /
 % endif

@@ -49,7 +49,7 @@ UNIFOUT
 ----------------------------------------------------------------------------
 GRID
 ----------------------------------------------------------------------------
-% if dic['write'] == 'yes':
+% if dic['write'] == 1:
 INIT
 % else:
 GRIDFILE                               
@@ -104,7 +104,7 @@ ${dic['dims'][2]} ${dic['salt_props'][0]} /
 RTEMPVD
 0   ${dic['temperature']}
 ${dic['dims'][2]} ${dic['temperature']} /
-% if dic['write'] == 'yes':
+% if dic['write'] == 1:
 RPTRST 
  'BASIC=2' FLOWS FLORES DEN VISC /
 % endif
@@ -189,7 +189,7 @@ RGIP
 ----------------------------------------------------------------------------
 SCHEDULE
 ----------------------------------------------------------------------------
-% if dic['write'] == 'yes':
+% if dic['write'] == 1:
 RPTRST
  'BASIC=2' FLOWS FLORES DEN VISC PCOW PCOG /
 % endif

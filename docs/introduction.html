@@ -55,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">pyopmnearwell Python API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="output_folder.html">Output folder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="related.html">Related</a></li>
 <li class="toctree-l1"><a class="reference internal" href="about.html">About pyopmnearwell</a></li>
 </ul>
@@ -107,7 +108,7 @@
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
 <p>The current implementation supports the following executable with the argument options:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pyopmnearwell<span class="w"> </span>-i<span class="w"> </span>input.txt<span class="w"> </span>-o<span class="w"> </span>output<span class="w"> </span>-p<span class="w"> </span>resdata<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-g<span class="w"> </span>all<span class="w"> </span>-w<span class="w"> </span>yes<span class="w"> </span>-z<span class="w"> </span><span class="m">10</span><span class="w"> </span>-s<span class="w"> </span>log<span class="w"> </span>-m<span class="w"> </span>co2store
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pyopmnearwell<span class="w"> </span>-i<span class="w"> </span>input.txt<span class="w"> </span>-o<span class="w"> </span>output<span class="w"> </span>-p<span class="w"> </span>resdata<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-g<span class="w"> </span>all<span class="w"> </span>-v<span class="w"> </span><span class="m">1</span><span class="w"> </span>-z<span class="w"> </span><span class="m">10</span><span class="w"> </span>-s<span class="w"> </span>log<span class="w"> </span>-m<span class="w"> </span>co2store<span class="w"> </span>-w<span class="w"> </span><span class="m">0</span><span class="w"> </span>-l<span class="w"> </span><span class="m">1</span>
 </pre></div>
 </div>
 <p>where</p>
@@ -128,7 +129,7 @@
 <dd><p>Run the whole framework (‘all’), only run flow (‘flow’), only write the deck and run flow together in the output folder (‘single’), or only create plots (‘plot’) (‘all’ by default).</p>
 </dd>
 <dt><kbd><span class="option">-w</span></kbd></dt>
-<dd><p>Write cell values, i.e., EGRID, INIT, UNRST (‘yes’ by default).</p>
+<dd><p>Write cell values, i.e., EGRID, INIT, UNRST (‘1’ by default).</p>
 </dd>
 <dt><kbd><span class="option">-z</span></kbd></dt>
 <dd><p>xlim in meters for the zoomed in plots (20 by default).</p>
@@ -138,6 +139,12 @@
 </dd>
 <dt><kbd><span class="option">-m</span></kbd></dt>
 <dd><p>Simulated model (5th row in the configuration file). This is used for the plotting compare method (it gets overwritten by the configuration file) (‘co2store’ by default).</p>
+</dd>
+<dt><kbd><span class="option">-w</span></kbd></dt>
+<dd><p>Set to 1 to print warnings (‘0’ by default).</p>
+</dd>
+<dt><kbd><span class="option">-l</span></kbd></dt>
+<dd><p>Set to 0 to not use LaTeX formatting (‘1’ by default).</p>
 </dd>
 </dl>
 <div class="admonition warning">

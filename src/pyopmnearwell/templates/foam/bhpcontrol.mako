@@ -47,7 +47,7 @@ UNIFOUT
 -------------------------------------------------------------------------
 GRID
 -------------------------------------------------------------------------
-% if dic['write'] == 'yes':
+% if dic['write'] == 1:
 INIT
 % else:
 GRIDFILE                               
@@ -243,7 +243,7 @@ FOAMADS
 -------------------------------------------------------------------------
 SOLUTION
 -------------------------------------------------------------------------
-% if dic['write'] == 'yes':
+% if dic['write'] == 1:
 RPTRST
 'BASIC=2' DENG DENO DENW BO BG BW KRG KRO KRW PCOW PCOG VGAS VOIL VWAT FOAM
 /
@@ -357,7 +357,7 @@ FTIPTFOA
 -------------------------------------------------------------------------
 SCHEDULE
 -------------------------------------------------------------------------
-% if dic['write'] == 'yes':
+% if dic['write'] == 1:
 RPTRST
 'BASIC=2' DENG DENO DENW BO BG BW KRG KRO KRW PCOW PCOG VGAS VOIL VWAT FOAM
 /

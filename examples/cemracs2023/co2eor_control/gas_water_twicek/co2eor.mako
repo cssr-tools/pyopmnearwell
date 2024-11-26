@@ -3,7 +3,7 @@ ${flow} --enable-opm-rst-file=true --linear-solver=cprw --relaxed-max-pv-fractio
 
 """Set the model parameters"""
 co2eor bhpcontrol #Model (co2store/h2store)
-cartesian3d 3500  #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
+cartesian   3500  #Grid type (radial/cake/cartesian2d/cartesian) and size (theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
 3500 100          #Reservoir dimensions [ft] (length and height)
 7 9 0             #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)
 0.5 0 0           #Well diameter [ft], well transmiscibility (0 to use the computed one internally in Flow), and remove the smaller cells than the well diameter

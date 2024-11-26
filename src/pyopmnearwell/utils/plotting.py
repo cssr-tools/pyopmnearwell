@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 
 
-def set_latex_params() -> None:
+def set_latex_params(latex: bool = True) -> None:
     """Set the LaTeX parameters for matplotlib.
 
     This function sets the font to be sans-serif and the text to be normal weight.
@@ -23,7 +23,7 @@ def set_latex_params() -> None:
     matplotlib.rc("font", **font)
     plt.rcParams.update(
         {
-            "text.usetex": True,
+            "text.usetex": latex,
             "font.family": "sans-serif",
             "svg.fonttype": "path",
             "legend.columnspacing": 0.9,
@@ -36,7 +36,7 @@ def set_latex_params() -> None:
     )
 
 
-set_latex_params()
+set_latex_params(True)
 
 
 def save_fig_and_data(fig: Figure, path: str | pathlib.Path) -> None:
