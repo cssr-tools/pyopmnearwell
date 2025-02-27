@@ -17,7 +17,7 @@ npoints, npruns = 30, 5
 tmin, tmax = 0, 365
 times = np.random.uniform(tmin, tmax, npoints)
 
-FLOW = "/Users/dmar/Github/opm/build/opm-simulators/bin/flow"
+FLOW = "flow"
 
 mytemplate = Template(filename="h2.mako")
 time = []
@@ -28,7 +28,7 @@ for i, time in enumerate(times):
     var = {"flow": FLOW, "time": time}
     filledtemplate = mytemplate.render(**var)
     with open(
-        f"h2_{i}.txt",
+        f"h2_{i}.toml",
         "w",
         encoding="utf8",
     ) as file:
@@ -36,18 +36,18 @@ for i, time in enumerate(times):
 
 for i in range(round(npoints / npruns)):
     os.system(
-        f"pyopmnearwell -i h2_{npruns*i}.txt -o h2_{npruns*i} -p '' & "
-        + f"pyopmnearwell -i h2_{npruns*i+1}.txt -o h2_{npruns*i+1} -p '' & "
-        + f"pyopmnearwell -i h2_{npruns*i+2}.txt -o h2_{npruns*i+2} -p '' & "
-        + f"pyopmnearwell -i h2_{npruns*i+3}.txt -o h2_{npruns*i+3} -p '' & "
-        + f"pyopmnearwell -i h2_{npruns*i+4}.txt -o h2_{npruns*i+4} -p '' & wait"
+        f"pyopmnearwell -i h2_{npruns*i}.toml -o h2_{npruns*i} -p '' & "
+        + f"pyopmnearwell -i h2_{npruns*i+1}.toml -o h2_{npruns*i+1} -p '' & "
+        + f"pyopmnearwell -i h2_{npruns*i+2}.toml -o h2_{npruns*i+2} -p '' & "
+        + f"pyopmnearwell -i h2_{npruns*i+3}.toml -o h2_{npruns*i+3} -p '' & "
+        + f"pyopmnearwell -i h2_{npruns*i+4}.toml -o h2_{npruns*i+4} -p '' & wait"
     )
     for j in range(npruns):
         smspec = Summary(f"./h2_{npruns*i+j}/output/H2_{npruns*i+j}.SMSPEC")
         ratio_fgpt_to_fgit.append(smspec["FGPT"].values[-1]/smspec["FGIT"].values[-1])
         wbhp.append(max(smspec["WBHP:PRO0"].values))
         fgit.append(smspec["FGIT"].values[-1])
-        os.system(f"rm -rf h2_{npruns*i+j} h2_{npruns*i+j}.txt")
+        os.system(f"rm -rf h2_{npruns*i+j} h2_{npruns*i+j}.toml")
 
 np.save('times', times)
 np.save('ratio_fgpt_to_fgit', ratio_fgpt_to_fgit)

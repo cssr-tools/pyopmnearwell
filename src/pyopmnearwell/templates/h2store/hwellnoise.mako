@@ -2,7 +2,7 @@
 import math as mt
 import numpy as np
 rng = np.random.default_rng(7)
-noise = rng.random(dic['noCells'][0]*dic['noCells'][2])
+noise = rng.random(dic['nocells'][0]*dic['nocells'][2])
 %>
 -- Copyright (C) 2023 NORCE
 ----------------------------------------------------------------------------
@@ -10,9 +10,9 @@ RUNSPEC
 ----------------------------------------------------------------------------
 DIMENS 
 %if dic['grid']== 'core':
-${dic['noCells'][0]} ${dic['noCells'][1]} ${dic['noCells'][2]} /
+${dic['nocells'][0]} ${dic['nocells'][1]} ${dic['nocells'][2]} /
 %else:
-${max(dic['noCells'][0],dic['noCells'][1])} ${dic['noCells'][1]} ${dic['noCells'][2]} /
+${max(dic['nocells'][0],dic['nocells'][1])} ${dic['nocells'][1]} ${dic['nocells'][2]} /
 %endif
 
 OIL
@@ -33,15 +33,15 @@ EQLDIMS
 /
 
 TABDIMS
-${(dic["hysteresis"]+1)*(dic['satnum']+dic['perforations'][0])} 1* 10000 /
+${(1*(dic["hysteresis"]!=0)+1)*(dic['satnum']+dic['perforations'][0])} 1* 10000 /
 
-% if dic["hysteresis"] ==1:
+% if dic["hysteresis"] !=0:
 SATOPTS
  HYSTER  /
 % endif
 
 WELLDIMS
-6 ${dic['noCells'][0]} 6 6 /
+6 ${dic['nocells'][0]} 6 6 /
 
 UNIFIN
 UNIFOUT
@@ -57,14 +57,14 @@ GRIDFILE
 INCLUDE
   'GEOLOGY.INC' /
 OPERATE
-% for k in range(dic['noCells'][2]-2):
-% for i in range(dic['noCells'][0]):
-PORO ${i+1} ${i+1} 1* 1* ${k+2} ${k+2} MULTX PORO ${max(0.2,min(0.8,noise[mt.floor(i/3)+mt.floor((k+2)/2)*dic['noCells'][0]]))} /
-PERMZ ${i+1} ${i+1} 1* 1* ${k+2} ${k+2} MULTX PERMZ ${max(0.2,min(0.8,noise[mt.floor(i/3)+mt.floor((k+2)/2)*dic['noCells'][0]]))} /
+% for k in range(dic['nocells'][2]-2):
+% for i in range(dic['nocells'][0]):
+PORO ${i+1} ${i+1} 1* 1* ${k+2} ${k+2} MULTX PORO ${max(0.2,min(0.8,noise[mt.floor(i/3)+mt.floor((k+2)/2)*dic['nocells'][0]]))} /
+PERMZ ${i+1} ${i+1} 1* 1* ${k+2} ${k+2} MULTX PERMZ ${max(0.2,min(0.8,noise[mt.floor(i/3)+mt.floor((k+2)/2)*dic['nocells'][0]]))} /
 % endfor
 % endfor
 /
-% if dic["pvMult"] > 0:
+% if dic["pvmult"] > 0:
 ----------------------------------------------------------------------------
 EDIT
 ----------------------------------------------------------------------------
@@ -77,9 +77,9 @@ PROPS
 INCLUDE
   'TABLES.INC' /
 
-% if dic["hysteresis"] ==1:
+% if dic["hysteresis"] !=0:
 EHYSTR
-  1  ${dic["hyst_model"]}  2* KR /
+  1  ${0 if dic["hysteresis"].upper()=="CARLSON" else 2}  2* KR /
 % endif
 ----------------------------------------------------------------------------
 REGIONS
@@ -93,18 +93,18 @@ EQUIL
 0 ${dic['pressure']} ${mt.floor((1-dic["initialphase"])*dic['dims'][2])} 0 0 0 1 1 0 /
 
 RTEMPVD
-0   ${dic['temperature']}
-${dic['dims'][2]} ${dic['temperature']} /
+0   ${dic['temperature'][0]}
+${dic['dims'][2]} ${dic['temperature'][1]} /
 
 RSVD
 0   0.0
 ${dic['dims'][2]} 0.0 /
 
 RS
-${dic['noCells'][0]*dic['noCells'][1]*dic['noCells'][2]}*0.0 /
+${dic['nocells'][0]*dic['nocells'][1]*dic['nocells'][2]}*0.0 /
 % if dic['write'] == 1:
 RPTRST 
- 'BASIC=2' FLOWS FLORES DEN VISC /
+ 'BASIC=2' DEN VISC /
 % endif
 ----------------------------------------------------------------------------
 SUMMARY
@@ -120,7 +120,7 @@ CGIRL
 /
 
 WGIRL
-% for j in range(0*dic['noCells'][2]+1):
+% for j in range(0*dic['nocells'][2]+1):
  'INJ0'  ${j+1}  /
  'PRO0'  ${j+1}  /
 % endfor
@@ -137,7 +137,7 @@ CGITL
 /
 
 WGITL
-% for j in range(0*dic['noCells'][2]+1):
+% for j in range(0*dic['nocells'][2]+1):
  'INJ0'  ${j+1}  /
  'PRO0'  ${j+1}  /
 % endfor
@@ -193,7 +193,7 @@ SCHEDULE
 ----------------------------------------------------------------------------
 % if dic['write'] == 1:
 RPTRST
- 'BASIC=2' FLOWS FLORES DEN VISC /
+ 'BASIC=2' DEN VISC /
 % endif
 
 WELSPECS
@@ -201,11 +201,11 @@ WELSPECS
 'PRO0'	'G1' 1 1	1*	'GAS' 2* 'STOP' ${'NO' if dic["xflow"] > 0 else ''} /
 /
 COMPDAT
-% for i in range(dic['noCells'][0]):
-'INJ0' ${1+i} 1 1 1 'OPEN' 1* ${f"1* {dic['diameter']}" if dic["jfactor"] == 0 else dic["jfactor"]} /
+% for i in range(dic['nocells'][0]):
+'INJ0' ${1+i} 1 1 1 'OPEN' 1* ${f"1* {dic['diameter']}" if dic["confact"] == 0 else dic["confact"]} /
 % endfor
-% for i in range(dic['noCells'][0]):
-'PRO0' ${1+i} 1 1 1 'OPEN' 1* ${f"1* {dic['diameter']}" if dic["jfactor"] == 0 else dic["jfactor"]} /
+% for i in range(dic['nocells'][0]):
+'PRO0' ${1+i} 1 1 1 'OPEN' 1* ${f"1* {dic['diameter']}" if dic["confact"] == 0 else dic["confact"]} /
 % endfor
 /
 
@@ -224,11 +224,13 @@ WCONINJE
 %endif
 /
 WCONPROD
-'PRO0' ${'OPEN' if dic['inj'][j][4] < 0 else 'SHUT'} 'GRAT' 2* ${f"{abs(dic['inj'][j][4]) / 0.0850397 : E}"} 2* ${dic["minWBHP_prod"][j] if dic['inj'][j][4] < 0 else ''}/
+'PRO0' ${'OPEN' if dic['inj'][j][4] < 0 else 'SHUT'} 'GRAT' 2* ${f"{abs(dic['inj'][j][4]) / 0.0850397 : E}"} 2* ${dic['inj'][j][5] if dic['inj'][j][4] < 0 else ''}/
 /
+% if dic['econ']>0:
 WECON
 'PRO0' 1* ${f"{dic['econ']*abs(dic['inj'][j][4]) / 0.0850397 : E}"} /
 /
+% endif
 TSTEP
 ${mt.floor(dic['inj'][j][0]/dic['inj'][j][1])}*${dic['inj'][j][1]}
 /

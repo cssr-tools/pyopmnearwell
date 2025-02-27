@@ -20,7 +20,7 @@ TPERIODP = 20 #Duration of the production period in days
 QI = 20 # Injection rate [kg/day]
 QP = 40 # Production rate [kg/day]
 NSCHED = 10  # Number of cycles (injection-withdrawal)
-NPRUNS = 5 # Number of parallel simulations
+NPRUNS = 8 # Number of parallel simulations
 
 TPERIOD = TPERIODI + TPERIODP
 times = np.linspace(TPERIOD, TPERIOD * NSCHED, NSCHED)
@@ -30,7 +30,7 @@ for i, time in enumerate(times):
     var = {"flow": FLOW, "tperiodi": TPERIODI, "tperiodp": TPERIODP, "qi": QI, "qp": QP, "time": time}
     filledtemplate = mytemplate.render(**var)
     with open(
-        f"h2_{i}.txt",
+        f"h2_{i}.toml",
         "w",
         encoding="utf8",
     ) as file:
@@ -38,7 +38,7 @@ for i, time in enumerate(times):
 for i in range(mt.floor(len(times) / NPRUNS)):
     command = ""
     for j in range(NPRUNS):
-        command += f"pyopmnearwell -i h2_{NPRUNS*i+j}.txt -o h2_{NPRUNS*i+j} -p '' & " 
+        command += f"pyopmnearwell -i h2_{NPRUNS*i+j}.toml -o h2_{NPRUNS*i+j} -p '' & " 
     command += 'wait'
     os.system(command)
     for j in range(NPRUNS):
@@ -47,12 +47,12 @@ for i in range(mt.floor(len(times) / NPRUNS)):
         fgpt.append(smspec["FGPT"].values[-1])
         fgit_fgpt.append(smspec["FGIT"].values[-1] - smspec["FGPT"].values[-1])
         rfac.append(100.*smspec["FGPT"].values[-1]/smspec["FGIT"].values[-1])
-        os.system(f"rm -rf h2_{NPRUNS*i+j} h2_{NPRUNS*i+j}.txt")
+        os.system(f"rm -rf h2_{NPRUNS*i+j} h2_{NPRUNS*i+j}.toml")
 finished = NPRUNS*mt.floor(len(times) / NPRUNS)
 remaining = len(times) - finished
 command = ""
 for i in range(remaining):
-    command += f"pyopmnearwell -i h2_{finished+i}.txt -o h2_{finished+i} -p '' & " 
+    command += f"pyopmnearwell -i h2_{finished+i}.toml -o h2_{finished+i} -p '' & " 
 command += 'wait'
 os.system(command)
 for i in range(remaining):
@@ -61,7 +61,7 @@ for i in range(remaining):
     fgpt.append(smspec["FGPT"].values[-1])
     fgit_fgpt.append(smspec["FGIT"].values[-1] - smspec["FGPT"].values[-1])
     rfac.append(100.*smspec["FGPT"].values[-1]/smspec["FGIT"].values[-1])
-    os.system(f"rm -rf h2_{finished+i} h2_{finished+i}.txt")
+    os.system(f"rm -rf h2_{finished+i} h2_{finished+i}.toml")
 
 fgpt = np.array(fgpt)
 fpit = np.array(fgit)

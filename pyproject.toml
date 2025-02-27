@@ -4,11 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyopmnearwell"
-description = "A framework to simulate near well dynamics using OPM Flow"
+description = "A Python framework to simulate near well dynamics using OPM Flow"
 authors= [{ name = "David Landa-Marbán", email = "dmar@norceresearch.no" },
-          {name = "Peter Moritz von Schultzendorff", email = "peter.schultzendorff@uib.no"}]
+          {name = "Peter Moritz von Schultzendorff", email = "peter.schultzendorff@uib.no"},
+          {name = "Antoine Lechevallier", email = "anle@norceresearch.no"}]
 maintainers = [{ name = "David Landa-Marbán", email = "dmar@norceresearch.no" },
-          {name = "Peter Moritz von Schultzendorff", email = "peter.schultzendorff@uib.no"}]
+          {name = "Peter Moritz von Schultzendorff", email = "peter.schultzendorff@uib.no"},
+          {name = "Antoine Lechevallier", email = "anle@norceresearch.no"}]
 dynamic = ["version"]
 readme = {file = "README.md", content-type = "text/markdown"}
 license = {text = "GPL-3.0"}
@@ -47,3 +49,6 @@ Repository = "https://github.com/cssr-tools/pyopmnearwell"
 [tool.setuptools]
 packages.find.where = ["src"]
 platforms = ["all"]
+
+[project.optional-dependencies]
+opm = ["opm"]

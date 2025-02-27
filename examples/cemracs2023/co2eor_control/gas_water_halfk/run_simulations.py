@@ -19,7 +19,7 @@ parser = argparse.ArgumentParser(description="Main script to plot the results")
 parser.add_argument(
     "-f",
     "--flow",
-    default="/Users/dmar/Github/opm/build/opm-simulators/bin/flow",
+    default="flow",
 )
 parser.add_argument(
     "-q",
@@ -91,7 +91,7 @@ for i, schedule in enumerate(schedules):
     var = {"flow": FLOW, "qratew": QRATEW, "qrateg": QRATEG, "tperiod": TPERIOD, "schedule": schedule}
     filledtemplate = mytemplate.render(**var)
     with open(
-        f"co2eor_{i}.txt",
+        f"co2eor_{i}.toml",
         "w",
         encoding="utf8",
     ) as file:
@@ -99,7 +99,7 @@ for i, schedule in enumerate(schedules):
 for i in range(mt.floor(nsimulations / NPRUNS)):
     command = ""
     for j in range(NPRUNS):
-        command += f"pyopmnearwell -i co2eor_{NPRUNS*i+j}.txt -o co2eor_{NPRUNS*i+j} -g single -v 0 & " 
+        command += f"pyopmnearwell -i co2eor_{NPRUNS*i+j}.toml -o co2eor_{NPRUNS*i+j} -g single -v 0 & " 
     command += 'wait'
     os.system(command)
     for j in range(NPRUNS):
@@ -111,12 +111,12 @@ for i in range(mt.floor(nsimulations / NPRUNS)):
         fnpt.append(smspec["FNPT"].values[-1])
         fopt.append(smspec["FOPT"].values[-1])
         fnit_fnpt.append(fnit[-1]-fnpt[-1])
-        os.system(f"rm -rf co2eor_{NPRUNS*i+j} co2eor_{NPRUNS*i+j}.txt")
+        os.system(f"rm -rf co2eor_{NPRUNS*i+j} co2eor_{NPRUNS*i+j}.toml")
 finished = NPRUNS*mt.floor(nsimulations / NPRUNS)
 remaining = nsimulations - finished
 command = ""
 for i in range(remaining):
-    command += f"pyopmnearwell -i co2eor_{finished+i}.txt -o co2eor_{finished+i} -g single -v 0 & " 
+    command += f"pyopmnearwell -i co2eor_{finished+i}.toml -o co2eor_{finished+i} -g single -v 0 & " 
 command += 'wait'
 os.system(command)
 for j in range(remaining):
@@ -128,7 +128,7 @@ for j in range(remaining):
     fnpt.append(smspec["FNPT"].values[-1])
     fopt.append(smspec["FOPT"].values[-1])
     fnit_fnpt.append(fnit[-1]-fnpt[-1])
-    os.system(f"rm -rf co2eor_{finished+j} co2eor_{finished+j}.txt")
+    os.system(f"rm -rf co2eor_{finished+j} co2eor_{finished+j}.toml")
 
 fvpt = np.array(fvpt)
 fvit = np.array(fvit)

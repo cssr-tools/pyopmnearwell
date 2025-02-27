@@ -15,5 +15,4 @@ Then after running **pyopmnearwell**, one could modify the generated OPM related
 run directly the simulations calling the Flow solvers, e.g., to add tracers 
 (see the OPM Flow documentation `here <https://opm-project.org/?page_id=955>`_).
 In addition, some plots comparing the simulations in different parts of the reservoir are generated
-in the postprocessing folder. Then the **plotting.py** script in the output/jobs folder can be modified/extended
-to generate additional plots.
+in the postprocessing folder.

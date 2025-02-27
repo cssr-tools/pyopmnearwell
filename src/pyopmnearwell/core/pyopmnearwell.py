@@ -22,8 +22,8 @@ def pyopmnearwell():
     parser.add_argument(
         "-i",
         "--input",
-        default="input.txt",
-        help="The base name of the input file (input.txt by default).",
+        default="input.toml",
+        help="The base name of the input file (input.toml by default).",
     )
     parser.add_argument(
         "-o",
@@ -65,7 +65,7 @@ def pyopmnearwell():
         help=(
             "Simulated model (5th row in the configuration file). This is used "
             + "for the plotting compare method (it gets overwritten by the configuration file)"
-            + "(co2store by default)."
+            + " (co2store by default)."
         ),
     )
     parser.add_argument(
@@ -98,8 +98,7 @@ def pyopmnearwell():
     dic: dict[str, Any] = {
         "pat": os.path.split(os.path.dirname(__file__))[0]
     }  # Path to the pyopmnearwell folder
-    dic["exe"] = os.getcwd()  # Path to the folder of the input.txt file
-    dic["fol"] = cmdargs["output"].strip()  # Name for the output folder
+    dic["fol"] = os.path.abspath(cmdargs["output"])  # Name for the output folder
     dic["plot"] = cmdargs["plotting"].strip()  # The python package used for plotting
     dic["model"] = cmdargs["model"].strip()  # Name of the simulated model
     dic["generate"] = cmdargs["generate"].strip()  # Parts of the workflow to run
@@ -117,24 +116,21 @@ def pyopmnearwell():
 
     file = cmdargs["input"].strip()  # Name of the input file
     dic["runname"] = pathlib.Path(file).stem
-
-    # Process the input file (open pyopmnearwell.utils.inputvalues to see the
-    # abbreviations meaning)
-    dic = process_input(dic, file)
+    dic = process_input(dic, file)  # Read the toml configuration file
 
     # Make the output folders
-    if not os.path.exists(os.path.join(dic["exe"], dic["fol"])):
-        os.makedirs(os.path.join(dic["exe"], dic["fol"]))
+    if not os.path.exists(dic["fol"]):
+        os.makedirs(dic["fol"])
     if dic["generate"] == "single":
-        dic["fprep"] = f"{dic['exe']}/{dic['fol']}"
-        dic["foutp"] = f"{dic['exe']}/{dic['fol']}"
+        dic["fprep"] = dic["fol"]
+        dic["foutp"] = dic["fol"]
     else:
-        dic["fprep"] = f"{dic['exe']}/{dic['fol']}/preprocessing"
-        dic["foutp"] = f"{dic['exe']}/{dic['fol']}/output"
-        for fil in ["preprocessing", "jobs", "output", "postprocessing"]:
-            if not os.path.exists(os.path.join(dic["exe"], dic["fol"], fil)):
-                os.makedirs(os.path.join(dic["exe"], dic["fol"], fil))
-    os.chdir(os.path.join(dic["exe"], dic["fol"]))
+        dic["fprep"] = f"{dic['fol']}/preprocessing"
+        dic["foutp"] = f"{dic['fol']}/output"
+        for fil in ["preprocessing", "output", "postprocessing"]:
+            if not os.path.exists(os.path.join(dic["fol"], fil)):
+                os.makedirs(os.path.join(dic["fol"], fil))
+    os.chdir(dic["fol"])
 
     if dic["generate"] in ["all", "flow", "single"]:
         # Write used opm related files

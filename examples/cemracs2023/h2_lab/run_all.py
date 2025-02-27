@@ -6,11 +6,11 @@ import subprocess
 import matplotlib
 from matplotlib.lines import Line2D
 
-FLOW = "/Users/dmar/Github/opm/build/opm-simulators/bin/flow"
+FLOW = "flow"
 QRATE = 400000. / 6 # Injection/production rate (as in the comparison paper, divided by 6 since the angle in the cake is 60 degrees)
 TPERIOD = 7 # Duration of one period in days
 NSCHED = 2  # Number of changues in the schedule
-NPRUNS = 4 # Number of parallel simulations
+NPRUNS = 8 # Number of parallel simulations
 
 folders = sorted([name for name in os.listdir(".") if os.path.isdir(name)])
 cwd = os.getcwd()

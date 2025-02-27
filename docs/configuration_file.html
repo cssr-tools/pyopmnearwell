@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Configuration file &mdash; pyopmnearwell  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
@@ -88,35 +88,33 @@
   <section id="configuration-file">
 <h1>Configuration file<a class="headerlink" href="#configuration-file" title="Link to this heading"></a></h1>
 <p>The following configuration file is available in the <a class="reference external" href="https://github.com/cssr-tools/pyopmnearwell/blob/main/examples">examples</a> folder
-in the GitHub repository as co2.txt and in the <a class="reference internal" href="examples.html"><span class="doc">examples</span></a> documentation section the simulation results are shown.</p>
+in the GitHub repository as co2.toml and in the <a class="reference internal" href="examples.html"><span class="doc">examples</span></a> documentation section the simulation results are shown.</p>
 <p>The first input parameter in the configuration file is:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="sd">&quot;&quot;&quot;Set the full path to the flow executable and flags&quot;&quot;&quot;</span>
-<span class="linenos">2</span><span class="n">flow</span> <span class="o">--</span><span class="n">enable</span><span class="o">-</span><span class="n">opm</span><span class="o">-</span><span class="n">rst</span><span class="o">-</span><span class="n">file</span><span class="o">=</span><span class="n">true</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="c1">#Set mpirun, the full path to the flow executable, and simulator flags (except --output-dir)</span>
+<span class="linenos">2</span><span class="n">flow</span> <span class="o">=</span> <span class="s2">&quot;flow --relaxed-max-pv-fraction=0 --enable-opm-rst-file=true --newton-min-iterations=1 --enable-tuning=true&quot;</span>
 </pre></div>
 </div>
-<p>If <strong>flow</strong> is not in your path, then write the full path to the executable
-(e.g., /Users/dmar/Github/opm/build/opm-simulators/bin/flow). We also add in the same
-line as many flags as required (see the OPM Flow documentation <a class="reference external" href="https://opm-project.org/?page_id=955">here</a>).</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If you have installed flow with MPI support, then you can run the simulations in
-parallel by adding <strong>mpirun -np N flow …</strong> where N is the number of cpus.</p>
-</div>
+<p>If <strong>flow</strong> is not in your path, then write the full path to the executable, as well as adding mpirun
+if this is supported in your machine (e.g., flow = “mpirun -np 8 /Users/dmar/Github/opm/build/opm-simulators/bin/flow –relaxed-max-pv-fraction=0”).</p>
 <section id="reservoir-related-parameters">
 <h2>Reservoir-related parameters<a class="headerlink" href="#reservoir-related-parameters" title="Link to this heading"></a></h2>
 <p>The following input lines are:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 4</span><span class="sd">&quot;&quot;&quot;Set the model parameters&quot;&quot;&quot;</span>
-<span class="linenos"> 5</span><span class="n">co2store</span> <span class="n">base</span> <span class="c1">#Model (co2store/h2store/co2eor/saltprec) and name of the template file (see src/pyopmnearwell/templates/)</span>
-<span class="linenos"> 6</span><span class="n">cake</span> <span class="mi">60</span>       <span class="c1">#Grid type (core/radial/cake/cartesian2d/cartesian/cpg3d/coord2d/coord3d/tensor2d/tensor3d) and size (input/output pipe length[m]/theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))</span>
-<span class="linenos"> 7</span><span class="mi">100</span> <span class="mi">24</span>        <span class="c1">#Reservoir dimensions [m] (Lenght and height (diameter for the core geometry))</span>
-<span class="linenos"> 8</span><span class="mi">80</span> <span class="mi">48</span> <span class="mi">2</span>       <span class="c1">#Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)</span>
-<span class="linenos"> 9</span><span class="mf">0.1</span> <span class="mi">0</span> <span class="mi">0</span>       <span class="c1">#Well diameter [m], well transmiscibility (0 to use the computed one internally in Flow), and remove the smaller cells than the well diameter</span>
-<span class="linenos">10</span><span class="mf">1e7</span> <span class="mi">40</span> <span class="mi">0</span>      <span class="c1">#Pressure [Pa] on the top, uniform temperature [°], and initial phase in the reservoir (0 wetting, 1 non-wetting)</span>
-<span class="linenos">11</span><span class="mf">1e10</span> <span class="mi">0</span>        <span class="c1">#Pore volume multiplier on the boundary [-] (0 to use well producers instead) and deactivate cross flow within the wellbore (see XFLOW in OPM Manual)</span>
-<span class="linenos">12</span><span class="mi">1</span> <span class="mi">5</span> <span class="mi">6</span>         <span class="c1">#Activate perforations [-], number of perforations [-], and lenght [m]</span>
-<span class="linenos">13</span><span class="mi">4</span> <span class="n">Killough</span> <span class="mi">0</span>  <span class="c1">#Number of layers [-], hysteresis (Killough, Carlson, or 0 to neglect it), and econ for the producer (for h2 models)</span>
-<span class="linenos">14</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="c1">#Ini salt conc [kg/m3], salt sol lim [kg/m3], prec salt den [kg/m3], gamma [-], phi_r [-], npoints [-], threshold [-], and expression (&#39;default&#39; to use the relatinonship in Verma and Pruess 1988 and &#39;power&#39; to use the one described in the OPM Manual in PERMFACT kewword with phi_r=phi_c/phi_0) (all entries for saltprec)</span>
-<span class="linenos">15</span><span class="mi">2</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">mt</span><span class="o">.</span><span class="n">cos</span><span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">mt</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="o">/</span><span class="mi">50</span><span class="p">))</span> <span class="o">+</span> <span class="mi">10</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="c1">#The function for the reservoir surface</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 4</span><span class="c1">#Set the model parameters</span>
+<span class="linenos"> 5</span><span class="n">model</span> <span class="o">=</span> <span class="s2">&quot;co2store&quot;</span> <span class="c1">#Model: co2store, co2eor, foam, h2store, or saltprec</span>
+<span class="linenos"> 6</span><span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;base&quot;</span> <span class="c1">#Template file (see src/pyopmnearwell/templates/)</span>
+<span class="linenos"> 7</span><span class="n">grid</span> <span class="o">=</span> <span class="s2">&quot;cake&quot;</span> <span class="c1">#Grid type: cake, radial, core, cartesian2d, coord2d, tensor2d, cartesian, cpg3d, coord3d, or tensor3d</span>
+<span class="linenos"> 8</span><span class="n">adim</span> <span class="o">=</span> <span class="mi">60</span> <span class="c1">#Grid cake/radial: theta [degrees]; core: input/output pipe length [m]; cartesian2d, coord2d, tensor2d: width[m]</span>
+<span class="linenos"> 9</span><span class="n">xdim</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1">#Length [m] (for cartesian/cpg3d/coord3d/tensor3d, Length=Width=2*xdim)</span>
+<span class="linenos">10</span><span class="n">xcn</span> <span class="o">=</span> <span class="p">[</span><span class="mi">80</span><span class="p">]</span> <span class="c1">#Number of x-cells [-]; coordinates for grid type coord2d/coord3d [m]; numbers of x-cells for grid type tensor2d/tensor3d [-]</span>
+<span class="linenos">11</span><span class="n">xfac</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1">#Exponential factor for the telescopic x-gridding (0 to use an equidistant partition)</span>
+<span class="linenos">12</span><span class="n">diameter</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1">#Well diameter [m]</span>
+<span class="linenos">13</span><span class="n">pressure</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1">#Pressure [Bar] on the top</span>
+<span class="linenos">14</span><span class="n">temperature</span> <span class="o">=</span> <span class="p">[</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">]</span> <span class="c1">#Top and bottom temperatures [C]</span>
+<span class="linenos">15</span><span class="n">initialphase</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#Initial phase in the reservoir (0 wetting, 1 non-wetting)</span>
+<span class="linenos">16</span><span class="n">pvmult</span> <span class="o">=</span> <span class="mf">1e10</span> <span class="c1">#Pore volume multiplier on the boundary [-] (-1 to ignore; 0 to use well producers instead)</span>
+<span class="linenos">17</span><span class="n">perforations</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span> <span class="c1">#Activate perforations [-], number of well perforations [-], and length [m]</span>
+<span class="linenos">18</span><span class="n">hysteresis</span> <span class="o">=</span> <span class="s2">&quot;Killough&quot;</span> <span class="c1">#Add hysteresis (Killough or Carlson, 0 by default, i.e., no hysteresis)</span>
+<span class="linenos">19</span><span class="n">zxy</span> <span class="o">=</span> <span class="s2">&quot;2-2*mt.cos((2*mt.pi*x/50)) + 10*(x/100)**2&quot;</span> <span class="c1">#The function for the reservoir surface</span>
 </pre></div>
 </div>
 <p>Here we first select the physical model and the corresponding template. To add additional models (e.g., blackoil), one could look at the
@@ -125,97 +123,81 @@ templates, add them to the src/pyopmnearwell/templates folder, and extending the
 src/pyopmnearwell/utils folder. In the following line we select type of grid and the second entry defines the length of the inlet/outlet tubes for the core,
 theta aperture for the radial/cake/coord2d/tensord2d grids, the width of the cells for the cartesian2d grid, or it is ignored for the 3D cartesian grids (the width and number of cells is set equal to
 the ones in the x directions). See/Run the <a class="reference external" href="https://github.com/cssr-tools/pyopmnearwell/blob/main/tests/geometries">tests/geometries</a> configuration files for these grids.
-Then we set the length and height of the reservoir (diameter for the core geometry), as well as the number of grid elements in the x and z direction (for the y/theta direction we consider only one
-element, with exception to the core/3D grids where the width and number of cells is set equal to the ones in the z/x directions). The third entry defines the exponential factor for the telescopic serie used to generate the x partition (if
+Then we set the length of the reservoir, as well as the number of grid elements in the x direction (for the y/theta direction we use the ‘adim’ variable
+with exception to the core/3D grids where the width and number of cells is set equal to the ones in the z/x directions). The xfac entry defines the exponential factor for the telescopic serie used to generate the x partition (if
 set to 0 then an equidistance partition is generated).</p>
 <figure class="align-default" id="id1">
 <img alt="_images/gridding.png" src="_images/gridding.png" />
 <figcaption>
-<p><span class="caption-text">Four different grids by setting the line # 6 to ‘radial 36’ (top left, showing the depth), ‘cake 60’ (top right, showing the y-direction cell size),
-‘cartesian2d 1’ (bottom left, showing the x-direction cell size), and cartesian 1 (bottom right, showing the cell pore volume).</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+<p><span class="caption-text">Four different grids by setting the line ‘grid’ and ‘adim’ to ‘radial’ ‘36’ (top left, showing the depth), ‘cake’ ‘60’ (top right, showing the y-direction cell size),
+‘cartesian2d’ ‘1’ (bottom left, showing the x-direction cell size), and ‘cartesian’ (bottom right, showing the cell pore volume).</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <figure class="align-default" id="id2">
 <img alt="_images/core.png" src="_images/core.png" />
 <figcaption>
-<p><span class="caption-text">Example of core geometry (generated by running the examples/h2core.txt configuration file).</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+<p><span class="caption-text">Example of core geometry (generated by running the examples/h2core.toml configuration file).</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
 </figcaption>
 </figure>
-<p>We then define the diameter of the well, the well transmissibility (0 to use the
-computed one internally in Flow), the reservoir pressure on the top, the initial phase, the factor to multiply the pore volume on
-the boundaries (0 to add production wells intead), and option to deactivate the XFLOW (see XFLOW in the OPM Manual). On line 12 there is an option to add heterogeinity by adding a defined number of
-layers around the injection well by a given length. After, the number of different rocks along the z direction is defined as well as the possibility to include hysteresis effects.
-If the saltprec model is used, then on line 14 we set the parameters as described in the line comment. Finally, there is an option to add a function to include spatial variatons in the geometry in the
-z direction.</p>
+<p>We then define additional parameters for the reservoir properties, as described in each configuration file.</p>
 </section>
 <section id="rock-related-parameters">
 <h2>Rock-related parameters<a class="headerlink" href="#rock-related-parameters" title="Link to this heading"></a></h2>
 <p>The following entries define the rock related parameters:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">17</span><span class="sd">&quot;&quot;&quot;Set the saturation functions&quot;&quot;&quot;</span>
-<span class="linenos">18</span><span class="n">krw</span> <span class="o">*</span> <span class="p">((</span><span class="n">sw</span> <span class="o">-</span> <span class="n">swi</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">sni</span> <span class="o">-</span><span class="n">swi</span><span class="p">))</span> <span class="o">**</span> <span class="n">nkrw</span>             <span class="c1">#Wetting rel perm saturation function [-]</span>
-<span class="linenos">19</span><span class="n">krn</span> <span class="o">*</span> <span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">sw</span> <span class="o">-</span> <span class="n">sni</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">sni</span> <span class="o">-</span> <span class="n">swi</span><span class="p">))</span> <span class="o">**</span> <span class="n">nkrn</span>      <span class="c1">#Non-wetting rel perm saturation function [-]</span>
-<span class="linenos">20</span><span class="n">pec</span> <span class="o">*</span> <span class="p">((</span><span class="n">sw</span> <span class="o">-</span> <span class="n">swi</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">swi</span><span class="p">))</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">npe</span><span class="p">))</span>        <span class="c1">#Capillary pressure saturation function [Pa]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">21</span><span class="c1">#Set the saturation functions</span>
+<span class="linenos">22</span><span class="n">krw</span> <span class="o">=</span> <span class="s2">&quot;krw * ((sw - swi) / (1.0 - sni -swi)) ** nkrw&quot;</span>        <span class="c1">#Wetting rel perm saturation function [-]</span>
+<span class="linenos">23</span><span class="n">krn</span> <span class="o">=</span> <span class="s2">&quot;krn * ((1.0 - sw - sni) / (1.0 - sni - swi)) ** nkrn&quot;</span> <span class="c1">#Non-wetting rel perm saturation function [-]</span>
+<span class="linenos">24</span><span class="n">pcap</span> <span class="o">=</span> <span class="s2">&quot;pen * ((sw - swi) / (1.0 - swi)) ** (-(1.0 / npen))&quot;</span> <span class="c1">#Capillary pressure saturation function [Bar]</span>
 </pre></div>
 </div>
 <p>In this example we consider properties for the sands number 2 to 5 as described in the
 <a class="reference external" href="https://www.spe.org/en/csp/">11th SPE CSP</a>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">22</span><span class="sd">&quot;&quot;&quot;Properties saturation functions&quot;&quot;&quot;</span>
-<span class="linenos">23</span><span class="sd">&quot;&quot;&quot;swi [-], sni [-], krn [-], krw [-], pec [Pa], nkrw [-], nkrn [-], npe [-], threshold cP evaluation, ignore swi for cP&quot;&quot;&quot;</span>
-<span class="linenos">24</span><span class="n">SWI2</span>  <span class="mf">0.14</span> <span class="n">SNI2</span>  <span class="mf">0.1</span> <span class="n">KRW2</span>  <span class="mi">1</span> <span class="n">KRN2</span>  <span class="mi">1</span> <span class="n">PRE2</span>  <span class="mi">8655</span> <span class="n">NNKRW2</span> <span class="mi">2</span> <span class="n">NNKRN2</span> <span class="mi">2</span> <span class="n">HNPE2</span> <span class="mi">2</span> <span class="n">THRE2</span>  <span class="mf">1e-4</span> <span class="n">IGN1</span>  <span class="mi">0</span>
-<span class="linenos">25</span><span class="n">SWI3</span>  <span class="mf">0.12</span> <span class="n">SNI3</span>  <span class="mf">0.1</span> <span class="n">KRW3</span>  <span class="mi">1</span> <span class="n">KRN3</span>  <span class="mi">1</span> <span class="n">PRE3</span>  <span class="mi">6120</span> <span class="n">NNKRW3</span> <span class="mi">2</span> <span class="n">NNKRN3</span> <span class="mi">2</span> <span class="n">HNPE3</span> <span class="mi">2</span> <span class="n">THRE3</span>  <span class="mf">1e-4</span> <span class="n">IGN2</span>  <span class="mi">0</span>
-<span class="linenos">26</span><span class="n">SWI4</span>  <span class="mf">0.12</span> <span class="n">SNI4</span>  <span class="mf">0.1</span> <span class="n">KRW4</span>  <span class="mi">1</span> <span class="n">KRN4</span>  <span class="mi">1</span> <span class="n">PRE4</span>  <span class="mi">3871</span> <span class="n">NNKRW4</span> <span class="mi">2</span> <span class="n">NNKRN4</span> <span class="mi">2</span> <span class="n">HNPE4</span> <span class="mi">2</span> <span class="n">THRE4</span>  <span class="mf">1e-4</span> <span class="n">IGN3</span>  <span class="mi">0</span>
-<span class="linenos">27</span><span class="n">SWI5</span>  <span class="mf">0.12</span> <span class="n">SNI5</span>  <span class="mf">0.1</span> <span class="n">KRW5</span>  <span class="mi">1</span> <span class="n">KRN5</span>  <span class="mi">1</span> <span class="n">PRE5</span>  <span class="mi">3060</span> <span class="n">NNKRW5</span> <span class="mi">2</span> <span class="n">NNKRN5</span> <span class="mi">2</span> <span class="n">HNPE5</span> <span class="mi">2</span> <span class="n">THRE5</span>  <span class="mf">1e-4</span> <span class="n">IGN4</span>  <span class="mi">0</span>
-<span class="linenos">28</span><span class="n">SWIP</span>     <span class="mi">0</span> <span class="n">SNIP</span>    <span class="mi">0</span> <span class="n">KRWP</span>  <span class="mi">1</span> <span class="n">KRNP</span>  <span class="mi">1</span> <span class="n">PECP</span>     <span class="mi">0</span> <span class="n">NNKRWP</span> <span class="mi">1</span> <span class="n">NNKRNP</span> <span class="mi">1</span> <span class="n">NPEP</span>  <span class="mi">1</span> <span class="n">THREP</span>  <span class="mf">1e-4</span> <span class="n">IGNP</span>  <span class="mi">0</span>
-<span class="linenos">29</span><span class="n">HSWI2</span> <span class="mf">0.28</span> <span class="n">HSNI2</span> <span class="mf">0.2</span> <span class="n">HKRW2</span> <span class="mi">1</span> <span class="n">HKRN2</span> <span class="mi">1</span> <span class="n">HPRE2</span> <span class="mi">8655</span> <span class="n">HNKRW2</span> <span class="mi">3</span> <span class="n">HNKRN2</span> <span class="mi">3</span> <span class="n">HNPE2</span> <span class="mi">2</span> <span class="n">HTHRE2</span> <span class="mf">1e-4</span> <span class="n">HIGN1</span> <span class="mi">0</span>
-<span class="linenos">30</span><span class="n">HSWI3</span> <span class="mf">0.24</span> <span class="n">HSNI3</span> <span class="mf">0.2</span> <span class="n">HKRW3</span> <span class="mi">1</span> <span class="n">HKRN3</span> <span class="mi">1</span> <span class="n">HPRE3</span> <span class="mi">6120</span> <span class="n">HNKRW3</span> <span class="mi">3</span> <span class="n">HNKRN3</span> <span class="mi">3</span> <span class="n">HNPE3</span> <span class="mi">2</span> <span class="n">HTHRE3</span> <span class="mf">1e-4</span> <span class="n">HIGN2</span> <span class="mi">0</span>
-<span class="linenos">31</span><span class="n">HSWI4</span> <span class="mf">0.24</span> <span class="n">HSNI4</span> <span class="mf">0.2</span> <span class="n">HKRW4</span> <span class="mi">1</span> <span class="n">HKRN4</span> <span class="mi">1</span> <span class="n">HPRE4</span> <span class="mi">3871</span> <span class="n">HNKRW4</span> <span class="mi">3</span> <span class="n">HNKRN4</span> <span class="mi">3</span> <span class="n">HNPE4</span> <span class="mi">2</span> <span class="n">HTHRE4</span> <span class="mf">1e-4</span> <span class="n">HIGN3</span> <span class="mi">0</span>
-<span class="linenos">32</span><span class="n">HSWI5</span> <span class="mf">0.24</span> <span class="n">HSNI5</span> <span class="mf">0.2</span> <span class="n">HKRW5</span> <span class="mi">1</span> <span class="n">HKRN5</span> <span class="mi">1</span> <span class="n">HPRE5</span> <span class="mi">3060</span> <span class="n">HNKRW5</span> <span class="mi">3</span> <span class="n">HNKRN5</span> <span class="mi">3</span> <span class="n">HNPE5</span> <span class="mi">2</span> <span class="n">HTHRE5</span> <span class="mf">1e-4</span> <span class="n">HIGN4</span> <span class="mi">0</span>
-<span class="linenos">33</span><span class="n">HSWIP</span>    <span class="mi">0</span> <span class="n">HSNIP</span>   <span class="mi">0</span> <span class="n">HKRWP</span> <span class="mi">1</span> <span class="n">HKRNP</span> <span class="mi">1</span> <span class="n">HPECP</span>    <span class="mi">0</span> <span class="n">HNKRWP</span> <span class="mi">1</span> <span class="n">HNKRNP</span> <span class="mi">1</span> <span class="n">HNPEP</span> <span class="mi">1</span> <span class="n">HTHREP</span> <span class="mf">1e-4</span> <span class="n">HIGN5</span> <span class="mi">0</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">26</span><span class="c1">#Properties sat functions: 1) swi [-], 2) sni [-], 3) krw [-], 4) krn [-], 5) pen [Bar], 6) nkrw [-], 7) nkrn [-],</span>
+<span class="linenos">27</span><span class="c1">#8) npen [-], 9) threshold cP evaluation, 10) ignore swi for cP? (sl* for cplog) (entry per layer, if hysteresis, additional entries per layer)</span>
+<span class="linenos">28</span><span class="n">safu</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.14</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">8655e-5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mf">1e-4</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+<span class="linenos">29</span><span class="p">[</span><span class="mf">0.12</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">6120e-5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mf">1e-4</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+<span class="linenos">30</span><span class="p">[</span><span class="mf">0.12</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">3871e-5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mf">1e-4</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+<span class="linenos">31</span><span class="p">[</span><span class="mf">0.12</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">3060e-5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mf">1e-4</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+<span class="linenos">32</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">1e-4</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+<span class="linenos">33</span><span class="p">[</span><span class="mf">0.14</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">8655e-5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mf">1e-4</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+<span class="linenos">34</span><span class="p">[</span><span class="mf">0.12</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">6120e-5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mf">1e-4</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+<span class="linenos">35</span><span class="p">[</span><span class="mf">0.12</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">3871e-5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mf">1e-4</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+<span class="linenos">36</span><span class="p">[</span><span class="mf">0.12</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">3060e-5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mf">1e-4</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+<span class="linenos">37</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">1e-4</span><span class="p">,</span><span class="mi">0</span><span class="p">]]</span>
 </pre></div>
 </div>
 <p>Since the ‘activate perforations option’ is set to 1, then we add an extra line after the 4 rock properties
-to define the ones in the perforations (Line 28). Since the hysteresis option is activated, then the
+to define the ones in the perforations (Line 32). Since the hysteresis option is activated, then the
 imbibition saturation functions are defined by adding as many additional lines as number of rocks (+1
-if the perforations are activated, Lines 29 to 33 in this example).</p>
+if the perforations are activated, lines 33 to 37 in this example).</p>
 <p>Now for the rock properties:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">35</span><span class="sd">&quot;&quot;&quot;Properties rock&quot;&quot;&quot;</span>
-<span class="linenos">36</span><span class="sd">&quot;&quot;&quot;Kxy [mD], Kz [mD], phi [-], thickness [m]&quot;&quot;&quot;</span>
-<span class="linenos">37</span><span class="n">PERMXY2</span> <span class="mf">101.324</span> <span class="n">PERMZ2</span> <span class="mf">10.1324</span> <span class="n">PORO2</span> <span class="mf">0.20</span> <span class="n">THIC2</span> <span class="mi">6</span>
-<span class="linenos">38</span><span class="n">PERMXY3</span> <span class="mf">202.650</span> <span class="n">PERMZ3</span> <span class="mf">20.2650</span> <span class="n">PORO3</span> <span class="mf">0.20</span> <span class="n">THIC3</span> <span class="mi">6</span>
-<span class="linenos">39</span><span class="n">PERMXY4</span> <span class="mf">506.625</span> <span class="n">PERMZ4</span> <span class="mf">50.6625</span> <span class="n">PORO4</span> <span class="mf">0.20</span> <span class="n">THIC4</span> <span class="mi">6</span>
-<span class="linenos">40</span><span class="n">PERMXY5</span> <span class="mf">1013.25</span> <span class="n">PERMZ5</span> <span class="mf">101.325</span> <span class="n">PORO5</span> <span class="mf">0.25</span> <span class="n">THIC5</span> <span class="mi">6</span>
-<span class="linenos">41</span><span class="n">PERMXYP</span> <span class="mf">2013.25</span> <span class="n">PERMZP</span> <span class="mf">201.325</span> <span class="n">POROP</span> <span class="mf">0.45</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">39</span><span class="c1">#Properties rock: 1) Kxy [mD], 2) Kz [mD], 3) phi [-], 4) thickness [m], and 5) no cells in the z dir [-] (entry per layer)</span>
+<span class="linenos">40</span><span class="n">rock</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">101.324</span><span class="p">,</span><span class="mf">10.1324</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span>
+<span class="linenos">41</span><span class="p">[</span><span class="mf">202.650</span><span class="p">,</span><span class="mf">20.2650</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span>
+<span class="linenos">42</span><span class="p">[</span><span class="mf">506.625</span><span class="p">,</span><span class="mf">50.6625</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span>
+<span class="linenos">43</span><span class="p">[</span><span class="mf">1013.25</span><span class="p">,</span><span class="mf">101.325</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span>
+<span class="linenos">44</span><span class="p">[</span><span class="mf">2013.25</span><span class="p">,</span><span class="mf">201.325</span><span class="p">,</span><span class="mf">0.45</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>As seen from the previous values, the finnest sand corresponds to No. 2 and it gets coarser
-towards sand No. 5. The last entry define the z size of the layer (the sum should be equal to
-the second entry of line 7, while for the perforations these have the thickness of one individual
-cell).</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The names for the saturation functions and rock properties are not used in the framework (they are used to
-ease the visualization of the parameter values in the configuration file, i.e., writing SWIX in line 24 has
-no impact, so far the name has at least one character since this is used in the reading of the values).</p>
-</div>
+<p>As seen from the previous values, the finnest sand corresponds to the top one and it gets coarser
+towards the bottom. The last two entries define the z size of the layer and number of cells,
+while for the perforations these have the thickness of one single cell.</p>
 </section>
 <section id="well-related-parameters">
 <h2>Well-related parameters<a class="headerlink" href="#well-related-parameters" title="Link to this heading"></a></h2>
 <p>Now we proceed to define the schedule for the injection well. Here the injection well is located from the
 top to the bottom on the left side of the domain and the injection is given as kg/day:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">43</span><span class="sd">&quot;&quot;&quot;Define the injection values&quot;&quot;&quot;</span>
-<span class="linenos">44</span><span class="sd">&quot;&quot;&quot;injection time [d], time step size to write results [d], maximum time step [d], injected phase (0 wetting, 1 non-wetting), injection rate [kg/day]&quot;&quot;&quot;</span>
-<span class="linenos">45</span><span class="mi">7</span> <span class="mf">1e-1</span> <span class="mf">5e-2</span> <span class="mi">1</span> <span class="mf">57611.52</span>
-<span class="linenos">46</span><span class="mi">7</span> <span class="mf">1e-1</span> <span class="mf">5e-2</span> <span class="mi">0</span> <span class="mf">57611.52</span>
-<span class="linenos">47</span><span class="mi">7</span> <span class="mf">1e-1</span> <span class="mf">5e-2</span> <span class="mi">1</span> <span class="mf">57611.52</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">46</span><span class="c1">#Define the injection values (entry per change in the schedule):</span>
+<span class="linenos">47</span><span class="c1">#1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]</span>
+<span class="linenos">48</span><span class="c1">#4) fluid (0 wetting, 1 non-wetting), 5) injection rates [kg/day]</span>
+<span class="linenos">49</span><span class="n">inj</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">7</span><span class="p">,</span><span class="mf">1e-1</span><span class="p">,</span><span class="mf">5e-2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">57611.52</span><span class="p">],</span>
+<span class="linenos">50</span><span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mf">1e-1</span><span class="p">,</span><span class="mf">5e-2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">57611.52</span><span class="p">],</span>
+<span class="linenos">51</span><span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mf">1e-1</span><span class="p">,</span><span class="mf">5e-2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">57611.52</span><span class="p">]]</span>
 </pre></div>
 </div>
 <p>Here CO2 (non-wetting phase) is injected for seven days printing the results 70 times and limmiting the time step
 to 5e-2 days, after water (wetting phase) is injected for the same period at the same mass rate, and finally CO2 is
 reinjected for the same period.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Keep the linebreak between the sections in the whole configuration file (in the current implementation this is used for the reading of the parameters).</p>
-</div>
 </section>
 </section>
 
@@ -230,7 +212,7 @@ reinjected for the same period.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, NORCE Norwegian Research Centre AS.</p>
+    <p>&#169; Copyright 2023-2025, NORCE Norwegian Research Centre AS.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

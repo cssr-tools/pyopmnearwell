@@ -162,13 +162,6 @@ cython_debug/
 # macOS
 .DS_Store
 
-# Tests
-tests/models/co2store/
-tests/models/compare/
-tests/models/h2store/
-tests/models/output/
-tests/models/saltprec/
-
 # Python environment
 vpyopmnearwell/
 
@@ -178,10 +171,9 @@ dune-geometry/
 dune-grid/
 dune-istl/
 
-# The OPM
+# OPM
 opm-common/
 opm-grid/
-opm-models/
 opm-simulators/
 
 # Developing

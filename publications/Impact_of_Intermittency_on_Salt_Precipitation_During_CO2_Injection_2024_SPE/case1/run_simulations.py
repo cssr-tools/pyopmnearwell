@@ -29,12 +29,12 @@ for i, (case, qrate) in enumerate(zip(CASES, QRATE)):
     filledtemplate = mytemplate.render(**var)
     os.system(f"rm -rf {case}_nca_{n_ca:.0f}_M_{qrate}kg_s")
     with open(
-        f"{case}_nca_{n_ca:.0f}_M_{qrate}kg_s.txt",
+        f"{case}_nca_{n_ca:.0f}_M_{qrate}kg_s.toml",
         "w",
         encoding="utf8",
     ) as file:
         file.write(filledtemplate)
-    command += f"pyopmnearwell -i {case}_nca_{n_ca:.0f}_M_{qrate}kg_s.txt -o {case}_nca_{n_ca:.0f}_M_{qrate}kg_s -p opm & "
+    command += f"pyopmnearwell -i {case}_nca_{n_ca:.0f}_M_{qrate}kg_s.toml -o {case}_nca_{n_ca:.0f}_M_{qrate}kg_s -p opm & "
 command += "wait"
 os.system(command)
 os.system("pyopmnearwell -c compare -m saltprec -p opm")

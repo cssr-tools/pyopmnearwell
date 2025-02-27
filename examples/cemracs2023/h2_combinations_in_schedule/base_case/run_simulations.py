@@ -15,10 +15,10 @@ import matplotlib.pyplot as plt
 
 np.random.seed(7)
 
-FLOW = "/Users/dmar/Github/opm/build/opm-simulators/bin/flow"
+FLOW = "flow"
 ECON = 0. #Minimum surface gas production rate (w.r.t gas prodcution rate, i.e., between 0 and 1)
 NSCHED = 4  # Number of changues in the schedule
-NPRUNS = 5 # Number of parallel simulations
+NPRUNS = 8 # Number of parallel simulations
 
 nsimulations = 2**NSCHED #The number of inj/prod combinations given the number of changues in the injection (NSCHED)
 schedules = [seq for seq in itertools.product("01", repeat=NSCHED)]
@@ -38,7 +38,7 @@ for i, schedule in enumerate(schedules):
     var = {"flow": FLOW, "econ": ECON, "schedule": schedule}
     filledtemplate = mytemplate.render(**var)
     with open(
-        f"h2_{i}.txt",
+        f"h2_{i}.toml",
         "w",
         encoding="utf8",
     ) as file:
@@ -47,7 +47,7 @@ for i, schedule in enumerate(schedules):
 for i in range(mt.floor(nsimulations / NPRUNS)):
     command = ""
     for j in range(NPRUNS):
-        command += f"pyopmnearwell -i h2_{NPRUNS*i+j}.txt -o h2_{NPRUNS*i+j} -p '' & " 
+        command += f"pyopmnearwell -i h2_{NPRUNS*i+j}.toml -o h2_{NPRUNS*i+j} -p '' & " 
     command += 'wait'
     os.system(command)
     for j in range(NPRUNS):
@@ -55,12 +55,12 @@ for i in range(mt.floor(nsimulations / NPRUNS)):
         fgit.append(smspec["FGIT"].values[-1])
         fgpt.append(smspec["FGPT"].values[-1])
         fgit_fgpt.append(smspec["FGIT"].values[-1] - smspec["FGPT"].values[-1])
-        os.system(f"rm -rf h2_{NPRUNS*i+j} h2_{NPRUNS*i+j}.txt")
+        os.system(f"rm -rf h2_{NPRUNS*i+j} h2_{NPRUNS*i+j}.toml")
 finished = NPRUNS*mt.floor(nsimulations / NPRUNS)
 remaining = nsimulations - finished
 command = ""
 for i in range(remaining):
-    command += f"pyopmnearwell -i h2_{finished+i}.txt -o h2_{finished+i} -p '' & " 
+    command += f"pyopmnearwell -i h2_{finished+i}.toml -o h2_{finished+i} -p '' & " 
 command += 'wait'
 os.system(command)
 for i in range(remaining):
@@ -68,7 +68,7 @@ for i in range(remaining):
     fgit.append(smspec["FGIT"].values[-1])
     fgpt.append(smspec["FGPT"].values[-1])
     fgit_fgpt.append(smspec["FGIT"].values[-1] - smspec["FGPT"].values[-1])
-    os.system(f"rm -rf h2_{finished+i} h2_{finished+i}.txt")
+    os.system(f"rm -rf h2_{finished+i} h2_{finished+i}.toml")
 
 fgpt = np.array(fgpt)
 fpit = np.array(fgit)

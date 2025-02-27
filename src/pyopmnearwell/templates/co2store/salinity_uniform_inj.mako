@@ -8,9 +8,9 @@ RUNSPEC
 ----------------------------------------------------------------------------
 DIMENS 
 %if dic['grid']== 'core':
-${dic['noCells'][0]} ${dic['noCells'][1]} ${dic['noCells'][2]} /
+${dic['nocells'][0]} ${dic['nocells'][1]} ${dic['nocells'][2]} /
 %else:
-${max(dic['noCells'][0],dic['noCells'][1])} ${dic['noCells'][1]} ${dic['noCells'][2]} /
+${max(dic['nocells'][0],dic['nocells'][1])} ${dic['nocells'][1]} ${dic['nocells'][2]} /
 %endif
 
 WATER
@@ -31,15 +31,15 @@ EQLDIMS
 /
 
 TABDIMS
-${(dic["hysteresis"]+1)*(dic['satnum']+dic['perforations'][0])} 1* 10000 /
+${(1*(dic["hysteresis"]!=0)+1)*(dic['satnum']+dic['perforations'][0])} 1* 10000 /
 
-% if dic["hysteresis"] ==1:
+% if dic["hysteresis"]!=0:
 SATOPTS
  HYSTER  /
 % endif
 
 WELLDIMS
-${dic['noCells'][2]} ${dic['noCells'][2]} 1 ${dic['noCells'][2]} /
+${dic['nocells'][2]} ${dic['nocells'][2]} 1 ${dic['nocells'][2]} /
 
 UNIFIN
 UNIFOUT
@@ -54,7 +54,7 @@ GRIDFILE
 % endif
 INCLUDE
   'GEOLOGY.INC' /
-% if dic["pvMult"] > 0:
+% if dic["pvmult"] > 0:
 ----------------------------------------------------------------------------
 EDIT
 ----------------------------------------------------------------------------
@@ -67,18 +67,20 @@ PROPS
 INCLUDE
 'TABLES.INC' /
 
-% if dic["hysteresis"] ==1:
+% if dic["hysteresis"]!=0:
 EHYSTR
-  1  3  2* BOTH /
+  1  ${0 if dic["hysteresis"].upper()=="CARLSON" else 2}  2* BOTH /
 % endif
 
-% if dic["rock_comp"] > 0:
+% if dic["rockcomp"] > 0:
 ROCK
-276.0 ${dic["rock_comp"]} /
+276.0 ${dic["rockcomp"]} /
 % endif
 
+% if dic["salinity"] > 0:
 SALINITY
- 2.72/ 35-40g/l  -> 35-40g /kg -> 0.63-0.72 mol/g
+${dic["salinity"]}/
+% endif
 ----------------------------------------------------------------------------
 REGIONS
 ----------------------------------------------------------------------------
@@ -91,11 +93,11 @@ EQUIL
  0 ${dic['pressure']} ${mt.floor(dic["initialphase"]*dic['dims'][2])} 0 0 0 1 1 0 /
 
 RTEMPVD
-0   ${dic['temperature']}
-${dic['dims'][2]} ${dic['temperature']} /
+0   ${dic['temperature'][0]}
+${dic['dims'][2]} ${dic['temperature'][1]} /
 % if dic['write'] == 1:
 RPTRST 
- 'BASIC=2' FLOWS FLORES DEN VISC /
+ 'BASIC=2' DEN VISC /
 % endif
 ----------------------------------------------------------------------------
 SUMMARY
@@ -113,7 +115,7 @@ CPI
 /
 
 WGIRL
-% for j in range(0*dic['noCells'][2]+1):
+% for j in range(0*dic['nocells'][2]+1):
  'INJ0'  ${j+1}  /
 % endfor
 /
@@ -127,7 +129,7 @@ CGITL
 /
 
 WGITL
-% for j in range(0*dic['noCells'][2]+1):
+% for j in range(0*dic['nocells'][2]+1):
  'INJ0'  ${j+1}  /
 % endfor
 /
@@ -180,57 +182,57 @@ SCHEDULE
 ----------------------------------------------------------------------------
 % if dic['write'] == 1:
 RPTRST
- 'BASIC=2' FLOWS FLORES DEN VISC PCOW PCOG /
+ 'BASIC=2' DEN VISC PCOW PCOG /
 % endif
 WELSPECS
 % if dic['grid'] == 'core':
-'INJ0' 'G1' 1 ${1+mt.floor(dic['noCells'][2]/2)} 1* ${'GAS' if dic['inj'][0][3] > 0 else 'WATER'} 3* ${'NO' if dic["xflow"] > 0 else ''} /
+'INJ0' 'G1' 1 ${1+mt.floor(dic['nocells'][2]/2)} 1* ${'GAS' if dic['inj'][0][3] > 0 else 'WATER'} 3* ${'NO' if dic["xflow"] > 0 else ''} /
 % else:
-% for i in range(dic['noCells'][2]):
-'INJ${i}' 'G1' ${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${max(1, 1+mt.floor(dic['noCells'][1]/2))} 1* ${'GAS' if dic['inj'][0][3] > 0 else 'WATER'} 3* ${'NO' if dic["xflow"] > 0 else ''} /
+% for i in range(dic['nocells'][2]):
+'INJ${i}' 'G1' ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${max(1, 1+mt.floor(dic['nocells'][1]/2))} 1* ${'GAS' if dic['inj'][0][3] > 0 else 'WATER'} 3* ${'NO' if dic["xflow"] > 0 else ''} /
 % endfor
 % endif
-% if dic["pvMult"] == 0 or dic['grid']== 'core':
+% if dic["pvmult"] == 0 or dic['grid']== 'core':
 % if dic['grid']== 'core':
-'PRO0' 'G1'	${dic['noCells'][0]} ${1+mt.floor(dic['noCells'][2]/2)}	1* 'WATER' /
+'PRO0' 'G1'	${dic['nocells'][0]} ${1+mt.floor(dic['nocells'][2]/2)}	1* 'WATER' /
 % elif dic['grid'] != 'cartesian' and dic['grid'] != 'tensor3d' and dic['grid'] != 'coord3d' and dic['grid'] != 'cpg3d':
-'PRO0' 'G1' ${dic['noCells'][0]} 1 1* 'WATER' /
+'PRO0' 'G1' ${dic['nocells'][0]} 1 1* 'WATER' /
 % else:
 'PRO0' 'G1' 1 1 1* 'WATER' /
-'PRO1' 'G1' ${dic['noCells'][0]} 1 1* 'WATER' /
-'PRO2' 'G1' 1 ${dic['noCells'][0]} 1* 'WATER' /
-'PRO3' 'G1' ${dic['noCells'][0]}  ${dic['noCells'][0]} 1* 'WATER' /
+'PRO1' 'G1' ${dic['nocells'][0]} 1 1* 'WATER' /
+'PRO2' 'G1' 1 ${dic['nocells'][0]} 1* 'WATER' /
+'PRO3' 'G1' ${dic['nocells'][0]}  ${dic['nocells'][0]} 1* 'WATER' /
 % endif
 % endif
 /
 COMPDAT
-% if dic["jfactor"] == 0:
+% if dic["confact"] == 0:
 % if dic['grid'] == 'core':
-'INJ0' 1 ${1+mt.floor(dic['noCells'][2]/2)} ${1+mt.floor(dic['noCells'][2]/2)} ${1+mt.floor(dic['noCells'][2]/2)} 'OPEN' 1* 1* ${dic['diameter']} /
+'INJ0' 1 ${1+mt.floor(dic['nocells'][2]/2)} ${1+mt.floor(dic['nocells'][2]/2)} ${1+mt.floor(dic['nocells'][2]/2)} 'OPEN' 1* 1* ${dic['diameter']} /
 % else:
-% for i in range(dic['noCells'][2]):
-'INJ${i}' ${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${i+1} ${i+1} 'OPEN' 1* 1* ${dic['diameter']} /
+% for i in range(dic['nocells'][2]):
+'INJ${i}' ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${i+1} ${i+1} 'OPEN' 1* 1* ${dic['diameter']} /
 % endfor
 % endif
 % else:
 % if dic['grid'] == 'core':
-'INJ0' 1 ${1+mt.floor(dic['noCells'][2]/2)} ${1+mt.floor(dic['noCells'][2]/2)} ${1+mt.floor(dic['noCells'][2]/2)} 'OPEN' 1* ${dic["jfactor"]} /
+'INJ0' 1 ${1+mt.floor(dic['nocells'][2]/2)} ${1+mt.floor(dic['nocells'][2]/2)} ${1+mt.floor(dic['nocells'][2]/2)} 'OPEN' 1* ${dic["confact"]} /
 % else:
-% for i in range(dic['noCells'][2]):
-'INJ${i}' ${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${max(1, 1+mt.floor(dic['noCells'][1]/2))} ${i+1} ${i+1} 'OPEN' 1* ${dic["jfactor"]*2*mt.pi*dic['rock'][int(dic["layers"][i])][0]*dic['dims'][2]/dic['noCells'][2]} /
+% for i in range(dic['nocells'][2]):
+'INJ${i}' ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${i+1} ${i+1} 'OPEN' 1* ${dic["confact"]*2*mt.pi*dic['rock'][int(dic["layers"][i])][0]*dic['dims'][2]/dic['nocells'][2]} /
 % endfor
 % endif
 % endif
-% if dic["pvMult"] == 0 or dic['grid']== 'core':
+% if dic["pvmult"] == 0 or dic['grid']== 'core':
 % if dic['grid']== 'core':
-'PRO0' ${dic['noCells'][0]} ${1+mt.floor(dic['noCells'][2]/2)}	${1+mt.floor(dic['noCells'][2]/2)} ${1+mt.floor(dic['noCells'][2]/2)}	'OPEN' 1*	${dic["jfactor"]} /
+'PRO0' ${dic['nocells'][0]} ${1+mt.floor(dic['nocells'][2]/2)}	${1+mt.floor(dic['nocells'][2]/2)} ${1+mt.floor(dic['nocells'][2]/2)}	'OPEN' 1*	${dic["confact"]} /
 % elif dic['grid'] != 'cartesian' and dic['grid'] != 'tensor3d' and dic['grid'] != 'coord3d' and dic['grid'] != 'cpg3d':
-'PRO0' ${dic['noCells'][0]}  1 1 ${0*dic['noCells'][2]+1}  'OPEN' 1* 1*  ${dic['diameter']} /
+'PRO0' ${dic['nocells'][0]}  1 1 ${0*dic['nocells'][2]+1}  'OPEN' 1* 1*  ${dic['diameter']} /
 %else:
-'PRO0' 1 1 1 ${0*dic['noCells'][2]+1} 'OPEN' 1* 1*  ${dic['diameter']} /
-'PRO1' ${dic['noCells'][0]} 1 1 ${0*dic['noCells'][2]+1} 'OPEN' 1* 1*  ${dic['diameter']} /
-'PRO2' 1 ${dic['noCells'][0]} 1 ${0*dic['noCells'][2]+1} 'OPEN' 1* 1*  ${dic['diameter']} /
-'PRO3' ${dic['noCells'][0]} ${dic['noCells'][0]} 1 ${0*dic['noCells'][2]+1}  'OPEN' 1* 1*  ${dic['diameter']} /
+'PRO0' 1 1 1 ${0*dic['nocells'][2]+1} 'OPEN' 1* 1*  ${dic['diameter']} /
+'PRO1' ${dic['nocells'][0]} 1 1 ${0*dic['nocells'][2]+1} 'OPEN' 1* 1*  ${dic['diameter']} /
+'PRO2' 1 ${dic['nocells'][0]} 1 ${0*dic['nocells'][2]+1} 'OPEN' 1* 1*  ${dic['diameter']} /
+'PRO3' ${dic['nocells'][0]} ${dic['nocells'][0]} 1 ${0*dic['nocells'][2]+1}  'OPEN' 1* 1*  ${dic['diameter']} /
 % endif
 % endif
 /
@@ -240,17 +242,17 @@ TUNING
 /
 /
 WCONINJE
-% for i in range(dic['noCells'][2]):
+% for i in range(dic['nocells'][2]):
 % if dic['inj'][j][3] > 0:
 'INJ${i}' 'GAS' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'}
-'RATE' ${f"{dic['inj'][j][4] / (dic['noCells'][2]*1.86843) : E}"}  1* 400/
+'RATE' ${f"{dic['inj'][j][4] / (dic['nocells'][2]*1.86843) : E}"}  1* 400/
 % else:
 'INJ${i}' 'WATER' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'}
-'RATE' ${f"{dic['inj'][j][4] / (dic['noCells'][2]*998.108) : E}"}  1* 400/
+'RATE' ${f"{dic['inj'][j][4] / (dic['nocells'][2]*998.108) : E}"}  1* 400/
 %endif
 %endfor
 /
-% if dic["pvMult"] == 0 or dic['grid']== 'core': 
+% if dic["pvmult"] == 0 or dic['grid']== 'core': 
 WCONPROD
 % if dic['grid'] == 'cartesian' or dic['grid'] == 'tensor3d' or dic['grid'] == 'coord3d' or dic['grid'] == 'cpg3d':
 'PRO0' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'} 'BHP' 5* ${dic['pressure']}/

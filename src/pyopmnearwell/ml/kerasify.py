@@ -1,5 +1,6 @@
 """Transform keras models to an OPM format. Copied from
-https://github.com/fractalmanifold/opm-common/blob/cemracs/opm/material/fluidmatrixinteractions/ml_tools/kerasify.py."""
+https://github.com/fractalmanifold/opm-common/blob/cemracs/opm/material/fluidmatrixinteractions/ml_tools/kerasify.py.
+"""
 
 import struct
 

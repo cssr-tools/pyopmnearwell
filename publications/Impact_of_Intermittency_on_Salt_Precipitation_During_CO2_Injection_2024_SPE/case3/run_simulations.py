@@ -16,7 +16,7 @@ os.system("rm -rf compare")
 command = ""
 for i, name in enumerate(NAMES):
     os.system(f"rm -rf {name}")
-    command += f"pyopmnearwell -i {name}.txt -o {name} -p opm & "
+    command += f"pyopmnearwell -i {name}.toml -o {name} -p opm & "
 command += "wait"
 os.system(command)
 os.system("pyopmnearwell -c compare -p opm -m saltprec")

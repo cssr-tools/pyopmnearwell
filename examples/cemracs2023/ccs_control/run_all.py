@@ -5,10 +5,10 @@ import os
 import subprocess
 import matplotlib
 
-FLOW = "/Users/dmar/Github/opm/build/opm-simulators/bin/flow"
+FLOW = "flow"
 TPERIOD = 60 # Duration of one period in days
 NSCHED = 3  # Number of changues in the schedule
-NPRUNS = 5 # Number of parallel simulations
+NPRUNS = 8 # Number of parallel simulations
 
 folders = sorted([name for name in os.listdir(".") if os.path.isdir(name)])
 cwd = os.getcwd()

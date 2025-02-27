@@ -65,18 +65,18 @@ def reservoir_files(
         }
     )
     if not "fprep" in dic:
-        dic["fprep"] = f"{dic['exe']}/{dic['fol']}/preprocessing"
+        dic["fprep"] = f"{dic['fol']}/preprocessing"
     if not "write" in dic:
         dic["write"] = 1
     # Generation of the x-dir spatial discretization using a telescopic function.
-    if dic["x_fac"] != 0:
+    if dic["xfac"] != 0:
         dic["xcor"] = np.flip(
             (dic["dims"][0])
-            * (np.exp(np.flip(np.linspace(0, dic["x_fac"], dic["noCells"][0] + 1))) - 1)
-            / (np.exp(dic["x_fac"]) - 1)
+            * (np.exp(np.flip(np.linspace(0, dic["xfac"], dic["nocells"][0] + 1))) - 1)
+            / (np.exp(dic["xfac"]) - 1)
         )
     elif dic["grid"] == "tensor2d":
-        for i, (name, arr) in enumerate(zip(["xcor"], ["x_n"])):
+        for i, (name, arr) in enumerate(zip(["xcor"], ["xcn"])):
             dic[f"{name}"] = [0.0]
             for j, num in enumerate(dic[f"{arr}"]):
                 for k in range(num):
@@ -85,15 +85,14 @@ def reservoir_files(
                     )
             dic[f"{name}"] = np.array(dic[f"{name}"])
     elif dic["grid"] == "coord2d":
-        dic["xcor"] = dic["x_n"]
+        dic["xcor"] = dic["xcn"]
     else:
-        dic["xcor"] = np.linspace(0, dic["dims"][0], dic["noCells"][0] + 1)
+        dic["xcor"] = np.linspace(0, dic["dims"][0], dic["nocells"][0] + 1)
     if dic["removecells"] == 1:
         dic["xcor"] = dic["xcor"][
             (0.5 * dic["diameter"] < dic["xcor"]) | (0 == dic["xcor"])
         ]
-    dic["noCells"][0] = len(dic["xcor"]) - 1
-
+    dic["nocells"][0] = len(dic["xcor"]) - 1
     # Either calculate the grid or update the links to all grid files.
     if kwargs.get("recalc_grid", True):
         if dic["grid"] == "core":
@@ -113,10 +112,9 @@ def reservoir_files(
     # If the tables are not recalculated, update the link to the tables file.
     # TODO: Hiding the default value in ``.get`` is dangerous, as this is accessed
     # multiple times. Possibly its better to introduce a local variable or update the
-    # dictionary at the start of the funciton.
+    # dictionary at the start of the function.
     if not kwargs.get("recalc_tables", True):
         dic.update({"tables_file": f"'{inc_folder / 'TABLES.INC'}'"})
-
     # If the sections are not recalculated, update the link to all section files.
     if not kwargs.get("recalc_sections", True):
         dic.update(
@@ -127,13 +125,20 @@ def reservoir_files(
             }
         )
 
-    dic["zcor"] = np.linspace(0, dic["dims"][2], dic["noCells"][2] + 1)
+    dic["zcor"] = [0.0]
+    for rock in dic["rock"]:
+        if len(rock) > 3:
+            for _ in range(rock[4]):
+                dic["zcor"].append(dic["zcor"][-1] + rock[3] / rock[4])
+    dic["zcor"] = np.array(dic["zcor"])
     dic["z_centers"] = 0.5 * (dic["zcor"][:-1] + dic["zcor"][1:])
     dic["x_centers"] = 0.5 * (dic["xcor"][:-1] + dic["xcor"][1:])
-    dic["layers"] = np.zeros(dic["noCells"][2])
-    for i, _ in enumerate(dic["thickness"]):
-        dic["layers"] += dic["z_centers"] > sum(dic["thickness"][: i + 1])
-
+    dic["layers"] = np.zeros(dic["nocells"][2])
+    thickness = 0.0
+    for i, _ in enumerate(dic["rock"]):
+        if len(dic["rock"][i]) > 3:
+            thickness += dic["rock"][i][3]
+            dic["layers"] += dic["z_centers"] > thickness
     var = {"dic": dic}
     filledtemplate: str = fill_template(
         var,
@@ -163,11 +168,11 @@ def manage_sections(dic):
 
     """
     sections = ["geology", "regions"]
-    if dic["pvMult"] > 0:
+    if dic["pvmult"] > 0:
         sections.append("multpv")
     if dic["model"] == "saltprec":
         sections.append("permfact")
-        if dic["template"] in ["dyncpres", "dyncpresuniform"]:
+        if dic["pcfact"] != 0:
             sections.append("pcfact")
     for section in sections:
         var = {"dic": dic}
@@ -198,25 +203,25 @@ def manage_tables(dic):
     else:
         filename = f"{dic['pat']}/templates/common/saturation_functions_format_1.mako"
     var = {"dic": dic}
+    pytables = os.path.join(dic["fprep"], "saturation_functions.py")
     filledtemplate: str = fill_template(var, filename=filename)
     with open(
-        os.path.join(dic["exe"], dic["fol"], "jobs", "saturation_functions.py"),
+        pytables,
         "w",
         encoding="utf8",
     ) as file:
         file.write(filledtemplate)
-    os.system(
-        f"chmod u+x {os.path.join(dic['exe'], dic['fol'], 'jobs', 'saturation_functions.py')}"
-    )
+    os.system(f"chmod u+x {pytables}")
     prosc = subprocess.run(
         [
             "python",
-            os.path.join(dic["exe"], dic["fol"], "jobs", "saturation_functions.py"),
+            pytables,
         ],
         check=True,
     )
     if prosc.returncode != 0:
         raise ValueError(f"Invalid result: { prosc.returncode }")
+    os.system(f"rm {pytables}")
 
 
 def manage_grid(dic):
@@ -234,8 +239,8 @@ def manage_grid(dic):
         dxarray = [
             f'{dic["xcor"][i+1]-dic["xcor"][i]}' for i in range(len(dic["xcor"]) - 1)
         ]
-        for _ in range(dic["noCells"][2] - 1):
-            dxarray.extend(dxarray[-dic["noCells"][0] :])
+        for _ in range(dic["nocells"][2] - 1):
+            dxarray.extend(dxarray[-dic["nocells"][0] :])
         dxarray.insert(0, "DX")
         dxarray.append("/")
         with open(
@@ -264,7 +269,7 @@ def manage_grid(dic):
         ) as file:
             for i, row in enumerate(csv.reader(file, delimiter="#")):
                 if i == 3:
-                    lol.append(f"    return {dic['z_xy']}")
+                    lol.append(f"    return {dic['zxy']}")
                 elif len(row) == 0:
                     lol.append("")
                 else:
@@ -279,7 +284,7 @@ def manage_grid(dic):
             file.write(filledtemplate)
     else:
         if dic["grid"] == "coord3d":
-            dic["xcorc"] = dic["x_n"]
+            dic["xcorc"] = dic["xcn"]
         else:
             dic = create_3dgrid(dic)
             if dic["model"] not in ["co2eor", "foam"]:
@@ -288,8 +293,8 @@ def manage_grid(dic):
         dxarray = [
             f'{dic["xcorc"][i+1]-dic["xcorc"][i]}' for i in range(len(dic["xcorc"]) - 1)
         ]
-        dic["noCells"][0] = len(dic["xcorc"]) - 1
-        dic["noCells"][1] = dic["noCells"][0]
+        dic["nocells"][0] = len(dic["xcorc"]) - 1
+        dic["nocells"][1] = dic["nocells"][0]
         dic = d3_grids(dic, dxarray)
     return dic
 
@@ -306,32 +311,32 @@ def handle_core(dic):
 
     """
     dic["coregeometry"] = np.ones(
-        dic["noCells"][0] * dic["noCells"][2] * dic["noCells"][2]
+        dic["nocells"][0] * dic["nocells"][2] * dic["nocells"][2]
     )
     indx = 0
-    for k in range(dic["noCells"][2]):
-        for j in range(dic["noCells"][2]):
-            for i in range(dic["noCells"][0]):
-                if (i + 0.5) * dic["dims"][0] / dic["noCells"][0] < dic["dims"][1] or (
+    for k in range(dic["nocells"][2]):
+        for j in range(dic["nocells"][2]):
+            for i in range(dic["nocells"][0]):
+                if (i + 0.5) * dic["dims"][0] / dic["nocells"][0] < dic["dims"][1] or (
                     i + 0.5
-                ) * dic["dims"][0] / dic["noCells"][0] > dic["dims"][0] - dic["dims"][
+                ) * dic["dims"][0] / dic["nocells"][0] > dic["dims"][0] - dic["dims"][
                     1
                 ]:
                     if (
-                        (k + 0.5) * dic["dims"][2] / dic["noCells"][2]
+                        (k + 0.5) * dic["dims"][2] / dic["nocells"][2]
                         - 0.5 * dic["dims"][2]
                     ) ** 2 + (
-                        (j + 0.5) * dic["dims"][2] / dic["noCells"][2]
+                        (j + 0.5) * dic["dims"][2] / dic["nocells"][2]
                         - 0.5 * dic["dims"][2]
                     ) ** 2 > (
-                        0.5 * dic["dims"][2] / dic["noCells"][2]
+                        0.5 * dic["dims"][2] / dic["nocells"][2]
                     ) ** 2:
                         dic["coregeometry"][indx] = 0
                 elif (
-                    (k + 0.5) * dic["dims"][2] / dic["noCells"][2]
+                    (k + 0.5) * dic["dims"][2] / dic["nocells"][2]
                     - 0.5 * dic["dims"][2]
                 ) ** 2 + (
-                    (j + 0.5) * dic["dims"][2] / dic["noCells"][2]
+                    (j + 0.5) * dic["dims"][2] / dic["nocells"][2]
                     - 0.5 * dic["dims"][2]
                 ) ** 2 > (
                     0.5 * dic["dims"][2]
@@ -339,7 +344,7 @@ def handle_core(dic):
                     dic["coregeometry"][indx] = 0
                 indx += 1
     dic["dims"][1] = dic["dims"][2]
-    dic["noCells"][1] = dic["noCells"][2]
+    dic["nocells"][1] = dic["nocells"][2]
     return dic
 
 
@@ -362,7 +367,7 @@ def d3_grids(dic, dxarray):
         ) as file:
             for i, row in enumerate(csv.reader(file, delimiter="#")):
                 if i == 3:
-                    lol.append(f"    return {dic['z_xy']}")
+                    lol.append(f"    return {dic['zxy']}")
                 elif len(row) == 0:
                     lol.append("")
                 else:
@@ -377,15 +382,15 @@ def d3_grids(dic, dxarray):
             file.write(filledtemplate)
     else:
         dyarray = []
-        for i in range(dic["noCells"][1] - 1):
-            for _ in range(dic["noCells"][1]):
+        for i in range(dic["nocells"][1] - 1):
+            for _ in range(dic["nocells"][1]):
                 dyarray.append(dxarray[i])
-            dxarray.extend(dxarray[-dic["noCells"][0] :])
-        for _ in range(dic["noCells"][1]):
-            dyarray.append(dxarray[dic["noCells"][1] - 1])
-        for _ in range(dic["noCells"][2] - 1):
-            dxarray.extend(dxarray[-dic["noCells"][0] * dic["noCells"][1] :])
-            dyarray.extend(dyarray[-dic["noCells"][0] * dic["noCells"][1] :])
+            dxarray.extend(dxarray[-dic["nocells"][0] :])
+        for _ in range(dic["nocells"][1]):
+            dyarray.append(dxarray[dic["nocells"][1] - 1])
+        for _ in range(dic["nocells"][2] - 1):
+            dxarray.extend(dxarray[-dic["nocells"][0] * dic["nocells"][1] :])
+            dyarray.extend(dyarray[-dic["nocells"][0] * dic["nocells"][1] :])
         dxarray.insert(0, "DX")
         dxarray.append("/")
         with open(
@@ -416,11 +421,11 @@ def create_3dgrid(dic):
         dic (dict): Global dictionary with new added parameters
 
     """
-    if dic["x_fac"] != 0:
+    if dic["xfac"] != 0:
         dic["xcorc"] = np.flip(
             (dic["dims"][0])
-            * (np.exp(np.flip(np.linspace(0, dic["x_fac"], dic["noCells"][0] + 1))) - 1)
-            / (np.exp(dic["x_fac"]) - 1)
+            * (np.exp(np.flip(np.linspace(0, dic["xfac"], dic["nocells"][0] + 1))) - 1)
+            / (np.exp(dic["xfac"]) - 1)
         )
         if dic["removecells"] == 1:
             dic["xcorc"] = dic["xcorc"][
@@ -428,7 +433,7 @@ def create_3dgrid(dic):
             ]
         dic["xcorc"][0] = 0.25 * dic["xcorc"][1]
     elif dic["grid"] == "tensor3d":
-        for i, (name, arr) in enumerate(zip(["xcorc"], ["x_n"])):
+        for i, (name, arr) in enumerate(zip(["xcorc"], ["xcn"])):
             dic[f"{name}"] = [0.0]
             for j, num in enumerate(dic[f"{arr}"]):
                 if j == 0:
@@ -446,7 +451,7 @@ def create_3dgrid(dic):
             dic[f"{name}"] = np.array(dic[f"{name}"])
         dic["xcorc"] = np.delete(dic["xcorc"], 0)
     else:
-        dic["xcorc"] = np.linspace(0, dic["dims"][0], dic["noCells"][0] + 1)
+        dic["xcorc"] = np.linspace(0, dic["dims"][0], dic["nocells"][0] + 1)
         if dic["removecells"] == 1:
             dic["xcorc"] = dic["xcorc"][
                 (dic["diameter"] < dic["xcorc"]) | (0 == dic["xcorc"])
@@ -462,7 +467,7 @@ def map_zcords(dic):
     """Generate the z array with the grid face locations"""
     dic["zcords"] = [0.0]
     for i in range(dic["satnum"]):
-        for _ in range(dic["nz_perlayer"][i]):
+        for _ in range(dic["rock"][i][4]):
             dic["zcords"].append(
-                dic["zcords"][-1] + dic["thickness"][i] / dic["nz_perlayer"][i]
+                dic["zcords"][-1] + dic["rock"][i][3] / dic["rock"][i][4]
             )

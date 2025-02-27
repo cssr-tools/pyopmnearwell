@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2023 NORCE
 # SPDX-License-Identifier: GPL-3.0
 
-""""
+"""
 Script for plotting
 """
 
@@ -90,12 +90,11 @@ def final_time_maps(dic):
             axis.set_xlim(right=dic["zoom"])
             fig.savefig(f"{dic['where']}/{quantity}_2D_zoom.png", bbox_inches="tight")
             plt.close()
-    return dic
 
 
 def saltprec_plots(dic):
     """
-    Additional plots for sal precipittaion
+    Additional plots for salt precipitation
     """
     nca_nb(dic)
     factors(dic)
@@ -113,7 +112,7 @@ def factors(dic):
             ["min", "max"],
         )
     ):
-        table = dic["exe"] + "/" + study + f"/preprocessing/{name.upper()}.INC"
+        table = study + f"/preprocessing/{name.upper()}.INC"
         if os.path.isfile(table):
             fig, axis = plt.subplots()
             poro, fact = [], []

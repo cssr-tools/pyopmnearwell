@@ -40,7 +40,7 @@ for k in range(NSEASON):
             var = {"flow": FLOW, "tsample": TSAMPLE, "tperiode": TPERIODE, "tperiodi": TPERIODI, "tperiodp": TPERIODP, "tperiods": TPERIODS, "bhp": BHP, "qi": QI, "qp": QP, "time": time, "timep": times[-2], "nseason": k+1}
             filledtemplate = mytemplate.render(**var)
             with open(
-                f"h2_{i+k*len(times)}.txt",
+                f"h2_{i+k*len(times)}.toml",
                 "w",
                 encoding="utf8",
             ) as file:
@@ -48,7 +48,7 @@ for k in range(NSEASON):
 for n in range(mt.floor(NSEASON*len(times) / NPRUNS)-1, mt.floor(NSEASON*len(times) / NPRUNS)):
     command = ""
     for j in range(NPRUNS):
-        command += f"pyopmnearwell -i h2_{NPRUNS*n+j}.txt -o h2_{NPRUNS*n+j} -p '' & " 
+        command += f"pyopmnearwell -i h2_{NPRUNS*n+j}.toml -o h2_{NPRUNS*n+j} -p '' & " 
     command += 'wait'
     os.system(command)
     for j in range(NPRUNS):
@@ -70,7 +70,7 @@ for n in range(mt.floor(NSEASON*len(times) / NPRUNS)-1, mt.floor(NSEASON*len(tim
             fgpt.append(smspec["FGPT"].values[indx])
             fgit_fgpt.append(smspec["FGIT"].values[indx] - smspec["FGPT"].values[indx])
             rfac.append(100.*smspec["FGPT"].values[indx]/smspec["FGIT"].values[indx])
-        #os.system(f"rm -rf h2_{NPRUNS*i+j} h2_{NPRUNS*i+j}.txt")
+        #os.system(f"rm -rf h2_{NPRUNS*i+j} h2_{NPRUNS*i+j}.toml")
 
 fgpt = np.array(fgpt)
 fpit = np.array(fgit)

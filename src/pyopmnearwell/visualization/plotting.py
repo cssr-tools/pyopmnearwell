@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0
 # pylint: disable=R0915
 
-""""Script to plot OPM Flow results."""
+"""Script to plot OPM Flow results."""
 
 import argparse
 import csv
@@ -75,7 +75,6 @@ def main():
     dic["model"] = cmdargs["model"].strip()  # Name of the simulated model
     dic["scale"] = cmdargs["scale"].strip()  # Scale for the x axis: 'normal' or 'log'
     dic["zoom"] = float(cmdargs["zoom"])  # xlim in meters for the zoomed in plots
-    dic["exe"] = os.getcwd()  # Path to the folder of the input.txt file
     dic["latex"] = int(cmdargs["latex"])  # LaTeX formatting
     plot_results(dic)
 
@@ -145,7 +144,7 @@ def plot_results(dic):
             [name for name in os.listdir(".") if os.path.isdir(name)]
         )
         if "compare" not in dic["folders"]:
-            os.system(f"mkdir {dic['exe']}/compare")
+            os.system("mkdir compare")
         else:
             dic["folders"].remove("compare")
     else:
@@ -243,7 +242,7 @@ def all_injectivities(dic):
                 dic["axis"].plot(
                     dic[f"{study}_report_time"],
                     dic[f"{study}_{quantity}_plot"],
-                    label=f"{study}",
+                    label=f"{study.split('/')[-1]}",
                 )
         dic["axis"].set_ylabel(units[i])
         dic["axis"].set_xlabel("Time")
@@ -261,7 +260,7 @@ def capillary_pressure(dic):
     for i, study in enumerate(dic["folders"]):
         data = []
         data.append([])
-        table = dic["exe"] + "/" + study + "/preprocessing/TABLES.INC"
+        table = study + "/preprocessing/TABLES.INC"
         with open(table, "r", encoding="utf8") as file:
             for row in csv.reader(file, delimiter=" "):
                 if row[0] == "SGOF":
@@ -278,7 +277,7 @@ def capillary_pressure(dic):
             axis.plot(
                 [float(row[0]) for row in data[j]],
                 [1e5 * float(row[col]) for row in data[j]],
-                label=f"{study}",
+                label=f"{study.split('/')[-1]}",
                 color=dic["colors"][i % len(dic["colors"])],
                 linestyle=dic["linestyle"][j % len(dic["linestyle"])],
             )
@@ -405,7 +404,7 @@ def final_time_projections_bottom(dic):
                     axis.plot(
                         dic[f"{study}_xmidpoints"],
                         dic[f"{study}_{quantity}_{projection}"],
-                        label=f"{study}",
+                        label=f"{study.split('/')[-1]}",
                         color=dic["colors"][ncolor % len(dic["colors"])],
                         linestyle=dic["linestyle"][k % len(dic["linestyle"])],
                     )
@@ -418,7 +417,7 @@ def final_time_projections_bottom(dic):
                         ]
                         for i in range(len(dic[f"{study}_xmidpoints"]))
                     ],
-                    label=f"{dic['names'][0]} ({study})",
+                    label=f"{dic['names'][0]} ({study.split('/')[-1]})",
                     color=dic["colors"][ncolor % len(dic["colors"])],
                 )
             if quantity == "pressure" and dic[f"{study}_nz"] < 2:
@@ -475,7 +474,7 @@ def final_time_projections_bottom(dic):
                         )
                         for r in range(1, npoints + 1)
                     ],
-                    label=f"Analytical solution ({study})",
+                    label=f"Analytical solution ({study.split('/')[-1]})",
                     color="k",
                     linestyle=dic["linestyle"][-1],
                 )
@@ -550,7 +549,7 @@ def final_time_projections_layered(dic):
                     axis.plot(
                         dic[f"{study}_xmidpoints"],
                         dic[f"{study}_{quantity}_{projection}"],
-                        label=f"{dic['names'][k]} ({study})",
+                        label=f"{dic['names'][k]} ({study.split('/')[-1]})",
                         color=dic["colors"][ncolor % len(dic["colors"])],
                         linestyle=dic["linestyle"][k % len(dic["linestyle"])],
                     )
@@ -563,7 +562,7 @@ def final_time_projections_layered(dic):
                         ]
                         for i in range(len(dic[f"{study}_xmidpoints"]))
                     ],
-                    label=f"{dic['names'][0]} ({study})",
+                    label=f"{dic['names'][0]} ({study.split('/')[-1]})",
                     color=dic["colors"][ncolor % len(dic["colors"])],
                 )
         axis.set_xlabel("Distance from wellbore [m]")
@@ -610,14 +609,14 @@ def over_time_well_cell(dic):
                 axis.plot(
                     dic[f"{study}_report_time"],
                     dic[f"{study}_{quantity}_{well_cell}"],
-                    label=f"{dic['names'][k]} ({study})",
+                    label=f"{dic['names'][k]} ({study.split('/')[-1]})",
                     color=dic["colors"][i % len(dic["colors"])],
                     linestyle=dic["linestyle"][k % len(dic["linestyle"])],
                 )
             axism.plot(
                 dic[f"{study}_report_time"],
                 dic[f"{study}_{quantity}_wc_mean"],
-                label=f"{study}",
+                label=f"{study.split('/')[-1]}",
                 color=dic["colors"][i % len(dic["colors"])],
             )
         axis.set_xlabel("Time [d]")
@@ -663,7 +662,7 @@ def final_time_projections_norms(dic):
                     axis.plot(
                         dic[f"{study}_xmidpoints"],
                         dic[f"{study}_{quantity}_{projection}"],
-                        label=f"{dic['names'][k]} ({study})",
+                        label=f"{dic['names'][k]} ({study.split('/')[-1]})",
                         color=dic["colors"][ncolor % len(dic["colors"])],
                         linestyle=dic["linestyle"][k % len(dic["linestyle"])],
                     )
@@ -676,7 +675,7 @@ def final_time_projections_norms(dic):
                         ]
                         for i in range(len(dic[f"{study}_xmidpoints"]))
                     ],
-                    label=f"{dic['names'][0]} ({study})",
+                    label=f"{dic['names'][0]} ({study.split('/')[-1]})",
                     color=dic["colors"][ncolor % len(dic["colors"])],
                 )
         axis.set_xlabel("Distance from wellbore [m]")
@@ -721,7 +720,7 @@ def final_time_projections_max(dic):
                     axis.plot(
                         dic[f"{study}_xmidpoints"],
                         dic[f"{study}_{quantity}_{projection}"],
-                        label=f"{study}",
+                        label=f"{study.split('/')[-1]}",
                         color=dic["colors"][ncolor % len(dic["colors"])],
                         linestyle=dic["linestyle"][k % len(dic["linestyle"])],
                     )
@@ -734,7 +733,7 @@ def final_time_projections_max(dic):
                         ]
                         for i in range(len(dic[f"{study}_xmidpoints"]))
                     ],
-                    label=f"{study}",
+                    label=f"{study.split('/')[-1]}",
                     color=dic["colors"][ncolor % len(dic["colors"])],
                 )
         axis.set_xlabel("Distance from wellbore [m]")
@@ -793,7 +792,7 @@ def over_time_max_distance(dic):
             dic[f"{study}_report_time"],
             dic[f"{study}_indicator_plot"],
             color=dic["colors"][j % len(dic["colors"])],
-            label=f"{study}",
+            label=f"{study.split('/')[-1]}",
         )
     dic["axis"][-1].set_ylabel("Plume distance to well [m]")
     dic["axis"][-1].set_xlabel("Time")
@@ -844,13 +843,9 @@ def over_time_well_injectivity(dic):
     for i, quantity in enumerate(quantites):
         dic["fig"], dic["axis"] = plt.subplots()
         for k, study in enumerate(dic["folders"]):
-            dic[f"{study}_xmx"] = np.load(
-                dic["exe"] + "/" + study + "/output/xspace.npy"
-            )
-            dic[f"{study}_zmz"] = np.load(
-                dic["exe"] + "/" + study + "/output/zspace.npy"
-            )
-            dic[f"{study}_ny"] = np.load(dic["exe"] + "/" + study + "/output/ny.npy")
+            dic[f"{study}_xmx"] = np.load(study + "/output/xspace.npy")
+            dic[f"{study}_zmz"] = np.load(study + "/output/zspace.npy")
+            dic[f"{study}_ny"] = np.load(study + "/output/ny.npy")
             dic[f"{study}_nx"] = len(dic[f"{study}_xmx"]) - 1
             dic[f"{study}_nz"] = len(dic[f"{study}_zmz"]) - 1
             dic[f"{study}_xmidpoints"] = 0.5 * (
@@ -902,7 +897,7 @@ def over_time_well_injectivity(dic):
             dic["axis"].plot(
                 dic[f"{study}_rst_seconds"][1:] / (86400.0),
                 dic[f"{study}_{quantity}_plot"],
-                label=f"{study}",
+                label=f"{study.split('/')[-1]}",
                 color=dic["colors"][k],
             )
             dic["axis"].set_xlabel("Time [d]")
@@ -952,21 +947,21 @@ def over_time_layers(dic):
             dic["axis"].plot(
                 dic[f"{study}_report_time"],
                 dic[f"{study}_upper_plot"],
-                label=f"{dic['names'][0]} ({study})",
+                label=f"{dic['names'][0]} ({study.split('/')[-1]})",
                 color=dic["colors"][j],
                 linestyle=dic["linestyle"][0],
             )
             dic["axis"].plot(
                 dic[f"{study}_report_time"],
                 dic[f"{study}_mid_plot"],
-                label=f"{dic['names'][1]} ({study})",
+                label=f"{dic['names'][1]} ({study.split('/')[-1]})",
                 color=dic["colors"][j],
                 linestyle=dic["linestyle"][1],
             )
             dic["axis"].plot(
                 dic[f"{study}_report_time"],
                 dic[f"{study}_bottom_plot"],
-                label=f"{dic['names'][2]} ({study})",
+                label=f"{dic['names'][2]} ({study.split('/')[-1]})",
                 color=dic["colors"][j],
                 linestyle=dic["linestyle"][2],
             )

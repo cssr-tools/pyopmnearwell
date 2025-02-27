@@ -17,10 +17,10 @@ pyopmspe11
 pycopm
 ******
 
-.. image:: ./figs/pycopm.gif
-    :scale: 60%
+.. image:: ./figs/pycopm.png
+    :scale: 32%
 
-`Simplified and flexible framework for coarsening geological models <https://github.com/cssr-tools/pycopm>`_.
+`An open-source tool to tailor OPM Flow geological models <https://github.com/cssr-tools/pycopm>`_.
 
 *****
 plopm
