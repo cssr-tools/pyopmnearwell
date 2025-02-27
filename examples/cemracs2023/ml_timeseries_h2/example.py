@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 np.random.seed(7)
 
-FLOW = "/Users/dmar/Github/opm/build/opm-simulators/bin/flow"
+FLOW = "flow"
 ECON = 0.95 #Minimum surface gas production rate (w.r.t gas prodcution rate, i.e., between 0 and 1)
 
 nsimulations, npruns = 57, 5
@@ -29,36 +29,36 @@ for i, time in enumerate(times):
     var = {"flow": FLOW, "econ": ECON, "time": time}
     filledtemplate = mytemplate.render(**var)
     with open(
-        f"h2_{i}.txt",
+        f"h2_{i}.toml",
         "w",
         encoding="utf8",
     ) as file:
         file.write(filledtemplate)
 for i in range(mt.floor(nsimulations / npruns)):
     os.system(
-        f"pyopmnearwell -i h2_{npruns*i}.txt -o h2_{npruns*i} -p '' & "
-        + f"pyopmnearwell -i h2_{npruns*i+1}.txt -o h2_{npruns*i+1} -p '' & "
-        + f"pyopmnearwell -i h2_{npruns*i+2}.txt -o h2_{npruns*i+2} -p '' & "
-        + f"pyopmnearwell -i h2_{npruns*i+3}.txt -o h2_{npruns*i+3} -p '' & "
-        + f"pyopmnearwell -i h2_{npruns*i+4}.txt -o h2_{npruns*i+4} -p '' & wait"
+        f"pyopmnearwell -i h2_{npruns*i}.toml -o h2_{npruns*i} -p '' & "
+        + f"pyopmnearwell -i h2_{npruns*i+1}.toml -o h2_{npruns*i+1} -p '' & "
+        + f"pyopmnearwell -i h2_{npruns*i+2}.toml -o h2_{npruns*i+2} -p '' & "
+        + f"pyopmnearwell -i h2_{npruns*i+3}.toml -o h2_{npruns*i+3} -p '' & "
+        + f"pyopmnearwell -i h2_{npruns*i+4}.toml -o h2_{npruns*i+4} -p '' & wait"
     )
     for j in range(npruns):
         smspec = Summary(f"./h2_{npruns*i+j}/output/H2_{npruns*i+j}.SMSPEC")
         fgit_fgpt.append(smspec["FGIT"].values[-1] - smspec["FGPT"].values[-1])
         fgit.append(smspec["FGIT"].values[-1])
         fgpt.append(smspec["FGPT"].values[-1])
-        os.system(f"rm -rf h2_{npruns*i+j} h2_{npruns*i+j}.txt")
+        os.system(f"rm -rf h2_{npruns*i+j} h2_{npruns*i+j}.toml")
 finished = npruns*mt.floor(nsimulations / npruns)
 remaining = nsimulations - finished
 for i in range(remaining):
     os.system(
-        f"pyopmnearwell -i h2_{finished+i}.txt -o h2_{finished+i} -p '' & wait"
+        f"pyopmnearwell -i h2_{finished+i}.toml -o h2_{finished+i} -p '' & wait"
     )
     smspec = Summary(f"./h2_{finished+i}/output/H2_{finished+i}.SMSPEC")
     fgit_fgpt.append(smspec["FGIT"].values[-1] - smspec["FGPT"].values[-1])
     fgit.append(smspec["FGIT"].values[-1])
     fgpt.append(smspec["FGPT"].values[-1])
-    os.system(f"rm -rf h2_{finished+i} h2_{finished+i}.txt")
+    os.system(f"rm -rf h2_{finished+i} h2_{finished+i}.toml")
 
 np.save('times', 365 + 90 + times)
 np.save('fgpt', fgpt)

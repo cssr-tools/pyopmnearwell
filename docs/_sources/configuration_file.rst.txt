@@ -3,23 +3,18 @@ Configuration file
 ==================
 
 The following configuration file is available in the `examples <https://github.com/cssr-tools/pyopmnearwell/blob/main/examples>`_ folder 
-in the GitHub repository as co2.txt and in the :doc:`examples <./examples>` documentation section the simulation results are shown.
+in the GitHub repository as co2.toml and in the :doc:`examples <./examples>` documentation section the simulation results are shown.
 
 The first input parameter in the configuration file is:
 
 .. code-block:: python
     :linenos:
 
-    """Set the full path to the flow executable and flags"""
-    flow --enable-opm-rst-file=true 
+    #Set mpirun, the full path to the flow executable, and simulator flags (except --output-dir)
+    flow = "flow --relaxed-max-pv-fraction=0 --enable-opm-rst-file=true --newton-min-iterations=1 --enable-tuning=true" 
 
-If **flow** is not in your path, then write the full path to the executable
-(e.g., /Users/dmar/Github/opm/build/opm-simulators/bin/flow). We also add in the same 
-line as many flags as required (see the OPM Flow documentation `here <https://opm-project.org/?page_id=955>`_).
-
-.. note::
-    If you have installed flow with MPI support, then you can run the simulations in
-    parallel by adding **mpirun -np N flow ...** where N is the number of cpus.
+If **flow** is not in your path, then write the full path to the executable, as well as adding mpirun
+if this is supported in your machine (e.g., flow = "mpirun -np 8 /Users/dmar/Github/opm/build/opm-simulators/bin/flow --relaxed-max-pv-fraction=0").
 
 ****************************
 Reservoir-related parameters
@@ -31,18 +26,22 @@ The following input lines are:
     :linenos:
     :lineno-start: 4
 
-    """Set the model parameters"""
-    co2store base #Model (co2store/h2store/co2eor/saltprec) and name of the template file (see src/pyopmnearwell/templates/)
-    cake 60       #Grid type (core/radial/cake/cartesian2d/cartesian/cpg3d/coord2d/coord3d/tensor2d/tensor3d) and size (input/output pipe length[m]/theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))
-    100 24        #Reservoir dimensions [m] (Lenght and height (diameter for the core geometry)) 
-    80 48 2       #Number of x- and z-cells [-] and exponential factor for the telescopic x-gridding (0 to use an equidistance partition)
-    0.1 0 0       #Well diameter [m], well transmiscibility (0 to use the computed one internally in Flow), and remove the smaller cells than the well diameter
-    1e7 40 0      #Pressure [Pa] on the top, uniform temperature [°], and initial phase in the reservoir (0 wetting, 1 non-wetting)
-    1e10 0        #Pore volume multiplier on the boundary [-] (0 to use well producers instead) and deactivate cross flow within the wellbore (see XFLOW in OPM Manual)
-    1 5 6         #Activate perforations [-], number of perforations [-], and lenght [m]
-    4 Killough 0  #Number of layers [-], hysteresis (Killough, Carlson, or 0 to neglect it), and econ for the producer (for h2 models)
-    0 0 0 0 0 0 0 #Ini salt conc [kg/m3], salt sol lim [kg/m3], prec salt den [kg/m3], gamma [-], phi_r [-], npoints [-], threshold [-], and expression ('default' to use the relatinonship in Verma and Pruess 1988 and 'power' to use the one described in the OPM Manual in PERMFACT kewword with phi_r=phi_c/phi_0) (all entries for saltprec)
-    2-2*mt.cos((2*mt.pi*x/50)) + 10*(x/100)**2 #The function for the reservoir surface
+    #Set the model parameters
+    model = "co2store" #Model: co2store, co2eor, foam, h2store, or saltprec
+    template = "base" #Template file (see src/pyopmnearwell/templates/)
+    grid = "cake" #Grid type: cake, radial, core, cartesian2d, coord2d, tensor2d, cartesian, cpg3d, coord3d, or tensor3d
+    adim = 60 #Grid cake/radial: theta [degrees]; core: input/output pipe length [m]; cartesian2d, coord2d, tensor2d: width[m]
+    xdim = 100 #Length [m] (for cartesian/cpg3d/coord3d/tensor3d, Length=Width=2*xdim)
+    xcn = [80] #Number of x-cells [-]; coordinates for grid type coord2d/coord3d [m]; numbers of x-cells for grid type tensor2d/tensor3d [-]
+    xfac = 2 #Exponential factor for the telescopic x-gridding (0 to use an equidistant partition)
+    diameter = 0.1 #Well diameter [m] 
+    pressure = 100 #Pressure [Bar] on the top 
+    temperature = [40,40] #Top and bottom temperatures [C]
+    initialphase = 0 #Initial phase in the reservoir (0 wetting, 1 non-wetting) 
+    pvmult = 1e10 #Pore volume multiplier on the boundary [-] (-1 to ignore; 0 to use well producers instead)
+    perforations = [1,5,6] #Activate perforations [-], number of well perforations [-], and length [m]
+    hysteresis = "Killough" #Add hysteresis (Killough or Carlson, 0 by default, i.e., no hysteresis)
+    zxy = "2-2*mt.cos((2*mt.pi*x/50)) + 10*(x/100)**2" #The function for the reservoir surface
 
 Here we first select the physical model and the corresponding template. To add additional models (e.g., blackoil), one could look at the 
 `opm-tests <https://github.com/OPM/opm-tests>`_ decks, convert the necessary input decks and files to mako
@@ -50,27 +49,21 @@ templates, add them to the src/pyopmnearwell/templates folder, and extending the
 src/pyopmnearwell/utils folder. In the following line we select type of grid and the second entry defines the length of the inlet/outlet tubes for the core, 
 theta aperture for the radial/cake/coord2d/tensord2d grids, the width of the cells for the cartesian2d grid, or it is ignored for the 3D cartesian grids (the width and number of cells is set equal to 
 the ones in the x directions). See/Run the `tests/geometries <https://github.com/cssr-tools/pyopmnearwell/blob/main/tests/geometries>`_ configuration files for these grids.
-Then we set the length and height of the reservoir (diameter for the core geometry), as well as the number of grid elements in the x and z direction (for the y/theta direction we consider only one
-element, with exception to the core/3D grids where the width and number of cells is set equal to the ones in the z/x directions). The third entry defines the exponential factor for the telescopic serie used to generate the x partition (if 
+Then we set the length of the reservoir, as well as the number of grid elements in the x direction (for the y/theta direction we use the 'adim' variable 
+with exception to the core/3D grids where the width and number of cells is set equal to the ones in the z/x directions). The xfac entry defines the exponential factor for the telescopic serie used to generate the x partition (if 
 set to 0 then an equidistance partition is generated). 
 
 .. figure:: figs/gridding.png
 
-    Four different grids by setting the line # 6 to 'radial 36' (top left, showing the depth), 'cake 60' (top right, showing the y-direction cell size), 
-    'cartesian2d 1' (bottom left, showing the x-direction cell size), and cartesian 1 (bottom right, showing the cell pore volume).
+    Four different grids by setting the line 'grid' and 'adim' to 'radial' '36' (top left, showing the depth), 'cake' '60' (top right, showing the y-direction cell size), 
+    'cartesian2d' '1' (bottom left, showing the x-direction cell size), and 'cartesian' (bottom right, showing the cell pore volume).
 
 
 .. figure:: figs/core.png
 
-    Example of core geometry (generated by running the examples/h2core.txt configuration file).
+    Example of core geometry (generated by running the examples/h2core.toml configuration file).
 
-We then define the diameter of the well, the well transmissibility (0 to use the 
-computed one internally in Flow), the reservoir pressure on the top, the initial phase, the factor to multiply the pore volume on 
-the boundaries (0 to add production wells intead), and option to deactivate the XFLOW (see XFLOW in the OPM Manual). On line 12 there is an option to add heterogeinity by adding a defined number of 
-layers around the injection well by a given length. After, the number of different rocks along the z direction is defined as well as the possibility to include hysteresis effects.
-If the saltprec model is used, then on line 14 we set the parameters as described in the line comment. Finally, there is an option to add a function to include spatial variatons in the geometry in the 
-z direction.  
-
+We then define additional parameters for the reservoir properties, as described in each configuration file.
 
 ***********************
 Rock-related parameters
@@ -79,61 +72,54 @@ The following entries define the rock related parameters:
 
 .. code-block:: python
     :linenos:
-    :lineno-start: 17
+    :lineno-start: 21
 
-    """Set the saturation functions"""
-    krw * ((sw - swi) / (1.0 - sni -swi)) ** nkrw             #Wetting rel perm saturation function [-]
-    krn * ((1.0 - sw - sni) / (1.0 - sni - swi)) ** nkrn      #Non-wetting rel perm saturation function [-]
-    pec * ((sw - swi) / (1.0 - swi)) ** (-(1.0 / npe))        #Capillary pressure saturation function [Pa]
+    #Set the saturation functions
+    krw = "krw * ((sw - swi) / (1.0 - sni -swi)) ** nkrw"        #Wetting rel perm saturation function [-]
+    krn = "krn * ((1.0 - sw - sni) / (1.0 - sni - swi)) ** nkrn" #Non-wetting rel perm saturation function [-]
+    pcap = "pen * ((sw - swi) / (1.0 - swi)) ** (-(1.0 / npen))" #Capillary pressure saturation function [Bar]
 
 In this example we consider properties for the sands number 2 to 5 as described in the 
 `11th SPE CSP <https://www.spe.org/en/csp/>`_:
 
 .. code-block:: python
     :linenos:
-    :lineno-start: 22
+    :lineno-start: 26
 
-    """Properties saturation functions"""
-    """swi [-], sni [-], krn [-], krw [-], pec [Pa], nkrw [-], nkrn [-], npe [-], threshold cP evaluation, ignore swi for cP"""
-    SWI2  0.14 SNI2  0.1 KRW2  1 KRN2  1 PRE2  8655 NNKRW2 2 NNKRN2 2 HNPE2 2 THRE2  1e-4 IGN1  0
-    SWI3  0.12 SNI3  0.1 KRW3  1 KRN3  1 PRE3  6120 NNKRW3 2 NNKRN3 2 HNPE3 2 THRE3  1e-4 IGN2  0
-    SWI4  0.12 SNI4  0.1 KRW4  1 KRN4  1 PRE4  3871 NNKRW4 2 NNKRN4 2 HNPE4 2 THRE4  1e-4 IGN3  0
-    SWI5  0.12 SNI5  0.1 KRW5  1 KRN5  1 PRE5  3060 NNKRW5 2 NNKRN5 2 HNPE5 2 THRE5  1e-4 IGN4  0
-    SWIP     0 SNIP    0 KRWP  1 KRNP  1 PECP     0 NNKRWP 1 NNKRNP 1 NPEP  1 THREP  1e-4 IGNP  0
-    HSWI2 0.28 HSNI2 0.2 HKRW2 1 HKRN2 1 HPRE2 8655 HNKRW2 3 HNKRN2 3 HNPE2 2 HTHRE2 1e-4 HIGN1 0
-    HSWI3 0.24 HSNI3 0.2 HKRW3 1 HKRN3 1 HPRE3 6120 HNKRW3 3 HNKRN3 3 HNPE3 2 HTHRE3 1e-4 HIGN2 0
-    HSWI4 0.24 HSNI4 0.2 HKRW4 1 HKRN4 1 HPRE4 3871 HNKRW4 3 HNKRN4 3 HNPE4 2 HTHRE4 1e-4 HIGN3 0
-    HSWI5 0.24 HSNI5 0.2 HKRW5 1 HKRN5 1 HPRE5 3060 HNKRW5 3 HNKRN5 3 HNPE5 2 HTHRE5 1e-4 HIGN4 0
-    HSWIP    0 HSNIP   0 HKRWP 1 HKRNP 1 HPECP    0 HNKRWP 1 HNKRNP 1 HNPEP 1 HTHREP 1e-4 HIGN5 0
+    #Properties sat functions: 1) swi [-], 2) sni [-], 3) krw [-], 4) krn [-], 5) pen [Bar], 6) nkrw [-], 7) nkrn [-],
+    #8) npen [-], 9) threshold cP evaluation, 10) ignore swi for cP? (sl* for cplog) (entry per layer, if hysteresis, additional entries per layer)
+    safu = [[0.14,0.1,1,1,8655e-5,2,2,2,1e-4,0],
+    [0.12,0.1,1,1,6120e-5,2,2,2,1e-4,0],
+    [0.12,0.1,1,1,3871e-5,2,2,2,1e-4,0],
+    [0.12,0.1,1,1,3060e-5,2,2,2,1e-4,0],
+    [0,0,1,1,0,1,1,1,1e-4,0],
+    [0.14,0.2,1,1,8655e-5,2,3,2,1e-4,0],
+    [0.12,0.2,1,1,6120e-5,2,3,2,1e-4,0],
+    [0.12,0.2,1,1,3871e-5,2,3,2,1e-4,0],
+    [0.12,0.2,1,1,3060e-5,2,3,2,1e-4,0],
+    [0,0,1,1,0,1,1,1,1e-4,0]]
 
 Since the 'activate perforations option' is set to 1, then we add an extra line after the 4 rock properties
-to define the ones in the perforations (Line 28). Since the hysteresis option is activated, then the 
+to define the ones in the perforations (Line 32). Since the hysteresis option is activated, then the 
 imbibition saturation functions are defined by adding as many additional lines as number of rocks (+1
-if the perforations are activated, Lines 29 to 33 in this example).  
+if the perforations are activated, lines 33 to 37 in this example).  
 
 Now for the rock properties:
 
 .. code-block:: python
     :linenos:
-    :lineno-start: 35
+    :lineno-start: 39
 
-    """Properties rock"""
-    """Kxy [mD], Kz [mD], phi [-], thickness [m]"""
-    PERMXY2 101.324 PERMZ2 10.1324 PORO2 0.20 THIC2 6
-    PERMXY3 202.650 PERMZ3 20.2650 PORO3 0.20 THIC3 6
-    PERMXY4 506.625 PERMZ4 50.6625 PORO4 0.20 THIC4 6
-    PERMXY5 1013.25 PERMZ5 101.325 PORO5 0.25 THIC5 6
-    PERMXYP 2013.25 PERMZP 201.325 POROP 0.45
+    #Properties rock: 1) Kxy [mD], 2) Kz [mD], 3) phi [-], 4) thickness [m], and 5) no cells in the z dir [-] (entry per layer)
+    rock = [[101.324,10.1324,0.2,6,6],
+    [202.650,20.2650,0.2,6,6],
+    [506.625,50.6625,0.2,6,6],
+    [1013.25,101.325,0.25,6,6],
+    [2013.25,201.325,0.45]]
 
-As seen from the previous values, the finnest sand corresponds to No. 2 and it gets coarser
-towards sand No. 5. The last entry define the z size of the layer (the sum should be equal to
-the second entry of line 7, while for the perforations these have the thickness of one individual
-cell).
-
-.. note::
-    The names for the saturation functions and rock properties are not used in the framework (they are used to
-    ease the visualization of the parameter values in the configuration file, i.e., writing SWIX in line 24 has 
-    no impact, so far the name has at least one character since this is used in the reading of the values). 
+As seen from the previous values, the finnest sand corresponds to the top one and it gets coarser
+towards the bottom. The last two entries define the z size of the layer and number of cells, 
+while for the perforations these have the thickness of one single cell.
 
 ***********************
 Well-related parameters
@@ -144,17 +130,15 @@ top to the bottom on the left side of the domain and the injection is given as k
 
 .. code-block:: python
     :linenos:
-    :lineno-start: 43
+    :lineno-start: 46
 
-    """Define the injection values""" 
-    """injection time [d], time step size to write results [d], maximum time step [d], injected phase (0 wetting, 1 non-wetting), injection rate [kg/day]"""
-    7 1e-1 5e-2 1 57611.52
-    7 1e-1 5e-2 0 57611.52
-    7 1e-1 5e-2 1 57611.52
+    #Define the injection values (entry per change in the schedule): 
+    #1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]
+    #4) fluid (0 wetting, 1 non-wetting), 5) injection rates [kg/day]
+    inj = [[7,1e-1,5e-2,1,57611.52],
+    [7,1e-1,5e-2,0,57611.52],
+    [7,1e-1,5e-2,1,57611.52]]
 
 Here CO2 (non-wetting phase) is injected for seven days printing the results 70 times and limmiting the time step
 to 5e-2 days, after water (wetting phase) is injected for the same period at the same mass rate, and finally CO2 is 
 reinjected for the same period. 
-
-.. warning::
-    Keep the linebreak between the sections in the whole configuration file (in the current implementation this is used for the reading of the parameters).

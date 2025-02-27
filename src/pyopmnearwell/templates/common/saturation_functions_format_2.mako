@@ -11,17 +11,17 @@ import numpy as np
 
 def krwe(sw, swi, sni, krw, nkrw):
     # Wetting relative permeability
-    return ${dic['krwf'].strip()}
+    return ${dic['krw'].strip()}
 
 
 def krne(sw, swi, sni, krn, nkrn):
     # CO2 relative permeability
-    return ${dic['krnf'].strip()}
+    return ${dic['krn'].strip()}
 
 
-def pcwce(sw, swi, sni, pec, npe):
+def pcwce(sw, swi, sni, pen, npen):
     # Capillary pressure
-    return ${dic['pcwcf'].strip()}
+    return ${dic['pcap'].strip()}
 
 
 def safu_evaluation():
@@ -36,7 +36,7 @@ def safu_evaluation():
     % endfor
 
     with open(
-        "${dic['exe']}/${dic['fol']}/preprocessing/TABLES.INC",
+        "${dic['fprep']}/TABLES.INC",
         "w",
         encoding="utf8",
     ) as file:

@@ -16,13 +16,11 @@ npoints, npruns = 20, 5
 tmin, tmax = 0, 30
 times = np.random.uniform(tmin, tmax, npoints)
 
-FLOW = "/Users/dmar/Github/opm/build/opm-simulators/bin/flow"
+FLOW = "flow"
 FLAGS = (
-    " --linear-solver-reduction=1e-5 --relaxed-max-pv-fraction=0"
-    + " --enable-drift-compensation=0 --newton-max-iterations=50"
-    + " --newton-min-iterations=5 --tolerance-mb=1e-7 --tolerance-wells=1e-5"
-    + " --relaxed-well-flow-tol=1e-5 --use-multisegment-well=false --enable-tuning=true"
-    + " --enable-opm-rst-file=true --linear-solver=cprw --enable-well-operability-check=false"
+    " --relaxed-max-pv-fraction=0"
+    + " --newton-min-iterations=1 --enable-tuning=true"
+    + " --enable-opm-rst-file=true --enable-well-operability-check=false"
     + " --min-time-step-before-shutting-problematic-wells-in-days=1e-99"
 )
 

@@ -6,6 +6,7 @@ Utility functions to run the studies.
 """
 import math as mt
 import os
+import sys
 
 import numpy as np
 
@@ -21,7 +22,7 @@ def simulations(dic):
 
     """
     if not "foutp" in dic:
-        dic["foutp"] = f"{dic['exe']}/{dic['fol']}/output"
+        dic["foutp"] = f"{dic['fol']}/output"
     if not "generate" in dic:
         dic["generate"] = "all"
     os.chdir(dic["foutp"])
@@ -33,7 +34,7 @@ def simulations(dic):
         # We save few variables for the plotting methods
         np.save("xspace", dic["xcor"])
         np.save("zspace", dic["zcor"])
-        np.save("ny", dic["noCells"][1])
+        np.save("ny", dic["nocells"][1])
         schedule = [0]
         for nrst in dic["inj"]:
             for _ in range(round(nrst[0] / nrst[1])):
@@ -47,7 +48,7 @@ def simulations(dic):
         if dic["grid"] == "cartesian":
             np.save(
                 "position",
-                (dic["noCells"][0] - 1) * (mt.floor(dic["noCells"][0] / 2) + 1),
+                (dic["nocells"][0] - 1) * (mt.floor(dic["nocells"][0] / 2) + 1),
             )
         else:
             np.save("position", 0)
@@ -61,14 +62,23 @@ def plotting(dic):
         dic (dict): Global dictionary with required parameters
 
     """
+    if dic["grid"] in ["core"]:
+        print(
+            f"Grid type {dic['grid']} not supported for plotting results. "
+            "As an alternative you can use https://github.com/cssr-tools/plopm"
+        )
+        sys.exit()
+    if dic["model"] in ["co2eor", "foam"]:
+        print(
+            f"Model type {dic['model']} not supported for plotting results. "
+            "As an alternative you can use https://github.com/cssr-tools/plopm"
+        )
+        sys.exit()
     dic["folders"] = [dic["fol"]]
-    os.system(
-        f"cp {dic['pat']}/visualization/plotting.py {dic['exe']}/{dic['fol']}/jobs/"
-    )
-    os.chdir(f"{dic['exe']}/{dic['fol']}/postprocessing")
+    os.chdir(f"{dic['fol']}/postprocessing")
     plot_exe = [
         "python3",
-        f"{dic['exe']}/{dic['fol']}/jobs/plotting.py",
+        f"{dic['pat']}/visualization/plotting.py",
         f"-f {dic['fol']}",
         f"-p {dic['plot']}",
         f"-m {dic['model']}",

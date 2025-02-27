@@ -20,6 +20,7 @@ dirname: pathlib.Path = pathlib.Path(__file__).parent
         "cartesian2d",
         "coord2d",
         "coord3d",
+        "core",
         "cpg3d",
         "radial",
         "tensor2d",
@@ -28,9 +29,11 @@ dirname: pathlib.Path = pathlib.Path(__file__).parent
 )
 def test_geometries(file: str, tmp_path):
     """See geometries/"""
-    shutil.copy((dirname / "geometries" / file).with_suffix(".txt"), tmp_path)
+    shutil.copy((dirname / "geometries" / file).with_suffix(".toml"), tmp_path)
     os.chdir(tmp_path)
-    command = f"pyopmnearwell -i {file}.txt -o {file} & wait"
-    print(command)
+    command = f"pyopmnearwell -i {file}.toml -o {file} & wait"
     os.system(command)
-    assert (tmp_path / file / "postprocessing" / "saturation_2D.png").exists()
+    if file == "core":
+        assert (tmp_path / file / "output" / "CORE.UNRST").exists()
+    else:
+        assert (tmp_path / file / "postprocessing" / "saturation_2D.png").exists()

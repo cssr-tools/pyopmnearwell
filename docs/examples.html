@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Examples &mdash; pyopmnearwell  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
@@ -90,30 +90,31 @@
 <h1>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h1>
 <section id="water-injection">
 <h2>Water injection<a class="headerlink" href="#water-injection" title="Link to this heading"></a></h2>
-<p>In this example we consider the configuration file ‘h2o.txt’ available in the
-examples folder (<a class="reference external" href="https://github.com/cssr-tools/pyopmnearwell/blob/main/examples/h2o.txt">link to the file</a>), where
+<p>In this example we consider the configuration file ‘h2o.toml’ available in the
+examples folder (<a class="reference external" href="https://github.com/cssr-tools/pyopmnearwell/blob/main/examples/h2o.toml">link to the file</a>), where
 the co2store model is used and only water is injected in a radial grid.</p>
 <p>If the generated files are to be saved in a folder called ‘h2o_radial’, then this is achieved by the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pyopmnearwell<span class="w"> </span>-i<span class="w"> </span>h2o.txt<span class="w"> </span>-o<span class="w"> </span>h2o_radial
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pyopmnearwell<span class="w"> </span>-i<span class="w"> </span>h2o.toml<span class="w"> </span>-o<span class="w"> </span>h2o_radial
 </pre></div>
 </div>
 <p>We change the grid to a 3D catesian grid:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">6</span><span class="n">cartesian</span> <span class="mi">1</span>  <span class="c1">#Grid type (core/radial/cake/cartesian2d/cartesian/cpg3d/coord2d/coord3d/tensor2d/tensor3d) and size (input/output pipe length[m]/theta[in degrees]/theta[in degrees]/width[m]/anynumber(the y size is set equal to the x one))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">7</span><span class="n">grid</span> <span class="o">=</span> <span class="s2">&quot;cartesian&quot;</span> <span class="c1">#Grid type: cake, radial, core, cartesian2d, coord2d, tensor2d, cartesian, cpg3d, coord3d, or tensor3d</span>
+<span class="linenos">8</span><span class="n">adim</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1">#Grid cake/radial: theta [degrees]; core: input/output pipe length [m]; cartesian2d, coord2d, tensor2d: width[m]</span>
 </pre></div>
 </div>
 <p>and increase the injection rate 6 times (this to be comparable since the radial grid has an angle of 60).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">32</span><span class="mf">1e-1</span> <span class="mf">1e-1</span> <span class="mf">5e-2</span> <span class="mi">0</span> <span class="mi">360000</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">32</span><span class="n">inj</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1e-1</span><span class="p">,</span><span class="mf">1e-1</span><span class="p">,</span><span class="mf">5e-2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">360000</span><span class="p">]]</span>
 </pre></div>
 </div>
 <p>We run again the configuration file and save it in a different folder:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pyopmnearwell<span class="w"> </span>-i<span class="w"> </span>h2o.txt<span class="w"> </span>-o<span class="w"> </span>h2o_cartesian
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pyopmnearwell<span class="w"> </span>-i<span class="w"> </span>h2o.toml<span class="w"> </span>-o<span class="w"> </span>h2o_cartesian
 </pre></div>
 </div>
 <p>To compare the results in the radial and cartesian folder, then it is enough to write in the terminal:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pyopmnearwell<span class="w"> </span>-c<span class="w"> </span>compare
 </pre></div>
 </div>
-<p>The following figure compares the pressure profile for both simulations:</p>
+<p>The following figure compares the pressure profile for both simulations (pressure_1D_single_layer_xnormal.png inside the compare folder):</p>
 <figure class="align-default">
 <img alt="_images/pressure_1D.png" src="_images/pressure_1D.png" />
 </figure>
@@ -122,9 +123,9 @@ the co2store model is used and only water is injected in a radial grid.</p>
 <h2>CO2 cyclic injection<a class="headerlink" href="#co2-cyclic-injection" title="Link to this heading"></a></h2>
 <p>In this example we consider the configuration file described in the
 <a class="reference internal" href="configuration_file.html"><span class="doc">configuration file</span></a> section, which is available in the
-examples folder as ‘co2.txt’.</p>
+examples folder as ‘co2.toml’.</p>
 <p>If the generated files are to be saved in a folder called ‘co2’, then this is achieved by the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pyopmnearwell<span class="w"> </span>-i<span class="w"> </span>co2.txt<span class="w"> </span>-o<span class="w"> </span>co2
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pyopmnearwell<span class="w"> </span>-i<span class="w"> </span>co2.toml<span class="w"> </span>-o<span class="w"> </span>co2
 </pre></div>
 </div>
 <p>The execution time was c.a. 20 seconds and the following is an animation using
@@ -177,7 +178,7 @@ about the impact of intermittency on salt precipitation during CO2 injection, se
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, NORCE Norwegian Research Centre AS.</p>
+    <p>&#169; Copyright 2023-2025, NORCE Norwegian Research Centre AS.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -14,10 +14,10 @@ import matplotlib.pyplot as plt
 
 np.random.seed(7)
 
-GRATES = np.random.uniform(1000, 3000, 7) # Randomly sampled gas injection rate values
-NPRUNS = 5 # Number of paralell runs (it should be limited by the number of your cpus)
+GRATES = np.random.uniform(1000, 3000, 8) # Randomly sampled gas injection rate values
+NPRUNS = 8 # Number of paralell runs (it should be limited by the number of your cpus)
 DELETE = 1 # Set to 0 to no delete the simulation files (careful with your PC memmory)
-FLOW = "/Users/dmar/Github/opm/build/opm-simulators/bin/flow"
+FLOW = "flow"
 
 mytemplate = Template(filename="co2eor.mako")
 rate = []
@@ -26,7 +26,7 @@ for i, rate in enumerate(GRATES):
     var = {"flow": FLOW, "rate": rate}
     filledtemplate = mytemplate.render(**var)
     with open(
-        f"co2eor_{i}.txt",
+        f"co2eor_{i}.toml",
         "w",
         encoding="utf8",
     ) as file:
@@ -35,31 +35,31 @@ for i in range(mt.floor(len(GRATES) / NPRUNS)):
     command = ""
     for j in range(NPRUNS):
         if DELETE == 1:
-            command += f"pyopmnearwell -i co2eor_{NPRUNS*i+j}.txt -o co2eor_{NPRUNS*i+j} -g single -v 0 & "
+            command += f"pyopmnearwell -i co2eor_{NPRUNS*i+j}.toml -o co2eor_{NPRUNS*i+j} -g single -v 0 & "
         else:
-            command += f"pyopmnearwell -i co2eor_{NPRUNS*i+j}.txt -o co2eor_{NPRUNS*i+j} -g single & "
+            command += f"pyopmnearwell -i co2eor_{NPRUNS*i+j}.toml -o co2eor_{NPRUNS*i+j} -g single & "
     command += "wait"
     os.system(command)
     for j in range(NPRUNS):
         smspec = Summary(f"./co2eor_{NPRUNS*i+j}/CO2EOR_{NPRUNS*i+j}.SMSPEC")
         ratio_oil_to_injected_volumes.append(smspec["FOPT"].values[-1]/(smspec["FGIT"].values[-1]+smspec["FWIT"].values[-1]))
         if DELETE == 1:
-            os.system(f"rm -rf co2eor_{NPRUNS*i+j} co2eor_{NPRUNS*i+j}.txt")
+            os.system(f"rm -rf co2eor_{NPRUNS*i+j} co2eor_{NPRUNS*i+j}.toml")
 finished = NPRUNS * mt.floor(len(GRATES) / NPRUNS)
 remaining = len(GRATES) - finished
 command = ""
 for i in range(remaining):
     if DELETE == 1:
-        command += f"pyopmnearwell -i co2eor_{finished+i}.txt -o co2eor_{finished+i} -g single -v 0 & "
+        command += f"pyopmnearwell -i co2eor_{finished+i}.toml -o co2eor_{finished+i} -g single -v 0 & "
     else:
-        command += f"pyopmnearwell -i co2eor_{finished+i}.txt -o co2eor_{finished+i} -g single & "
+        command += f"pyopmnearwell -i co2eor_{finished+i}.toml -o co2eor_{finished+i} -g single & "
 command += "wait"
 os.system(command)
 for i in range(remaining):
     smspec = Summary(f"./co2eor_{finished+i}/CO2EOR_{finished+i}.SMSPEC")
     ratio_oil_to_injected_volumes.append(smspec["FOPT"].values[-1]/(smspec["FGIT"].values[-1]+smspec["FWIT"].values[-1]))
     if DELETE == 1:
-        os.system(f"rm -rf co2eor_{finished+i} co2eor_{finished+i}.txt")
+        os.system(f"rm -rf co2eor_{finished+i} co2eor_{finished+i}.toml")
 
 np.save('rates', GRATES)
 np.save('ratio_oil_to_injected_volumes', ratio_oil_to_injected_volumes)

@@ -21,7 +21,7 @@ def test_simulations(input_dict: dict[str, Any], prepare_runfiles: None):
     simulations(input_dict)
 
     # Check that the expected files were created.
-    output_fol: pathlib.Path = input_dict["exe"] / input_dict["fol"] / "output"
+    output_fol: pathlib.Path = input_dict["fol"] / "output"
     assert (output_fol / "TEST_RUN.EGRID").exists()
     assert (output_fol / "xspace.npy").exists()
     assert (output_fol / "zspace.npy").exists()

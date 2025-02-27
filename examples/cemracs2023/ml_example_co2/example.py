@@ -20,7 +20,7 @@ npoints, npruns = 20, 5
 tmin, tmax = 0, 365
 times = np.random.uniform(tmin, tmax, npoints)
 
-FLOW = "/Users/dmar/Github/opm/build/opm-simulators/bin/flow"
+FLOW = "flow"
 REF_CO2_DENSITY = 1.86843  # CO2 reference density at surface conditions 
 THRESHOLD_CO2_MASS = 1000  # Threshold for the calculation of the CO2 gas (mass) location [kg]
 
@@ -36,7 +36,7 @@ for i, time in enumerate(times):
     var = {"flow": FLOW, "time": time}
     filledtemplate = mytemplate.render(**var)
     with open(
-        f"co2_{i}.txt",
+        f"co2_{i}.toml",
         "w",
         encoding="utf8",
     ) as file:
@@ -44,11 +44,11 @@ for i, time in enumerate(times):
 
 for i in range(round(npoints / npruns)):
     os.system(
-        f"pyopmnearwell -i co2_{npruns*i}.txt -o co2_{npruns*i} -p '' & "
-        + f"pyopmnearwell -i co2_{npruns*i+1}.txt -o co2_{npruns*i+1} -p '' & "
-        + f"pyopmnearwell -i co2_{npruns*i+2}.txt -o co2_{npruns*i+2} -p '' & "
-        + f"pyopmnearwell -i co2_{npruns*i+3}.txt -o co2_{npruns*i+3} -p '' & "
-        + f"pyopmnearwell -i co2_{npruns*i+4}.txt -o co2_{npruns*i+4} -p '' & wait"
+        f"pyopmnearwell -i co2_{npruns*i}.toml -o co2_{npruns*i} -p off & "
+        + f"pyopmnearwell -i co2_{npruns*i+1}.toml -o co2_{npruns*i+1} -p off & "
+        + f"pyopmnearwell -i co2_{npruns*i+2}.toml -o co2_{npruns*i+2} -p off & "
+        + f"pyopmnearwell -i co2_{npruns*i+3}.toml -o co2_{npruns*i+3} -p off & "
+        + f"pyopmnearwell -i co2_{npruns*i+4}.toml -o co2_{npruns*i+4} -p off & wait"
     )
     for j in range(npruns):
         xcord = np.load(f"./co2_{npruns*i+j}/output/xspace.npy")
@@ -77,7 +77,7 @@ for i in range(round(npoints / npruns)):
             if max(row) > 0:
                 max_distance_index = max(max_distance_index , len(row[::-1]) - pd.Series(row[::-1]).argmax() - 1)
         min_distance_to_boundary.append(xcord[-1] - xcord[1+max_distance_index])
-        os.system(f"rm -rf co2_{npruns*i+j} co2_{npruns*i+j}.txt")
+        os.system(f"rm -rf co2_{npruns*i+j} co2_{npruns*i+j}.toml")
 
 np.save('times', times)
 np.save('rmdt', ratio_co2_dissolved_total)

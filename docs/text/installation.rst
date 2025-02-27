@@ -4,6 +4,8 @@ Installation
 
 The following steps work installing the dependencies in Linux via apt-get or in macOS using brew or macports.
 While using packages managers such as Anaconda, Miniforge, or Mamba might work, these are not tested.
+In addition, the current supported Python version is 3.12. We will update the documentation when Python3.13 is supported (e.g., the resdata Python package is not yet available
+via pip install in Python 3.13).
 
 Python package
 --------------

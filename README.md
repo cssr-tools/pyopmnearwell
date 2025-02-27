@@ -3,9 +3,9 @@
 [![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![DOI](https://zenodo.org/badge/662625461.svg)](https://zenodo.org/doi/10.5281/zenodo.10266790)
-<img src="docs/text/figs/introduction.gif" width="830" height="400">
+<img src="docs/text/figs/graphical.png" width="830" height="425">
 
-# pyopmnearwell: A framework to simulate near well dynamics using OPM Flow
+# pyopmnearwell: A Python framework to simulate near well dynamics using OPM Flow
 
 ## Main feature
 Simplified and flexible testing framework for near-well simulations via a configuration file using the OPM Flow simulator.
@@ -47,19 +47,17 @@ in Linux, Windows, and macOS, as well as the opm Python package and LaTeX depend
 ## Running pyopmnearwell
 You can run _pyopmnearwell_ as a single command line:
 ```
-pyopmnearwell -i configuration_file.txt
+pyopmnearwell -i configuration_file.toml
 ```
 Run `pyopmnearwell --help` to see all possible command line 
-argument options. Inside the `configuration_file.txt` file you provide the path to the
-flow executable and simulation parameters. See the .txt files in the [_examples_](https://github.com/cssr-tools/pyopmnearwell/tree/main/examples),
+argument options. Inside the `configuration_file.toml` file you provide the path to the
+flow executable and simulation parameters. See the .toml files in the [_examples_](https://github.com/cssr-tools/pyopmnearwell/tree/main/examples),
 [_tests/geometries/_](https://github.com/cssr-tools/pyopmnearwell/tree/main/tests/geometries), and [_tests/models/_](https://github.com/cssr-tools/pyopmnearwell/tree/main/tests/models) folders. 
 
 ## Getting started
 See the [_examples_](https://cssr-tools.github.io/pyopmnearwell/examples.html) in the [_documentation_](https://cssr-tools.github.io/pyopmnearwell/introduction.html).
 
 ## Citing
-If you would like to cite this repository:
-
 * Landa-Marbán, D. and von Schultzendorff, P.M. 2023. pyopmnearwell: A framework to simulate near well dynamics using OPM Flow. https://doi.org/10.5281/zenodo.10266790.
 
 ## Publications
@@ -69,10 +67,10 @@ The following is a list of manuscripts in which _pyopmnearwell_ is used:
 Norway Subsurface Conference, Bergen, Norway, April 2024. doi: 10.2118/218477-MS.   
 1. von Schultzendorff, P., Sandve, T.H., Kane, B., Landa-Marbán, D., Both, J.W., Nordbotten, J.M., 2024. A Machine-Learned Near-Well Model in OPM Flow, presented at ECMOR 2024, European Association of Geoscientists & Engineers, Sep. 2024, pp. 1–23. doi: 10.3997/2214-4609.202437033.
 1. Lliguizaca, J.R., Landa-Marbán, D., Gasda, S.E., Sandve, T.H., Alcorn, Z.P., 2024. Data-Driven Predictions of CO2 EOR Numerical Studies Using Machine Learning in an Open-Source Framework, presented at SPE Norway Subsurface Conference, Bergen, Norway, April 2024. doi: 10.2118/218441-MS.
-1. Mushabe, R., Minougou, J.D., Landa-Marbán, D., Kane, B., Sandve, T.H., Submitted. Predicting Ultimate Hydrogen Production and Residual Volume during Cyclic Underground Hydrogen Storage in Porous Media using Machine Learning.
+1. Mushabe, R., Minougou, J.D., Landa-Marbán, D., Kane, B., Sandve, T.H., To appear. Predicting Ultimate Hydrogen Production and Residual Volume during Cyclic Underground Hydrogen Storage in Porous Media using Machine Learning.
 
 ## About pyopmnearwell
 The pyopmnearwell package is being funded by the [_HPC Simulation Software for the Gigatonne Storage Challenge project_](https://www.norceresearch.no/en/projects/hpc-simulation-software-for-the-gigatonne-storage-challenge) [project number 622059] and [_Center for Sustainable Subsurface Resources (CSSR)_](https://cssr.no) 
 [project no. 331841].
-This is work in progress.
-Contributions are more than welcome using the fork and pull request approach. For a new feature, please request this by raising an issue.
+Contributions are more than welcome using the fork and pull request approach. 
+For a new feature, please request this by raising an issue.

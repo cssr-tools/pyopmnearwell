@@ -18,10 +18,10 @@ import matplotlib.pyplot as plt
 
 np.random.seed(7)
 
-FLOW = "/Users/dmar/Github/opm/build/opm-simulators/bin/flow"
+FLOW = "flow"
 TPERIOD = 60 # Duration of one period in days
 NSCHED = 3  # Number of changues in the schedule
-NPRUNS = 5
+NPRUNS = 8
 REF_CO2_DENSITY = 1.86843  # CO2 reference density at surface conditions 
 THRESHOLD_CO2_MASS = 100  # Threshold for the calculation of the CO2 gas (mass) location [kg]
 
@@ -61,7 +61,7 @@ for i, schedule in enumerate(schedules):
     var = {"flow": FLOW, "tperiod": TPERIOD, "schedule": schedule}
     filledtemplate = mytemplate.render(**var)
     with open(
-        f"co2_{i}.txt",
+        f"co2_{i}.toml",
         "w",
         encoding="utf8",
     ) as file:
@@ -69,7 +69,7 @@ for i, schedule in enumerate(schedules):
 for i in range(mt.floor(nsimulations / NPRUNS)):
     command = ""
     for j in range(NPRUNS):
-        command += f"pyopmnearwell -i co2_{NPRUNS*i+j}.txt -o co2_{NPRUNS*i+j} -p '' & " 
+        command += f"pyopmnearwell -i co2_{NPRUNS*i+j}.toml -o co2_{NPRUNS*i+j} -p '' & " 
     command += 'wait'
     os.system(command)
     for j in range(NPRUNS):
@@ -100,12 +100,12 @@ for i in range(mt.floor(nsimulations / NPRUNS)):
                 max_distance_index = max(max_distance_index , len(row[::-1]) - pd.Series(row[::-1]).argmax() - 1)
         min_distance_to_boundary.append(xcord[-1] - xcord[1+max_distance_index])
         fgit.append(smspec["FGIT"].values[-1])
-        os.system(f"rm -rf co2_{NPRUNS*i+j} co2_{NPRUNS*i+j}.txt")
+        os.system(f"rm -rf co2_{NPRUNS*i+j} co2_{NPRUNS*i+j}.toml")
 finished = NPRUNS*mt.floor(nsimulations / NPRUNS)
 remaining = nsimulations - finished
 command = ""
 for i in range(remaining):
-    command += f"pyopmnearwell -i co2_{finished+i}.txt -o co2_{finished+i} -p '' & " 
+    command += f"pyopmnearwell -i co2_{finished+i}.toml -o co2_{finished+i} -p '' & " 
 command += 'wait'
 os.system(command)
 for j in range(remaining):
@@ -136,7 +136,7 @@ for j in range(remaining):
             max_distance_index = max(max_distance_index , len(row[::-1]) - pd.Series(row[::-1]).argmax() - 1)
     min_distance_to_boundary.append(xcord[-1] - xcord[1+max_distance_index])
     fgit.append(smspec["FGIT"].values[-1])
-    os.system(f"rm -rf co2_{finished+j} co2_{finished+j}.txt")
+    os.system(f"rm -rf co2_{finished+j} co2_{finished+j}.toml")
 
 np.save('fgit', fgit)
 np.save('rmdt', ratio_co2_dissolved_total)

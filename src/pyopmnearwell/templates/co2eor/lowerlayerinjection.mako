@@ -16,7 +16,7 @@
 RUNSPEC
 -------------------------------------------------------------------------
 DIMENS
-${dic['noCells'][0]} ${dic['noCells'][0]} ${dic['noCells'][2]} /
+${dic['nocells'][0]} ${dic['nocells'][0]} ${dic['nocells'][2]} /
 
 EQLDIMS
 /
@@ -39,7 +39,7 @@ START
    1 'JAN' 1987 /
 
 WELLDIMS
-   3 ${dic['noCells'][2]} 2 2 /
+   3 ${dic['nocells'][2]} 2 2 /
 
 UNIFOUT
 -------------------------------------------------------------------------
@@ -57,42 +57,42 @@ INCLUDE
   ${dic['grid_file']} /
 %else:
 DX 	
-${dic['noCells'][0]*dic['noCells'][0]*dic['noCells'][2]}*${dic['dims'][0]/dic['noCells'][0]} /
+${dic['nocells'][0]*dic['nocells'][0]*dic['nocells'][2]}*${dic['dims'][0]/dic['nocells'][0]} /
 
 DY	
-${dic['noCells'][0]*dic['noCells'][0]*dic['noCells'][2]}*${dic['dims'][0]/dic['noCells'][0]} /
+${dic['nocells'][0]*dic['nocells'][0]*dic['nocells'][2]}*${dic['dims'][0]/dic['nocells'][0]} /
 
 DZ
 %for i in range(dic['satnum']):
-${dic['noCells'][0]*dic['noCells'][0]*dic['nz_perlayer'][i]}*${dic["thickness"][i]/(dic['nz_perlayer'][i])}
+${dic['nocells'][0]*dic['nocells'][0]*dic['rock'][i][4]}*${dic['rock'][i][3]/(dic['rock'][i][4])}
 %endfor
 /
 
 TOPS
-${dic['noCells'][0]*dic['noCells'][0]}*8325 /
+${dic['nocells'][0]*dic['nocells'][0]}*8325 /
 % endif
 
 PORO
 %for i in range(dic['satnum']):
-${dic['noCells'][0]*dic['noCells'][0]*dic['nz_perlayer'][i]}*${dic['rock'][i][2]}
+${dic['nocells'][0]*dic['nocells'][0]*dic['rock'][i][4]}*${dic['rock'][i][2]}
 %endfor
 /
 
 PERMX
 %for i in range(dic['satnum']):
-${dic['noCells'][0]*dic['noCells'][0]*dic['nz_perlayer'][i]}*${dic['rock'][i][0]}
+${dic['nocells'][0]*dic['nocells'][0]*dic['rock'][i][4]}*${dic['rock'][i][0]}
 %endfor
 /
 
 PERMY
 %for i in range(dic['satnum']):
-${dic['noCells'][0]*dic['noCells'][0]*dic['nz_perlayer'][i]}*${dic['rock'][i][0]}
+${dic['nocells'][0]*dic['nocells'][0]*dic['rock'][i][4]}*${dic['rock'][i][0]}
 %endfor
 /
 
 PERMZ
 %for i in range(dic['satnum']):
-${dic['noCells'][0]*dic['noCells'][0]*dic['nz_perlayer'][i]}*${dic['rock'][i][1]}
+${dic['nocells'][0]*dic['nocells'][0]*dic['rock'][i][4]}*${dic['rock'][i][1]}
 %endfor
 /
 -------------------------------------------------------------------------
@@ -352,14 +352,14 @@ RPTRST
 /
 % endif
 WELSPECS
-	'PROD'	'G1'	${dic['noCells'][0]}	${dic['noCells'][0]}	1*	'OIL' /
+	'PROD'	'G1'	${dic['nocells'][0]}	${dic['nocells'][0]}	1*	'OIL' /
 	'INJW'	'INJ'	1	1	1*	'WATER' /
 	'INJG'	'INJ'	1	1	1*	'GAS' /
 /
 COMPDAT
-	'PROD'	${dic['noCells'][0]}	${dic['noCells'][0]}	${sum(dic['nz_perlayer'])-dic['nz_perlayer'][-1]+1}	${dic['noCells'][2]} 'OPEN' 2* ${dic["diameter"]}  /
-	'INJW'	1	1	${sum(dic['nz_perlayer'])-dic['nz_perlayer'][-1]+1}	${dic['noCells'][2]}	'OPEN'	2*	${dic["diameter"]}  /
-	'INJG'	1	1	${sum(dic['nz_perlayer'])-dic['nz_perlayer'][-1]+1}	${dic['noCells'][2]}	'OPEN'	2*	${dic["diameter"]}  /
+	'PROD'	${dic['nocells'][0]}	${dic['nocells'][0]}	${dic['nocells'][2]-dic['rock'][-1][4]+1}	${dic['nocells'][2]} 'OPEN' 2* ${dic["diameter"]}  /
+	'INJW'	1	1	${dic['nocells'][2]-dic['rock'][-1][4]+1}	${dic['nocells'][2]}	'OPEN'	2*	${dic["diameter"]}  /
+	'INJG'	1	1	${dic['nocells'][2]-dic['rock'][-1][4]+1}	${dic['nocells'][2]}	'OPEN'	2*	${dic["diameter"]}  /
 /
 WCONPROD
 'PROD' 'OPEN' 'BHP' 5* ${dic["probhp"]} /

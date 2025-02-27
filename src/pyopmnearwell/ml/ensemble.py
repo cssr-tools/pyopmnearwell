@@ -1,7 +1,6 @@
 # pylint: skip-file
-""""Run high-fidelity nearwell simulations in OPM-Flow for an ensemble of varying input
+"""Run high-fidelity nearwell simulations in OPM-Flow for an ensemble of varying input
 arguments.
-
 """
 from __future__ import annotations
 
@@ -24,7 +23,7 @@ from resdata.resfile import ResdataFile
 from resdata.summary import Summary
 
 from pyopmnearwell.utils.formulas import area_squaredcircle, pyopmnearwell_correction
-from pyopmnearwell.utils.inputvalues import readthefirstpart, readthesecondpart
+from pyopmnearwell.utils.inputvalues import process_input
 from pyopmnearwell.utils.writefile import reservoir_files
 
 logging.basicConfig(level=logging.INFO)
@@ -271,24 +270,24 @@ def setup_ensemble(
 
         (ensemble_path / f"runfiles_{i}").mkdir(exist_ok=True)
         (ensemble_path / f"runfiles_{i}" / "preprocessing").mkdir(exist_ok=True)
-        (ensemble_path / f"runfiles_{i}" / "jobs").mkdir(exist_ok=True)
-
-        lol = []
-        # Ignore Pylance complaining that the argument might be ``list[bool]``
-        for row in csv.reader(filledtemplate.split("\n"), delimiter="#"):  # type: ignore
-            lol.append(row)
-        dic, index = readthefirstpart(
-            lol,
+        # NOTE: It might be possible to skip the writing and deleting of the toml file
+        with open(
+            f"{ensemble_path}/runfiles_{i}/input.toml",
+            "w",
+            encoding="utf8",
+        ) as file:
+            file.write(filledtemplate)
+        dic = process_input(
             {
-                "exe": ensemble_path / "..",
                 "pat": dirname / "..",  # Path to pyopmnearwell.
-                "fol": pathlib.Path(ensemble_path.name) / f"runfiles_{i}",
+                "fol": ensemble_path / f"runfiles_{i}",
             },
+            f"{ensemble_path}/runfiles_{i}/input.toml",
         )
-        readthesecondpart(lol, dic, index)
+        os.system(f"rm {ensemble_path}/runfiles_{i}/input.toml")
         dic.update({"runname": f"RUN_{i}"})
-        dic["fprep"] = f"{dic['exe']}/{dic['fol']}/preprocessing"
-        dic["foutp"] = f"{dic['exe']}/{dic['fol']}/output"
+        dic["fprep"] = f"{dic['fol']}/preprocessing"
+        dic["foutp"] = f"{dic['fol']}/output"
         # Always calculate geology, grid, tables, etc. for the first ensemble member.
         if i == 0:
             reservoir_files(dic)
@@ -304,7 +303,6 @@ def setup_ensemble(
     # pyopmnearwell creates these unneeded folders, so we remove them.
     try:
         shutil.rmtree(ensemble_path / "preprocessing")
-        shutil.rmtree(ensemble_path / "jobs")
     except FileNotFoundError:
         pass
     logger.info(f"Filled templates for {len(ensemble)} members")

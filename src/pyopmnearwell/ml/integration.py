@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2023 UiB
 # SPDX-License-Identifier: GPL-3.0
 # pylint: skip-file
-""""Run simulations with machine learned well models. 
+"""Run simulations with machine learned well models.
 
 Check the https://github.com/cssr-tools/ML_near_well/ repo for examples on how to use
 the ``recompile_flow`` and ``run_integration`` functions.
@@ -171,7 +171,7 @@ def run_integration(
         except Exception as error:
             print(exceptions.text_error_template().render())
             raise error
-        with (savepath / f"run_{i}.txt").open("w", encoding="utf-8") as file:
+        with (savepath / f"run_{i}.toml").open("w", encoding="utf-8") as file:
             # We assume that filledtemplate is a string and ignore Pylance complaining.
             file.write(filledtemplate)  # type: ignore
 
@@ -179,4 +179,4 @@ def run_integration(
         # results.
         logger.info(f"Run {i}th integration run")
         os.chdir(savepath)
-        os.system(f"pyopmnearwell -i run_{i}.txt -o run_{i} -p off")
+        os.system(f"pyopmnearwell -i run_{i}.toml -o run_{i} -p off")

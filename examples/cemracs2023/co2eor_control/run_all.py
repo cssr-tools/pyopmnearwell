@@ -5,7 +5,7 @@ import os
 import subprocess
 import matplotlib
 
-FLOW = "/Users/dmar/Github/opm/build/opm-simulators/bin/flow"
+FLOW = "flow"
 QRATEW = 15000 # Injection rates [stb]
 QRATEG = 15000 # Injection rates [Mscf] * 5.6146e-3
 TPERIOD = 80 # Duration of one period in days

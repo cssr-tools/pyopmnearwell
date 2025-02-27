@@ -28,9 +28,7 @@ def test_reservoir_files(
     )
 
     # Check that the expected files were created.
-    preprocessing_fol: pathlib.Path = (
-        input_dict["exe"] / input_dict["fol"] / "preprocessing"
-    )
+    preprocessing_fol: pathlib.Path = input_dict["fol"] / "preprocessing"
     assert (preprocessing_fol / "TEST_RUN.DATA").exists()
     if recalc_grid:
         assert (preprocessing_fol / "GRID.INC").exists()

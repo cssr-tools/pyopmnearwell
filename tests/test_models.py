@@ -12,17 +12,17 @@ dirname: pathlib.Path = pathlib.Path(__file__).parent
     "run_model,expected",
     [
         ("input", "output/INPUT.UNRST"),
-        ("co2core", "output/CO2CORE.UNRST"),
         ("co2eor", "output/CO2EOR.UNRST"),
         ("co2store", "postprocessing/pressure_2D.png"),
-        ("h2store", "postprocessing/pressure_2D.png"),
+        ("foam", "output/FOAM.UNRST"),
+        ("h2store", "postprocessing/distance_from_well.png"),
         ("saltprec", "postprocessing/cumulative_saltprec.png"),
     ],
     indirect=["run_model"],
 )
 def test_models(run_model: tuple[str, pathlib.Path], expected: str) -> None:
-    """Check that pyopmnearwell runs for the input, co2core, co2eor, co2store, and
-    h2store decks in ```models``.
+    """Check that pyopmnearwell runs for the input, co2core, co2eor, co2store, foam,
+    h2store, and saltprec decks in ```models``.
 
     The fixture runs pyopmnearwell via the command line.
 

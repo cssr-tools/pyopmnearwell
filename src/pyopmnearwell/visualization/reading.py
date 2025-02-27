@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0
 
 # pylint: skip-file
-""""
+"""
 Script to read the output files
 """
 
@@ -34,10 +34,9 @@ def read_simulations(dic):
     """
     dic["connections"] = []
     if dic["plot"] == "resdata":
-        dic = read_resdata(dic)
+        read_resdata(dic)
     else:
-        dic = read_opm(dic)
-    return dic
+        read_opm(dic)
 
 
 def read_opm(dic):
@@ -52,22 +51,16 @@ def read_opm(dic):
 
     """
     for study in dic["folders"]:
-        dic[f"{study}_rst_seconds"] = np.load(
-            dic["exe"] + "/" + study + "/output/schedule.npy"
-        )
-        dic[f"{study}_wellid"] = np.load(
-            dic["exe"] + "/" + study + "/output/position.npy"
-        )
-        dic[f"{study}_radius"] = np.load(
-            dic["exe"] + "/" + study + "/output/radius.npy"
-        )
-        dic[f"{study}_angle"] = np.load(dic["exe"] + "/" + study + "/output/angle.npy")
+        dic[f"{study}_rst_seconds"] = np.load(study + "/output/schedule.npy")
+        dic[f"{study}_wellid"] = np.load(study + "/output/position.npy")
+        dic[f"{study}_radius"] = np.load(study + "/output/radius.npy")
+        dic[f"{study}_angle"] = np.load(study + "/output/angle.npy")
         deck = [
             f.stem
-            for f in (pathlib.Path(dic["exe"]) / study / "output").iterdir()
+            for f in (pathlib.Path(study) / "output").iterdir()
             if str(f).endswith(".UNRST")
         ]
-        case = str(pathlib.Path(dic["exe"]) / study / f"output/{deck[0]}")
+        case = str(pathlib.Path(study) / f"output/{deck[0]}")
         dic[f"{study}_rst"] = OpmRestart(case + ".UNRST")
         dic[f"{study}_ini"] = OpmFile(case + ".INIT")
         dic[f"{study}_smsp"] = OpmSummary(case + ".SMSPEC")
@@ -113,7 +106,7 @@ def read_opm(dic):
         dic[f"{study}_viscn_array"] = []
         dic[f"{study}_denn_array"] = []
         dic[f"{study}_concentration_array"] = []
-        dic = create_arrays_opm(dic, study)
+        create_arrays_opm(dic, study)
         if dic[f"{study}_injection_ratew"][-1] > 0:
             dic[f"{study}_Q"] = (
                 dic[f"{study}_injection_ratew"][-1] * dic[f"{study}_rhow_ref"]
@@ -152,7 +145,6 @@ def read_opm(dic):
             * (1e-3 * dic[f"{study}_mu"])
             / dic[f"{study}_rho"]
         )
-    return dic
 
 
 def create_arrays_opm(dic, study):
@@ -235,10 +227,16 @@ def create_arrays_opm(dic, study):
                     dic[f"{study}_denw_array"].append(
                         np.array(dic[f"{study}_rst"]["OIL_DEN", rst])
                     )
-                    dic[f"{study}_concentration_array"].append(
-                        np.array(dic[f"{study}_rhor"] * dic[f"{study}_rst"]["RV", rst])
-                    )
-    return dic
+                    if dic[f"{study}_rst"].count("RV", 0):
+                        dic[f"{study}_concentration_array"].append(
+                            np.array(
+                                dic[f"{study}_rhor"] * dic[f"{study}_rst"]["RV", rst]
+                            )
+                        )
+                    else:
+                        dic[f"{study}_concentration_array"].append(
+                            0 * dic[f"{study}_denw_array"][-1]
+                        )
 
 
 def read_resdata(dic):
@@ -253,22 +251,16 @@ def read_resdata(dic):
 
     """
     for study in dic["folders"]:
-        dic[f"{study}_rst_seconds"] = np.load(
-            dic["exe"] + "/" + study + "/output/schedule.npy"
-        )
-        dic[f"{study}_wellid"] = np.load(
-            dic["exe"] + "/" + study + "/output/position.npy"
-        )
-        dic[f"{study}_radius"] = np.load(
-            dic["exe"] + "/" + study + "/output/radius.npy"
-        )
-        dic[f"{study}_angle"] = np.load(dic["exe"] + "/" + study + "/output/angle.npy")
+        dic[f"{study}_rst_seconds"] = np.load(study + "/output/schedule.npy")
+        dic[f"{study}_wellid"] = np.load(study + "/output/position.npy")
+        dic[f"{study}_radius"] = np.load(study + "/output/radius.npy")
+        dic[f"{study}_angle"] = np.load(study + "/output/angle.npy")
         deck = [
             f.stem
-            for f in (pathlib.Path(dic["exe"]) / study / "output").iterdir()
+            for f in (pathlib.Path(study) / "output").iterdir()
             if str(f).endswith(".UNRST")
         ]
-        case = str(pathlib.Path(dic["exe"]) / study / f"output/{deck[0]}")
+        case = str(pathlib.Path(study) / f"output/{deck[0]}")
         dic[f"{study}_rst"] = ResdataFile(case + ".UNRST")
         dic[f"{study}_ini"] = ResdataFile(case + ".INIT")
         dic[f"{study}_smsp"] = Summary(case + ".SMSPEC")
@@ -324,10 +316,9 @@ def read_resdata(dic):
         else:
             dic[f"{study}_well_pressure"] = dic[f"{study}_smsp"]["WBHP:INJ0"].values
             dic[f"{study}_well_pi"] = dic[f"{study}_smsp"]["WPI:INJ0"].values
-        dic = handle_smsp_time(dic, study)
-        # dic = create_arrays_resdata(dic, study, salt)
-        dic = create_arrays_resdata(dic, study)
-    return dic
+        handle_smsp_time(dic, study)
+        # create_arrays_resdata(dic, study, salt)
+        create_arrays_resdata(dic, study)
 
 
 def handle_smsp_time(dic, study):
@@ -367,7 +358,6 @@ def handle_smsp_time(dic, study):
         for time in dic[f"{study}_rst_seconds"]
     ]
     dic[f"{study}_smsp_seconds"] = np.insert(dic[f"{study}_smsp_seconds"], 0, 0.0)
-    return dic
 
 
 def create_arrays_resdata(dic, study):
@@ -474,4 +464,3 @@ def create_arrays_resdata(dic, study):
         * (1e-3 * dic[f"{study}_mu"])
         / dic[f"{study}_rho"]
     )
-    return dic

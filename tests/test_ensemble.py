@@ -21,7 +21,6 @@ from pyopmnearwell.ml.ensemble import (
     run_ensemble,
     setup_ensemble,
 )
-from pyopmnearwell.utils import units
 
 TEST_ENSEMBLE_MAKO: pathlib.Path = pathlib.Path(__file__).parent / "test_ensemble.mako"
 
@@ -46,8 +45,8 @@ rng: np.random.Generator = np.random.default_rng()
                 "npruns": 3,
                 "variables": {
                     "PRESSURE": (
-                        50.9 * units.BAR_TO_PASCAL,
-                        70.5 * units.BAR_TO_PASCAL,
+                        50.9,
+                        70.5,
                         3,
                     ),
                     "TEMPERATURE": (20.5, 30.5, 2),
@@ -62,8 +61,8 @@ rng: np.random.Generator = np.random.default_rng()
                 "npruns": 5,
                 "variables": {
                     "PRESSURE": (
-                        30.5 * units.BAR_TO_PASCAL,
-                        70.5 * units.BAR_TO_PASCAL,
+                        30.5,
+                        70.5,
                         20,
                     ),
                     "TEMPERATURE": (-20.5, 10.5, 10),
@@ -77,7 +76,7 @@ rng: np.random.Generator = np.random.default_rng()
                 "npoints": 200,
                 "npruns": 10,
                 "variables": {
-                    "PRESSURE": (0 * units.BAR_TO_PASCAL, 10 * units.BAR_TO_PASCAL, 5),
+                    "PRESSURE": (0, 10, 5),
                     "TEMPERATURE": (-20.1, 0, 5),
                     "PERMX": (1, 1.5, 5),
                 },
@@ -174,7 +173,6 @@ class TestEnsemble:
             # Create ensemble dir.
             dirname: pathlib.Path = tmp_path_factory.mktemp("ensemble")
             (dirname / "preprocessing").mkdir()
-            (dirname / "jobs").mkdir()
 
             setup_ensemble(
                 dirname,
@@ -231,7 +229,6 @@ class TestEnsemble:
                 file.name for file in (fixture_setup_ensemble / member_folder).iterdir()
             ]
             assert "preprocessing" in subfolders
-            assert "jobs" in subfolders
 
             if member_folder.endswith("_0"):
                 preprocessing_files: list[str] = [
@@ -249,13 +246,6 @@ class TestEnsemble:
                     "RUN_0.DATA",
                 ]:
                     assert file in preprocessing_files
-                assert "saturation_functions.py" in [
-                    file.name
-                    for file in (
-                        fixture_setup_ensemble / member_folder / "jobs"
-                    ).iterdir()
-                ]
-
             else:
                 runfiles: list[pathlib.Path] = list(
                     (fixture_setup_ensemble / member_folder / "preprocessing").iterdir()

@@ -26,7 +26,7 @@ WRATE = 45000 # Water injection rate
 GVOL = 270000 # Target gas volume to inject in a period (i.e., larger grates would have shorter injection periods so all grates cases inject the same volumes)
 NPRUNS = 5 # Number of paralell runs (it should be limited by the number of your cpus)
 DELETE = 1 # Set to 0 to no delete the simulation files (careful with your PC memmory)
-FLOW = "/Users/dmar/Github/opm/build/opm-simulators/bin/flow" # Set the path to the flow executable
+FLOW = "flow" # Set the path to the flow executable
 
 # Initialize the variables to read and plot (if new variables are added, in lines 54-59 you can read the vectors from the summary file)
 names = {'ratio_oil_to_inj_vol': []}
@@ -39,7 +39,7 @@ for i, grate in enumerate(GRATES):
     var = {"flow": FLOW, "grate": grate, "eor": EOR, "wtime":WTIME, "wrate":WRATE, "gvol":GVOL, "nsched":NSCHED}
     filledtemplate = mytemplate.render(**var)
     with open(
-        f"{EOR}_{i}.txt",
+        f"{EOR}_{i}.toml",
         "w",
         encoding="utf8",
     ) as file:
@@ -49,9 +49,9 @@ for i in range(mt.floor(len(GRATES) / NPRUNS)):
     command = ""
     for j in range(NPRUNS):
         if DELETE == 1:
-            command += f"pyopmnearwell -i {EOR}_{NPRUNS*i+j}.txt -o {EOR}_{NPRUNS*i+j} -g single -v 0 & "
+            command += f"pyopmnearwell -i {EOR}_{NPRUNS*i+j}.toml -o {EOR}_{NPRUNS*i+j} -g single -v 0 & "
         else:
-            command += f"pyopmnearwell -i {EOR}_{NPRUNS*i+j}.txt -o {EOR}_{NPRUNS*i+j} -g single & "
+            command += f"pyopmnearwell -i {EOR}_{NPRUNS*i+j}.toml -o {EOR}_{NPRUNS*i+j} -g single & "
     command += "wait"
     os.system(command)
     for j in range(NPRUNS):
@@ -63,15 +63,15 @@ for i in range(mt.floor(len(GRATES) / NPRUNS)):
         names["oil_pro_vol"].append(smspec["FOPT"].values[-1])
         names["ratio_oil_to_inj_vol"].append(smspec["FOPT"].values[-1]/(smspec["FGIT"].values[-1]+smspec["FWIT"].values[-1]))
         if DELETE == 1:
-            os.system(f"rm -rf {EOR}_{NPRUNS*i+j} {EOR.upper()}_{NPRUNS*i+j}.txt")
+            os.system(f"rm -rf {EOR}_{NPRUNS*i+j} {EOR.upper()}_{NPRUNS*i+j}.toml")
 finished = NPRUNS * mt.floor(len(GRATES) / NPRUNS)
 remaining = len(GRATES) - finished
 command = ""
 for i in range(remaining):
     if DELETE == 1:
-        command += f"pyopmnearwell -i {EOR}_{finished+i}.txt -o {EOR}_{finished+i} -g single -v 0 & "
+        command += f"pyopmnearwell -i {EOR}_{finished+i}.toml -o {EOR}_{finished+i} -g single -v 0 & "
     else:
-        command += f"pyopmnearwell -i {EOR}_{finished+i}.txt -o {EOR}_{finished+i} -g single & "
+        command += f"pyopmnearwell -i {EOR}_{finished+i}.toml -o {EOR}_{finished+i} -g single & "
 command += "wait"
 os.system(command)
 for i in range(remaining):
@@ -83,7 +83,7 @@ for i in range(remaining):
     names["oil_pro_vol"].append(smspec["FOPT"].values[-1])
     names["ratio_oil_to_inj_vol"].append(smspec["FOPT"].values[-1]/(smspec["FGIT"].values[-1]+smspec["FWIT"].values[-1]))
     if DELETE == 1:
-        os.system(f"rm -rf {EOR}_{finished+i} {EOR.upper()}_{finished+i}.txt")
+        os.system(f"rm -rf {EOR}_{finished+i} {EOR.upper()}_{finished+i}.toml")
 
 # Save variables to numpy objects
 np.save('grates', GRATES)
