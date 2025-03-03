@@ -41,7 +41,11 @@ inj = [
 [${tperiodp},${tperiodp},1,1,${-qp},3e1],
 [${tperiods},${tperiods},1,1,0],
 % endfor
+% if j == nseason - 1:
+[${5*tperiodp},${tperiodp},1,1,${-qp},3e1]]
+% else:
 [${5*tperiodp},${tperiodp},1,1,${-qp},3e1],
+% endif
 % endfor
 % else:
 % for j in range(nseason-1):

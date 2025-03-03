@@ -46,8 +46,8 @@ for i in range(round(npoints / npruns)):
         smspec = Summary(f"./h2_{npruns*i+j}/output/H2_{npruns*i+j}.SMSPEC")
         ratio_fgpt_to_fgit.append(smspec["FGPT"].values[-1]/smspec["FGIT"].values[-1])
         fgit.append(smspec["FGIT"].values[-1])
-        #os.system(f"rm -rf h2_{npruns*i+j} h2_{npruns*i+j}.toml")
-        exit()
+        os.system(f"rm -rf h2_{npruns*i+j} h2_{npruns*i+j}.toml")
+        
 
 np.save('times', 365 + 90 + times)
 np.save('ratio_fgpt_to_fgit', ratio_fgpt_to_fgit)

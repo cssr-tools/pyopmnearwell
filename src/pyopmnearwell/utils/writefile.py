@@ -196,7 +196,10 @@ def manage_tables(dic):
         dic (dict): Global dictionary with required parameters
 
     """
-    if dic["model"] in ["co2store", "saltprec"]:
+    if (
+        dic["model"] in ["co2store", "h2store", "saltprec"]
+        and dic["template"].lower() != "h2ch4"
+    ):
         filename: str = (
             f"{dic['pat']}/templates/common/saturation_functions_format_2.mako"
         )

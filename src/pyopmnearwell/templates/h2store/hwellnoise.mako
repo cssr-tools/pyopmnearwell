@@ -15,9 +15,9 @@ ${dic['nocells'][0]} ${dic['nocells'][1]} ${dic['nocells'][2]} /
 ${max(dic['nocells'][0],dic['nocells'][1])} ${dic['nocells'][1]} ${dic['nocells'][2]} /
 %endif
 
-OIL
+WATER
 GAS
-DISGAS
+DISGASW
 H2STORE
 
 METRIC
@@ -90,17 +90,13 @@ INCLUDE
 SOLUTION
 ---------------------------------------------------------------------------
 EQUIL
-0 ${dic['pressure']} ${mt.floor((1-dic["initialphase"])*dic['dims'][2])} 0 0 0 1 1 0 /
+0 ${dic['pressure']} ${mt.floor(dic["initialphase"]*dic['dims'][2])} 0 0 0 1 1 0 /
 
 RTEMPVD
 0   ${dic['temperature'][0]}
 ${dic['dims'][2]} ${dic['temperature'][1]} /
 
-RSVD
-0   0.0
-${dic['dims'][2]} 0.0 /
-
-RS
+RVW
 ${dic['nocells'][0]*dic['nocells'][1]*dic['nocells'][2]}*0.0 /
 % if dic['write'] == 1:
 RPTRST 
@@ -147,17 +143,17 @@ FPR
 
 FGIP
 
-FOIP
+FWIP
 
 FGIR
 
-FOIR
+FWIR
 
 FGIT
 
 FGPT
 
-FOIT
+FWIT
 
 WGIR
 /
@@ -177,13 +173,13 @@ WBHP
 RPR
 /
 
-ROIP
+RWIP
 /
 
 RGIP
 /
 
-WOPR
+WWPR
 /
 
 WPI
@@ -219,7 +215,7 @@ WCONINJE
 'INJ0' 'GAS' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'}
 'RATE' ${f"{dic['inj'][j][4] / 0.0850397 : E}"}  1* 400/
 % else:
-'INJ0' 'OIL' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'}
+'INJ0' 'WATER' ${'OPEN' if dic['inj'][j][4] > 0 else 'SHUT'}
 'RATE' ${f"{dic['inj'][j][4] / 998.108 : E}"}  1* 400/
 %endif
 /

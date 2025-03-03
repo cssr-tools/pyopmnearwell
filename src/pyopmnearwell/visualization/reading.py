@@ -77,13 +77,17 @@ def read_opm(dic):
             dic[f"{study}_fco2diss"] = 0 * dic[f"{study}_fco2"]
         if dic[f"{study}_rst"].count("SWAT", 0):
             dic[f"{study}_injection_ratew"] = dic[f"{study}_smsp"]["FWIR"]
-            dic[f"{study}_rhon_ref"] = 1.86843  # CO2 reference density
+            if dic["model"] == "h2store":
+                dic[f"{study}_rhon_ref"] = 0.0850397  # H2 reference density
+            else:
+                dic[f"{study}_rhon_ref"] = 1.86843  # CO2 reference density
             dic[f"{study}_rhow_ref"] = 998.108  # Water reference density
             dic[f"{study}_rhor"] = dic[f"{study}_rhon_ref"]
         else:
             dic[f"{study}_injection_ratew"] = dic[f"{study}_smsp"]["FOIR"]
             dic[f"{study}_rhon_ref"] = 0.0850397  # H2 reference density
-            # dic[f"{study}_rhow_ref"] = 0.6785064  # CH4 reference density
+            if dic["model"] == "h2ch4":
+                dic[f"{study}_rhow_ref"] = 0.6785064  # CH4 reference density
             dic[f"{study}_rhow_ref"] = 998.108  # Water reference density
             dic[f"{study}_rhor"] = dic[f"{study}_rhow_ref"]
         if dic[f"{study}_rst"].count("SSOLVENT", 0):
@@ -296,7 +300,10 @@ def read_resdata(dic):
                 dic[f"{study}_rs"] = dic[f"{study}_rst"].iget_kw("RS")
             else:
                 dic[f"{study}_rs"] = dic[f"{study}_rst"].iget_kw("RSW")
-            dic[f"{study}_rhon_ref"] = 1.86843  # CO2 reference density
+            if dic["model"] == "h2store":
+                dic[f"{study}_rhon_ref"] = 0.0850397  # H2 reference density
+            else:
+                dic[f"{study}_rhon_ref"] = 1.86843  # CO2 reference density
             dic[f"{study}_rhow_ref"] = 998.108  # Water reference density
             dic[f"{study}_rhor"] = dic[f"{study}_rhon_ref"]
             dic[f"{study}_injection_ratew"] = dic[f"{study}_smsp"]["FWIR"].values
@@ -306,7 +313,8 @@ def read_resdata(dic):
             # dic[f"{study}_rs"] = dic[f"{study}_rst"].iget_kw("RV")
             dic[f"{study}_rhon_ref"] = 0.0850397  # H2 reference density
             dic[f"{study}_rhow_ref"] = 998.108  # Water reference density
-            # dic[f"{study}_rhow_ref"] = 0.6785064  # CH4 reference density
+            if dic["model"] == "h2ch4":
+                dic[f"{study}_rhow_ref"] = 0.6785064  # CH4 reference density
             dic[f"{study}_rhor"] = dic[f"{study}_rhow_ref"]
             dic[f"{study}_injection_ratew"] = dic[f"{study}_smsp"]["FOIR"].values
         dic[f"{study}_indicator_array"] = []
