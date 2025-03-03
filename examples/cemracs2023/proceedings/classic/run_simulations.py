@@ -17,8 +17,8 @@ np.random.seed(7)
 FLOW = "flow"
 TPERIODI = 10 #Duration of the injection period in days
 TPERIODP = 5 #Duration of the injection period in days
-QI = 80000 # Injection rate [kg/day]
-QP = 160000 # Production rate [kg/day]
+QI = 10000 # Injection rate [kg/day]
+QP = 20000 # Production rate [kg/day]
 NSCHED = 10  # Number of cycles (injection-withdrawal)
 NPRUNS = 8 # Number of parallel simulations
 
