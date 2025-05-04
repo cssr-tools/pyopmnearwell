@@ -17,7 +17,6 @@ pvmult = -1 #Pore volume multiplier on the boundary [-] (-1 to ignore; 0 to use 
 hysteresis = "Killough" #Add hysteresis (Killough or Carlson, 0 by default, i.e., no hysteresis)
 rockcomp = 8.5e-5 #Rock compressibility [1/Bar]
 saltprops = [138,268,2153] #Initial salt concentration [kg/m3], salt solubility limit [kg/m3], and precipitated salt density [kg/m3]
-permfact = ["power",1.75,0.35,1001,1e-2] #Model ('default' or 'power'), gamma [-], phi_r [-], npoints [-], threshold [-]
 pcfact = 0.5 #Exponent for the capillary pressure factor (Leveret J-function) [-]
 
 #Set the saturation functions
@@ -38,6 +37,13 @@ safu = [[0.12,0.15,1,1,3060e-5,0.457,0.457,0.457,6e-4,0.205],
 
 #Properties rock: 1) Kxy [mD], 2) Kz [mD], 3) phi [-], 4) thickness [m], and 5) no cells in the z dir [-] (entry per layer)
 rock = [[1013.25,101.325,0.25,25,25],[506.625,50.6625,0.2,25,25],[202.650,20.2650,0.2,25,25],[101.324,10.1324,0.2,25,25]]
+
+#Set the poro-perm relationship as a function of the porosity fraction (pofa) and the properties (entry per layer)
+poroperm = "((pofa - (phr - thr)) / (1 - (phr - thr))) ** gam"
+popevals = [[["phr",0.35],["gam",1.75],["thr",1e-2],["npoints",1001]],
+            [["phr",0.35],["gam",1.75],["thr",1e-2],["npoints",1001]],
+            [["phr",0.35],["gam",1.75],["thr",1e-2],["npoints",1001]],
+            [["phr",0.35],["gam",1.75],["thr",1e-2],["npoints",1001]]]
 
 #Define the injection values (entry per change in the schedule): 
 #1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]

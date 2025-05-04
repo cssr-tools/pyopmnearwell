@@ -16,7 +16,6 @@ initialphase = 0 #Initial phase in the reservoir (0 wetting, 1 non-wetting)
 pvmult = -1 #Pore volume multiplier on the boundary [-] (-1 to ignore; 0 to use well producers instead)
 rockcomp = 8.5e-5 #Rock compressibility [1/Bar]
 saltprops = [138,268,2153] #Initial salt concentration [kg/m3], salt solubility limit [kg/m3], and precipitated salt density [kg/m3]
-permfact = ["default",0.8,0.8,1001,0] #Model ('default' or 'power'), gamma [-], phi_r [-], npoints [-], threshold [-]
 
 #Set the saturation functions
 krw = "((sw - swi) / (1.0 - swi - sni)) ** 4.0" #Wetting rel perm saturation function [-]
@@ -29,6 +28,10 @@ safu = [[0.25,0.05,1,1,1.96e-2,0.487,0.487,0.457,8e-4,0]]
 
 #Properties rock: 1) Kxy [mD], 2) Kz [mD], 3) phi [-], 4) thickness [m], and 5) no cells in the z dir [-] (entry per layer)
 rock = [[101.3,101.3,0.1,100,20]]
+
+#Set the poro-perm relationship as a function of the porosity fraction (pofa) and the properties (entry per layer)
+poroperm = "((pofa -(phr-thr))/(1-(phr-thr)))**2*((1-gam+gam/(1+(1/gam)/(1/(phr-thr)-1))**2))/(1-gam+gam*((pofa-(phr-thr))/(1-(phr-thr))/((pofa-(phr-thr))/(1-(phr-thr))+(1+(1/gam)/(1/(phr-thr)-1))-1))**2)"
+popevals = [[["phr",0.8],["gam",0.8],["thr",0],["npoints",1001]]]
 
 #Define the injection values (entry per change in the schedule): 
 #1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]

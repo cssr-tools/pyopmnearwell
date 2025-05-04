@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0
 #!/usr/bin/env python
 
-""""
+"""
 Script to write the saturation functions
 """
 
@@ -28,10 +28,16 @@ def safu_evaluation():
     # Saturation function assignation
 
     # Properties: swi, sni, krw, krn, pe
-    safu = [[0.0] * 10 for _ in range(${len(dic['safu'])})]
+    safug = [[0.0] * 10 for _ in range(${len(dic['safu'])})]
+    safuw = [[0.0] * 10 for _ in range(${len(dic['safu'])})]
     % for i, _ in enumerate(dic['safu']):
     % for j, _ in enumerate(dic['safu'][i]):
-    safu[${i}][${j}] = ${dic['safu'][i][j]}
+    safug[${i}][${j}] = ${dic['safu'][i][j]}
+    % if dic["imbnum"] == 2 and j==1 and len(dic['safu'])/dic["imbnum"] <= i:
+    safuw[${i}][1] = ${dic['safu'][int(i%len(dic['safu'])/dic["imbnum"])][1]}
+    % else:
+    safuw[${i}][${j}] = ${dic['safu'][i][j]}
+    % endif
     % endfor
     % endfor
 
@@ -41,7 +47,7 @@ def safu_evaluation():
         encoding="utf8",
     ) as file:
         file.write("SGFN\n")
-        for _, para in enumerate(safu):
+        for _, para in enumerate(safug):
             sco2 = np.linspace(para[1], 1 - para[0], 1001)
             if sco2[0] > 0:
                 file.write(
@@ -59,7 +65,7 @@ def safu_evaluation():
                 )
             file.write("/\n")
         file.write("SWFN\n")
-        for _, para in enumerate(safu):
+        for _, para in enumerate(safuw):
             if para[9] == 1. or  para[9] == 0. :
                 swatc = np.linspace((1.-para[9])*para[0], 1-0*para[1], 10000)
                 for i, value in enumerate(swatc):
