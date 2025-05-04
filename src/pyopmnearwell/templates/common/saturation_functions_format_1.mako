@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0
 #!/usr/bin/env python
 
-""""
+"""
 Script to write the saturation functions
 """
 

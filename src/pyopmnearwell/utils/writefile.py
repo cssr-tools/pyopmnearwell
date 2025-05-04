@@ -170,10 +170,6 @@ def manage_sections(dic):
     sections = ["geology", "regions"]
     if dic["pvmult"] > 0:
         sections.append("multpv")
-    if dic["model"] == "saltprec":
-        sections.append("permfact")
-        if dic["pcfact"] != 0:
-            sections.append("pcfact")
     for section in sections:
         var = {"dic": dic}
         filledtemplate: str = fill_template(
@@ -186,6 +182,36 @@ def manage_sections(dic):
             encoding="utf-8",
         ) as file:
             file.write(filledtemplate)
+    sections = []
+    if dic["model"] == "saltprec":
+        sections.append("permfact")
+        if dic["pcfact"] != 0:
+            sections.append("pcfact")
+        for section in sections:
+            pytables = os.path.join(dic["fprep"], f"{section}.py")
+            filledtemplate: str = fill_template(
+                var,
+                filename=os.path.join(
+                    dic["pat"], "templates", "common", f"{section}.mako"
+                ),
+            )
+            with open(
+                pytables,
+                "w",
+                encoding="utf8",
+            ) as file:
+                file.write(filledtemplate)
+            os.system(f"chmod u+x {pytables}")
+            prosc = subprocess.run(
+                [
+                    "python",
+                    pytables,
+                ],
+                check=True,
+            )
+            if prosc.returncode != 0:
+                raise ValueError(f"Invalid result: { prosc.returncode }")
+            os.system(f"rm {pytables}")
 
 
 def manage_tables(dic):
