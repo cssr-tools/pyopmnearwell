@@ -21,7 +21,7 @@ EQLDIMS
 /
 
 TABDIMS
-${(1*(dic["hysteresis"]!=0)+1)*(dic['satnum']+dic['perforations'][0])} 1* 10000 /
+${(1*(dic["hysteresis"]!=0)+1)*(dic['satnum']+dic['perforations'][0])} /
 
 WATER
 GAS
@@ -68,7 +68,7 @@ ${dic['tables_file']} /
 
 % if dic["hysteresis"]!=0:
 EHYSTR
-1  ${0 if dic["hysteresis"].upper()=="CARLSON" else 2}  2* BOTH /
+1* ${0 if dic["hysteresis"].upper()=="CARLSON" else 2} 2* BOTH /
 % endif
 
 % if dic["rockcomp"] > 0:

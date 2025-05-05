@@ -22,9 +22,10 @@ krw = "((sw - swi) / (1.0 - swi - sni)) ** 4.0" #Wetting rel perm saturation fun
 krn = "(1-((sw - swi) / (1.0 - swi - sni)) ** 2.0) * (1-(sw - swi) / (1.0 - swi - sni)) ** 2" #Non-wetting rel perm saturation function [-]
 pcap = "pen * (((sw - swi) / (1. - swi)) ** (-(1./npen)) - 1.) ** (1. - npen)" #Capillary pressure saturation function [Bar]
 
-#Properties sat functions: 1) swi [-], 2) sni [-], 3) krw [-], 4) krn [-], 5) pen [Bar], 6) nkrw [-], 7) nkrn [-],
-#8) npen [-], 9) threshold cP evaluation, 10) ignore swi for cP? (sl* for cplog) (entry per layer, if hysteresis, additional entries per layer)
-safu = [[0.25,0.05,1,1,1.96e-2,0.487,0.487,0.457,8e-4,0]]
+#Properties sat functions: 1) swi [-], 2) sni [-], 3) krw [-], 4) krn [-], 5) pen [Bar], 6) nkrw [-],
+#7) nkrn [-], 8) npen [-], 9) threshold cP evaluation, 10) ignore swi for cP? (sl* for cplog)
+#11) npoints [-] (entry per layer, if hysteresis, additional entries per layer)
+safu = [[0.25,0.05,1,1,1.96e-2,0.487,0.487,0.457,8e-4,0,10000]]
 
 #Properties rock: 1) Kxy [mD], 2) Kz [mD], 3) phi [-], 4) thickness [m], and 5) no cells in the z dir [-] (entry per layer)
 rock = [[101.3,101.3,0.1,100,20]]

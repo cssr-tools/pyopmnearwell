@@ -30,7 +30,7 @@ EQLDIMS
 /
 
 TABDIMS
-${(1*(dic["hysteresis"]!=0)+1)*(dic['satnum']+dic['perforations'][0])} 1* 10000 /
+${(1*(dic["hysteresis"]!=0)+1)*(dic['satnum']+dic['perforations'][0])} /
 
 % if dic["hysteresis"] !=0:
 SATOPTS
@@ -68,7 +68,7 @@ INCLUDE
 
 % if dic["hysteresis"]!=0:
 EHYSTR
-  1  ${0 if dic["hysteresis"].upper()=="CARLSON" else 2}  2* KR /
+1* ${0 if dic["hysteresis"].upper()=="CARLSON" else 2} 2* BOTH /
 % endif
 ----------------------------------------------------------------------------
 REGIONS

@@ -1,5 +1,13 @@
+#Using plopm (https://github.com/cssr-tools/plopm), one can plot the rel perms and cp relationships with hysteresis by:
+#pyopmnearwell -i co2_hyst_cplog.toml -o results -g single
+#plopm -i results/CO2_HYST_CPLOG -v krwh
+#plopm -i results/CO2_HYST_CPLOG -v krgh
+#plopm -i results/CO2_HYST_CPLOG -v pcowh -ylog 1
+#In general, hysteresis is only set for krg and pc (this is stored as pcow in OPM Flow, but it corresponds to the
+#gas water capillary pressure). See the EHYSTR is the OPM manual for the available options.
+
 #Set mpirun, the full path to the flow executable, and simulator flags (except --output-dir)
-flow = "flow --linear-solver-reduction=1e-5 --relaxed-max-pv-fraction=0 --enable-drift-compensation=0 --newton-max-iterations=50 --newton-min-iterations=5 --tolerance-wells=1e-5 --relaxed-well-flow-tol=1e-5 --use-multisegment-well=false --enable-tuning=true --enable-opm-rst-file=true --enable-well-operability-check=false --min-time-step-before-shutting-problematic-wells-in-days=1e-99"
+flow = "flow --relaxed-max-pv-fraction=0 --enable-opm-rst-file=true --newton-min-iterations=1 --enable-tuning=true"
 
 #Set the model parameters
 model = "co2store" #Model: co2store, co2eor, foam, h2store, or saltprec
@@ -7,13 +15,16 @@ template = "base" #Template file (see src/pyopmnearwell/templates/)
 grid = "cake" #Grid type: cake, radial, core, cartesian2d, coord2d, tensor2d, cartesian, cpg3d, coord3d, or tensor3d
 adim = 60 #Grid cake/radial: theta [degrees]; core: input/output pipe length [m]; cartesian2d, coord2d, tensor2d: width[m]
 xdim = 100 #Length [m] (for cartesian/cpg3d/coord3d/tensor3d, Length=Width=2*xdim)
-xcn = [100] #Number of x-cells [-]; coordinates for grid type coord2d/coord3d [m]; numbers of x-cells for grid type tensor2d/tensor3d [-] 
-xfac = 0 #Exponential factor for the telescopic x-gridding (0 to use an equidistant partition)
+xcn = [80] #Number of x-cells [-]; coordinates for grid type coord2d/coord3d [m]; numbers of x-cells for grid type tensor2d/tensor3d [-]
+xfac = 2 #Exponential factor for the telescopic x-gridding (0 to use an equidistant partition)
 diameter = 0.1 #Well diameter [m] 
-pressure = 1e2 #Pressure [Bar] on the top 
+pressure = 100 #Pressure [Bar] on the top 
 temperature = [40,40] #Top and bottom temperatures [C]
-initialphase = 0 #Initial phase in the reservoir (0 wetting, 1 non-wetting)
+initialphase = 0 #Initial phase in the reservoir (0 wetting, 1 non-wetting) 
 pvmult = 1e10 #Pore volume multiplier on the boundary [-] (-1 to ignore; 0 to use well producers instead)
+perforations = [1,5,6] #Activate perforations [-], number of well perforations [-], and length [m]
+hysteresis = "Killough" #Add hysteresis (Killough or Carlson, 0 by default, i.e., no hysteresis)
+zxy = "2-2*mt.cos((2*mt.pi*x/50)) + 10*(x/100)**2" #The function for the reservoir surface
 
 #Set the saturation functions
 krw = "krw * ((sw - swi) / (1.0 - sni -swi)) ** nkrw"        #Wetting rel perm saturation function [-]
@@ -23,12 +34,14 @@ pcap = "pen * ((sw - swi) / (1.0 - swi)) ** (-(1.0 / npen))" #Capillary pressure
 #Properties sat functions: 1) swi [-], 2) sni [-], 3) krw [-], 4) krn [-], 5) pen [Bar], 6) nkrw [-],
 #7) nkrn [-], 8) npen [-], 9) threshold cP evaluation, 10) ignore swi for cP? (sl* for cplog)
 #11) npoints [-] (entry per layer, if hysteresis, additional entries per layer)
-safu = [[0.24,0.05,1,1,0,2,2,2,1e-4,0,10000]]
+safu = [[0.478,0,1,0.3,10,3,3,2,1e-2,0.6,100],[0,0,1,1,0,1,1,1,1e-4,0,2],[0.478,0.312,1,0.3,1,3,4,2,1e-2,0.52625,100],[0,0,1,1,0,1,1,1,1e-4,0,2]]
 
 #Properties rock: 1) Kxy [mD], 2) Kz [mD], 3) phi [-], 4) thickness [m], and 5) no cells in the z dir [-] (entry per layer)
-rock = [[1013.25,101.325,0.25,1,1]]
+rock = [[101.324,10.1324,0.2,24,24],[2013.25,201.325,0.45]]
 
 #Define the injection values (entry per change in the schedule): 
 #1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]
 #4) fluid (0 wetting, 1 non-wetting), 5) injection rates [kg/day]
-inj = [[2,1,1,0,100000]]
+inj = [[7,1,5e-3,1,57611.52],
+[7,1,5e-3,0,57611.52],
+[7,1,5e-3,1,57611.52]]

@@ -34,11 +34,11 @@ EQLDIMS
 /
 
 TABDIMS
-${(1*(dic["hysteresis"]!=0)+1)*(dic['satnum']+dic['perforations'][0])} 1* 10000 /
+${(1*(dic["hysteresis"]!=0)+1)*(dic['satnum']+dic['perforations'][0])} /
 
 % if dic["hysteresis"]!=0:
 SATOPTS
- HYSTER  /
+HYSTER  /
 % endif
 
 WELLDIMS
@@ -56,13 +56,13 @@ GRIDFILE
 0 0 /
 % endif
 INCLUDE
-  'GEOLOGY.INC' /
+'GEOLOGY.INC' /
 % if dic["pvmult"] > 0:
 ----------------------------------------------------------------------------
 EDIT
 ----------------------------------------------------------------------------
 INCLUDE
-  'MULTPV.INC' /
+'MULTPV.INC' /
 %endif
 ----------------------------------------------------------------------------
 PROPS
@@ -72,11 +72,11 @@ INCLUDE
 
 % if dic["hysteresis"]!=0:
 EHYSTR
-  1  ${0 if dic["hysteresis"].upper()=="CARLSON" else 2}  2* BOTH /
+1* ${0 if dic["hysteresis"].upper()=="CARLSON" else 2} 2* BOTH /
 % endif
 
 SALTSOL
-	${dic['saltprops'][1]} ${dic['saltprops'][2]}/
+${dic['saltprops'][1]} ${dic['saltprops'][2]}/
 /
 
 % if dic["rockcomp"] > 0:
@@ -95,12 +95,12 @@ INCLUDE
 REGIONS
 ----------------------------------------------------------------------------
 INCLUDE
-  'REGIONS.INC' /
+'REGIONS.INC' /
 ----------------------------------------------------------------------------
 SOLUTION
----------------------------------------------------------------------------
+----------------------------------------------------------------------------
 EQUIL
- 0 ${dic['pressure']} ${mt.floor(dic["initialphase"]*dic['dims'][2])} 0 0 0 1 1 0 /
+0 ${dic['pressure']} ${mt.floor(dic["initialphase"]*dic['dims'][2])} 0 0 0 1 1 0 /
 
 SALTVD
 0   ${dic['saltprops'][0]}
@@ -111,12 +111,12 @@ RTEMPVD
 ${dic['dims'][2]} ${dic['temperature'][1]} /
 % if dic['write'] == 1:
 RPTRST 
- 'BASIC=2' DEN VISC /
+'BASIC=2' DEN VISC PCOW PCOG /
 % endif
 ----------------------------------------------------------------------------
 SUMMARY
--------------------------------------------------------------------------
-PERFORMA---
+----------------------------------------------------------------------------
+PERFORMA
 FPR 
 
 FGIP
@@ -158,7 +158,7 @@ SCHEDULE
 ----------------------------------------------------------------------------
 % if dic['write'] == 1:
 RPTRST
- 'BASIC=2' DEN VISC /
+'BASIC=2' DEN VISC PCOW PCOG /
 % endif
 
 WELSPECS

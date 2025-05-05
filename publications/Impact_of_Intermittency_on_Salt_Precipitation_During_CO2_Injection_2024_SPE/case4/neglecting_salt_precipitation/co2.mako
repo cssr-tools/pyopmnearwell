@@ -23,16 +23,17 @@ krw = "((sw - swi) / (1.0 - swi - sni)) ** 4.0" #Wetting rel perm saturation fun
 krn = "(1-((sw - swi) / (1.0 - swi - sni)) ** 2.0) * (1-(sw - swi) / (1.0 - swi - sni)) ** 2" #Non-wetting rel perm saturation function [-]
 pcap = "pen * (((sw - swi) / (1. - swi)) ** (-(1./npen)) - 1.) ** (1. - npen)" #Capillary pressure saturation function [Bar]
 
-#Properties sat functions: 1) swi [-], 2) sni [-], 3) krw [-], 4) krn [-], 5) pen [Bar], 6) nkrw [-], 7) nkrn [-],
-#8) npen [-], 9) threshold cP evaluation, 10) ignore swi for cP? (sl* for cplog) (entry per layer, if hysteresis, additional entries per layer)
-safu = [[0.14,0.1,1,1,8655e-5,0.457,0.457,0.457,6e-4,0.28],
-[0.12,0.1,1,1,6120e-5,0.457,0.457,0.457,6e-4,0.23],
-[0.12,0.1,1,1,3871e-5,0.457,0.457,0.457,6e-4,0.215],
-[0.12,0.1,1,1,3060e-5,0.457,0.457,0.457,6e-4,0.205],
-[0.14,0.15,1,1,8655e-5,0.457,0.457,0.457,6e-4,0.28],
-[0.12,0.15,1,1,6120e-5,0.457,0.457,0.457,6e-4,0.23],
-[0.12,0.15,1,1,3871e-5,0.457,0.457,0.457,6e-4,0.215],
-[0.12,0.15,1,1,3060e-5,0.457,0.457,0.457,6e-4,0.205]]
+#Properties sat functions: 1) swi [-], 2) sni [-], 3) krw [-], 4) krn [-], 5) pen [Bar], 6) nkrw [-],
+#7) nkrn [-], 8) npen [-], 9) threshold cP evaluation, 10) ignore swi for cP? (sl* for cplog)
+#11) npoints [-] (entry per layer, if hysteresis, additional entries per layer)
+safu = [[0.14,0.1,1,1,8655e-5,0.457,0.457,0.457,6e-4,0.28,10000],
+[0.12,0.1,1,1,6120e-5,0.457,0.457,0.457,6e-4,0.23,10000],
+[0.12,0.1,1,1,3871e-5,0.457,0.457,0.457,6e-4,0.215,10000],
+[0.12,0.1,1,1,3060e-5,0.457,0.457,0.457,6e-4,0.205,10000],
+[0.14,0.15,1,1,8655e-5,0.457,0.457,0.457,6e-4,0.28,10000],
+[0.12,0.15,1,1,6120e-5,0.457,0.457,0.457,6e-4,0.23,10000],
+[0.12,0.15,1,1,3871e-5,0.457,0.457,0.457,6e-4,0.215,10000],
+[0.12,0.15,1,1,3060e-5,0.457,0.457,0.457,6e-4,0.205,10000]]
 
 #Properties rock: 1) Kxy [mD], 2) Kz [mD], 3) phi [-], 4) thickness [m], and 5) no cells in the z dir [-] (entry per layer)
 rock = [[101.324,10.1324,0.2,25,25],[202.650,20.2650,0.2,25,25],[506.625,50.6625,0.2,25,25],[1013.25,101.325,0.25,25,25]]
