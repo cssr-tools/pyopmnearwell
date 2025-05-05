@@ -250,6 +250,7 @@ def manage_tables(dic):
     )
     if prosc.returncode != 0:
         raise ValueError(f"Invalid result: { prosc.returncode }")
+    # exit()
     os.system(f"rm {pytables}")
 
 

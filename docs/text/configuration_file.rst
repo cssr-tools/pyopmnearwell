@@ -86,29 +86,34 @@ In this example we consider properties for the sands number 2 to 5 as described 
     :linenos:
     :lineno-start: 26
 
-    #Properties sat functions: 1) swi [-], 2) sni [-], 3) krw [-], 4) krn [-], 5) pen [Bar], 6) nkrw [-], 7) nkrn [-],
-    #8) npen [-], 9) threshold cP evaluation, 10) ignore swi for cP? (sl* for cplog) (entry per layer, if hysteresis, additional entries per layer)
-    safu = [[0.14,0.1,1,1,8655e-5,2,2,2,1e-4,0],
-    [0.12,0.1,1,1,6120e-5,2,2,2,1e-4,0],
-    [0.12,0.1,1,1,3871e-5,2,2,2,1e-4,0],
-    [0.12,0.1,1,1,3060e-5,2,2,2,1e-4,0],
-    [0,0,1,1,0,1,1,1,1e-4,0],
-    [0.14,0.2,1,1,8655e-5,2,3,2,1e-4,0],
-    [0.12,0.2,1,1,6120e-5,2,3,2,1e-4,0],
-    [0.12,0.2,1,1,3871e-5,2,3,2,1e-4,0],
-    [0.12,0.2,1,1,3060e-5,2,3,2,1e-4,0],
-    [0,0,1,1,0,1,1,1,1e-4,0]]
+    #Properties sat functions: 1) swi [-], 2) sni [-], 3) krw [-], 4) krn [-], 5) pen [Bar], 6) nkrw [-],
+    #7) nkrn [-], 8) npen [-], 9) threshold cP evaluation, 10) ignore swi for cP? (sl* for cplog)
+    #11) npoints [-] (entry per layer, if hysteresis, additional entries per layer)
+    safu = [[0.14,0.1,1,1,8655e-5,2,2,2,1e-4,0,10000],
+    [0.12,0.1,1,1,6120e-5,2,2,2,1e-4,0,10000],
+    [0.12,0.1,1,1,3871e-5,2,2,2,1e-4,0,10000],
+    [0.12,0.1,1,1,3060e-5,2,2,2,1e-4,0,10000],
+    [0,0,1,1,0,1,1,1,1e-4,0,10000],
+    [0.14,0.2,1,1,8655e-5,2,3,2,1e-4,0,10000],
+    [0.12,0.2,1,1,6120e-5,2,3,2,1e-4,0,10000],
+    [0.12,0.2,1,1,3871e-5,2,3,2,1e-4,0,10000],
+    [0.12,0.2,1,1,3060e-5,2,3,2,1e-4,0,10000],
+    [0,0,1,1,0,1,1,1,1e-4,0,10000]]
 
 Since the 'activate perforations option' is set to 1, then we add an extra line after the 4 rock properties
-to define the ones in the perforations (Line 32). Since the hysteresis option is activated, then the 
+to define the ones in the perforations (Line 33). Since the hysteresis option is activated, then the 
 imbibition saturation functions are defined by adding as many additional lines as number of rocks (+1
-if the perforations are activated, lines 33 to 37 in this example).  
+if the perforations are activated, lines 34 to 38 in this example).
+
+.. note::
+
+    The hysteresis is activated for krn and pcap, no for krw. 
 
 Now for the rock properties:
 
 .. code-block:: python
     :linenos:
-    :lineno-start: 39
+    :lineno-start: 40
 
     #Properties rock: 1) Kxy [mD], 2) Kz [mD], 3) phi [-], 4) thickness [m], and 5) no cells in the z dir [-] (entry per layer)
     rock = [[101.324,10.1324,0.2,6,6],
@@ -130,7 +135,7 @@ top to the bottom on the left side of the domain and the injection is given as k
 
 .. code-block:: python
     :linenos:
-    :lineno-start: 46
+    :lineno-start: 47
 
     #Define the injection values (entry per change in the schedule): 
     #1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]
@@ -142,3 +147,11 @@ top to the bottom on the left side of the domain and the injection is given as k
 Here CO2 (non-wetting phase) is injected for seven days printing the results 70 times and limmiting the time step
 to 5e-2 days, after water (wetting phase) is injected for the same period at the same mass rate, and finally CO2 is 
 reinjected for the same period. 
+
+*********************
+Additional parameters
+*********************
+
+For different models than the co2store, new variables are used from the ones explained here. Then, in each of the 
+configuration files, a short description of the variable is added, e.g., for the saltprec model, then the poro-perm 
+relationship and the parameters per different facies can be set, see `saltprec.toml <https://github.com/cssr-tools/pyopmnearwell/blob/main/examples/saltprec.toml>`_.

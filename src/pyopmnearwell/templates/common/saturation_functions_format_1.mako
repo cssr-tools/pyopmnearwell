@@ -21,14 +21,14 @@ def krne(sw, swi, sni, krn, nkrn):
 
 def pcwce(sw, swi, sni, pen, npen):
     # Capillary pressure
-    return ${dic['pcap'].strip()}
+    return 0 if pen==0 else ${dic['pcap'].strip()}
 
 
 def safu_evaluation():
     # Saturation function assignation
 
     # Properties: swi, sni, krw, krn, pe
-    safu = [[0.0] * 10 for _ in range(${len(dic['safu'])})]
+    safu = [[0.0] * ${len(dic['safu'][0])} for _ in range(${len(dic['safu'])})]
     % for i, _ in enumerate(dic['safu']):
     % for j, _ in enumerate(dic['safu'][i]):
     safu[${i}][${j}] = ${dic['safu'][i][j]}
@@ -41,8 +41,12 @@ def safu_evaluation():
         encoding="utf8",
     ) as file:
         file.write("SGOF\n")
-        for _, para in enumerate(safu):
-            snatc = np.linspace(para[1], 1-para[0], 10000)
+        for j, para in enumerate(safu):
+            if j > 0:
+                if safu[j-1] == para:
+                    file.write("/\n")
+                    continue
+            snatc = np.linspace(para[1], 1-para[0], para[10])
             if para[1] > 0:
                 file.write(
                     f"{0:.6f}"

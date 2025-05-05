@@ -30,7 +30,7 @@ EQLDIMS
 /
 
 TABDIMS
-${(1*(dic["hysteresis"]!=0)+1)*(dic['satnum']+dic['perforations'][0])} 1* 10000 /
+${(1*(dic["hysteresis"]!=0)+1)*(dic['satnum']+dic['perforations'][0])} /
 
 % if dic["hysteresis"] !=0:
 SATOPTS
@@ -58,23 +58,23 @@ INCLUDE
 EDIT
 ----------------------------------------------------------------------------
 INCLUDE
-  'MULTPV.INC' /
+'MULTPV.INC' /
 %endif
 ----------------------------------------------------------------------------
 PROPS
 ----------------------------------------------------------------------------
 INCLUDE
-  'TABLES.INC' /
+'TABLES.INC' /
 
 % if dic["hysteresis"]!=0:
 EHYSTR
-  1  ${0 if dic["hysteresis"].upper()=="CARLSON" else 2}  2* KR /
+1* ${0 if dic["hysteresis"].upper()=="CARLSON" else 2} 2* BOTH /
 % endif
 ----------------------------------------------------------------------------
 REGIONS
 ----------------------------------------------------------------------------
 INCLUDE
-  'REGIONS.INC' /
+'REGIONS.INC' /
 ----------------------------------------------------------------------------
 SOLUTION
 ---------------------------------------------------------------------------
@@ -82,14 +82,14 @@ EQUIL
 0 ${dic['pressure']} ${mt.floor(dic["initialphase"]*dic['dims'][2])} 0 0 0 1 1 0 /
 
 RTEMPVD
-0   ${dic['temperature'][0]}
+0 ${dic['temperature'][0]}
 ${dic['dims'][2]} ${dic['temperature'][1]} /
 
 RVW
 ${dic['nocells'][0]*dic['nocells'][1]*dic['nocells'][2]}*0.0 /
 % if dic['write'] == 1:
 RPTRST 
- 'BASIC=2' DEN VISC /
+'BASIC=2' DEN VISC /
 % endif
 ----------------------------------------------------------------------------
 SUMMARY
