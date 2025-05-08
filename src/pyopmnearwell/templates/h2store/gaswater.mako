@@ -1,7 +1,7 @@
 <%
 import math as mt
 %>
--- Copyright (C) 2024 NORCE
+-- Copyright (C) 2025 NORCE
 ----------------------------------------------------------------------------
 RUNSPEC
 ----------------------------------------------------------------------------
@@ -44,7 +44,7 @@ GRID
 % if dic['write'] == 1:
 INIT
 % else:
-GRIDFILE                               
+GRIDFILE 
 0 0 /
 % endif
 INCLUDE
@@ -83,11 +83,12 @@ ${dic['dims'][2]} ${dic['temperature'][1]} /
 
 % if dic['write'] == 1:
 RPTRST 
- 'BASIC=2' DEN VISC /
+ 'BASIC=2' DEN VISC FLOWS /
 % endif
 ----------------------------------------------------------------------------
 SUMMARY
 ----------------------------------------------------------------------------
+PERFORMA
 FGMIP
 FGMIT
 FGMPT
@@ -142,6 +143,10 @@ FGIT
 
 FGPT
 
+FGMIR
+
+FGMPR
+
 FWIT
 
 WGIR
@@ -178,7 +183,7 @@ SCHEDULE
 ----------------------------------------------------------------------------
 % if dic['write'] == 1:
 RPTRST 
- 'BASIC=2' DEN VISC /
+ 'BASIC=2' DEN VISC FLOWS /
 % endif
 
 WELSPECS

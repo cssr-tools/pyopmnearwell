@@ -48,7 +48,7 @@ GRID
 % if dic['write'] == 1:
 INIT
 % else:
-GRIDFILE                               
+GRIDFILE 
 0 0 /
 % endif
 INCLUDE

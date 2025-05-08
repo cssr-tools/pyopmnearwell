@@ -1,0 +1,45 @@
+
+#Commands to generate the figures in the interpore2025 presentation for:
+#"Impact of hydrodynamics on microbial transport and growth in porous-reservoir hydrogen storage" 
+# pyopmnearwell -i h2interpore2025.toml -o h2 -g single
+# plopm -i h2/H2INTERPORE2025 -v porv -t 'Total pore volume = 7.217E6 m$^3$' -yformat .0f -cformat .0f -clabel 'porv [m$^3$]' -c terrain
+# plopm -i h2/H2INTERPORE2025 -v dx -s ,,1  -yformat .0f -cformat .2f -c turbo -t 'Top view' -f 16
+# plopm -i h2/H2INTERPORE2025 -v 'fgmir' -ylabel 'H$_2$ mass injection rate [kg/day]' -c b -lw 5 -loc empty -xlnum 7 -ylnum 6 -f 16
+# plopm -i h2/H2INTERPORE2025 -v 'fgmpr' -ylabel 'H$_2$ mass production rate [kg/day]' -c k -lw 5 -loc empty -xlnum 7 -ylnum 6 -f 16
+# plopm -i h2/H2INTERPORE2025 -v 'fgmpt / fgmit * 100' -ylabel 'Recovery factor [/%]' -c '#5ca904' -lw 5 -loc empty -xlnum 7 -ylnum 6 -f 16 -yformat .0f
+
+#Set mpirun, the full path to the flow executable, and simulator flags (except --output-dir)
+flow = "flow --relaxed-max-pv-fraction=0 --newton-min-iterations=1 --enable-opm-rst-file=true --enable-well-operability-check=false --min-time-step-before-shutting-problematic-wells-in-days=1e-99 --linear-solver=cpr_trueimpes --time-step-control=newtoniterationcount --newton-max-iterations=12 --solver-growth-factor=1.6 --time-step-control-growth-rate=1.1 --solver-restart-factor=0.2 --time-step-control-decay-rate=0.65"
+
+#Set the model parameters
+model = "h2store" #Model: co2store, co2eor, foam, h2store, or saltprec
+template = "gaswater" #Template file (see src/pyopmnearwell/templates/)
+grid = "cake" #Grid type: cake, radial, core, cartesian2d, coord2d, tensor2d, cartesian, cpg3d, coord3d, or tensor3d
+adim = 60 #Grid cake/radial: theta [degrees]; core: input/output pipe length [m]; cartesian2d, coord2d, tensor2d: width[m]
+xdim = 1000 #Length [m] (for cartesian/cpg3d/coord3d/tensor3d, Length=Width=2*xdim)
+xcn = [200] #Number of x-cells [-]; coordinates for grid type coord2d/coord3d [m]; numbers of x-cells for grid type tensor2d/tensor3d [-]
+xfac = 2.1 #Grid cake/radial/cartesian2d/cartesian/cpg3d: exponential factor for the telescopic x-gridding (0 to use an equidistant partition)
+diameter = 0.2 #Well diameter [m] 
+pressure = 40 #Pressure [Bar] on the top 
+temperature = [50,50] #Top and bottom temperatures [C]
+initialphase = 0 #Initial phase in the reservoir (0 wetting, 1 non-wetting)
+pvmult = -1 #Pore volume multiplier on the boundary [-] (-1 to ignore; 0 to use well producers instead)
+zxy = "100*(x/1000)**2" #The function for the reservoir surface
+
+#Set the saturation functions
+krw = "krw * ((sw - swi) / (1.0 - sni -swi)) ** nkrw"        #Wetting rel perm saturation function [-]
+krn = "krn * ((1.0 - sw - sni) / (1.0 - sni - swi)) ** nkrn" #Non-wetting rel perm saturation function [-]
+pcap = "pen * ((sw - swi) / (1.0 - swi)) ** (-(1.0 / npen))" #Capillary pressure saturation function [Bar]
+
+#Properties sat functions: 1) swi [-], 2) sni [-], 3) krw [-], 4) krn [-], 5) pen [Bar], 6) nkrw [-],
+#7) nkrn [-], 8) npen [-], 9) threshold cP evaluation, 10) ignore swi for cP? (sl* for cplog)
+#11) npoints [-] (entry per layer, if hysteresis, additional entries per layer)
+safu = [[0.15,0.1,1,1,0.0,2,2,2,1e-4,0,1000]]
+
+#Properties rock: 1) Kxy [mD], 2) Kz [mD], 3) phi [-], 4) thickness [m], and 5) no cells in the z dir [-] (entry per layer)
+rock = [[1013.25,101.325,0.25,50,50]]
+
+#Define the injection values (entry per change in the schedule): 
+#1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]
+#4) fluid (0 wetting, 1 non-wetting), 5) injection rates [kg/day] (for h2store, 6) minimum BHP for producer [Bar])
+inj = [[30,5,1,1,10000],[30,5,1,1,0],[30,5,1,1,-20000,3e1]]
