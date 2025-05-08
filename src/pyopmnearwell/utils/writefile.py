@@ -183,7 +183,7 @@ def manage_sections(dic):
         ) as file:
             file.write(filledtemplate)
     sections = []
-    if dic["model"] == "saltprec":
+    if dic["model"] in ["saltprec"] or dic["template"] in ["biofilm"]:
         sections.append("permfact")
         if dic["pcfact"] != 0:
             sections.append("pcfact")

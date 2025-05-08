@@ -40,7 +40,7 @@ def safu_evaluation():
         "w",
         encoding="utf8",
     ) as file:
-        file.write("SGOF\n")
+    file.write("SGOF\n")
         for j, para in enumerate(safu):
             if j > 0:
                 if safu[j-1] == para:

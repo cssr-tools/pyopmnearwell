@@ -1,21 +1,17 @@
 <%
 import math as mt
 %>
--- Copyright (C) 2023 NORCE
+-- Copyright (C) 2025 NORCE
 ----------------------------------------------------------------------------
 RUNSPEC
 ----------------------------------------------------------------------------
 DIMENS 
-%if dic['grid']== 'core':
 ${dic['nocells'][0]} ${dic['nocells'][1]} ${dic['nocells'][2]} /
-%else:
-${max(dic['nocells'][0],dic['nocells'][1])} ${dic['nocells'][1]} ${dic['nocells'][2]} /
-%endif
 
 WATER
 GAS
-DISGASW
 H2STORE
+DISGASW
 
 METRIC
 
@@ -30,15 +26,15 @@ EQLDIMS
 /
 
 TABDIMS
-${(1*(dic["hysteresis"]!=0)+1)*(dic['satnum']+dic['perforations'][0])} /
+${(dic["hysteresis"]+1)*(dic['satnum']+dic['perforations'][0])} 1* 10000 /
 
-% if dic["hysteresis"] !=0:
+% if dic["hysteresis"] ==1:
 SATOPTS
  HYSTER  /
 % endif
 
 WELLDIMS
-6 ${dic['nocells'][0]} 6 6 /
+6 ${dic['nocells'][2]} 6 6 /
 
 UNIFIN
 UNIFOUT
@@ -58,23 +54,23 @@ INCLUDE
 EDIT
 ----------------------------------------------------------------------------
 INCLUDE
-'MULTPV.INC' /
+  'MULTPV.INC' /
 %endif
 ----------------------------------------------------------------------------
 PROPS
 ----------------------------------------------------------------------------
 INCLUDE
-'TABLES.INC' /
+  'TABLES.INC' /
 
-% if dic["hysteresis"]!=0:
+% if dic["hysteresis"] ==1:
 EHYSTR
-1* ${0 if dic["hysteresis"].upper()=="CARLSON" else 2} 2* BOTH /
+  1  ${dic["hyst_model"]}  2* KR /
 % endif
 ----------------------------------------------------------------------------
 REGIONS
 ----------------------------------------------------------------------------
 INCLUDE
-'REGIONS.INC' /
+  'REGIONS.INC' /
 ----------------------------------------------------------------------------
 SOLUTION
 ---------------------------------------------------------------------------
@@ -82,19 +78,23 @@ EQUIL
 0 ${dic['pressure']} ${mt.floor(dic["initialphase"]*dic['dims'][2])} 0 0 0 1 1 0 /
 
 RTEMPVD
-0 ${dic['temperature'][0]}
+0   ${dic['temperature'][0]}
 ${dic['dims'][2]} ${dic['temperature'][1]} /
 
-RVW
-${dic['nocells'][0]*dic['nocells'][1]*dic['nocells'][2]}*0.0 /
 % if dic['write'] == 1:
 RPTRST 
-'BASIC=2' DEN VISC /
+ 'BASIC=2' DEN VISC FLOWS /
 % endif
 ----------------------------------------------------------------------------
 SUMMARY
--------------------------------------------------------------------------
-PERFORMA---
+----------------------------------------------------------------------------
+PERFORMA
+FGMIP
+FGMIT
+FGMPT
+FGIP
+FWIP
+
 CGIR
  INJ0 /
  PRO0 /
@@ -143,6 +143,10 @@ FGIT
 
 FGPT
 
+FGMIR
+
+FGMPR
+
 FWIT
 
 WGIR
@@ -178,22 +182,18 @@ WPI
 SCHEDULE
 ----------------------------------------------------------------------------
 % if dic['write'] == 1:
-RPTRST
- 'BASIC=2' DEN VISC /
+RPTRST 
+ 'BASIC=2' DEN VISC FLOWS /
 % endif
+
 WELSPECS
-'INJ0'	'G1' 1 1	1*	'GAS' 2* 'STOP' ${'NO' if dic["xflow"] > 0 else ''} /
-'PRO0'	'G1' 1 1	1*	'GAS' 2* 'STOP' ${'NO' if dic["xflow"] > 0 else ''} /
+'INJ0'	'G1'	1 ${1+mt.floor(dic['nocells'][2]/2)}	1*	'GAS' 2* 'STOP' ${'NO' if dic["xflow"] > 0 else ''} /
+'PRO0'	'G1'	1 ${1+mt.floor(dic['nocells'][2]/2)}	1*	'GAS' 2* 'STOP' ${'NO' if dic["xflow"] > 0 else ''} /
 /
 COMPDAT
-% for i in range(dic['nocells'][0]):
-'INJ0' ${1+i} 1 1 1 'OPEN' 1* ${f"1* {dic['diameter']}" if dic["confact"] == 0 else dic["confact"]} /
-% endfor
-% for i in range(dic['nocells'][0]):
-'PRO0' ${1+i} 1 1 1 'OPEN' 1* ${f"1* {dic['diameter']}" if dic["confact"] == 0 else dic["confact"]} /
-% endfor
+'INJ0'	1	${1+mt.floor(dic['nocells'][1]/2)}	${1+mt.floor(dic['nocells'][1]/2)}	${1+mt.floor(dic['nocells'][2]/2)}	'OPEN' 1*	${dic["confact"]}	 /
+'PRO0'	1   ${1+mt.floor(dic['nocells'][1]/2)}	${1+mt.floor(dic['nocells'][1]/2)}	${1+mt.floor(dic['nocells'][2]/2)}	'OPEN' 1*	${dic["confact"]} /
 /
-
 % for j in range(len(dic['inj'])):
 TUNING
 1e-2 ${dic['inj'][j][2]} 1e-10 2* 1e-12/
@@ -211,11 +211,9 @@ WCONINJE
 WCONPROD
 'PRO0' ${'OPEN' if dic['inj'][j][4] < 0 else 'SHUT'} 'GRAT' 2* ${f"{abs(dic['inj'][j][4]) / 0.0850397 : E}"} 2* ${dic['inj'][j][5] if dic['inj'][j][4] < 0 else ''}/
 /
-% if dic['econ']>0:
 WECON
 'PRO0' 1* ${f"{dic['econ']*abs(dic['inj'][j][4]) / 0.0850397 : E}"} /
 /
-% endif
 TSTEP
 ${mt.floor(dic['inj'][j][0]/dic['inj'][j][1])}*${dic['inj'][j][1]}
 /
