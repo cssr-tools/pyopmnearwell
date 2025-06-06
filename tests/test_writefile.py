@@ -40,9 +40,7 @@ def test_reservoir_files(
         assert not (preprocessing_fol / "TABLES.INC").exists()
     if recalc_sections:
         assert (preprocessing_fol / "GEOLOGY.INC").exists()
-        assert (preprocessing_fol / "REGIONS.INC").exists()
         assert (preprocessing_fol / "MULTPV.INC").exists()
     else:
         assert not (preprocessing_fol / "GEOLOGY.INC").exists()
-        assert not (preprocessing_fol / "REGIONS.INC").exists()
         assert not (preprocessing_fol / "MULTPV.INC").exists()

@@ -40,8 +40,8 @@ def pcfact_evaluation():
         file.write("-- Copyright (C) 2025 NORCE\n")
         file.write("PCFACT\n")
         for i, para in enumerate(vals):
-            if i > 0:
-                if vals[i-1] == para:
+            if i>0:
+                if vals[i-1]==para:
                     file.write("/\n")
                     continue
             file.write(f"0.0 {pcfact(para[0], ${parm})}\n")
@@ -51,5 +51,5 @@ def pcfact_evaluation():
         for i in range(${len(dic['safu'])-len(dic['popevals'])}):
             file.write("/\n")
 
-if __name__ == "__main__":
+if __name__=="__main__":
     pcfact_evaluation()

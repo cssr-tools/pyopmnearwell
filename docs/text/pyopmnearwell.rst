@@ -10,13 +10,12 @@ Subpackages
    pyopmnearwell.core
    pyopmnearwell.ml
    pyopmnearwell.utils
-   pyopmnearwell.visualization
 
 Module contents
 ---------------
 
 .. automodule:: pyopmnearwell
    :members:
-   :undoc-members:
-   :show-inheritance:
    :private-members:
+   :show-inheritance:
+   :undoc-members:

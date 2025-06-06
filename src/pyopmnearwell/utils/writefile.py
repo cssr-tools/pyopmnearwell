@@ -34,7 +34,7 @@ def reservoir_files(
             - recalc_tables (bool): Whether to recalculate the ``TABLES.INC``file.
                 Defaults to True.
             - recalc_sections (bool): Whether to recalculate the ``GEOLOGY.INC`` and
-                ``REGIONS.INC`` files. Defaults to True.
+                ``FLUXNUM.INC`` files. Defaults to True.
             - inc_folder (pathlib.Path): If any of the mentioned files is not
                 recalculated, they are taken from this folder. Defaults to
                 ``pathlib.Path("")``.
@@ -61,7 +61,7 @@ def reservoir_files(
             "dy_file": "DY.INC",
             "tables_file": "TABLES.INC",
             "geology_file": "GEOLOGY.INC",
-            "regions_file": "REGIONS.INC",
+            "fluxnum_file": "FLUXNUM.INC",
         }
     )
     if not "fprep" in dic:
@@ -120,8 +120,8 @@ def reservoir_files(
         dic.update(
             {
                 "geology_file": f"'{inc_folder / 'GEOLOGY.INC'}'",
-                "regions_file": f"'{inc_folder / 'REGIONS.INC'}'",
                 "multpv_file": f"'{inc_folder / 'MULTPV.INC'}'",
+                "fluxnum_file": f"'{inc_folder / 'FLUXNUM.INC'}'",
             }
         )
 
@@ -167,9 +167,12 @@ def manage_sections(dic):
         dic (dict): Global dictionary with required parameters
 
     """
-    sections = ["geology", "regions"]
+    sections = ["geology"]
     if dic["pvmult"] > 0:
         sections.append("multpv")
+    if dic["fluxnum"]:
+        sections.append("fluxnum")
+    get_spaces(dic)
     for section in sections:
         var = {"dic": dic}
         filledtemplate: str = fill_template(
@@ -214,6 +217,23 @@ def manage_sections(dic):
             os.system(f"rm {pytables}")
 
 
+def get_spaces(dic):
+    """
+    Improve the format of the files by aligning the values
+
+    Args:
+        dic (dict): Global dictionary with required parameters
+
+    """
+    dic["whsp"], dic["whnz"] = 0, 0
+    if not dic["fluxnum"]:
+        return
+    dic["whnz"] = len(str(dic["nocells"][2]))
+    for rock in dic["rock"]:
+        for i in range(3):
+            dic["whsp"] = max(dic["whsp"], len(str(rock[i])))
+
+
 def manage_tables(dic):
     """
     Function to write the saturation function tables
@@ -250,7 +270,6 @@ def manage_tables(dic):
     )
     if prosc.returncode != 0:
         raise ValueError(f"Invalid result: { prosc.returncode }")
-    # exit()
     os.system(f"rm {pytables}")
 
 
@@ -340,10 +359,8 @@ def handle_core(dic):
         dic (dict): Global dictionary with new added parameters
 
     """
-    dic["coregeometry"] = np.ones(
-        dic["nocells"][0] * dic["nocells"][2] * dic["nocells"][2]
-    )
-    indx = 0
+    dic["coregeometry"] = ["MULTPV\n"]
+    act, ina = 0, 0
     for k in range(dic["nocells"][2]):
         for j in range(dic["nocells"][2]):
             for i in range(dic["nocells"][0]):
@@ -361,7 +378,15 @@ def handle_core(dic):
                     ) ** 2 > (
                         0.5 * dic["dims"][2] / dic["nocells"][2]
                     ) ** 2:
-                        dic["coregeometry"][indx] = 0
+                        if act > 0:
+                            dic["coregeometry"].append(f"{act}* ")
+                            act = 0
+                        ina += 1
+                    else:
+                        if ina > 0:
+                            dic["coregeometry"].append(f"{ina}*0 ")
+                            ina = 0
+                        act += 1
                 elif (
                     (k + 0.5) * dic["dims"][2] / dic["nocells"][2]
                     - 0.5 * dic["dims"][2]
@@ -371,8 +396,20 @@ def handle_core(dic):
                 ) ** 2 > (
                     0.5 * dic["dims"][2]
                 ) ** 2:
-                    dic["coregeometry"][indx] = 0
-                indx += 1
+                    if act > 0:
+                        dic["coregeometry"].append(f"{act}* ")
+                        act = 0
+                    ina += 1
+                else:
+                    if ina > 0:
+                        dic["coregeometry"].append(f"{ina}*0 ")
+                        ina = 0
+                    act += 1
+    if ina > 0:
+        dic["coregeometry"].append(f"{ina}*0 ")
+    elif act > 0:
+        dic["coregeometry"].append(f"{act}* ")
+    dic["coregeometry"].append("/")
     dic["dims"][1] = dic["dims"][2]
     dic["nocells"][1] = dic["nocells"][2]
     return dic
@@ -411,6 +448,8 @@ def d3_grids(dic, dxarray):
         ) as file:
             file.write(filledtemplate)
     else:
+        if dic["model"] in ["co2eor", "foam"]:
+            return dic
         dyarray = []
         for i in range(dic["nocells"][1] - 1):
             for _ in range(dic["nocells"][1]):

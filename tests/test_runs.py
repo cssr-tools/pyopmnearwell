@@ -23,10 +23,3 @@ def test_simulations(input_dict: dict[str, Any], prepare_runfiles: None):
     # Check that the expected files were created.
     output_fol: pathlib.Path = input_dict["fol"] / "output"
     assert (output_fol / "TEST_RUN.EGRID").exists()
-    assert (output_fol / "xspace.npy").exists()
-    assert (output_fol / "zspace.npy").exists()
-    assert (output_fol / "ny.npy").exists()
-    assert (output_fol / "schedule.npy").exists()
-    assert (output_fol / "radius.npy").exists()
-    assert (output_fol / "angle.npy").exists()
-    assert (output_fol / "position.npy").exists()

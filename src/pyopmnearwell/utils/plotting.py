@@ -5,38 +5,8 @@ from __future__ import annotations
 import pathlib
 import pickle
 
-import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
-
-
-def set_latex_params(latex: bool = True) -> None:
-    """Set the LaTeX parameters for matplotlib.
-
-    This function sets the font to be sans-serif and the text to be normal weight.
-
-    Returns:
-        None
-
-    """
-    font = {"family": "normal", "weight": "normal", "size": 16}
-    matplotlib.rc("font", **font)
-    plt.rcParams.update(
-        {
-            "text.usetex": latex,
-            "font.family": "sans-serif",
-            "svg.fonttype": "path",
-            "legend.columnspacing": 0.9,
-            "legend.handlelength": 1.5,
-            "legend.fontsize": 14,
-            "lines.linewidth": 4,
-            "axes.titlesize": 16,
-            "axes.grid": True,
-        }
-    )
-
-
-set_latex_params(True)
 
 
 def save_fig_and_data(fig: Figure, path: str | pathlib.Path) -> None:

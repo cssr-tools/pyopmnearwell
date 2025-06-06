@@ -90,7 +90,7 @@
 linting completely. It is possible that the module is not functional at the moment.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.scaler_layers.MinMaxScalerLayer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.scaler_layers.</span></span><span class="sig-name descname"><span class="pre">MinMaxScalerLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.MinMaxScalerLayer" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.scaler_layers.</span></span><span class="sig-name descname"><span class="pre">MinMaxScalerLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.MinMaxScalerLayer" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer" title="pyopmnearwell.ml.scaler_layers.ScalerLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalerLayer</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Layer</span></code></p>
 <p>Scales the input according to MinMaxScaling.</p>
 <p>See
@@ -194,13 +194,16 @@ for an explanation of the transform.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_own_variables</span></code>(store)</p></td>
 <td><p>Loads the state of the layer.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_own_variables</span></code>(store)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rematerialized_call</span></code>(layer_call, *args, **kwargs)</p></td>
+<td><p>Enable rematerialization dynamically for layer's call method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_own_variables</span></code>(store)</p></td>
 <td><p>Saves the state of the layer.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_weights</span></code>(weights)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_weights</span></code>(weights)</p></td>
 <td><p>Set parameters of the scaling.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stateless_call</span></code>(trainable_variables, ...[, ...])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stateless_call</span></code>(trainable_variables, ...[, ...])</p></td>
 <td><p>Call the layer without any side effects.</p></td>
 </tr>
 </tbody>
@@ -243,7 +246,7 @@ for an explanation of the transform.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.scaler_layers.MinMaxScalerLayer.from_config">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.MinMaxScalerLayer.from_config" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.MinMaxScalerLayer.from_config" title="Link to this definition"></a></dt>
 <dd><p>Reconstruct the layer from its config.</p>
 </dd></dl>
 
@@ -257,7 +260,7 @@ for an explanation of the transform.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.scaler_layers.MinMaxUnScalerLayer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.scaler_layers.</span></span><span class="sig-name descname"><span class="pre">MinMaxUnScalerLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.MinMaxUnScalerLayer" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.scaler_layers.</span></span><span class="sig-name descname"><span class="pre">MinMaxUnScalerLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.MinMaxUnScalerLayer" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer" title="pyopmnearwell.ml.scaler_layers.ScalerLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalerLayer</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Layer</span></code></p>
 <p>Unscales the input by applying the inverse transform of <code class="docutils literal notranslate"><span class="pre">MinMaxScalerLayer</span></code>.</p>
 <p>See
@@ -358,13 +361,16 @@ for an explanation of the transformation.</p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_own_variables</span></code>(store)</p></td>
 <td><p>Loads the state of the layer.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_own_variables</span></code>(store)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rematerialized_call</span></code>(layer_call, *args, **kwargs)</p></td>
+<td><p>Enable rematerialization dynamically for layer's call method.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_own_variables</span></code>(store)</p></td>
 <td><p>Saves the state of the layer.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_weights</span></code>(weights)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_weights</span></code>(weights)</p></td>
 <td><p>Set parameters of the scaling.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stateless_call</span></code>(trainable_variables, ...[, ...])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stateless_call</span></code>(trainable_variables, ...[, ...])</p></td>
 <td><p>Call the layer without any side effects.</p></td>
 </tr>
 </tbody>
@@ -410,7 +416,7 @@ for an explanation of the transformation.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.scaler_layers.MinMaxUnScalerLayer.from_config">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.MinMaxUnScalerLayer.from_config" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.MinMaxUnScalerLayer.from_config" title="Link to this definition"></a></dt>
 <dd><p>Reconstruct the layer from its config.</p>
 </dd></dl>
 
@@ -424,7 +430,7 @@ for an explanation of the transformation.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.scaler_layers.ScalerLayer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.scaler_layers.</span></span><span class="sig-name descname"><span class="pre">ScalerLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.scaler_layers.</span></span><span class="sig-name descname"><span class="pre">ScalerLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Layer</span></code></p>
 <p>MixIn to provide functionality for the Scaler Layer.</p>
 <dl class="field-list simple">
@@ -519,13 +525,16 @@ for an explanation of the transformation.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_own_variables</span></code>(store)</p></td>
 <td><p>Loads the state of the layer.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_own_variables</span></code>(store)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rematerialized_call</span></code>(layer_call, *args, **kwargs)</p></td>
+<td><p>Enable rematerialization dynamically for layer's call method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_own_variables</span></code>(store)</p></td>
 <td><p>Saves the state of the layer.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer.set_weights" title="pyopmnearwell.ml.scaler_layers.ScalerLayer.set_weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_weights</span></code></a>(weights)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer.set_weights" title="pyopmnearwell.ml.scaler_layers.ScalerLayer.set_weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_weights</span></code></a>(weights)</p></td>
 <td><p>Set parameters of the scaling.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stateless_call</span></code>(trainable_variables, ...[, ...])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stateless_call</span></code>(trainable_variables, ...[, ...])</p></td>
 <td><p>Call the layer without any side effects.</p></td>
 </tr>
 </tbody>
@@ -593,17 +602,17 @@ not been initialized yet.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.scaler_layers.ScalerLayer.data_max">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_max</span></span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer.data_max" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_max</span></span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer.data_max" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.scaler_layers.ScalerLayer.data_min">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_min</span></span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer.data_min" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_min</span></span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer.data_min" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.scaler_layers.ScalerLayer.feature_range">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_range</span></span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer.feature_range" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_range</span></span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer.feature_range" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -619,7 +628,7 @@ not been initialized yet.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.scaler_layers.ScalerLayer.is_adapted">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_adapted</span></span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer.is_adapted" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_adapted</span></span><a class="headerlink" href="#pyopmnearwell.ml.scaler_layers.ScalerLayer.is_adapted" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

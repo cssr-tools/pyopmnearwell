@@ -93,7 +93,7 @@ pylint: pointless-string-statement is disabled, as it complains an attribute doc
 in the <code class="docutils literal notranslate"><span class="pre">Upscaler</span></code> protocol.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.BaseUpscaler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.upscale.</span></span><span class="sig-name descname"><span class="pre">BaseUpscaler</span></span><a class="headerlink" href="#pyopmnearwell.ml.upscale.BaseUpscaler" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.upscale.</span></span><span class="sig-name descname"><span class="pre">BaseUpscaler</span></span><a class="headerlink" href="#pyopmnearwell.ml.upscale.BaseUpscaler" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
 <p>Extract and upscale data from an array of ensemble data.</p>
 <p>This base class provides several methods to extract features from fine-scale radial
@@ -159,7 +159,7 @@ The target array will have shape <code class="docutils literal notranslate"><spa
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.BaseUpscaler.create_ds">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_ds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.upscale.BaseUpscaler.create_ds" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_ds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.upscale.BaseUpscaler.create_ds" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -325,7 +325,7 @@ random (bool, optional): If True, select elements randomly instead of using</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.Upscaler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.upscale.</span></span><span class="sig-name descname"><span class="pre">Upscaler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.upscale.</span></span><span class="sig-name descname"><span class="pre">Upscaler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Protocol</span></code></p>
 <p>Protocol class for upscalers.</p>
 <p>This class is used for typing of abstract attributes of <code class="docutils literal notranslate"><span class="pre">BaseUpscaler</span></code>. MyPy will
@@ -369,32 +369,32 @@ annotations.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.Upscaler.angle">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">angle</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler.angle" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">angle</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler.angle" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.Upscaler.num_layers">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_layers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler.num_layers" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_layers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler.num_layers" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.Upscaler.num_timesteps">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_timesteps</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler.num_timesteps" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_timesteps</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler.num_timesteps" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.Upscaler.num_xcells">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_xcells</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler.num_xcells" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_xcells</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler.num_xcells" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.Upscaler.num_zcells">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_zcells</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler.num_zcells" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_zcells</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler.num_zcells" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.upscale.Upscaler.single_feature_shape">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">single_feature_shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler.single_feature_shape" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">single_feature_shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span></em><a class="headerlink" href="#pyopmnearwell.ml.upscale.Upscaler.single_feature_shape" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

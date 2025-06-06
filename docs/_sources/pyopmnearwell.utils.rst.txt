@@ -20,6 +20,6 @@ Module contents
 
 .. automodule:: pyopmnearwell.utils
    :members:
-   :undoc-members:
-   :show-inheritance:
    :private-members:
+   :show-inheritance:
+   :undoc-members:

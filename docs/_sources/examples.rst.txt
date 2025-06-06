@@ -2,50 +2,28 @@
 Examples
 ********
 
-Water injection
----------------
+Hello world
+-----------
 In this example we consider the configuration file 'h2o.toml' available in the 
 examples folder (`link to the file <https://github.com/cssr-tools/pyopmnearwell/blob/main/examples/h2o.toml>`_), where
 the co2store model is used and only water is injected in a radial grid.
 
-If the generated files are to be saved in a folder called 'h2o_radial', then this is achieved by the following command:
+If the generated files are to be saved in a folder called 'hello_world', then this is achieved by the following command:
 
 .. code-block:: bash
 
-    pyopmnearwell -i h2o.toml -o h2o_radial
+    pyopmnearwell -i h2o.toml -o hello_world
 
-We change the grid to a 3D catesian grid:
-
-.. code-block:: python
-    :linenos:
-    :lineno-start: 7
-
-    grid = "cartesian" #Grid type: cake, radial, core, cartesian2d, coord2d, tensor2d, cartesian, cpg3d, coord3d, or tensor3d
-    adim = 100 #Grid cake/radial: theta [degrees]; core: input/output pipe length [m]; cartesian2d, coord2d, tensor2d: width[m]
-
-and increase the injection rate 6 times (this to be comparable since the radial grid has an angle of 60).
-
-.. code-block:: python
-    :linenos:
-    :lineno-start: 32
-
-    inj = [[1e-1,1e-1,5e-2,0,360000]]
-
-We run again the configuration file and save it in a different folder:
+To visualize the results, this can be achieved by using plopm, for example:
 
 .. code-block:: bash
 
-    pyopmnearwell -i h2o.toml -o h2o_cartesian
-
-To compare the results in the radial and cartesian folder, then it is enough to write in the terminal:
-
-.. code-block:: bash
-
-    pyopmnearwell -c compare
-
-The following figure compares the pressure profile for both simulations (pressure_1D_single_layer_xnormal.png inside the compare folder):
+    plopm -i hello_world/output/H2O -v pressure -s ,,1 -t 'Top view at the end of the simulation' -c bwr -xformat .0f -cformat .0f 
 
 .. figure:: figs/pressure_1D.png
+
+.. tip::
+    You can install `plopm <https://github.com/cssr-tools/plopm>`_ by executing in the terminal: pip install git+https://github.com/cssr-tools/plopm.git.
 
 
 CO2 cyclic injection
@@ -61,21 +39,11 @@ If the generated files are to be saved in a folder called 'co2', then this is ac
 
     pyopmnearwell -i co2.toml -o co2
 
-The execution time was c.a. 20 seconds and the following is an animation using
-ResInsight to visualize the gas saturation:
+The execution time was c.a. 20 seconds and the following is an animation using ResInsight to visualize the gas saturation:
 
 .. figure:: figs/saturation.gif
 
     Simulation results of the gas saturation.
-
-The following are some of the plots created by the **pyopmnearwell** executable:
-
-.. figure:: figs/permeability_2D.png
-.. figure:: figs/w_rate.png
-.. figure:: figs/nearwell_saturation.png
-    
-    Permeability (top), CO2 injection schedule (middle), and saturation values over time on the cells along the well location
-    at three different locations (bottom).
 
 CCUS (machine learning)
 -----------------------

@@ -102,7 +102,6 @@
 <li><p>Set the rock and fluid properties.</p></li>
 <li><p>Define the injection schedule.</p></li>
 <li><p>Run the simulations.</p></li>
-<li><p>Inspect the results by looking at the generated figures.</p></li>
 </ul>
 </section>
 <section id="overview">
@@ -119,38 +118,22 @@
 <dt><kbd><span class="option">-o</span></kbd></dt>
 <dd><p>The base name of the <a class="reference internal" href="output_folder.html"><span class="doc">output folder</span></a> (‘output’ by default).</p>
 </dd>
-<dt><kbd><span class="option">-p</span></kbd></dt>
-<dd><p>Using the ‘resdata’ or ‘opm’ Python package to generate the figures (‘resdata’ by default, ‘off’ to skip the plotting).</p>
-</dd>
-<dt><kbd><span class="option">-c</span></kbd></dt>
-<dd><p>Compare the results from different output folders (write any name to actiate, ‘’ by default).</p>
-</dd>
-<dt><kbd><span class="option">-g</span></kbd></dt>
-<dd><p>Run the whole framework (‘all’), only run flow (‘flow’), only write the deck and run flow together in the output folder (‘single’), or only create plots (‘plot’) (‘all’ by default).</p>
+<dt><kbd><span class="option">-m</span></kbd></dt>
+<dd><p>Run the whole framework (‘all’), only generate the deck (‘deck’), or only run flow (‘flow’), or generate the deck and run flow in the same output folder (‘single’) (‘all’ by default).</p>
 </dd>
 <dt><kbd><span class="option">-v</span></kbd></dt>
 <dd><p>Write cell values, i.e., EGRID, INIT, UNRST (‘1’ by default).</p>
 </dd>
-<dt><kbd><span class="option">-z</span></kbd></dt>
-<dd><p>xlim in meters for the zoomed in plots (20 by default).</p>
-</dd>
-<dt><kbd><span class="option">-s</span></kbd></dt>
-<dd><p>Scale for the x axis in the figures: ‘normal’ or ‘log’ (‘normal’ by default).</p>
-</dd>
-<dt><kbd><span class="option">-m</span></kbd></dt>
-<dd><p>Simulated model (5th row in the configuration file). This is used for the plotting compare method (it gets overwritten by the configuration file) (‘co2store’ by default).</p>
-</dd>
 <dt><kbd><span class="option">-w</span></kbd></dt>
 <dd><p>Set to 1 to print warnings (‘0’ by default).</p>
 </dd>
-<dt><kbd><span class="option">-l</span></kbd></dt>
-<dd><p>Set to 0 to not use LaTeX formatting (‘1’ by default).</p>
-</dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The plotting functionality works for co2store, h2store, and saltprec models, and all grids except the core sample. To generate
-PNGs and GIFs of the other models and core samples, you could use <a class="reference external" href="https://github.com/cssr-tools/plopm">plopm</a>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The plotting functionality in <strong>pyopmnearwell</strong> has been retired in the release 2025.04. Instead, to generate
+PNGs and GIFs of the simulation results, you could use <a class="reference external" href="https://github.com/cssr-tools/plopm">plopm</a>, where previous functionality in
+the plotting routines in <strong>pyopmnearwell</strong> has been implemented such as distance of a variable (e.g., gas saturation) to the model boundaries,
+variable values along a given layer in the model, etc.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>

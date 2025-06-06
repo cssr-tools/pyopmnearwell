@@ -9,10 +9,11 @@ executing **pyopmnearwell**.
 
     Generated files after executing **pyopmnearwell**.
 
-The simulation results are saved in the output folder, and
-`ResInsight <https://resinsight.org>`_ can be used for the visualization.
+The deck is generated in the preprocessing folder, and the simulation results are saved in the output folder. 
+Then postprocessing tools such as `ResInsight <https://resinsight.org>`_ and `plopm <https://github.com/cssr-tools/plopm>`_ can be used for visualization of the results.
 Then after running **pyopmnearwell**, one could modify the generated OPM related files and 
-run directly the simulations calling the Flow solvers, e.g., to add tracers 
+run directly the simulations, e.g., to add different summary variables  
 (see the OPM Flow documentation `here <https://opm-project.org/?page_id=955>`_).
-In addition, some plots comparing the simulations in different parts of the reservoir are generated
-in the postprocessing folder.
+
+.. tip::
+    Using the flag **-m single** results in all files being in the same output folder.

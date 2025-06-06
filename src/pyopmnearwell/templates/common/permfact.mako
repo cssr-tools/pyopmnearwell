@@ -40,8 +40,8 @@ def pope_evaluation():
         file.write("-- Copyright (C) 2025 NORCE\n")
         file.write("PERMFACT\n")
         for i, para in enumerate(vals):
-            if i > 0:
-                if vals[i-1] == para:
+            if i>0:
+                if vals[i-1]==para:
                     file.write("/\n")
                     continue
             file.write(f"0.0 {pope(para[0], ${parm})}\n")
@@ -52,5 +52,5 @@ def pope_evaluation():
             file.write("/\n")
 
 
-if __name__ == "__main__":
+if __name__=="__main__":
     pope_evaluation()

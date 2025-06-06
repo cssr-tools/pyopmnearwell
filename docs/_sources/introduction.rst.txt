@@ -20,7 +20,6 @@ Simplified and flexible testing framework for near-well simulations via a
 - Set the rock and fluid properties.
 - Define the injection schedule.
 - Run the simulations.
-- Inspect the results by looking at the generated figures.
 
 Overview
 --------
@@ -35,19 +34,15 @@ where
 
 -i  The base name of the :doc:`configuration file <./configuration_file>` ('input.toml' by default).
 -o  The base name of the :doc:`output folder <./output_folder>` ('output' by default).
--p  Using the 'resdata' or 'opm' Python package to generate the figures ('resdata' by default, 'off' to skip the plotting).
--c  Compare the results from different output folders (write any name to actiate, '' by default).
--g  Run the whole framework ('all'), only run flow ('flow'), only write the deck and run flow together in the output folder ('single'), or only create plots ('plot') ('all' by default).
+-m  Run the whole framework ('all'), only generate the deck ('deck'), or only run flow ('flow'), or generate the deck and run flow in the same output folder ('single') ('all' by default). 
 -v  Write cell values, i.e., EGRID, INIT, UNRST ('1' by default).
--z  xlim in meters for the zoomed in plots (20 by default).
--s  Scale for the x axis in the figures: 'normal' or 'log' ('normal' by default).
--m  Simulated model (5th row in the configuration file). This is used for the plotting compare method (it gets overwritten by the configuration file) ('co2store' by default).
 -w  Set to 1 to print warnings ('0' by default).
--l  Set to 0 to not use LaTeX formatting ('1' by default).
 
-.. note::
-    The plotting functionality works for co2store, h2store, and saltprec models, and all grids except the core sample. To generate
-    PNGs and GIFs of the other models and core samples, you could use `plopm <https://github.com/cssr-tools/plopm>`_.
+.. tip::
+    The plotting functionality in **pyopmnearwell** has been retired in the release 2025.04. Instead, to generate
+    PNGs and GIFs of the simulation results, you could use `plopm <https://github.com/cssr-tools/plopm>`_, where previous functionality in
+    the plotting routines in **pyopmnearwell** has been implemented such as distance of a variable (e.g., gas saturation) to the model boundaries, 
+    variable values along a given layer in the model, etc.
 
 .. warning::
     The H2CH4 template in the h2store model folder is under development and it is based on an input deck available in 

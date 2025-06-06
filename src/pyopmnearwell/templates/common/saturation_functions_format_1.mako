@@ -42,12 +42,12 @@ def safu_evaluation():
     ) as file:
     file.write("SGOF\n")
         for j, para in enumerate(safu):
-            if j > 0:
-                if safu[j-1] == para:
+            if j>0:
+                if safu[j-1]==para:
                     file.write("/\n")
                     continue
             snatc = np.linspace(para[1], 1-para[0], para[10])
-            if para[1] > 0:
+            if para[1]>0:
                 file.write(
                     f"{0:.6f}"
                     f" 0.00000"
@@ -71,5 +71,5 @@ def safu_evaluation():
                     )
             file.write("/\n")
 
-if __name__ == "__main__":
+if __name__=="__main__":
     safu_evaluation()

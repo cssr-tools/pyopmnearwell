@@ -35,9 +35,9 @@ for i in range(mt.floor(len(GRATES) / NPRUNS)):
     command = ""
     for j in range(NPRUNS):
         if DELETE == 1:
-            command += f"pyopmnearwell -i co2eor_{NPRUNS*i+j}.toml -o co2eor_{NPRUNS*i+j} -g single -v 0 & "
+            command += f"pyopmnearwell -i co2eor_{NPRUNS*i+j}.toml -o co2eor_{NPRUNS*i+j} -m single -v 0 & "
         else:
-            command += f"pyopmnearwell -i co2eor_{NPRUNS*i+j}.toml -o co2eor_{NPRUNS*i+j} -g single & "
+            command += f"pyopmnearwell -i co2eor_{NPRUNS*i+j}.toml -o co2eor_{NPRUNS*i+j} -m single & "
     command += "wait"
     os.system(command)
     for j in range(NPRUNS):
@@ -50,9 +50,9 @@ remaining = len(GRATES) - finished
 command = ""
 for i in range(remaining):
     if DELETE == 1:
-        command += f"pyopmnearwell -i co2eor_{finished+i}.toml -o co2eor_{finished+i} -g single -v 0 & "
+        command += f"pyopmnearwell -i co2eor_{finished+i}.toml -o co2eor_{finished+i} -m single -v 0 & "
     else:
-        command += f"pyopmnearwell -i co2eor_{finished+i}.toml -o co2eor_{finished+i} -g single & "
+        command += f"pyopmnearwell -i co2eor_{finished+i}.toml -o co2eor_{finished+i} -m single & "
 command += "wait"
 os.system(command)
 for i in range(remaining):

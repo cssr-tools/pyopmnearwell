@@ -36,11 +36,11 @@ for i, time in enumerate(times):
 
 for i in range(round(npoints / npruns)):
     os.system(
-        f"pyopmnearwell -i h2_{npruns*i}.toml -o h2_{npruns*i} -p '' & "
-        + f"pyopmnearwell -i h2_{npruns*i+1}.toml -o h2_{npruns*i+1} -p '' & "
-        + f"pyopmnearwell -i h2_{npruns*i+2}.toml -o h2_{npruns*i+2} -p '' & "
-        + f"pyopmnearwell -i h2_{npruns*i+3}.toml -o h2_{npruns*i+3} -p '' & "
-        + f"pyopmnearwell -i h2_{npruns*i+4}.toml -o h2_{npruns*i+4} -p '' & wait"
+        f"pyopmnearwell -i h2_{npruns*i}.toml -o h2_{npruns*i} & "
+        + f"pyopmnearwell -i h2_{npruns*i+1}.toml -o h2_{npruns*i+1} & "
+        + f"pyopmnearwell -i h2_{npruns*i+2}.toml -o h2_{npruns*i+2} & "
+        + f"pyopmnearwell -i h2_{npruns*i+3}.toml -o h2_{npruns*i+3} & "
+        + f"pyopmnearwell -i h2_{npruns*i+4}.toml -o h2_{npruns*i+4} & wait"
     )
     for j in range(npruns):
         smspec = Summary(f"./h2_{npruns*i+j}/output/H2_{npruns*i+j}.SMSPEC")
