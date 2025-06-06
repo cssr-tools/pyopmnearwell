@@ -69,7 +69,7 @@ for i, schedule in enumerate(schedules):
 for i in range(mt.floor(nsimulations / NPRUNS)):
     command = ""
     for j in range(NPRUNS):
-        command += f"pyopmnearwell -i co2_{NPRUNS*i+j}.toml -o co2_{NPRUNS*i+j} -p '' & " 
+        command += f"pyopmnearwell -i co2_{NPRUNS*i+j}.toml -o co2_{NPRUNS*i+j} & " 
     command += 'wait'
     os.system(command)
     for j in range(NPRUNS):
@@ -105,7 +105,7 @@ finished = NPRUNS*mt.floor(nsimulations / NPRUNS)
 remaining = nsimulations - finished
 command = ""
 for i in range(remaining):
-    command += f"pyopmnearwell -i co2_{finished+i}.toml -o co2_{finished+i} -p '' & " 
+    command += f"pyopmnearwell -i co2_{finished+i}.toml -o co2_{finished+i} & " 
 command += 'wait'
 os.system(command)
 for j in range(remaining):

@@ -21,7 +21,7 @@ Contribute to the software
 #. Work on your own fork of the main repo
 #. In the main repo execute:
 
-    #. **pip install -r dev-requirements.txt** (this installs the `dev-requirements.txt <https://github.com/cssr-tools/pyopmnearwell/blob/main/dev-requirements.txt>`_; in addition, the opm Python package is required, then for not macOs users run **pip install opm**, or else follow the instructions in `macOS installation <https://cssr-tools.github.io/pyopmnearwell/installation.html#source-build-in-macos>`_)
+    #. **pip install -r dev-requirements.txt** (this installs the `dev-requirements.txt <https://github.com/cssr-tools/pyopmnearwell/blob/main/dev-requirements.txt>`_; in addition, the tensorflow Python package is required but not yet available for Python 3.13, then Python 3.12 is currently needed to run the tests)
     #. **black src/ tests/** (this formats the code)
     #. **pylint src/ tests/** (this analyses the code, and might rise issues that need to be fixed before the pull request)
     #. **mypy --ignore-missing-imports src/ tests/** (this is a static checker, and might rise issues that need to be fixed before the pull request)

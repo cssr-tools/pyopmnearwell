@@ -39,6 +39,7 @@ def process_input(dic, in_file):
     with open(in_file, "rb") as file:
         dic.update(tomllib.load(file))
     dic["satnum"] = len(dic["rock"]) - dic["perforations"][0]
+    dic["fluxnum"] = len(dic["rock"]) > 1
     if dic["hysteresis"] != 0:
         dic["imbnum"] = 2
     else:
@@ -63,4 +64,10 @@ def process_input(dic, in_file):
             sum(dic["zcn"]),
         ]
     dic["dims"] = [dic["xdim"], dic["adim"], zdim]
+    dic["tuning"] = False
+    for value in dic["flow"].split():
+        if "--enable-tuning" in value:
+            if value[16:] in ["true", "True", "1"]:
+                dic["tuning"] = True
+                break
     return dic

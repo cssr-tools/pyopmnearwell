@@ -48,5 +48,5 @@ rock = [[101.324,10.1324,0.2,6,6],
 #1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]
 #4) fluid (0 wetting, 1 non-wetting), 5) injection rates [kg/day]
 inj = [[7,1e-1,5e-2,1,57611.52],
-[7,1e-1,5e-2,0,57611.52],
+[7,1e-1,5e-2,0,1E4],
 [7,1e-1,5e-2,1,57611.52]]

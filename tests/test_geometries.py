@@ -33,7 +33,4 @@ def test_geometries(file: str, tmp_path):
     os.chdir(tmp_path)
     command = f"pyopmnearwell -i {file}.toml -o {file} & wait"
     os.system(command)
-    if file == "core":
-        assert (tmp_path / file / "output" / "CORE.UNRST").exists()
-    else:
-        assert (tmp_path / file / "postprocessing" / "saturation_2D.png").exists()
+    assert (tmp_path / file / "output" / f"{file.upper()}.UNRST").exists()

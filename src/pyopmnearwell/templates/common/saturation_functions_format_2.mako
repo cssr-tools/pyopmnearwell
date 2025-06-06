@@ -33,7 +33,7 @@ def safu_evaluation():
     % for i, _ in enumerate(dic['safu']):
     % for j, _ in enumerate(dic['safu'][i]):
     safug[${i}][${j}] = ${dic['safu'][i][j]}
-    % if dic["imbnum"] == 2 and j == 1 and len(dic['safu'])/dic["imbnum"] <= i:
+    % if dic["imbnum"]==2 and j==1 and len(dic['safu'])/dic["imbnum"] <= i:
     safuw[${i}][${j}] = ${dic['safu'][int(i%len(dic['safu'])/dic["imbnum"])][j]}
     % else:
     safuw[${i}][${j}] = ${dic['safu'][i][j]}
@@ -48,45 +48,45 @@ def safu_evaluation():
     ) as file:
         file.write("SGFN\n")
         for j, para in enumerate(safug):
-            if j > 0:
-                if safug[j-1] == para:
+            if j>0:
+                if safug[j-1]==para:
                     file.write("/\n")
                     continue
             sco2 = np.linspace(para[1], 1 - para[0], para[10])
-            if sco2[0] > 0:
+            if sco2[0]>0:
                 file.write(
-                    f"0.00000 {max(0,krne(1-sco2[0], para[0], para[1], para[3], para[6])):.6f}"
-                    f" 0.00000 \n"
+                    f"{0:E} {0:E}"
+                    f" {0:E} \n"
                 )
             for i, value in enumerate(sco2[:-1]):
                 file.write(
-                    f"{value:E} {max(0,krne(1-sco2[i], para[0], para[1], para[3], para[6])):.6f}"
-                    f" 0.00000 \n"
+                    f"{value:E} {max(0,krne(1-sco2[i], para[0], para[1], para[3], para[6])):E}"
+                    f" {0:E} \n"
                 )
             file.write(
-                    f"{sco2[-1]:E} {max(0,krne(1-sco2[-1], para[0], para[1], para[3], para[6])):.6f}"
-                    f" 0.00000 \n"
+                    f"{sco2[-1]:E} {max(0,krne(1-sco2[-1], para[0], para[1], para[3], para[6])):E}"
+                    f" {0:E} \n"
                 )
             file.write("/\n")
         file.write("SWFN\n")
         for j, para in enumerate(safuw):
-            if j > 0:
-                if safuw[j-1] == para:
+            if j>0:
+                if safuw[j-1]==para:
                     file.write("/\n")
                     continue
-            if para[9] == 1. or  para[9] == 0. :
+            if para[9]==1. or  para[9]==0. :
                 swatc = np.linspace((1.-para[9])*para[0], 1-0*para[1], para[10])
                 for i, value in enumerate(swatc):
                     if value <= para[0]:
                         file.write(
                             f"{value:E}"
-                            f" 0.00000"
+                            f" {0:E}"
                             f" {pcwce(value, (1.-para[9])*para[0] - para[8], para[1], para[4], para[7]):E} \n"
                         )
                     elif value >= 1 - para[1]:
                         file.write(
                                 f"{value:E}"
-                                f" 1.00000"
+                                f" {1:E}"
                                 f" {pcwce(value, (1.-para[9])*para[0]- para[8], para[1], para[4], para[7]):E} \n"
                             )
                     else:
@@ -103,16 +103,16 @@ def safu_evaluation():
                         file.write(
                             f"{value:E}"
                             f" {krwe(max(value, para[0]), para[0], para[1] , para[2], para[5]):E}"
-                            % if dic['pcap'].strip() == "pen * (((sw - swi) / (1. - swi)) ** (-(1./npen)) - 1.) ** (1. - npen)":
-                            f"{10.**((sls-value)*(np.log((sls)/(sls-para[0])*((1.-para[7])/para[7])*(1./(1.-((sls- para[0])/(1 - para[0]))**(1./para[7])))))/(sls)+np.log10(pcwce(sls, para[0], para[1], para[4], para[7]))) : E} \n"
+                            % if dic['pcap'].strip()=="pen * (((sw - swi) / (1. - swi)) ** (-(1./npen)) - 1.) ** (1. - npen)":
+                            f" {10.**((sls-value)*(np.log((sls)/(sls-para[0])*((1.-para[7])/para[7])*(1./(1.-((sls- para[0])/(1 - para[0]))**(1./para[7])))))/(sls)+np.log10(pcwce(sls, para[0], para[1], para[4], para[7]))):E} \n"
                             % else:
-                            f"{10.**((sls-value)*(np.log((sls)/((sls-para[0])*para[7])))/(sls)+np.log10(pcwce(sls, para[0], para[1], para[4], para[7]))) : E} \n"
+                            f" {10.**((sls-value)*(np.log((sls)/((sls-para[0])*para[7])))/(sls)+np.log10(pcwce(sls, para[0], para[1], para[4], para[7]))):E} \n"
                             % endif
                         )
                     elif value >= 1 - para[1]:
                         file.write(
                                 f"{value:E}"
-                                f" 1.00000"
+                                f" {1:E}"
                                 f" {pcwce(value, para[0], para[1], para[4], para[7]):E} \n"
                             )
                     else:
@@ -124,5 +124,5 @@ def safu_evaluation():
             file.write("/\n")
 
 
-if __name__ == "__main__":
+if __name__=="__main__":
     safu_evaluation()

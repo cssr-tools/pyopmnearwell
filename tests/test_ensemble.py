@@ -241,7 +241,6 @@ class TestEnsemble:
                     "GEOLOGY.INC",
                     "GRID.INC",
                     "MULTPV.INC",
-                    "REGIONS.INC",
                     "TABLES.INC",
                     "RUN_0.DATA",
                 ]:

@@ -42,7 +42,7 @@ os.chdir(f"{cwd}")
 colors = matplotlib.colormaps["tab20"]
 markers = ['o', 'v', '^', '<', '>', 'D', '1', '2', '3', '4', '8', 's', 'p', '*', 'h', 'H', '+', 'x', 'D', 'd', '|', '_', 'P', 'X']
 
-quantities = ['bhpxyear', "fgit", "rmdt", 'maxwbhp', 'mindistance', "mass_salt"]
+quantities = ['bhpxyear', "fgmit", "rmdt", 'maxwbhp', 'mindistance', "mass_salt"]
 units = ["bar year", "Mt", "\\%", "bar", "m", "t"]
 descriptions = ["BHP integretaed over time", r"Injected CO$_2$", r"Dissolved CO$_2$", "Max well BHP", r"CO$_2$ distance to the well", "Precipitated salt"]
 
@@ -51,7 +51,7 @@ for j,(quantity, description) in enumerate(zip(quantities,descriptions)):
     for i, folder in enumerate(folders):
         schedules = np.load(f'{folder}/schedules.npy')
         data = np.load(f'{folder}/{quantity}.npy')
-        if quantity == "fgit":
+        if quantity == "fgmit":
             data *= GDENS * CONVF
         names = np.load(f'{folder}/names.npy')
         if i+j==0:
@@ -71,7 +71,7 @@ for j,(quantity, description) in enumerate(zip(quantities,descriptions)):
     axis.set_ylabel(f"{ylabel}")
     if quantity == "rmdt":
         axis.set_ylabel(r"Dissolved CO$_2$ [$\%$]")
-    if quantity in ["fgit", "rmdt"]:
+    if quantity in ["fgmit", "rmdt"]:
         axis.set_ylim(0)
     axis.set_xlabel(r"Sequence in the schedule [-]")
     axis.legend(loc='best')

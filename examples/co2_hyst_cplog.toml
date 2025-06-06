@@ -1,5 +1,5 @@
 #Using plopm (https://github.com/cssr-tools/plopm), one can plot the rel perms and cp relationships with hysteresis by:
-#pyopmnearwell -i co2_hyst_cplog.toml -o results -g single
+#pyopmnearwell -i co2_hyst_cplog.toml -o results -m single
 #plopm -i results/CO2_HYST_CPLOG -v krwh
 #plopm -i results/CO2_HYST_CPLOG -v krgh
 #plopm -i results/CO2_HYST_CPLOG -v pcowh -ylog 1

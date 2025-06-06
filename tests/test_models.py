@@ -13,10 +13,10 @@ dirname: pathlib.Path = pathlib.Path(__file__).parent
     [
         ("input", "output/INPUT.UNRST"),
         ("co2eor", "output/CO2EOR.UNRST"),
-        ("co2store", "postprocessing/pressure_2D.png"),
+        ("co2store", "output/CO2STORE.UNRST"),
         ("foam", "output/FOAM.UNRST"),
-        ("h2store", "postprocessing/distance_from_well.png"),
-        ("saltprec", "postprocessing/cumulative_saltprec.png"),
+        ("h2store", "output/H2STORE.UNRST"),
+        ("saltprec", "output/SALTPREC.UNRST"),
     ],
     indirect=["run_model"],
 )

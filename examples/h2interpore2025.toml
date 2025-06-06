@@ -1,7 +1,7 @@
 
 #Commands to generate the figures in the interpore2025 presentation for:
 #"Impact of hydrodynamics on microbial transport and growth in porous-reservoir hydrogen storage" 
-# pyopmnearwell -i h2interpore2025.toml -o h2 -g single
+# pyopmnearwell -i h2interpore2025.toml -o h2 -m single
 # plopm -i h2/H2INTERPORE2025 -v porv -t 'Total pore volume = 7.217E6 m$^3$' -yformat .0f -cformat .0f -clabel 'porv [m$^3$]' -c terrain
 # plopm -i h2/H2INTERPORE2025 -v dx -s ,,1  -yformat .0f -cformat .2f -c turbo -t 'Top view' -f 16
 # plopm -i h2/H2INTERPORE2025 -v 'fgmir' -ylabel 'H$_2$ mass injection rate [kg/day]' -c b -lw 5 -loc empty -xlnum 7 -ylnum 6 -f 16

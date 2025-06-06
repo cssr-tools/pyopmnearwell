@@ -48,7 +48,7 @@ for k in range(NSEASON):
 for n in range(mt.floor(NSEASON*len(times) / NPRUNS)-1, mt.floor(NSEASON*len(times) / NPRUNS)):
     command = ""
     for j in range(NPRUNS):
-        command += f"pyopmnearwell -i h2_{NPRUNS*n+j}.toml -o h2_{NPRUNS*n+j} -p '' & " 
+        command += f"pyopmnearwell -i h2_{NPRUNS*n+j}.toml -o h2_{NPRUNS*n+j} & " 
     command += 'wait'
     os.system(command)
     for j in range(NPRUNS):

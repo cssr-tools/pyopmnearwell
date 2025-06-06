@@ -44,11 +44,11 @@ for i, time in enumerate(times):
 
 for i in range(round(npoints / npruns)):
     os.system(
-        f"pyopmnearwell -i co2_{npruns*i}.toml -o co2_{npruns*i} -p off & "
-        + f"pyopmnearwell -i co2_{npruns*i+1}.toml -o co2_{npruns*i+1} -p off & "
-        + f"pyopmnearwell -i co2_{npruns*i+2}.toml -o co2_{npruns*i+2} -p off & "
-        + f"pyopmnearwell -i co2_{npruns*i+3}.toml -o co2_{npruns*i+3} -p off & "
-        + f"pyopmnearwell -i co2_{npruns*i+4}.toml -o co2_{npruns*i+4} -p off & wait"
+        f"pyopmnearwell -i co2_{npruns*i}.toml -o co2_{npruns*i} & "
+        + f"pyopmnearwell -i co2_{npruns*i+1}.toml -o co2_{npruns*i+1} & "
+        + f"pyopmnearwell -i co2_{npruns*i+2}.toml -o co2_{npruns*i+2} & "
+        + f"pyopmnearwell -i co2_{npruns*i+3}.toml -o co2_{npruns*i+3} & "
+        + f"pyopmnearwell -i co2_{npruns*i+4}.toml -o co2_{npruns*i+4} & wait"
     )
     for j in range(npruns):
         xcord = np.load(f"./co2_{npruns*i+j}/output/xspace.npy")

@@ -20,7 +20,7 @@ for name in ["nohysteresis", "Carlson", "Killough"]:
         encoding="utf8",
     ) as file:
         file.write(filledtemplate)
-    command += f"pyopmnearwell -i co2_{name}.toml -o {name} -g single & "
+    command += f"pyopmnearwell -i co2_{name}.toml -o {name} -m single & "
 command += "wait"
 os.system(command)
 command = ""

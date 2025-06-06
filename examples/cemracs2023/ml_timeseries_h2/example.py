@@ -36,11 +36,11 @@ for i, time in enumerate(times):
         file.write(filledtemplate)
 for i in range(mt.floor(nsimulations / npruns)):
     os.system(
-        f"pyopmnearwell -i h2_{npruns*i}.toml -o h2_{npruns*i} -p '' & "
-        + f"pyopmnearwell -i h2_{npruns*i+1}.toml -o h2_{npruns*i+1} -p '' & "
-        + f"pyopmnearwell -i h2_{npruns*i+2}.toml -o h2_{npruns*i+2} -p '' & "
-        + f"pyopmnearwell -i h2_{npruns*i+3}.toml -o h2_{npruns*i+3} -p '' & "
-        + f"pyopmnearwell -i h2_{npruns*i+4}.toml -o h2_{npruns*i+4} -p '' & wait"
+        f"pyopmnearwell -i h2_{npruns*i}.toml -o h2_{npruns*i} & "
+        + f"pyopmnearwell -i h2_{npruns*i+1}.toml -o h2_{npruns*i+1} & "
+        + f"pyopmnearwell -i h2_{npruns*i+2}.toml -o h2_{npruns*i+2} & "
+        + f"pyopmnearwell -i h2_{npruns*i+3}.toml -o h2_{npruns*i+3} & "
+        + f"pyopmnearwell -i h2_{npruns*i+4}.toml -o h2_{npruns*i+4} & wait"
     )
     for j in range(npruns):
         smspec = Summary(f"./h2_{npruns*i+j}/output/H2_{npruns*i+j}.SMSPEC")
@@ -52,7 +52,7 @@ finished = npruns*mt.floor(nsimulations / npruns)
 remaining = nsimulations - finished
 for i in range(remaining):
     os.system(
-        f"pyopmnearwell -i h2_{finished+i}.toml -o h2_{finished+i} -p '' & wait"
+        f"pyopmnearwell -i h2_{finished+i}.toml -o h2_{finished+i} & wait"
     )
     smspec = Summary(f"./h2_{finished+i}/output/H2_{finished+i}.SMSPEC")
     fgit_fgpt.append(smspec["FGIT"].values[-1] - smspec["FGPT"].values[-1])
