@@ -1,5 +1,5 @@
 #Set mpirun, the full path to the flow executable, and simulator flags (except --output-dir)
-flow = "flow --relaxed-max-pv-fraction=0 --newton-min-iterations=1 --enable-tuning=true --enable-opm-rst-file=true"
+flow = "flow --relaxed-max-pv-fraction=0 --newton-min-iterations=1 --enable-opm-rst-file=true --solver-max-time-step-in-days=5e-2"
 
 #Set the model parameters
 model = "co2store" #Model: co2store, co2eor, foam, h2store, or saltprec
@@ -28,6 +28,6 @@ safu = [[0.12,0.05,1,1,0,2,2,2,1e-4,0,10000]]
 rock = [[1013.25,101.325,0.25,1,1]]
 
 #Define the injection values (entry per change in the schedule): 
-#1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]
-#4) fluid (0 wetting, 1 non-wetting), 5) injection rates [kg/day]
-inj = [[1e-1,1e-1,5e-2,0,60000]]
+#1) injection time [d], 2) time step size to write results [d], 3) fluid (0 wetting, 1 non-wetting), 4) injection rates [kg/day].
+#If --enable-tuning=1, then 5) for TUNING values as described in the OPM manual.
+inj = [[1e-1,1e-1,0,60000]]

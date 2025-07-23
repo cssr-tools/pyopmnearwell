@@ -348,17 +348,17 @@ PROD OPEN ORAT 12000 4* ${dic["probhp"]} /
 % if dic["tuning"]:
 % if dic["tuning"]:
 TUNING
-1E-02 ${dic['inj'][j][2]} 1E-10 2* 1E-12 /
-/
-/
+${dic['inj'][j][4]+" " if len(dic['inj'][j])>4 else ""}/
+${dic['inj'][j][5]+" " if len(dic['inj'][j])>5 else ""}/
+${dic['inj'][j][6]+" " if len(dic['inj'][j])>6 else ""}/
 % endif
 % endif
 WCONINJE
-INJW WATER ${'OPEN' if dic['inj'][j][3]==0 else 'SHUT'} RATE ${f"{dic['inj'][j][4]}"} 1* ${dic["injbhp"]} /
-INJG   GAS ${'SHUT' if dic['inj'][j][3]==0 else 'OPEN'} RATE ${f"{dic['inj'][j][4]}"} 1* ${dic["injbhp"]} /
+INJW WATER ${'OPEN' if dic['inj'][j][2]==0 else 'SHUT'} RATE ${f"{dic['inj'][j][3]}"} 1* ${dic["injbhp"]} /
+INJG   GAS ${'SHUT' if dic['inj'][j][2]==0 else 'OPEN'} RATE ${f"{dic['inj'][j][3]}"} 1* ${dic["injbhp"]} /
 /
 WSOLVENT
-INJG ${dic['inj'][j][3]} /
+INJG ${dic['inj'][j][2]} /
 /
 TSTEP
 ${f"{round(dic['inj'][j][0]/dic['inj'][j][1])}*" if round(dic['inj'][j][0]/dic['inj'][j][1])>1 else ""}${dic['inj'][j][1]} /

@@ -35,9 +35,9 @@ poroperm = "((pofa -(phr-thr))/(1-(phr-thr)))**2*((1-gam+gam/(1+(1/gam)/(1/(phr-
 popevals = [[["phr",0.8],["gam",0.8],["thr",0],["npoints",1001]]]
 
 #Define the injection values (entry per change in the schedule): 
-#1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]
-#4) fluid (0 wetting, 1 non-wetting), 5) injection rates [kg/day]
-inj = [[6,6,0.005,1,${qrate*86400./6}],
-[30,30,0.01,1,${qrate*86400./6}],
-[37,37,0.05,1,${qrate*86400./6}],
-[1022,73,1,1,${qrate*86400./6}]]
+#1) injection time [d], 2) time step size to write results [d], 3) fluid (0 wetting, 1 non-wetting), 4) injection rates [kg/day].
+#If --enable-tuning=1, then 5) for TUNING values as described in the OPM manual.
+inj = [[6,6,1,${qrate*86400./6},"1e-2 5e-3 1e-12"],
+[30,30,1,${qrate*86400./6},"1e-2 1e-2 1e-12"],
+[37,37,1,${qrate*86400./6},"1e-2 5e-2 1e-12"],
+[1022,73,1,${qrate*86400./6},"1e-2 1 1e-12"]]

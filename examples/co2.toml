@@ -45,8 +45,8 @@ rock = [[101.324,10.1324,0.2,6,6],
 [2013.25,201.325,0.45]]
 
 #Define the injection values (entry per change in the schedule): 
-#1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]
-#4) fluid (0 wetting, 1 non-wetting), 5) injection rates [kg/day]
-inj = [[7,1e-1,5e-2,1,57611.52],
-[7,1e-1,5e-2,0,1E4],
-[7,1e-1,5e-2,1,57611.52]]
+#1) injection time [d], 2) time step size to write results [d], 3) fluid (0 wetting, 1 non-wetting), 4) injection rates [kg/day].
+#If --enable-tuning=1, then 5) for TUNING values as described in the OPM manual.
+inj = [[7,1e-1,1,57611.52,"1* 1e-2"],
+[7,1e-1,0,1E4,"1* 5e-2"],
+[7,1e-1,1,57611.52,"1* 5e-2"]]

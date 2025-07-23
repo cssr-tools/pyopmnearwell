@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 NORCE
+# SPDX-FileCopyrightText: 2023-2025, NORCE Research AS
 # SPDX-License-Identifier: GPL-3.0
 #!/usr/bin/env python
 
@@ -49,22 +49,19 @@ def safu_evaluation():
             snatc = np.linspace(para[1], 1-para[0], para[10])
             if para[1]>0:
                 file.write(
-                    f"{0:.6f}"
-                    f" 0.00000"
-                    f" 1.00000"
+                    f"{0:E} {0:E} {1:E}"
                     f" {pcwce(1-para[1]+para[8],para[0], para[1], para[4], para[7]):E} \n"
                 )
             for i, value in enumerate(snatc):
                 if i==0:
                     file.write(
-                        f"{value:.6f}"
-                        f" 0.00000"
+                        f"{value:E} {0:E}"
                         f" {krwe(1-value,para[0], para[1] , para[2], para[5]) :.6f}"
                         f" {pcwce(1-value+para[8],para[0], para[1], para[4], para[7]):E} \n"
                     )
                 else:
                     file.write(
-                        f"{value:.6f}"
+                        f"{value:E}"
                         f" {krne(1-value,para[0], para[1] , para[3], para[6]) :.6f}"
                         f" {krwe(1-value,para[0], para[1] , para[2], para[5]) :.6f}"
                         f" {pcwce(1-value+para[8],para[0], para[1], para[4], para[7]):E} \n"

@@ -96,7 +96,7 @@ in the GitHub repository as co2.toml and in the <a class="reference internal" hr
 </pre></div>
 </div>
 <p>If <strong>flow</strong> is not in your path, then write the full path to the executable, as well as adding mpirun
-if this is supported in your machine (e.g., flow = “mpirun -np 8 /Users/dmar/Github/opm/build/opm-simulators/bin/flow –relaxed-max-pv-fraction=0”).</p>
+if this is supported in your machine (e.g., flow = “mpirun -np 8 /Users/dmar/Github/opm/build/opm-simulators/bin/flow --relaxed-max-pv-fraction=0”).</p>
 <section id="reservoir-related-parameters">
 <h2>Reservoir-related parameters<a class="headerlink" href="#reservoir-related-parameters" title="Link to this heading"></a></h2>
 <p>The following input lines are:</p>
@@ -194,16 +194,32 @@ while for the perforations these have the thickness of one single cell.</p>
 <p>Now we proceed to define the schedule for the injection well. Here the injection well is located from the
 top to the bottom on the left side of the domain and the injection is given as kg/day:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">47</span><span class="c1">#Define the injection values (entry per change in the schedule):</span>
-<span class="linenos">48</span><span class="c1">#1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]</span>
-<span class="linenos">49</span><span class="c1">#4) fluid (0 wetting, 1 non-wetting), 5) injection rates [kg/day]</span>
-<span class="linenos">50</span><span class="n">inj</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">7</span><span class="p">,</span><span class="mf">1e-1</span><span class="p">,</span><span class="mf">5e-2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">57611.52</span><span class="p">],</span>
-<span class="linenos">51</span><span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mf">1e-1</span><span class="p">,</span><span class="mf">5e-2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">57611.52</span><span class="p">],</span>
-<span class="linenos">52</span><span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mf">1e-1</span><span class="p">,</span><span class="mf">5e-2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">57611.52</span><span class="p">]]</span>
+<span class="linenos">48</span><span class="c1">#1) injection time [d], 2) time step size to write results [d],</span>
+<span class="linenos">49</span><span class="c1">#3) fluid (0 wetting, 1 non-wetting), 4) injection rates [kg/day].</span>
+<span class="linenos">50</span><span class="c1">#If --enable-tuning=1, then 5) for TUNING values as described in the OPM manual.</span>
+<span class="linenos">51</span><span class="n">inj</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">7</span><span class="p">,</span><span class="mf">1e-1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">57611.52</span><span class="p">,</span><span class="s2">&quot;1* 1e-2&quot;</span><span class="p">],</span>
+<span class="linenos">52</span><span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mf">1e-1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">57611.52</span><span class="p">,</span><span class="s2">&quot;1* 5e-2&quot;</span><span class="p">],</span>
+<span class="linenos">53</span><span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mf">1e-1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">57611.52</span><span class="p">,</span><span class="s2">&quot;1* 5e-2&quot;</span><span class="p">]]</span>
 </pre></div>
 </div>
 <p>Here CO2 (non-wetting phase) is injected for seven days printing the results 70 times and limmiting the time step
-to 5e-2 days, after water (wetting phase) is injected for the same period at the same mass rate, and finally CO2 is
-reinjected for the same period.</p>
+to 1e-2 days, after water (wetting phase) is injected for the same period at the same mass rate but limiting the time step
+to a higher value of 5e-2 days, and finally CO2 is reinjected for the same period.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If tuning is enabled by the OPM flag <strong>--enable-tuning</strong>, then the TUNING keywords are added to the deck, see the OPM Flow manual for the definitions of all
+34 different options and their default values. To set these values to avoid using the default values, then one can add per injection line in the configuration file a string with the corresponding values, e.g., to set
+maximum time steps per injection periods as in the example above (the first value is defaulted (1*), and the second entry corresponds to TSMAXZ). If you do not want to
+use TUNING; then do not add the flag <strong>--enable-tuning</strong>, and do not add the string values, e.g., for the previous injection schedule:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">inj</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">7</span><span class="p">,</span><span class="mf">1e-1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">57611.52</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mf">1e-1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">57611.52</span><span class="p">],</span>
+<span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mf">1e-1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">57611.52</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>See <a class="reference external" href="https://github.com/OPM/pyopmspe11/blob/main/examples/spe11c.txt">this configuration file</a> for an example setting more TUNING values, where entries are given for the three
+different records (lines) of the TUNING keyword. In practice, TUNING helps to speed up simulations, e.g., to limit the time step for periods with higher injection rates, while relaxing it
+for periods where the wells are shut.</p>
+</div>
 </section>
 <section id="additional-parameters">
 <h2>Additional parameters<a class="headerlink" href="#additional-parameters" title="Link to this heading"></a></h2>
@@ -224,7 +240,7 @@ relationship and the parameters per different facies can be set, see <a class="r
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023-2025, NORCE Norwegian Research Centre AS.</p>
+    <p>&#169; Copyright 2023-2025, NORCE Research AS.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

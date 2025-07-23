@@ -1,5 +1,5 @@
 #Set mpirun, the full path to the flow executable, and simulator flags (except --output-dir)
-flow = "${flow} --relaxed-max-pv-fraction=0 --newton-min-iterations=1 --enable-tuning=true --enable-opm-rst-file=true --enable-well-operability-check=false --min-time-step-before-shutting-problematic-wells-in-days=1e-99"
+flow = "${flow} --relaxed-max-pv-fraction=0 --newton-min-iterations=1 --enable-opm-rst-file=true --enable-well-operability-check=false --min-time-step-before-shutting-problematic-wells-in-days=1e-99"
 
 #Set the model parameters
 model = "h2store" #Model: co2store, co2eor, foam, h2store, or saltprec
@@ -30,17 +30,18 @@ safu = [[0.1,0.1,0.8,0.2,4,4,3.5,1.2,1e-4,0,10000],[0.1,0.1,0.8,0.2,40,4,3.5,1.2
 rock = [[10,10,0.1,10,5],[0.0001,0.0001,0.1,50,5],[700.15,700.15,0.25,20,5],[0.01,0.01,0.1,25,5]]
 
 #Define the injection values (entry per change in the schedule): 
-#1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]
-#4) fluid (0 wetting, 1 non-wetting), 5) injection rates [kg/day] (for h2store, 6) minimum BHP for producer [Bar])
-inj = [[${time},${time},10,1,20000],
-[90,10,10,1,0],
-[7,7,7,1,-40000,3.6e1],
-[7,7,7,1,40000],
-[7,7,7,1,-40000,3.6e1],
-[7,7,7,1,40000],
-[7,7,7,1,-40000,3.6e1],
-[7,7,7,1,40000],
-[7,7,7,1,-40000,3.6e1],
-[7,7,7,1,40000],
-[7,7,7,1,-40000,3.6e1],
-[7,7,7,1,40000]]
+#1) injection time [d], 2) time step size to write results [d], 3) fluid (0 wetting, 1 non-wetting),
+#4) injection rates [kg/day] (for h2store, 5) minimum BHP for producer [Bar]).
+#If --enable-tuning=1, then last entry for TUNING values as described in the OPM manual.
+inj = [[${time},${time},1,20000],
+[90,10,1,0],
+[7,7,1,-40000,3.6e1],
+[7,7,1,40000],
+[7,7,1,-40000,3.6e1],
+[7,7,1,40000],
+[7,7,1,-40000,3.6e1],
+[7,7,1,40000],
+[7,7,1,-40000,3.6e1],
+[7,7,1,40000],
+[7,7,1,-40000,3.6e1],
+[7,7,1,40000]]

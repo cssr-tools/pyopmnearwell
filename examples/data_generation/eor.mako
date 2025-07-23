@@ -1,5 +1,5 @@
 #Set mpirun, the full path to the flow executable, and simulator flags (except --output-dir)
-flow = "${flow} --relaxed-max-pv-fraction=0 --enable-opm-rst-file=true --newton-min-iterations=1 --enable-tuning=true"
+flow = "${flow} --relaxed-max-pv-fraction=0 --enable-opm-rst-file=true --newton-min-iterations=1 --solver-max-time-step-in-days=1"
 
 #Set the model parameters
 model = "${eor}" #Model (co2store/co2eor/foam/h2store/saltprec)
@@ -16,14 +16,15 @@ probhp = 1000 #Producer min BHP [Psia]
 rock = [[500,50,0.3,20,1],[50,50,0.3,30,1],[200,25,0.3,50,1]]
 
 #Define the injection values (entry per change in the schedule): 
-#1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]
-#4) fluid (0 wetting, 1 non-wetting), 5) injection rates [stb/day]
+#1) injection time [d], 2) time step size to write results [d],
+#3) fluid (0 wetting, 1 non-wetting), 4) injection rates [stb/day].
+#If --enable-tuning=1, then 5) the TUNING values as described in the OPM manual.
 inj=[
 % for i in range(nsched):
-[${wtime},${wtime},1,0,${wrate}],
+[${wtime},${wtime},0,${wrate}],
 % if i == nsched - 1:
-[${gvol/grate},${gvol/grate},1,1,${grate}]]
+[${gvol/grate},${gvol/grate},1,${grate}]]
 % else:
-[${gvol/grate},${gvol/grate},1,1,${grate}],
+[${gvol/grate},${gvol/grate},1,${grate}],
 % endif
 % endfor

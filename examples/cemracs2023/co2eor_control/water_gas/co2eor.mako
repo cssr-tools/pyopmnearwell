@@ -16,21 +16,22 @@ probhp = 1000 #Producer min BHP [Psia]
 rock = [[500,50,0.3,20,3],[50,50,0.3,30,3],[200,25,0.3,50,3]]
 
 #Define the injection values (entry per change in the schedule): 
-#1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]
-#4) fluid (0 wetting, 1 non-wetting), 5) injection rates [stb/day]
+#1) injection time [d], 2) time step size to write results [d],
+#3) fluid (0 wetting, 1 non-wetting), 4) injection rates [stb/day].
+#If --enable-tuning=1, then 5) the TUNING values as described in the OPM manual.
 inj = [
 % for i,control in enumerate(schedule):
 % if control == 0:
 % if i == len(schedule) - 1:
-[${tperiod},${tperiod},1,0,${qratew}]]
+[${tperiod},${tperiod},0,${qratew}]]
 % else:
-[${tperiod},${tperiod},1,0,${qratew}],
+[${tperiod},${tperiod},0,${qratew}],
 % endif
 % else:
 % if i == len(schedule) - 1:
-[${tperiod},${tperiod},1,1,${qrateg}]]
+[${tperiod},${tperiod},1,${qrateg}]]
 % else:
-[${tperiod},${tperiod},1,1,${qrateg}],
+[${tperiod},${tperiod},1,${qrateg}],
 % endif
 % endif
 % endfor

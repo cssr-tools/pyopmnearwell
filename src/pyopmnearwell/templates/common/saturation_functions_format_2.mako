@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 NORCE
+# SPDX-FileCopyrightText: 2023-2025, NORCE Research AS
 # SPDX-License-Identifier: GPL-3.0
 #!/usr/bin/env python
 
@@ -54,10 +54,7 @@ def safu_evaluation():
                     continue
             sco2 = np.linspace(para[1], 1 - para[0], para[10])
             if sco2[0]>0:
-                file.write(
-                    f"{0:E} {0:E}"
-                    f" {0:E} \n"
-                )
+                file.write(f"{0:E} {0:E} {0:E}\n")
             for i, value in enumerate(sco2[:-1]):
                 file.write(
                     f"{value:E} {max(0,krne(1-sco2[i], para[0], para[1], para[3], para[6])):E}"
@@ -79,14 +76,12 @@ def safu_evaluation():
                 for i, value in enumerate(swatc):
                     if value <= para[0]:
                         file.write(
-                            f"{value:E}"
-                            f" {0:E}"
+                            f"{value:E} {0:E}"
                             f" {pcwce(value, (1.-para[9])*para[0] - para[8], para[1], para[4], para[7]):E} \n"
                         )
                     elif value >= 1 - para[1]:
                         file.write(
-                                f"{value:E}"
-                                f" {1:E}"
+                                f"{value:E} {1:E}"
                                 f" {pcwce(value, (1.-para[9])*para[0]- para[8], para[1], para[4], para[7]):E} \n"
                             )
                     else:
@@ -111,8 +106,7 @@ def safu_evaluation():
                         )
                     elif value >= 1 - para[1]:
                         file.write(
-                                f"{value:E}"
-                                f" {1:E}"
+                                f"{value:E} {1:E}"
                                 f" {pcwce(value, para[0], para[1], para[4], para[7]):E} \n"
                             )
                     else:

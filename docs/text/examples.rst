@@ -23,7 +23,11 @@ To visualize the results, this can be achieved by using plopm, for example:
 .. figure:: figs/pressure_1D.png
 
 .. tip::
-    You can install `plopm <https://github.com/cssr-tools/plopm>`_ by executing in the terminal: pip install git+https://github.com/cssr-tools/plopm.git.
+    You can install `plopm <https://github.com/cssr-tools/plopm>`_ by executing in the terminal:
+
+    .. code-block:: bash
+        
+        pip install git+https://github.com/cssr-tools/plopm.git
 
 
 CO2 cyclic injection
@@ -31,7 +35,7 @@ CO2 cyclic injection
 
 In this example we consider the configuration file described in the
 :doc:`configuration file<./configuration_file>` section, which is available in the 
-examples folder as 'co2.toml'.
+examples folder as `'co2.toml' <https://github.com/cssr-tools/pyopmnearwell/blob/main/examples/co2.toml>`_.
 
 If the generated files are to be saved in a folder called 'co2', then this is achieved by the following command:
 

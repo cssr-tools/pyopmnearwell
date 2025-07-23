@@ -1,7 +1,7 @@
 <%
 import math as mt
 %>#Set mpirun, the full path to the flow executable, and simulator flags (except --output-dir)
-flow = "${flow} --relaxed-max-pv-fraction=0 --enable-opm-rst-file=true --newton-min-iterations=1 --enable-tuning=true"
+flow = "${flow} --relaxed-max-pv-fraction=0 --enable-opm-rst-file=true --newton-min-iterations=1 --solver-max-time-step-in-days=1"
 
 #Set the model parameters
 model = "h2store" #Model: co2store, co2eor, foam, h2store, or saltprec
@@ -32,38 +32,39 @@ safu = [[0.2,0.05,1,1,4,2,2,1.2,1e-2,0]]
 rock = [[700.15,70.015,0.15,100,100]]
 
 #Define the injection values (entry per change in the schedule): 
-#1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]
-#4) fluid (0 wetting, 1 non-wetting), 5) injection rates [kg/day] (for h2store, 6) minimum BHP for producer [Bar])
+#1) injection time [d], 2) time step size to write results [d], 3) fluid (0 wetting, 1 non-wetting),
+#4) injection rates [kg/day] (for h2store, 5) minimum BHP for producer [Bar]).
+#If --enable-tuning=1, then last entry for TUNING values as described in the OPM manual.
 inj = [
 % if time == 0:
 % for j in range(nseason):
 % for i in range(mt.floor(timep/(tperiodi + tperiodp + tperiods))):
-[${tperiodi},${tperiodi},1,1,${qi}],
-[${tperiodp},${tperiodp},1,1,${-qp},3e1],
-[${tperiods},${tperiods},1,1,0],
+[${tperiodi},${tperiodi},1,${qi}],
+[${tperiodp},${tperiodp},1,${-qp},3e1],
+[${tperiods},${tperiods},1,0],
 % endfor
 % if j == nseason - 1:
-[${5*tperiodp},${tperiodp},1,1,${-qp},3e1]]
+[${5*tperiodp},${tperiodp},1,${-qp},3e1]]
 % else:
-[${5*tperiodp},${tperiodp},1,1,${-qp},3e1],
+[${5*tperiodp},${tperiodp},1,${-qp},3e1],
 % endif
 % endfor
 % else:
 % for j in range(nseason-1):
 % for i in range(mt.floor(timep/(tperiodi + tperiodp + tperiods))):
-[${tperiodi},${tperiodi},1,1,${qi}],
-[${tperiodp},${tperiodp},1,1,${-qp},3e1],
-[${tperiods},${tperiods},1,1,0],
+[${tperiodi},${tperiodi},1,${qi}],
+[${tperiodp},${tperiodp},1,${-qp},3e1],
+[${tperiods},${tperiods},1,0],
 % endfor
-[${5*tperiodp},${tperiodp},1,1,${-qp},3e1],
+[${5*tperiodp},${tperiodp},1,${-qp},3e1],
 % endfor
 % for i in range(mt.floor(time/(tperiodi + tperiodp + tperiods))):
-[${tperiodi},${tperiodi},1,1,${qi}],
-[${tperiodp},${tperiodp},1,1,${-qp},3e1],
+[${tperiodi},${tperiodi},1,${qi}],
+[${tperiodp},${tperiodp},1,${-qp},3e1],
 % if i == mt.floor(time/(tperiodi + tperiodp + tperiods))-1 and j == nseason-2:
-[${tperiods},${tperiods},1,1,0]]
+[${tperiods},${tperiods},1,0]]
 % else:
-[${tperiods},${tperiods},1,1,0],
+[${tperiods},${tperiods},1,0],
 % endif
 % endfor
 % endif

@@ -87,6 +87,18 @@
 <span id="pyopmnearwell-utils-writefile-module"></span><h1>pyopmnearwell.utils.writefile module<a class="headerlink" href="#module-pyopmnearwell.utils.writefile" title="Link to this heading"></a></h1>
 <p>Utility functions for necessary files and variables to run OPM Flow.</p>
 <dl class="py function">
+<dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.compact_format">
+<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">compact_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.compact_format" title="Link to this definition"></a></dt>
+<dd><p>Use the ‘n*x’ notation to write repited values to save storage</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>values (list): List with the variable values</p>
+</dd>
+<dt>Returns:</dt><dd><p>values (list): List with the compacted variable values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.create_3dgrid">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">create_3dgrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.create_3dgrid" title="Link to this definition"></a></dt>
 <dd><p>Function to handle the first part of the 3d grids</p>
@@ -105,6 +117,18 @@
 <dl class="simple">
 <dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters
 dxarray (list): String with the size of the grid cells</p>
+</dd>
+<dt>Returns:</dt><dd><p>dic (dict): Global dictionary with new added parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.get_2dgrid">
+<span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">get_2dgrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.get_2dgrid" title="Link to this definition"></a></dt>
+<dd><p>Function to create the 2D corner-point grid</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters</p>
 </dd>
 <dt>Returns:</dt><dd><p>dic (dict): Global dictionary with new added parameters</p>
 </dd>
@@ -229,7 +253,7 @@ need to be recalculated for each ensemble member. Defaults to True.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023-2025, NORCE Norwegian Research Centre AS.</p>
+    <p>&#169; Copyright 2023-2025, NORCE Research AS.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
