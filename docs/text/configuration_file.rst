@@ -14,7 +14,7 @@ The first input parameter in the configuration file is:
     flow = "flow --relaxed-max-pv-fraction=0 --enable-opm-rst-file=true --newton-min-iterations=1 --enable-tuning=true" 
 
 If **flow** is not in your path, then write the full path to the executable, as well as adding mpirun
-if this is supported in your machine (e.g., flow = "mpirun -np 8 /Users/dmar/Github/opm/build/opm-simulators/bin/flow --relaxed-max-pv-fraction=0").
+if this is supported in your machine (e.g., flow = "mpirun -np 8 /Users/dmar/Github/opm/build/opm-simulators/bin/flow -\-relaxed-max-pv-fraction=0").
 
 ****************************
 Reservoir-related parameters
@@ -138,15 +138,32 @@ top to the bottom on the left side of the domain and the injection is given as k
     :lineno-start: 47
 
     #Define the injection values (entry per change in the schedule): 
-    #1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]
-    #4) fluid (0 wetting, 1 non-wetting), 5) injection rates [kg/day]
-    inj = [[7,1e-1,5e-2,1,57611.52],
-    [7,1e-1,5e-2,0,57611.52],
-    [7,1e-1,5e-2,1,57611.52]]
+    #1) injection time [d], 2) time step size to write results [d],
+    #3) fluid (0 wetting, 1 non-wetting), 4) injection rates [kg/day].
+    #If --enable-tuning=1, then 5) for TUNING values as described in the OPM manual.
+    inj = [[7,1e-1,1,57611.52,"1* 1e-2"],
+    [7,1e-1,0,57611.52,"1* 5e-2"],
+    [7,1e-1,1,57611.52,"1* 5e-2"]]
 
 Here CO2 (non-wetting phase) is injected for seven days printing the results 70 times and limmiting the time step
-to 5e-2 days, after water (wetting phase) is injected for the same period at the same mass rate, and finally CO2 is 
-reinjected for the same period. 
+to 1e-2 days, after water (wetting phase) is injected for the same period at the same mass rate but limiting the time step 
+to a higher value of 5e-2 days, and finally CO2 is reinjected for the same period.
+
+.. note::
+    If tuning is enabled by the OPM flag **-\-enable-tuning**, then the TUNING keywords are added to the deck, see the OPM Flow manual for the definitions of all 
+    34 different options and their default values. To set these values to avoid using the default values, then one can add per injection line in the configuration file a string with the corresponding values, e.g., to set  
+    maximum time steps per injection periods as in the example above (the first value is defaulted (1*), and the second entry corresponds to TSMAXZ). If you do not want to 
+    use TUNING; then do not add the flag **-\-enable-tuning**, and do not add the string values, e.g., for the previous injection schedule:
+
+    .. code-block:: python
+
+        inj = [[7,1e-1,1,57611.52],
+        [7,1e-1,0,57611.52],
+        [7,1e-1,1,57611.52]]
+
+    See `this configuration file <https://github.com/OPM/pyopmspe11/blob/main/examples/spe11c.txt>`_ for an example setting more TUNING values, where entries are given for the three 
+    different records (lines) of the TUNING keyword. In practice, TUNING helps to speed up simulations, e.g., to limit the time step for periods with higher injection rates, while relaxing it 
+    for periods where the wells are shut.
 
 *********************
 Additional parameters

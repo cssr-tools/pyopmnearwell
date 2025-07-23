@@ -39,6 +39,6 @@ safu = [[0.14,0.1,1,1,8655e-5,2,2,2,1e-4,0,10000],
 rock = [[${PERMX},${PERMZ},0.25,1,1]]
 
 #Define the injection values (entry per change in the schedule): 
-#1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]
-#4) fluid (0 wetting, 1 non-wetting), 5) injection rates [kg/day]
-inj = [[10,0.1,0.1,1,${INJECTION_RATE}]]
+#1) injection time [d], 2) time step size to write results [d], 3) fluid (0 wetting, 1 non-wetting), 4) injection rates [kg/day].
+#If --enable-tuning=1, then 5) for TUNING values as described in the OPM manual.
+inj = [[10,0.1,1,${INJECTION_RATE}]]

@@ -2,20 +2,7 @@
 import math as mt
 def mainfold(x, y):
     return (x ** 2 + y ** 1) / (dic['xcorc'][-1]+dic['xcorc'][-1])
-%>-- Copyright (C) 2023 NORCE
-
-SPECGRID
-${dic['nocells'][0]} ${dic['nocells'][1]} ${dic['nocells'][2]} 1 F /
-
-COORD
-% for j in range(dic['nocells'][1] + 1):
-% for i in range(dic['nocells'][0] + 1):
-${f"{dic['xcorc'][i]:E}"} ${f"{dic['xcorc'][j]:E}"} ${f"{0:E}"} ${f"{dic['xcorc'][i]:E}"} ${f"{dic['xcorc'][j]:E}"} ${f"{dic['dims'][2]:E} "}\
-% endfor
-% endfor
-/
-
-ZCORN
+%>
 % if dic["model"] in ["co2eor", "foam"]:
 % for j in range(dic['nocells'][1]):
 % for i in range(dic['nocells'][0]):
@@ -75,4 +62,3 @@ ${f"{dic['dims'][2] +  mainfold(dic['xcorc'][i], dic['xcorc'][j+1]):E}"} ${f"{di
 % endfor
 % endfor
 % endif
-/

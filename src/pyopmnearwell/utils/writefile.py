@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 NORCE
+# SPDX-FileCopyrightText: 2023-2025, NORCE Research AS
 # SPDX-License-Identifier: GPL-3.0
 
 # pylint: skip-file
@@ -290,47 +290,31 @@ def manage_grid(dic):
         ]
         for _ in range(dic["nocells"][2] - 1):
             dxarray.extend(dxarray[-dic["nocells"][0] :])
-        dxarray.insert(0, "DX")
+        dxarray = compact_format(dxarray)
+        dxarray.insert(0, "DX\n")
         dxarray.append("/")
         with open(
             os.path.join(dic["fprep"], "DX.INC"),
             "w",
             encoding="utf8",
         ) as file:
-            file.write("\n".join(dxarray))
+            file.write("".join(dxarray))
     elif dic["grid"] == "radial":
         dxarray = [
             f'{dic["xcor"][i+1]-dic["xcor"][i]}' for i in range(len(dic["xcor"]) - 1)
         ]
-        dxarray.insert(0, "DRV")
+        dxarray = compact_format(dxarray)
+        dxarray.insert(0, "DRV\n")
         dxarray.append("/")
         with open(
             os.path.join(dic["fprep"], "DRV.INC"),
             "w",
             encoding="utf8",
         ) as file:
-            file.write("\n".join(dxarray))
+            file.write("".join(dxarray))
     elif dic["grid"] == "cake" or dic["grid"] == "tensor2d" or dic["grid"] == "coord2d":
         dic["slope"] = mt.tan(0.5 * dic["dims"][1] * mt.pi / 180)
-        lol = []
-        with open(
-            f"{dic['pat']}/templates/common/grid2d.mako", "r", encoding="utf8"
-        ) as file:
-            for i, row in enumerate(csv.reader(file, delimiter="#")):
-                if i == 3:
-                    lol.append(f"    return {dic['zxy']}")
-                elif len(row) == 0:
-                    lol.append("")
-                else:
-                    lol.append(row[0])
-        var = {"dic": dic}
-        filledtemplate: str = fill_template(var, text="\n".join(lol))
-        with open(
-            os.path.join(dic["fprep"], "GRID.INC"),
-            "w",
-            encoding="utf8",
-        ) as file:
-            file.write(filledtemplate)
+        get_2dgrid(dic)
     else:
         if dic["grid"] == "coord3d":
             dic["xcorc"] = dic["xcn"]
@@ -346,6 +330,88 @@ def manage_grid(dic):
         dic["nocells"][1] = dic["nocells"][0]
         dic = d3_grids(dic, dxarray)
     return dic
+
+
+def get_2dgrid(dic):
+    """
+    Function to create the 2D corner-point grid
+
+    Args:
+        dic (dict): Global dictionary with required parameters
+
+    Returns:
+        dic (dict): Global dictionary with new added parameters
+
+    """
+    grid, tmp = [], []
+    grid.append("-- Copyright (C) 2023-2025 NORCE\n")
+    grid.append("COORD\n")
+    for i in range(dic["nocells"][0] + 1):
+        tmp.append(
+            f"{dic['xcor'][i]:E} {-0*0.5*dic['xcor'][1]-dic['xcor'][i]*dic['slope']:E} {0:E} {dic['xcor'][i]:E} {-0*0.5*dic['xcor'][1]-dic['xcor'][i]*dic['slope']:E} {dic['dims'][2]:E} "
+        )
+    for i in range(dic["nocells"][0] + 1):
+        tmp.append(
+            f"{dic['xcor'][i]:E} {0*0.5*dic['xcor'][1]+dic['xcor'][i]*dic['slope']:E} {0:E} {dic['xcor'][i]:E} {0*0.5*dic['xcor'][1]+dic['xcor'][i]*dic['slope']:E} {dic['dims'][2]:E} "
+        )
+    grid += compact_format("".join(tmp).split())
+    grid.append("/\n")
+    grid.append("ZCORN\n")
+    lol, tmp = [], []
+    with open(
+        f"{dic['pat']}/templates/common/grid2d.mako", "r", encoding="utf8"
+    ) as file:
+        for i, row in enumerate(csv.reader(file, delimiter="#")):
+            if i == 3:
+                lol.append(f"    return {dic['zxy']}")
+            elif len(row) == 0:
+                lol.append("")
+            else:
+                lol.append(row[0])
+    var = {"dic": dic}
+    filledtemplate = fill_template(var, text="\n".join(lol))
+    grid += compact_format("".join(filledtemplate).split())
+    grid.append("/")
+    with open(
+        os.path.join(dic["fprep"], "GRID.INC"),
+        "w",
+        encoding="utf8",
+    ) as file:
+        file.write("".join(grid))
+
+
+def compact_format(values):
+    """
+    Use the 'n*x' notation to write repited values to save storage
+
+    Args:
+        values (list): List with the variable values
+
+    Returns:
+        values (list): List with the compacted variable values
+
+    """
+    n, value0, tmp = 0, float(values[0]), []
+    for value in values:
+        if value0 != float(value) or len(values) == 1:
+            if value0 == 0:
+                tmp.append(f"{n}*0 " if n > 1 else "0 ")
+            elif value0.is_integer():
+                tmp.append(f"{n}*{int(value0)} " if n > 1 else f"{int(value0)} ")
+            else:
+                tmp.append(f"{n}*{value0} " if n > 1 else f"{value0} ")
+            n = 1
+            value0 = float(value)
+        else:
+            n += 1
+    if value0 == float(values[-1]) and len(values) > 1:
+        if value0 == 0:
+            tmp.append(f"{n}*0 " if n > 1 else "0 ")
+        elif value0.is_integer():
+            tmp.append(f"{n}*{int(value0)} " if n > 1 else f"{int(value0)} ")
+        else:
+            tmp.append(f"{n}*{value0} " if n > 1 else f"{value0} ")
+    return tmp
 
 
 def handle_core(dic):
@@ -428,7 +494,18 @@ def d3_grids(dic, dxarray):
 
     """
     if dic["grid"] == "cpg3d":
-        lol = []
+        grid, tmp = [], []
+        grid.append("-- Copyright (C) 2023-2025 NORCE\n")
+        grid.append("COORD\n")
+        for j in range(dic["nocells"][1] + 1):
+            for i in range(dic["nocells"][0] + 1):
+                tmp.append(
+                    f"{dic['xcorc'][i]:E} {dic['xcorc'][j]:E} {0:E} {dic['xcorc'][i]:E} {dic['xcorc'][j]:E} {dic['dims'][2]:E} "
+                )
+        grid += compact_format("".join(tmp).split())
+        grid.append("/\n")
+        grid.append("ZCORN\n")
+        lol, tmp = [], []
         with open(
             f"{dic['pat']}/templates/common/grid3d.mako", "r", encoding="utf8"
         ) as file:
@@ -440,13 +517,15 @@ def d3_grids(dic, dxarray):
                 else:
                     lol.append(row[0])
         var = {"dic": dic}
-        filledtemplate: str = fill_template(var, text="\n".join(lol))
+        filledtemplate = fill_template(var, text="\n".join(lol))
+        grid += compact_format("".join(filledtemplate).split())
+        grid.append("/")
         with open(
-            f"{dic['fprep']}/GRID.INC",
+            os.path.join(dic["fprep"], "GRID.INC"),
             "w",
             encoding="utf8",
         ) as file:
-            file.write(filledtemplate)
+            file.write("".join(grid))
     else:
         if dic["model"] in ["co2eor", "foam"]:
             return dic
@@ -460,22 +539,24 @@ def d3_grids(dic, dxarray):
         for _ in range(dic["nocells"][2] - 1):
             dxarray.extend(dxarray[-dic["nocells"][0] * dic["nocells"][1] :])
             dyarray.extend(dyarray[-dic["nocells"][0] * dic["nocells"][1] :])
-        dxarray.insert(0, "DX")
+        dxarray = compact_format(dxarray)
+        dxarray.insert(0, "DX\n")
         dxarray.append("/")
         with open(
             f"{dic['fprep']}/DX.INC",
             "w",
             encoding="utf8",
         ) as file:
-            file.write("\n".join(dxarray))
-        dyarray.insert(0, "DY")
+            file.write("".join(dxarray))
+        dyarray = compact_format(dyarray)
+        dyarray.insert(0, "DY\n")
         dyarray.append("/")
         with open(
             f"{dic['fprep']}/DY.INC",
             "w",
             encoding="utf8",
         ) as file:
-            file.write("\n".join(dyarray))
+            file.write("".join(dyarray))
     return dic
 
 

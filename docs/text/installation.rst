@@ -8,8 +8,8 @@ While using packages managers such as Anaconda, Miniforge, or Mamba might work, 
 .. note::
     The tensorflow Python package is not yet available via pip install in Python 3.13. Then, tensorflow has been removed from
     the dependencies to allow installation of **pyopmnearwell** in Python 3.13. If you are using Python 3.12, then after installing 
-    **pyopmnearwell**, install tensorflow `pip install tensorflow`. Most of the functionality in **pyopmnearwell** can be used without 
-    having installed tensorflow.
+    **pyopmnearwell**, install tensorflow by executing in the terminal `pip install tensorflow`. Most of the functionality in **pyopmnearwell** 
+    can be used without having installed tensorflow.
 
 Python package
 --------------
@@ -29,7 +29,7 @@ install the Python requirements in a virtual environment with the following comm
     git clone https://github.com/cssr-tools/pyopmnearwell.git
     # Get inside the folder
     cd pyopmnearwell
-    # For a specific version (e.g., v2024.10), or else skip this step (i.e., edge version)
+    # For a specific version (e.g., v2024.10), or skip this step (i.e., edge version)
     git checkout v2024.10
     # Create virtual environment
     python3 -m venv vpyopmnearwell

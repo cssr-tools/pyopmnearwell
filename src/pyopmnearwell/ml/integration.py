@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 NORCE
+# SPDX-FileCopyrightText: 2023-2025, NORCE Research AS
 # SPDX-FileCopyrightText: 2023 UiB
 # SPDX-License-Identifier: GPL-3.0
 # pylint: skip-file

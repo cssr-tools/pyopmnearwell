@@ -201,23 +201,24 @@ PRO0 1 ${1+mt.floor(dic['nocells'][1]/2)} ${1+mt.floor(dic['nocells'][1]/2)} ${1
 % for j in range(len(dic['inj'])):
 
 % if dic["tuning"]:
+<% i = 1 if dic["inj"][j][3]<0 else 0 %>
 TUNING
-1E-02 ${dic['inj'][j][2]} 1E-10 2* 1E-12 /
-/
-/
+${dic['inj'][j][4+i]+" " if len(dic['inj'][j])>4+i else ""}/
+${dic['inj'][j][5+i]+" " if len(dic['inj'][j])>5+i else ""}/
+${dic['inj'][j][6+i]+" " if len(dic['inj'][j])>6+i else ""}/
 % endif
 WCONINJE
-% if dic['inj'][j][3]>0:
-INJ0 GAS ${'OPEN' if dic['inj'][j][4]>0 else 'SHUT'} RATE ${f"{dic['inj'][j][4] / 0.0850397:E}"} 1* 480 /
+% if dic['inj'][j][2]>0:
+INJ0 GAS ${'OPEN' if dic['inj'][j][3]>0 else 'SHUT'} RATE ${f"{dic['inj'][j][3] / 0.0850397:E}"} 1* 480 /
 % else:
-INJ0 WATER ${'OPEN' if dic['inj'][j][4]>0 else 'SHUT'} RATE ${f"{dic['inj'][j][4] / 998.108:E}"} 1* 480 /
+INJ0 WATER ${'OPEN' if dic['inj'][j][3]>0 else 'SHUT'} RATE ${f"{dic['inj'][j][3] / 998.108:E}"} 1* 480 /
 % endif
 /
 WCONPROD
-PRO0 ${'OPEN' if dic['inj'][j][4] < 0 else 'SHUT'} GRAT 2* ${f"{abs(dic['inj'][j][4]) / 0.0850397:E}"} 2* ${dic['inj'][j][5] if dic['inj'][j][4] < 0 else ''} /
+PRO0 ${'OPEN' if dic['inj'][j][3] < 0 else 'SHUT'} GRAT 2* ${f"{abs(dic['inj'][j][3]) / 0.0850397:E}"} 2* ${dic['inj'][j][4] if dic['inj'][j][3] < 0 else ''} /
 /
 WECON
-PRO0 1* ${f"{dic['econ']*abs(dic['inj'][j][4]) / 0.0850397:E}"} /
+PRO0 1* ${f"{dic['econ']*abs(dic['inj'][j][3]) / 0.0850397:E}"} /
 /
 TSTEP
 ${f"{round(dic['inj'][j][0]/dic['inj'][j][1])}*" if round(dic['inj'][j][0]/dic['inj'][j][1])>1 else ""}${dic['inj'][j][1]} /

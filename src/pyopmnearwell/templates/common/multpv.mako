@@ -14,7 +14,7 @@ BOX
 MULTPV
 % for _ in range(dic['nocells'][2]):
 % for i in range(dic['nocells'][0]):
-${'\t\t{0:.15e}'.format(dic["pvmult"]/(dic['xcorc'][i+1]-dic['xcorc'][i]))}\
+${dic["pvmult"]/(dic['xcorc'][i+1]-dic['xcorc'][i])} \
 % endfor
 ${'/\n' if loop.last else ' '}\
 % endfor
@@ -25,7 +25,7 @@ BOX
 MULTPV
 % for _ in range(dic['nocells'][2]):
 % for i in range(dic['nocells'][0]):
-${'\t\t{0:.15e}'.format(dic["pvmult"]/(dic['xcorc'][i+1]-dic['xcorc'][i]))}\
+${dic["pvmult"]/(dic['xcorc'][i+1]-dic['xcorc'][i])} \
 % endfor
 ${'/\n' if loop.last else ' '}\
 % endfor
@@ -36,7 +36,7 @@ ${dic['nocells'][1]} ${dic['nocells'][1]} 1 ${dic['nocells'][0]} 2* /
 MULTPV
 % for _ in range(dic['nocells'][2]):
 % for i in range(dic['nocells'][0]):
-${'\t\t{0:.15e}'.format(dic["pvmult"]/(dic['xcorc'][i+1]-dic['xcorc'][i]))}\
+${dic["pvmult"]/(dic['xcorc'][i+1]-dic['xcorc'][i])} \
 % endfor
 ${'/\n' if loop.last else ' '}\
 % endfor
@@ -47,7 +47,7 @@ BOX
 MULTPV
 % for _ in range(dic['nocells'][2]):
 % for i in range(dic['nocells'][0]):
-${'\t\t{0:.15e}'.format(dic["pvmult"]/(dic['xcorc'][i+1]-dic['xcorc'][i]))}\
+${dic["pvmult"]/(dic['xcorc'][i+1]-dic['xcorc'][i])} \
 % endfor
 ${'/\n' if loop.last else ' '}\
 % endfor

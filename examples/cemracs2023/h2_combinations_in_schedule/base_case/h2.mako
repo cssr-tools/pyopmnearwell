@@ -30,11 +30,12 @@ safu = [[0.1,0.1,0.8,0.2,4,4,3.5,1.2,1e-4,0,10000]]
 rock = [[700.15,700.15,0.25,20,10]]
 
 #Define the injection values (entry per change in the schedule): 
-#1) injection time [d], 2) time step size to write results [d], 3) maximum time step [d]
-#4) fluid (0 wetting, 1 non-wetting), 5) injection rates [kg/day] (for h2store, 6) minimum BHP for producer [Bar])
-inj = [[365,365,10,1,20000],
-[90,10,10,1,0],
+#1) injection time [d], 2) time step size to write results [d], 3) fluid (0 wetting, 1 non-wetting),
+#4) injection rates [kg/day] (for h2store, 5) minimum BHP for producer [Bar]).
+#If --enable-tuning=1, then last entry for TUNING values as described in the OPM manual.
+inj = [[365,365,1,20000,"0.01 10"],
+[90,10,1,0,"0.01 10"],
 % for _,control in enumerate(schedule):
-[7,7,1,0.1,${'-40000,3.6e1' if control == 0 else 40000}],
+[7,7,1,${'-40000,3.6e1' if control == 0 else 40000},"0.01 1"],
 % endfor
-[730,730,1,1,-20000,3.6e1]]
+[730,730,1,-20000,3.6e1,"0.01 1"]]
