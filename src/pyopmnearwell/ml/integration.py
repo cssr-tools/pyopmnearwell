@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2023 UiB
 # SPDX-License-Identifier: GPL-3.0
 # pylint: skip-file
-""""Run simulations with machine learned well models. 
+""" "Run simulations with machine learned well models.
 
 Check the https://github.com/cssr-tools/ML_near_well/ repo for examples on how to use
 the ``recompile_flow`` and ``run_integration`` functions.
@@ -20,7 +20,7 @@ import logging
 import os
 import pathlib
 import shutil
-from typing import Any, Literal, Optional
+from typing import Any, Optional
 
 from mako import exceptions
 from mako.template import Template

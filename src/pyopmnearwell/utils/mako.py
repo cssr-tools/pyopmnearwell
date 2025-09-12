@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import logging
 import pathlib
 from typing import Optional
 
 from mako import exceptions
 from mako.template import Template
+
+logger = logging.getLogger(__name__)
 
 
 def fill_template(
@@ -38,7 +41,9 @@ def fill_template(
     mytemplate: Template = Template(filename=filename, text=text)
     try:
         filledtemplate = mytemplate.render(**var)
+        if isinstance(filledtemplate, bytes):
+            filledtemplate = filledtemplate.decode("utf-8")
     except Exception as error:
-        print(exceptions.text_error_template().render())
+        logger.error(exceptions.text_error_template().render())
         raise error
     return filledtemplate
