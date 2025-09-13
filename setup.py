@@ -38,7 +38,7 @@ setup(
     package_data={find_packages(where="src")[0]: ["py.typed"]},
     packages=find_packages(where="src"),
     license="GPL-3.0",
-    python_requires=">=3.8, <4",
+    python_requires="=3.8.20, <4",
     entry_points={
         "console_scripts": [
             "pyopmnearwell=pyopmnearwell.core.pyopmnearwell:main",
