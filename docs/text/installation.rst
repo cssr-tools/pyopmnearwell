@@ -5,12 +5,6 @@ Installation
 The following steps work installing the dependencies in Linux via apt-get or in macOS using brew or macports.
 While using packages managers such as Anaconda, Miniforge, or Mamba might work, these are not tested.
 
-.. note::
-    The tensorflow Python package is not yet available via pip install in Python 3.13. Then, tensorflow has been removed from
-    the dependencies to allow installation of **pyopmnearwell** in Python 3.13. If you are using Python 3.12, then after installing 
-    **pyopmnearwell**, install tensorflow by executing in the terminal `pip install tensorflow`. Most of the functionality in **pyopmnearwell** 
-    can be used without having installed tensorflow.
-
 Python package
 --------------
 
@@ -95,7 +89,19 @@ in the terminal the following lines (which in turn should build flow in the fold
 
 Source build in macOS
 +++++++++++++++++++++
-For macOS, there are no available binary packages, so OPM Flow needs to be built from source, in addition to the dune libraries (see the `prerequisites <https://opm-project.org/?page_id=239>`_, which can be installed using macports or brew). This can be achieved by the following lines:
+For macOS, there are no available binary packages, so OPM Flow needs to be built from source, in addition to the dune libraries 
+(see the `prerequisites <https://opm-project.org/?page_id=239>`_, which can be installed using macports or brew). For example,
+with brew the prerequisites can be installed by:
+
+.. code-block:: console
+
+    brew install boost@1.85 cmake openblas suite-sparse python@3.12
+
+.. note::
+    boost 1.89.0 was made available recently (August 14th, 2025), which it is not compatible with OPM Flow (yet).
+    Then, we install boost 1.85, and add the cmake path to the boost include folder, as shown in the bash lines below.
+
+This can be achieved by the following lines:
 
 .. code-block:: console
 
@@ -122,13 +128,16 @@ For macOS, there are no available binary packages, so OPM Flow needs to be built
     do
         mkdir build/opm-$repo
         cd build/opm-$repo
-        cmake -DWITH_NDEBUG=1 -DUSE_MPI=0 -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$CURRENT_DIRECTORY/dune-common/build-cmake;$CURRENT_DIRECTORY/dune-grid/build-cmake;$CURRENT_DIRECTORY/dune-geometry/build-cmake;$CURRENT_DIRECTORY/dune-istl/build-cmake;$CURRENT_DIRECTORY/build/opm-common" $CURRENT_DIRECTORY/opm-$repo
+        cmake -DWITH_NDEBUG=1 -DUSE_MPI=0 -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="/opt/homebrew/opt/boost@1.85/include;$CURRENT_DIRECTORY/dune-common/build-cmake;$CURRENT_DIRECTORY/dune-grid/build-cmake;$CURRENT_DIRECTORY/dune-geometry/build-cmake;$CURRENT_DIRECTORY/dune-istl/build-cmake;$CURRENT_DIRECTORY/build/opm-common" $CURRENT_DIRECTORY/opm-$repo
         make -j5 opm$repo
         cd ../..
     done    
 
     mkdir build/opm-simulators
     cd build/opm-simulators
-    cmake -DUSE_MPI=0 -DWITH_NDEBUG=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$CURRENT_DIRECTORY/dune-common/build-cmake;$CURRENT_DIRECTORY/dune-grid/build-cmake;$CURRENT_DIRECTORY/dune-geometry/build-cmake;$CURRENT_DIRECTORY/dune-istl/build-cmake;$CURRENT_DIRECTORY/build/opm-common;$CURRENT_DIRECTORY/build/opm-grid" $CURRENT_DIRECTORY/opm-simulators
+    cmake -DUSE_MPI=0 -DWITH_NDEBUG=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="/opt/homebrew/opt/boost@1.85/include;$CURRENT_DIRECTORY/dune-common/build-cmake;$CURRENT_DIRECTORY/dune-grid/build-cmake;$CURRENT_DIRECTORY/dune-geometry/build-cmake;$CURRENT_DIRECTORY/dune-istl/build-cmake;$CURRENT_DIRECTORY/build/opm-common;$CURRENT_DIRECTORY/build/opm-grid" $CURRENT_DIRECTORY/opm-simulators
     make -j5 flow
     cd ../..
+
+.. tip::
+    See `this repository <https://github.com/daavid00/OPM-Flow_macOS>`_ dedicated to build OPM Flow from source in the latest macOS (GitHub actions).
