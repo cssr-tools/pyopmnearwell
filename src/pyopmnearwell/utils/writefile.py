@@ -215,13 +215,13 @@ def manage_tables(dic):
     )
     prosc = subprocess.run(
         [
-            "python",
+            "python3.10",
             os.path.join(dic["exe"], dic["fol"], "jobs", "saturation_functions.py"),
         ],
         check=True,
     )
     if prosc.returncode != 0:
-        raise ValueError(f"Invalid result: { prosc.returncode }")
+        raise ValueError(f"Invalid result: {prosc.returncode}")
 
 
 def manage_grid(dic):
@@ -237,7 +237,8 @@ def manage_grid(dic):
     """
     if dic["grid"] == "cartesian2d":
         dxarray = [
-            f'{dic["xcor"][i+1]-dic["xcor"][i]}' for i in range(len(dic["xcor"]) - 1)
+            f"{dic['xcor'][i + 1] - dic['xcor'][i]}"
+            for i in range(len(dic["xcor"]) - 1)
         ]
         for _ in range(dic["noCells"][2] - 1):
             dxarray.extend(dxarray[-dic["noCells"][0] :])
@@ -251,7 +252,8 @@ def manage_grid(dic):
             file.write("\n".join(dxarray))
     elif dic["grid"] == "radial":
         dxarray = [
-            f'{dic["xcor"][i+1]-dic["xcor"][i]}' for i in range(len(dic["xcor"]) - 1)
+            f"{dic['xcor'][i + 1] - dic['xcor'][i]}"
+            for i in range(len(dic["xcor"]) - 1)
         ]
         dxarray.insert(0, "DRV")
         dxarray.append("/")
@@ -291,7 +293,8 @@ def manage_grid(dic):
                 for cord in dic["xcorc"]:
                     dic["xcorc"] = np.insert(dic["xcorc"], 0, -cord)
         dxarray = [
-            f'{dic["xcorc"][i+1]-dic["xcorc"][i]}' for i in range(len(dic["xcorc"]) - 1)
+            f"{dic['xcorc'][i + 1] - dic['xcorc'][i]}"
+            for i in range(len(dic["xcorc"]) - 1)
         ]
         dic["noCells"][0] = len(dic["xcorc"]) - 1
         dic["noCells"][1] = dic["noCells"][0]
@@ -328,9 +331,7 @@ def handle_core(dic):
                     ) ** 2 + (
                         (j + 0.5) * dic["dims"][2] / dic["noCells"][2]
                         - 0.5 * dic["dims"][2]
-                    ) ** 2 > (
-                        0.5 * dic["dims"][2] / dic["noCells"][2]
-                    ) ** 2:
+                    ) ** 2 > (0.5 * dic["dims"][2] / dic["noCells"][2]) ** 2:
                         dic["coregeometry"][indx] = 0
                 elif (
                     (k + 0.5) * dic["dims"][2] / dic["noCells"][2]
@@ -338,9 +339,7 @@ def handle_core(dic):
                 ) ** 2 + (
                     (j + 0.5) * dic["dims"][2] / dic["noCells"][2]
                     - 0.5 * dic["dims"][2]
-                ) ** 2 > (
-                    0.5 * dic["dims"][2]
-                ) ** 2:
+                ) ** 2 > (0.5 * dic["dims"][2]) ** 2:
                     dic["coregeometry"][indx] = 0
                 indx += 1
     dic["dims"][1] = dic["dims"][2]

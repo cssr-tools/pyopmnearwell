@@ -4,7 +4,7 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![DOI](https://zenodo.org/badge/662625461.svg)](https://zenodo.org/doi/10.5281/zenodo.10266790)
 
-**Note: This branch is fixed to run with Python 3.8.20. No future updates will come to this branch (after 13th September 2025).**
+**Note: This branch is fixed to run with Python 3.10.12. No future updates will come to this branch (after 06th October 2025).**
 
 # pyopmnearwell: A framework to simulate near well dynamics using OPM Flow
 
