@@ -1,3 +1,4 @@
+# pylint: skip-file
 """Provide conversions between different units and physical/chemical/... constants."""
 
 from __future__ import annotations

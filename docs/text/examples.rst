@@ -4,9 +4,8 @@ Examples
 
 Hello world
 -----------
-In this example we consider the configuration file 'h2o.toml' available in the 
-examples folder (`link to the file <https://github.com/cssr-tools/pyopmnearwell/blob/main/examples/h2o.toml>`_), where
-the co2store model is used and only water is injected in a radial grid.
+In this example we consider the configuration file `h2o.toml <https://github.com/cssr-tools/pyopmnearwell/blob/main/examples/h2o.toml>`_ available in the 
+examples folder, where the co2store model is used and only water is injected in a radial grid.
 
 If the generated files are to be saved in a folder called 'hello_world', then this is achieved by the following command:
 
@@ -62,4 +61,4 @@ For the simulation results published in `this paper <https://onepetro.org/SPEBER
 about the impact of intermittency on salt precipitation during CO2 injection, see/run 
 `these configuration files <https://github.com/cssr-tools/pyopmnearwell/blob/main/publications>`_.
 
-For a study where **pyopmnearwell** is used to generated a machine-learned near-well model, `click here <https://github.com/cssr-tools/ML_near_well>`_. 
+For a study where **pyopmnearwell** is used to generated a machine-learned near-well model, `click here <https://github.com/cssr-tools/ML_near_well>`_.
