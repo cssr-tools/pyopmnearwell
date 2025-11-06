@@ -41,5 +41,4 @@ popevals = [[["phr",0.35],["gam",1.75],["kbio",0.35],["thr",0],["npoints",1001]]
 #1) injection time [d], 2) time step size to write results [d], 3) fluid (0 wetting, 1 non-wetting),
 #4) injection rates [kg/day] (for h2store, 5) minimum BHP for producer [Bar]).
 #If --enable-tuning=1, then last entry for TUNING values as described in the OPM manual.
-inj = [[30,5,1,10000],[30,5,1,0],[30,5,1,-20000,3e1],[30,5,1,10000],[30,5,1,0],[30,5,1,-20000,3e1],[30,5,1,10000],[30,5,1,0],[30,5,1,-20000,3e1],
-[30,5,1,10000],[30,5,1,0],[30,5,1,-20000,3e1],[30,5,1,10000],[30,5,1,0],[30,5,1,-20000,3e1],[30,5,1,10000],[30,5,1,0],[30,5,1,-20000,3e1]]
+inj = [[1,1,1,100]]

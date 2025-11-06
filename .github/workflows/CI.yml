@@ -41,6 +41,7 @@ jobs:
       run: |
         pip install --upgrade pip setuptools wheel
         pip install -r dev-requirements.txt
+        pip install tensorflow
         
     - name: Install pyopmnearwell
       run: |

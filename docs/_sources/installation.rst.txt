@@ -4,6 +4,9 @@ Installation
 
 The following steps work installing the dependencies in Linux via apt-get or in macOS using brew or macports.
 While using packages managers such as Anaconda, Miniforge, or Mamba might work, these are not tested.
+The supported Python versions are 3.12 to 3.14.
+
+.. _vpyopmnearwell:
 
 Python package
 --------------
@@ -14,7 +17,7 @@ To install the **pyopmnearwell** executable from the development version:
 
     pip install git+https://github.com/cssr-tools/pyopmnearwell.git
 
-If you are interested in a specific version (e.g., v2024.10) or in modifying the source code, then you can clone the repository and 
+If you are interested in a specific version (e.g., v2025.10) or in modifying the source code, then you can clone the repository and 
 install the Python requirements in a virtual environment with the following commands:
 
 .. code-block:: console
@@ -23,8 +26,8 @@ install the Python requirements in a virtual environment with the following comm
     git clone https://github.com/cssr-tools/pyopmnearwell.git
     # Get inside the folder
     cd pyopmnearwell
-    # For a specific version (e.g., v2024.10), or skip this step (i.e., edge version)
-    git checkout v2024.10
+    # For a specific version (e.g., v2025.10), or skip this step (i.e., edge version)
+    git checkout v2025.10
     # Create virtual environment
     python3 -m venv vpyopmnearwell
     # Activate virtual environment
@@ -40,11 +43,24 @@ install the Python requirements in a virtual environment with the following comm
 
     Typing **git tag -l** writes all available specific versions.
 
+.. note::
+
+    The tensorflow package has been removed from the dependencies to allow for a ligther installation of **pyopmnearwell**. Most of the functionality
+    in **pyopmnearwell** can be used without having installed tensorflow, i.e., running in the terminal **pyopmnearwell -i configuration_file.toml** does not require tensorflow.
+    The tensorflow package is a requirement only for the machine learning near well functionality, see the `ML_near_well repository <https://github.com/cssr-tools/ML_near_well>`_.
+    If you are interested in the ML functionality and using Python 3.12 or 3.13, then after installing **pyopmnearwell**, install tensorflow by executing in the terminal
+
+    .. code-block:: bash
+
+        pip install tensorflow
+    
+    Currently tensorflow is not available via pip in Python 3.14 (we will update this when it is available).
+
 OPM Flow
 --------
 You also need to install:
 
-* OPM Flow (https://opm-project.org, Release 2025.04 or current master branches)
+* OPM Flow (https://opm-project.org, Release 2025.10 or current master branches)
 
 .. tip::
 
@@ -53,39 +69,35 @@ You also need to install:
 
 Source build in Linux/Windows
 +++++++++++++++++++++++++++++
-If you are a Linux user (including the Windows subsystem for Linux), then you could try to build Flow (after installing the `prerequisites <https://opm-project.org/?page_id=239>`_) from the master branches with mpi support by running
+If you are a Linux user (including the Windows subsystem for Linux, see `this link <https://learn.microsoft.com/en-us/windows/python/web-frameworks>`_ 
+for a nice tutorial for setting Python environments in WSL), then you could try to build Flow (after installing the `prerequisites <https://opm-project.org/?page_id=239>`_) from the master branches with mpi support by running
 in the terminal the following lines (which in turn should build flow in the folder ./build/opm-simulators/bin/flow): 
 
 .. code-block:: console
 
     CURRENT_DIRECTORY="$PWD"
 
-    for repo in common grid simulators
-    do
-        git clone https://github.com/OPM/opm-$repo.git
-    done
-
     mkdir build
 
     for repo in common grid
-    do
+    do  git clone https://github.com/OPM/opm-$repo.git
         mkdir build/opm-$repo
         cd build/opm-$repo
-        cmake -DUSE_MPI=1 -DWITH_NDEBUG=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$CURRENT_DIRECTORY/build/opm-common" $CURRENT_DIRECTORY/opm-$repo
-        make -j5 opm$repo
+        cmake -DUSE_MPI=1 -DWITH_NDEBUG=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$CURRENT_DIRECTORY/build/opm-common;$CURRENT_DIRECTORY/build/opm-grid" $CURRENT_DIRECTORY/opm-$repo
+        if [[ $repo == simulators ]]; then
+            make -j5 flow
+        else
+            make -j5 opm$repo
+        fi
         cd ../..
-    done    
-
-    mkdir build/opm-simulators
-    cd build/opm-simulators
-    cmake -DUSE_MPI=1 -DWITH_NDEBUG=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$CURRENT_DIRECTORY/build/opm-common;$CURRENT_DIRECTORY/build/opm-grid" $CURRENT_DIRECTORY/opm-simulators
-    make -j5 flow
-    cd ../..
+    done
 
 
 .. tip::
 
     You can create a .sh file (e.g., build_opm_mpi.sh), copy the previous lines, and run in the terminal **source build_opm_mpi.sh**
+
+.. _macOS:
 
 Source build in macOS
 +++++++++++++++++++++
@@ -95,11 +107,12 @@ with brew the prerequisites can be installed by:
 
 .. code-block:: console
 
-    brew install boost@1.85 cmake openblas suite-sparse python@3.12
+    brew install boost openblas suite-sparse python@3.13 cmake
 
-.. note::
-    boost 1.89.0 was made available recently (August 14th, 2025), which it is not compatible with OPM Flow (yet).
-    Then, we install boost 1.85, and add the cmake path to the boost include folder, as shown in the bash lines below.
+In addition, it is recommended to uprade and update your macOS to the latest available versions (the following steps have 
+worked for macOS Tahoe 26.1 with Apple clang version 17.0.0).
+After the prerequisites are installed and the vpyopmnearwell Python environment is created (see :ref:`vpyopmnearwell`), 
+then building OPM Flow can be achieved with the following bash lines:
 
 This can be achieved by the following lines:
 
@@ -107,37 +120,36 @@ This can be achieved by the following lines:
 
     CURRENT_DIRECTORY="$PWD"
 
+    deactivate
+    source vpyopmnearwell/bin/activate
+
     for module in common geometry grid istl
     do   git clone https://gitlab.dune-project.org/core/dune-$module.git --branch v2.9.1
+        ./dune-common/bin/dunecontrol --only=dune-$module cmake -DCMAKE_DISABLE_FIND_PACKAGE_MPI=1
+        ./dune-common/bin/dunecontrol --only=dune-$module make -j5
     done
-    for module in common geometry grid istl
-    do   ./dune-common/bin/dunecontrol --only=dune-$module cmake -DCMAKE_DISABLE_FIND_PACKAGE_MPI=1
-         ./dune-common/bin/dunecontrol --only=dune-$module make -j5
-    done
-
-    for repo in common grid simulators
-    do
-        git clone https://github.com/OPM/opm-$repo.git
-    done
-
-    source vpyopmnearwell/bin/activate
 
     mkdir build
 
-    for repo in common grid
-    do
+    for repo in common grid simulators
+    do  git clone https://github.com/OPM/opm-$repo.git
         mkdir build/opm-$repo
         cd build/opm-$repo
-        cmake -DWITH_NDEBUG=1 -DUSE_MPI=0 -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="/opt/homebrew/opt/boost@1.85/include;$CURRENT_DIRECTORY/dune-common/build-cmake;$CURRENT_DIRECTORY/dune-grid/build-cmake;$CURRENT_DIRECTORY/dune-geometry/build-cmake;$CURRENT_DIRECTORY/dune-istl/build-cmake;$CURRENT_DIRECTORY/build/opm-common" $CURRENT_DIRECTORY/opm-$repo
-        make -j5 opm$repo
+        cmake -DUSE_MPI=0 -DWITH_NDEBUG=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$CURRENT_DIRECTORY/dune-common/build-cmake;$CURRENT_DIRECTORY/dune-grid/build-cmake;$CURRENT_DIRECTORY/dune-geometry/build-cmake;$CURRENT_DIRECTORY/dune-istl/build-cmake;$CURRENT_DIRECTORY/build/opm-common;$CURRENT_DIRECTORY/build/opm-grid" $CURRENT_DIRECTORY/opm-$repo
+        if [[ $repo == simulators ]]; then
+            make -j5 flow
+        else
+            make -j5 opm$repo
+        fi
         cd ../..
-    done    
+    done
 
-    mkdir build/opm-simulators
-    cd build/opm-simulators
-    cmake -DUSE_MPI=0 -DWITH_NDEBUG=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="/opt/homebrew/opt/boost@1.85/include;$CURRENT_DIRECTORY/dune-common/build-cmake;$CURRENT_DIRECTORY/dune-grid/build-cmake;$CURRENT_DIRECTORY/dune-geometry/build-cmake;$CURRENT_DIRECTORY/dune-istl/build-cmake;$CURRENT_DIRECTORY/build/opm-common;$CURRENT_DIRECTORY/build/opm-grid" $CURRENT_DIRECTORY/opm-simulators
-    make -j5 flow
-    cd ../..
+    echo "export PATH=\$PATH:$CURRENT_DIRECTORY/build/opm-simulators/bin" >> $CURRENT_DIRECTORY/vpyopmnearwell/bin/activate
+
+    deactivate
+    source vpyopmnearwell/bin/activate
+
+This builds OPM Flow, and it exports the path to the flow executable (i.e., executing in the terminal **which flow** should print the path).
 
 .. tip::
     See `this repository <https://github.com/daavid00/OPM-Flow_macOS>`_ dedicated to build OPM Flow from source in the latest macOS (GitHub actions).

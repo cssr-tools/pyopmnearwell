@@ -171,4 +171,5 @@ Additional parameters
 
 For different models than the co2store, new variables are used from the ones explained here. Then, in each of the 
 configuration files, a short description of the variable is added, e.g., for the saltprec model, then the poro-perm 
-relationship and the parameters per different facies can be set, see `saltprec.toml <https://github.com/cssr-tools/pyopmnearwell/blob/main/examples/saltprec.toml>`_.
+relationship and the parameters per different facies can be set, see `saltprec.toml <https://github.com/cssr-tools/pyopmnearwell/blob/main/examples/saltprec.toml>`_, and for
+biofilm effects in hydrogen storage, then the parameters for the biofilm can be set, see `h2biofilm.toml <https://github.com/cssr-tools/pyopmnearwell/blob/main/examples/h2biofilm.toml>`_.
