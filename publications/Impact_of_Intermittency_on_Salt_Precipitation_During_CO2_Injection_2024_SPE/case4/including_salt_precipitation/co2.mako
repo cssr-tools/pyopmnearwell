@@ -49,12 +49,12 @@ popevals = [[["phr",0.35],["gam",1.75],["thr",1e-2],["npoints",1001]],
 #Define the injection values (entry per change in the schedule): 
 #1) injection time [d], 2) time step size to write results [d], 3) fluid (0 wetting, 1 non-wetting), 4) injection rates [kg/day].
 #If --enable-tuning=1, then 5) for TUNING values as described in the OPM manual.
-inj = [[5,5,1,144000,"1e-2 5e-3"],
-[360,360,1,144000,"1e-2 5e-1"],
+inj = [[5,5,1,144000,"1e-2 5e-3 1e-12"],
+[360,360,1,144000,"1e-2 5e-1 1e-12"],
 % for i,control in enumerate(schedule[1:]):
 % if i == len(schedule[1:])-1:
-[${tperiod},${tperiod},1,${control*144000.0},${"1e-2 0.5 1e-12" if control==1 else 5}]]
+[${tperiod},${tperiod},1,${control*144000.0},"1e-2 ${0.5 if control==1 else 5} 1e-12"]]
 % else:
-[${tperiod},${tperiod},1,${control*144000.0},${"1e-2 0.5 1e-12" if control==1 else 5}],
+[${tperiod},${tperiod},1,${control*144000.0},"1e-2 ${0.5 if control==1 else 5} 1e-12"],
 % endif
 % endfor
