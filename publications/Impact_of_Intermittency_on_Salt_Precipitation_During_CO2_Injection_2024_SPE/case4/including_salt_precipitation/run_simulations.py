@@ -28,7 +28,7 @@ scheduless = [seq for seq in itertools.product("01", repeat=2**NSCHED)]
 seq_string = ["".join(seq) for seq in itertools.product("01", repeat=2**NSCHED)]
 for i, row in enumerate(scheduless):
     scheduless[i] = [int(column) for column in row]
-ordered = np.argsort(np.array([sum(row) for row in scheduless]))
+ordered = np.argsort(np.array([np.sum(row) for row in scheduless]))
 scheduless = np.array(scheduless)[ordered]
 namess = []
 for inx in ordered:
@@ -36,7 +36,7 @@ for inx in ordered:
 schedules = []
 names = []
 for i,row in enumerate(scheduless):
-    if sum(row) == 2**(NSCHED-1) and row[0]>0:
+    if np.sum(row) == 2**(NSCHED-1) and row[0]>0:
         schedules.append(row)
         names.append(namess[i])
 del schedules[10]
@@ -86,17 +86,17 @@ for i in range(mt.floor(nsimulations / NPRUNS)):
         phiv = np.array(unrst.iget_kw("RPORV")[-1][:])
         sgas = np.array(unrst.iget_kw("SGAS")[-1][:])
         rhog = np.array(unrst.iget_kw("GAS_DEN")[-1][:])
-        mass_salt.append(sum(saltp * phiv) * 2153 / 1000.)
+        mass_salt.append(np.sum(saltp * phiv) * 2153 / 1000.)
         ratio_co2_dissolved_total.append(100 * smspec["FGMDS"].values[-1] / smspec["FGMIP"].values[-1])
         wellp = smspec["WBHP:INJ0"].values
-        wbhp.append(max(wellp))
-        wbhpxyear.append(sum(times*(0.5*(wellp[1:]+wellp[:-1]))) / (86400.*365))
+        wbhp.append(np.max(wellp))
+        wbhpxyear.append(np.sum(times*(0.5*(wellp[1:]+wellp[:-1]))) / (86400.*365))
         # Handle the distance part
         indicator_mass = 1.0*((sgas * rhog * phiv) > THRESHOLD_CO2_MASS).reshape(grid.nz, grid.nx)
         max_distance_index = 0
         for row in indicator_mass:
-            if max(row) > 0:
-                max_distance_index = max(max_distance_index , len(row[::-1]) - pd.Series(row[::-1]).argmax() - 1)
+            if np.max(row) > 0:
+                max_distance_index = max(max_distance_index, len(row[::-1]) - pd.Series(row[::-1]).argmax() - 1)
         min_distance_to_boundary.append(xcord[max_distance_index])
         fgmit.append(smspec["FGMIT"].values[-1])
         os.system(f"rm -rf co2_{NPRUNS*i+j} co2_{NPRUNS*i+j}.toml")
@@ -124,16 +124,16 @@ for j in range(remaining):
     rhog = np.array(unrst.iget_kw("GAS_DEN")[-1][:])
     saltp = np.array(unrst.iget_kw("SALTP")[-1][:])
     phiv = np.array(unrst.iget_kw("RPORV")[-1][:])
-    mass_salt.append(sum(saltp * phiv) * 2153 / 1000.)
+    mass_salt.append(np.sum(saltp * phiv) * 2153 / 1000.)
     ratio_co2_dissolved_total.append(100 * smspec["FGMDS"].values[-1] / smspec["FGMIP"].values[-1])
     wellp = smspec["WBHP:INJ0"].values
-    wbhp.append(max(wellp))
-    wbhpxyear.append(sum(times*(0.5*(wellp[1:]+wellp[:-1]))) / (86400.*365))
+    wbhp.append(np.max(wellp))
+    wbhpxyear.append(np.sum(times*(0.5*(wellp[1:]+wellp[:-1]))) / (86400.*365))
     # Handle the distance part
     indicator_mass = 1.0*((sgas * rhog * phiv) > THRESHOLD_CO2_MASS).reshape(grid.nz, grid.nx)
     max_distance_index = 0
     for row in indicator_mass:
-        if max(row) > 0:
+        if np.max(row) > 0:
             max_distance_index = max(max_distance_index , len(row[::-1]) - pd.Series(row[::-1]).argmax() - 1)
     min_distance_to_boundary.append(xcord[max_distance_index])
     fgmit.append(smspec["FGMIT"].values[-1])
