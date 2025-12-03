@@ -7,6 +7,7 @@ Utiliy functions to set the requiried input values by pynearwell.
 
 import tomllib
 import sys
+import numpy as np
 
 
 def process_input(dic, in_file):
@@ -59,13 +60,13 @@ def process_input(dic, in_file):
         dic["nocells"] = [
             len(dic["xcn"]) - 1,
             1,
-            sum(dic["zcn"]),
+            np.sum(dic["zcn"]),
         ]
     else:
         dic["nocells"] = [
-            sum(dic["xcn"]),
+            np.sum(dic["xcn"]),
             1,
-            sum(dic["zcn"]),
+            np.sum(dic["zcn"]),
         ]
     dic["dims"] = [dic["xdim"], dic["adim"], zdim]
     process_tuning(dic)
