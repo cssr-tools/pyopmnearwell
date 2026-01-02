@@ -37,7 +37,7 @@ def pope_evaluation():
         "w",
         encoding="utf8",
     ) as file:
-        file.write("-- Copyright (C) 2025 NORCE Research AS\n")
+        file.write("-- Copyright (C) 2025-2026 NORCE Research AS\n")
         file.write("PERMFACT\n")
         for i, para in enumerate(vals):
             if i>0:

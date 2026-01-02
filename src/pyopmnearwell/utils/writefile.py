@@ -344,7 +344,7 @@ def get_2dgrid(dic):
 
     """
     grid, tmp = [], []
-    grid.append("-- Copyright (C) 2023-2025 NORCE\n")
+    grid.append("-- Copyright (C) 2023-2026 NORCE Research AS\n")
     grid.append("COORD\n")
     for i in range(dic["nocells"][0] + 1):
         tmp.append(
@@ -495,7 +495,7 @@ def d3_grids(dic, dxarray):
     """
     if dic["grid"] == "cpg3d":
         grid, tmp = [], []
-        grid.append("-- Copyright (C) 2023-2025 NORCE\n")
+        grid.append("-- Copyright (C) 2023-2026 NORCE Research AS\n")
         grid.append("COORD\n")
         for j in range(dic["nocells"][1] + 1):
             for i in range(dic["nocells"][0] + 1):

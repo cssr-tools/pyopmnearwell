@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2025, NORCE Research AS
+# SPDX-FileCopyrightText: 2023-2026, NORCE Research AS
 # SPDX-License-Identifier: GPL-3.0
 
 """"
