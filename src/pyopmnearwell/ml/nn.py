@@ -1,5 +1,6 @@
 # pylint: skip-file
 """Transform ensemble data into datasets and train neural networks."""
+
 from __future__ import annotations
 
 import csv

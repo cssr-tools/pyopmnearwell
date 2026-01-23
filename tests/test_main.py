@@ -3,7 +3,6 @@
 # pylint: disable=missing-function-docstring
 """Test the main framework."""
 
-
 import pathlib
 
 

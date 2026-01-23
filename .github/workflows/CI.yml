@@ -48,7 +48,7 @@ jobs:
       
     - name: Run the tests
       run: |
-        pytest -x --cov=pyopmnearwell --cov-report term-missing tests/
+        pytest --cov=pyopmnearwell --exitfirst --cov-report term-missing tests/
 
     - name: Build documentation
       run: |

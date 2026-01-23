@@ -2,6 +2,7 @@
 """Run high-fidelity nearwell simulations in OPM-Flow for an ensemble of varying input
 arguments.
 """
+
 from __future__ import annotations
 
 import copy

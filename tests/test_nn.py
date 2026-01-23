@@ -1,5 +1,6 @@
 # pylint: disable=missing-function-docstring,fixme
 """Tests for the ``pyopmnearwell.ml.nn`` module."""
+
 from __future__ import annotations
 
 import csv

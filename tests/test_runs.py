@@ -1,5 +1,6 @@
 # pylint: disable=missing-function-docstring
 """Test the ``pyopmnearwell.utils.runs`` module."""
+
 from __future__ import annotations
 
 import pathlib
