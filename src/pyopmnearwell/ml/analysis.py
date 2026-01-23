@@ -27,7 +27,8 @@ def sensitivity_analysis(
         Literal["homogeneous", "random_uniform", "random_normal"] | float
     ) = "homogeneous",
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Perform a sensitivity analysis of a neural network.
+    """
+    Perform a sensitivity analysis of a neural network.
 
     For each input variable, vary from a min to a max value and measure how the output
     of the network changes. The other input variables are kept constant meanwhile.
@@ -139,14 +140,15 @@ def plot_analysis(
 
     Args:
         outputs (np.ndarray): The model outputs.
-        inputs (np.ndarray): The model inputs. Shape is ``(num_inputs, resolution_1,
-        resolution_2)``.
+        inputs (np.ndarray): The model inputs. Shape is
+            ``(num_inputs, resolution_1, resolution_2)``.
         savepath (str | pathlib.Path): The path to save the plot.
         feature_names (Optional[list[str]]): The names of the input features. If None,
         default names (:math:`x_1,x_2,\dots`) will be used. Default is None.
         main_plot (Optional[tuple[np.ndarray, np.ndarray]]): Add output and input for a
             main plot that is specifically highlighted. Default is None.
         **kwargs:
+
             - legend (bool): Whether to plot a legend. Default
               is True.
 

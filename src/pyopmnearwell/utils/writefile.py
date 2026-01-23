@@ -22,26 +22,26 @@ def reservoir_files(
     dic,
     **kwargs,
 ):
-    """
-    Function to write opm-related files by running mako templates
+    """Write OPM-related files by running Mako templates.
 
     Args:
         dic (dict): Global dictionary with required parameters
         **kwargs: Possible kwargs are:
-            - recalc_grid (bool): Whether to recalculate the ``GRID.INC``file. Intended
-                for ensemble runs, where the saturation functions/geography/etc. do not
-                need to be recalculated for each ensemble member. Defaults to True.
-            - recalc_tables (bool): Whether to recalculate the ``TABLES.INC``file.
-                Defaults to True.
+
+            - recalc_grid (bool): Whether to recalculate the ``GRID.INC`` file. Intended
+              for ensemble runs, where the saturation functions/geography/etc. do not
+              need to be recalculated for each ensemble member. Defaults to True.
+            - recalc_tables (bool): Whether to recalculate the ``TABLES.INC`` file.
+              Defaults to True.
             - recalc_sections (bool): Whether to recalculate the ``GEOLOGY.INC`` and
-                ``FLUXNUM.INC`` files. Defaults to True.
+              ``FLUXNUM.INC`` files. Defaults to True.
             - inc_folder (pathlib.Path): If any of the mentioned files is not
-                recalculated, they are taken from this folder. Defaults to
-                ``pathlib.Path("")``.
+              recalculated, they are taken from this folder. Defaults to
+              ``pathlib.Path("")``.
 
     Note:
         - All of the ``recalc_*`` options only work for
-        ``co2store no_disgas_no_diffusion`` on a ``cake`` grid so far.
+          ``co2store no_disgas_no_diffusion`` on a ``cake`` grid so far.
         - For other models or grids there will be errors.
 
     Returns:

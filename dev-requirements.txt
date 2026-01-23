@@ -1,5 +1,4 @@
 black
-numpydoc
 mypy
 pylint
 pytest-cov

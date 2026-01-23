@@ -8,14 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyopmnearwell.ml.nn module &mdash; pyopmnearwell  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -90,12 +90,19 @@
 <dt class="sig sig-object py" id="pyopmnearwell.ml.nn.build_model">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.nn.</span></span><span class="sig-name descname"><span class="pre">build_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HyperParameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ninputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noutputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_tune</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Module</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.nn.build_model" title="Link to this definition"></a></dt>
 <dd><p>Build and compile a FCNN with the given hyperparameters.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>hp (keras_tuner.Hyperparameters): Hyperparameters object.
-ninputs (int): Number of inputs.
-noutputs (int): Number of outputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hp</strong> (<em>keras_tuner.Hyperparameters</em>) – Hyperparameters object.</p></li>
+<li><p><strong>ninputs</strong> (<em>int</em>) – Number of inputs.</p></li>
+<li><p><strong>noutputs</strong> (<em>int</em>) – Number of outputs.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>tf.Module: The built neural network model.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The built neural network model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tf.Module</p>
 </dd>
 </dl>
 </dd></dl>
@@ -104,29 +111,29 @@ noutputs (int): Number of outputs.</p>
 <dt class="sig sig-object py" id="pyopmnearwell.ml.nn.get_FCNN">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.nn.</span></span><span class="sig-name descname"><span class="pre">get_FCNN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ninputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noutputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saved_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'sigmoid'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'relu'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'tanh'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sigmoid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_initializer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'glorot_normal'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'glorot_uniform'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'glorot_normal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Model</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.nn.get_FCNN" title="Link to this definition"></a></dt>
 <dd><p>Return a fully connected neural network with the specified architecture.</p>
-<dl>
-<dt>Args:</dt><dd><p>ninputs (int): Number of inputs to the model.
-noutputs (int): Number of outputs from the model.
-depth (int, optional): Number of hidden layers in the model. Defaults to 5.
-hidden_dim (int, optional): Number of neurons in each hidden layer. Defaults to</p>
-<blockquote>
-<div><ol class="arabic simple" start="10">
-<li></li>
-</ol>
-</div></blockquote>
-<dl class="simple">
-<dt>saved_model (str, optional): Path to a saved model to load weights from.</dt><dd><p>Defaults to None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ninputs</strong> (<em>int</em>) – Number of inputs to the model.</p></li>
+<li><p><strong>noutputs</strong> (<em>int</em>) – Number of outputs from the model.</p></li>
+<li><p><strong>depth</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of hidden layers in the model. Defaults to 5.</p></li>
+<li><p><strong>hidden_dim</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of neurons in each hidden layer. Defaults to
+10.</p></li>
+<li><p><strong>saved_model</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to a saved model to load weights from.
+Defaults to None.</p></li>
+<li><p><strong>activation</strong> (<em>Literal</em><em>[</em><em>&quot;sigmoid&quot;</em><em>, </em><em>&quot;relu&quot;</em><em>, </em><em>&quot;tanh&quot;</em><em>]</em><em>, </em><em>optional</em>) – Activation function
+to use in the hidden layers. Defaults to “sigmoid”.</p></li>
+<li><p><strong>kernel_initializer</strong> (<em>Literal</em><em>[</em><em>&quot;glorot_normal&quot;</em><em>, </em><em>&quot;glorot_uniform&quot;</em><em>]</em><em>, </em><em>optional</em>) – Weight initialization method to use in the hidden layers. Defaults to
+“glorot_normal”.</p></li>
+<li><p><strong>normalization</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use batch normalization in the model.
+Defaults to False.</p></li>
+</ul>
 </dd>
-<dt>activation (Literal[“sigmoid”, “relu”, “tanh”], optional): Activation function</dt><dd><p>to use in the hidden layers. Defaults to “sigmoid”.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A fully connected neural network.</p>
 </dd>
-<dt>kernel_initializer (Literal[“glorot_normal”, “glorot_uniform”], optional):</dt><dd><p>Weight initialization method to use in the hidden layers. Defaults to
-“glorot_normal”.</p>
-</dd>
-<dt>normalization (bool, optional): Whether to use batch normalization in the model.</dt><dd><p>Defaults to False.</p>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><p>keras.Model: A fully connected neural network.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>keras.Model</p>
 </dd>
 </dl>
 </dd></dl>
@@ -135,27 +142,27 @@ hidden_dim (int, optional): Number of neurons in each hidden layer. Defaults to<
 <dt class="sig sig-object py" id="pyopmnearwell.ml.nn.get_GRU">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.nn.</span></span><span class="sig-name descname"><span class="pre">get_GRU</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ninputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noutputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saved_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'sigmoid'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'relu'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'tanh'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'tanh'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_initializer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'glorot_normal'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'glorot_uniform'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'glorot_uniform'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Model</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.nn.get_GRU" title="Link to this definition"></a></dt>
 <dd><p>Return a recurrent neural network with the specified architecture.</p>
-<dl>
-<dt>Args:</dt><dd><p>ninputs (int): Number of inputs to the model.
-noutputs (int): Number of outputs from the model.
-units (int, optional): Size of internal model state. Defaults to 20.
-hidden_dim (int, optional): Number of neurons in each hidden layer. Defaults to</p>
-<blockquote>
-<div><ol class="arabic simple" start="10">
-<li></li>
-</ol>
-</div></blockquote>
-<dl class="simple">
-<dt>saved_model (str, optional): Path to a saved model to load weights from.</dt><dd><p>Defaults to None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ninputs</strong> (<em>int</em>) – Number of inputs to the model.</p></li>
+<li><p><strong>noutputs</strong> (<em>int</em>) – Number of outputs from the model.</p></li>
+<li><p><strong>units</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of internal model state. Defaults to 20.</p></li>
+<li><p><strong>hidden_dim</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of neurons in each hidden layer. Defaults to
+10.</p></li>
+<li><p><strong>saved_model</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to a saved model to load weights from.
+Defaults to None.</p></li>
+<li><p><strong>activation</strong> (<em>Literal</em><em>[</em><em>&quot;sigmoid&quot;</em><em>, </em><em>&quot;relu&quot;</em><em>, </em><em>&quot;tanh&quot;</em><em>]</em><em>, </em><em>optional</em>) – Activation function
+to use in the hidden layers. Defaults to “sigmoid”.</p></li>
+<li><p><strong>kernel_initializer</strong> (<em>Literal</em><em>[</em><em>&quot;glorot_normal&quot;</em><em>, </em><em>&quot;glorot_uniform&quot;</em><em>]</em><em>, </em><em>optional</em>) – Weight initialization method to use in the hidden layers. Defaults to
+“glorot_normal”.</p></li>
+</ul>
 </dd>
-<dt>activation (Literal[“sigmoid”, “relu”, “tanh”], optional): Activation function</dt><dd><p>to use in the hidden layers. Defaults to “sigmoid”.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A fully connected neural network.</p>
 </dd>
-<dt>kernel_initializer (Literal[“glorot_normal”, “glorot_uniform”], optional):</dt><dd><p>Weight initialization method to use in the hidden layers. Defaults to
-“glorot_normal”.</p>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><p>keras.Model: A fully connected neural network.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>keras.Model</p>
 </dd>
 </dl>
 </dd></dl>
@@ -164,27 +171,27 @@ hidden_dim (int, optional): Number of neurons in each hidden layer. Defaults to<
 <dt class="sig sig-object py" id="pyopmnearwell.ml.nn.get_LSTM">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.nn.</span></span><span class="sig-name descname"><span class="pre">get_LSTM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ninputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noutputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saved_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'sigmoid'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'relu'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'tanh'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'tanh'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_initializer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'glorot_normal'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'glorot_uniform'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'glorot_uniform'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Model</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.nn.get_LSTM" title="Link to this definition"></a></dt>
 <dd><p>Return a recurrent neural network with the specified architecture.</p>
-<dl>
-<dt>Args:</dt><dd><p>ninputs (int): Number of inputs to the model.
-noutputs (int): Number of outputs from the model.
-units (int, optional): Size of internal model state. Defaults to 20.
-hidden_dim (int, optional): Number of neurons in each hidden layer. Defaults to</p>
-<blockquote>
-<div><ol class="arabic simple" start="10">
-<li></li>
-</ol>
-</div></blockquote>
-<dl class="simple">
-<dt>saved_model (str, optional): Path to a saved model to load weights from.</dt><dd><p>Defaults to None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ninputs</strong> (<em>int</em>) – Number of inputs to the model.</p></li>
+<li><p><strong>noutputs</strong> (<em>int</em>) – Number of outputs from the model.</p></li>
+<li><p><strong>units</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of internal model state. Defaults to 20.</p></li>
+<li><p><strong>hidden_dim</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of neurons in each hidden layer. Defaults to
+10.</p></li>
+<li><p><strong>saved_model</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to a saved model to load weights from.
+Defaults to None.</p></li>
+<li><p><strong>activation</strong> (<em>Literal</em><em>[</em><em>&quot;sigmoid&quot;</em><em>, </em><em>&quot;relu&quot;</em><em>, </em><em>&quot;tanh&quot;</em><em>]</em><em>, </em><em>optional</em>) – Activation function
+to use in the hidden layers. Defaults to “sigmoid”.</p></li>
+<li><p><strong>kernel_initializer</strong> (<em>Literal</em><em>[</em><em>&quot;glorot_normal&quot;</em><em>, </em><em>&quot;glorot_uniform&quot;</em><em>]</em><em>, </em><em>optional</em>) – Weight initialization method to use in the hidden layers. Defaults to
+“glorot_normal”.</p></li>
+</ul>
 </dd>
-<dt>activation (Literal[“sigmoid”, “relu”, “tanh”], optional): Activation function</dt><dd><p>to use in the hidden layers. Defaults to “sigmoid”.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A fully connected neural network.</p>
 </dd>
-<dt>kernel_initializer (Literal[“glorot_normal”, “glorot_uniform”], optional):</dt><dd><p>Weight initialization method to use in the hidden layers. Defaults to
-“glorot_normal”.</p>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><p>keras.Model: A fully connected neural network.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>keras.Model</p>
 </dd>
 </dl>
 </dd></dl>
@@ -193,27 +200,27 @@ hidden_dim (int, optional): Number of neurons in each hidden layer. Defaults to<
 <dt class="sig sig-object py" id="pyopmnearwell.ml.nn.get_RNN">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.nn.</span></span><span class="sig-name descname"><span class="pre">get_RNN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ninputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noutputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saved_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'sigmoid'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'relu'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'tanh'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'tanh'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_initializer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'glorot_normal'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'glorot_uniform'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'glorot_uniform'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Model</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.nn.get_RNN" title="Link to this definition"></a></dt>
 <dd><p>Return a recurrent neural network with the specified architecture.</p>
-<dl>
-<dt>Args:</dt><dd><p>ninputs (int): Number of inputs to the model.
-noutputs (int): Number of outputs from the model.
-units (int, optional): Size of internal model state. Defaults to 20.
-hidden_dim (int, optional): Number of neurons in each hidden layer. Defaults to</p>
-<blockquote>
-<div><ol class="arabic simple" start="10">
-<li></li>
-</ol>
-</div></blockquote>
-<dl class="simple">
-<dt>saved_model (str, optional): Path to a saved model to load weights from.</dt><dd><p>Defaults to None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ninputs</strong> (<em>int</em>) – Number of inputs to the model.</p></li>
+<li><p><strong>noutputs</strong> (<em>int</em>) – Number of outputs from the model.</p></li>
+<li><p><strong>units</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of internal model state. Defaults to 20.</p></li>
+<li><p><strong>hidden_dim</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of neurons in each hidden layer. Defaults to
+10.</p></li>
+<li><p><strong>saved_model</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to a saved model to load weights from.
+Defaults to None.</p></li>
+<li><p><strong>activation</strong> (<em>Literal</em><em>[</em><em>&quot;sigmoid&quot;</em><em>, </em><em>&quot;relu&quot;</em><em>, </em><em>&quot;tanh&quot;</em><em>]</em><em>, </em><em>optional</em>) – Activation function
+to use in the hidden layers. Defaults to “sigmoid”.</p></li>
+<li><p><strong>kernel_initializer</strong> (<em>Literal</em><em>[</em><em>&quot;glorot_normal&quot;</em><em>, </em><em>&quot;glorot_uniform&quot;</em><em>]</em><em>, </em><em>optional</em>) – Weight initialization method to use in the hidden layers. Defaults to
+“glorot_normal”.</p></li>
+</ul>
 </dd>
-<dt>activation (Literal[“sigmoid”, “relu”, “tanh”], optional): Activation function</dt><dd><p>to use in the hidden layers. Defaults to “sigmoid”.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A fully connected neural network.</p>
 </dd>
-<dt>kernel_initializer (Literal[“glorot_normal”, “glorot_uniform”], optional):</dt><dd><p>Weight initialization method to use in the hidden layers. Defaults to
-“glorot_normal”.</p>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><p>keras.Model: A fully connected neural network.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>keras.Model</p>
 </dd>
 </dl>
 </dd></dl>
@@ -223,10 +230,15 @@ hidden_dim (int, optional): Number of neurons in each hidden layer. Defaults to<
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.nn.</span></span><span class="sig-name descname"><span class="pre">handle_zeros_in_scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.nn.handle_zeros_in_scale" title="Link to this definition"></a></dt>
 <dd><p>Set scales of near constant features to 1.</p>
 <p>Note: This behavior is in line with <cite>sklearn.preprocessing.MinMaxScaler</cite>.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>scale (ArrayLike): The scale array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scale</strong> (<em>ArrayLike</em>) – The scale array.</p>
 </dd>
-<dt>Returns:</dt><dd><p>np.ndarray: The modified scale array.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The modified scale array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -240,18 +252,26 @@ hidden_dim (int, optional): Number of neurons in each hidden layer. Defaults to<
 <dt class="sig sig-object py" id="pyopmnearwell.ml.nn.scale_and_evaluate">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.nn.</span></span><span class="sig-name descname"><span class="pre">scale_and_evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalingsfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.nn.scale_and_evaluate" title="Link to this definition"></a></dt>
 <dd><p>Scale the input, evaluate with the model and scale the output.</p>
-<dl>
-<dt>Args:</dt><dd><p>model (tf.keras.Model): A Keras model to evaluate the input with.
-model_input (ArrayLike): Input tensor. Can be a batch.
-scalingsfile (str | pathlib.Path): The path to the CSV file containing the</p>
-<blockquote>
-<div><p>scaling parameters for MinMaxScaling.</p>
-</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>tf.keras.Model</em>) – A Keras model to evaluate the input with.</p></li>
+<li><p><strong>model_input</strong> (<em>ArrayLike</em>) – Input tensor. Can be a batch.</p></li>
+<li><p><strong>scalingsfile</strong> (<em>str</em><em> | </em><em>pathlib.Path</em>) – The path to the CSV file containing the
+scaling parameters for MinMaxScaling.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>tf.Tensor: The model’s output, scaled back to the original range.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The model’s output, scaled back to the original range.</p>
 </dd>
-<dt>Raises:</dt><dd><p>FileNotFoundError: If <code class="docutils literal notranslate"><span class="pre">scalingsfile</span></code> does not exist.
-ValueError: If <code class="docutils literal notranslate"><span class="pre">scalingsfile</span></code> contains an invalid row.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tf.Tensor</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>FileNotFoundError</strong> – If <code class="docutils literal notranslate"><span class="pre">scalingsfile</span></code> does not exist.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">scalingsfile</span></code> contains an invalid row.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -260,40 +280,44 @@ ValueError: If <code class="docutils literal notranslate"><span class="pre">scal
 <dt class="sig sig-object py" id="pyopmnearwell.ml.nn.scale_and_prepare_dataset">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.nn.</span></span><span class="sig-name descname"><span class="pre">scale_and_prepare_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dsfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_split</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'first'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'last'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'false'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'first'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(-1,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(-1,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyopmnearwell.ml.nn.scale_and_prepare_dataset" title="Link to this definition"></a></dt>
 <dd><p>Scale, shuffle and split a dataset.</p>
-<dl>
-<dt>Args:</dt><dd><p>dsfile (str | pathlib.Path): Dataset file.
-feature_names (list[str]): List of feature names.
-savepath (pathlib.Path): Savepath for the scaling values.
-train_split (float, optional): Train split. Defaults to 0.9.
-val_split (float, optional): Val split. Defaults to 0.1.
-test_split (float, optional): Test split. Defaults to None.
-shuffle (Literal[“first”, “last”, “false”], optional): Options for shuffling the</p>
-<blockquote>
-<div><p>dataset:
-- “first”: The dataset gets shuffled before the split.
-- “last”: The dataset gets shuffled after the split.
-- “false”: The dataset does not get shuffled.
-Defaults to “first”.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>feature_range (tuple[float, float], optional): Target range of feature scaling.</dt><dd><p>Defaults to (-1, 1).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dsfile</strong> (<em>str</em><em> | </em><em>pathlib.Path</em>) – Dataset file.</p></li>
+<li><p><strong>feature_names</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of feature names.</p></li>
+<li><p><strong>savepath</strong> (<em>pathlib.Path</em>) – Savepath for the scaling values.</p></li>
+<li><p><strong>train_split</strong> (<em>float</em><em>, </em><em>optional</em>) – Train split. Defaults to 0.9.</p></li>
+<li><p><strong>val_split</strong> (<em>float</em><em>, </em><em>optional</em>) – Val split. Defaults to 0.1.</p></li>
+<li><p><strong>test_split</strong> (<em>float</em><em>, </em><em>optional</em>) – Test split. Defaults to None.</p></li>
+<li><p><strong>shuffle</strong> (<em>Literal</em><em>[</em><em>&quot;first&quot;</em><em>, </em><em>&quot;last&quot;</em><em>, </em><em>&quot;false&quot;</em><em>]</em><em>, </em><em>optional</em>) – <p>Options for shuffling the
+dataset:</p>
+<ul>
+<li><p>”first”: The dataset gets shuffled before the split.</p></li>
+<li><p>”last”: The dataset gets shuffled after the split.</p></li>
+<li><p>”false”: The dataset does not get shuffled.</p></li>
+</ul>
+<p>Defaults to “first”.</p>
+</p></li>
+<li><p><strong>feature_range</strong> (<em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – Target range of feature scaling.
+Defaults to (-1, 1).</p></li>
+<li><p><strong>target_range</strong> (<em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – Target range of target scaling.
+Defaults to (-1, 1)</p></li>
+<li><p><strong>scale</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to scale the dataset. Defaults to True.</p></li>
+</ul>
 </dd>
-<dt>target_range (tuple[float, float], optional): Target range of target scaling.</dt><dd><p>Defaults to (-1, 1)</p>
-</dd>
-</dl>
-<p>scale (bool, optional): Whether to scale the dataset. Defaults to True.</p>
-</dd>
-<dt>Returns:</dt><dd><p>tuple[tuple[np.ndarray, np.ndarray], tuple[np.ndarray, np.ndarray]]
-| tuple[</p>
-<blockquote>
-<div><p>tuple[np.ndarray, np.ndarray],
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl>
+<dt>tuple[tuple[np.ndarray, np.ndarray], tuple[np.ndarray, np.ndarray]]</dt><dd><div class="line-block">
+<div class="line">tuple[
 tuple[np.ndarray, np.ndarray],
-tuple[np.ndarray, np.ndarray],</p>
-</div></blockquote>
-<dl class="simple">
+tuple[np.ndarray, np.ndarray],
+tuple[np.ndarray, np.ndarray],</div>
+</div>
+</dd>
 <dt>]: Tuple of scaled and split dataset. Includes test set only if</dt><dd><p><code class="docutils literal notranslate"><span class="pre">test_split</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>.</p>
 </dd>
 </dl>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -302,32 +326,31 @@ tuple[np.ndarray, np.ndarray],</p>
 <dt class="sig sig-object py" id="pyopmnearwell.ml.nn.train">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.nn.</span></span><span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">patience</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_patience</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kerasify</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'mse'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'MeanAbsolutePercentageError'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'MeanSquaredLogarithmicError'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mse'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recompile_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.nn.train" title="Link to this definition"></a></dt>
 <dd><p>Train a tensorflow model on the provided training data and save the best model.</p>
-<dl>
-<dt>Args:</dt><dd><p>model (tf.Module): Model to be trained.
-train_data (tuple[ArrayLike, ArrayLike]): Training features and targets.
-val_data (tuple[ArrayLike, ArrayLike]): Validation features and targets.
-savepath (pathlib.Path): Savepath for models and logging.
-lr (float, optional): Initial learning rate. Defaults to 0.1.
-epochs (_type_, optional): Training epochs. Defaults to 500.
-bs (int, optional): Batch size. Defaults to 64.
-patience (int, optional): Number of epochs without improvement before early</p>
-<blockquote>
-<div><p>stopping. Defaults to 100.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>lr_patience (int, optional): Number of epochs without improvement before lr</dt><dd><p>decay. Defaults to 10.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>tf.Module</em>) – Model to be trained.</p></li>
+<li><p><strong>train_data</strong> (<em>tuple</em><em>[</em><em>ArrayLike</em><em>, </em><em>ArrayLike</em><em>]</em>) – Training features and targets.</p></li>
+<li><p><strong>val_data</strong> (<em>tuple</em><em>[</em><em>ArrayLike</em><em>, </em><em>ArrayLike</em><em>]</em>) – Validation features and targets.</p></li>
+<li><p><strong>savepath</strong> (<em>pathlib.Path</em>) – Savepath for models and logging.</p></li>
+<li><p><strong>lr</strong> (<em>float</em><em>, </em><em>optional</em>) – Initial learning rate. Defaults to 0.1.</p></li>
+<li><p><strong>epochs</strong> (<em>_type_</em><em>, </em><em>optional</em>) – Training epochs. Defaults to 500.</p></li>
+<li><p><strong>bs</strong> (<em>int</em><em>, </em><em>optional</em>) – Batch size. Defaults to 64.</p></li>
+<li><p><strong>patience</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of epochs without improvement before early
+stopping. Defaults to 100.</p></li>
+<li><p><strong>lr_patience</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of epochs without improvement before lr
+decay. Defaults to 10.</p></li>
+<li><p><strong>kerasify</strong> (<em>bool</em><em>, </em><em>optional</em>) – Export the best model with kerasify after training.
+Defaults to True.</p></li>
+<li><p><strong>loss_func</strong> (<em>Literal</em><em>[</em><em>&quot;mse&quot;</em><em>, </em><em>&quot;MeanAbsolutePercentageError&quot;</em><em>, </em><em>&quot;MeanSquaredLogarithmicError&quot;</em><em>]</em><em>, </em><em>optional</em>) – Loss function. Defaults to “mse”.</p></li>
+<li><p><strong>recompile_model</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to recompile the model before
+training. Can e.g., be set to false, if the model is built and compiled by a
+different function. Defaults to True.</p></li>
+<li><p><strong>**kwargs</strong> – Get passed to the <code class="docutils literal notranslate"><span class="pre">model.fit()</span></code> method.</p></li>
+</ul>
 </dd>
-<dt>kerasify (bool, optional): Export the best model with kerasify after training.</dt><dd><p>Defaults to True.</p>
-</dd>
-<dt>loss_func (Literal[“mse”, “MeanAbsolutePercentageError”,</dt><dd><p>“MeanSquaredLogarithmicError”], optional): Loss function. Defaults to “mse”.</p>
-</dd>
-<dt>recompile_model (bool, optional): Whether to recompile the model before</dt><dd><p>training. Can e.g., be set to false, if the model is built and compiled by a
-different function. Defaults to True.</p>
-</dd>
-</dl>
-<p><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: Get passed to the <code class="docutils literal notranslate"><span class="pre">model.fit()</span></code> method.</p>
-</dd>
-<dt>Returns:</dt><dd><p>None</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -336,28 +359,32 @@ different function. Defaults to True.</p>
 <dt class="sig sig-object py" id="pyopmnearwell.ml.nn.tune">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.nn.</span></span><span class="sig-name descname"><span class="pre">tune</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ninputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noutputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objective</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'loss'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'val_loss'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'val_loss'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_trials</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">executions_per_trial</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">array([1.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_tune</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Model</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuner</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyopmnearwell.ml.nn.tune" title="Link to this definition"></a></dt>
 <dd><p>Tune the hyperparameters of a neural network model using random search.</p>
-<dl>
-<dt>Args:</dt><dd><p>ninputs (int): Number of input features to the model.
-noutputs (int): Number of output features to the model.
-train_data (tuple[ArrayLike, ArrayLike]): Tuple of training input and target</p>
-<blockquote>
-<div><p>data.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>val_data (tuple[ArrayLike, ArrayLike],): Tuple of validation input and target</dt><dd><p>data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ninputs</strong> (<em>int</em>) – Number of input features to the model.</p></li>
+<li><p><strong>noutputs</strong> (<em>int</em>) – Number of output features to the model.</p></li>
+<li><p><strong>train_data</strong> (<em>tuple</em><em>[</em><em>ArrayLike</em><em>, </em><em>ArrayLike</em><em>]</em>) – Tuple of training input and target
+data.</p></li>
+<li><p><strong>val_data</strong> (<em>tuple</em><em>[</em><em>ArrayLike</em><em>, </em><em>ArrayLike</em><em>]</em><em>,</em>) – Tuple of validation input and target
+data.</p></li>
+<li><p><strong>objective</strong> (<em>Literal</em><em>[</em><em>&quot;loss&quot;</em><em>, </em><em>&quot;val_loss&quot;</em><em>]</em><em>, </em><em>optional</em>) – Objective for search.
+Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;val_loss&quot;</span></code>.</p></li>
+<li><p><strong>max_trials</strong> (<em>int</em>) – Default is 5.</p></li>
+<li><p><strong>executions_per_trial</strong> (<em>int</em>) – Default is 1.</p></li>
+<li><p><strong>sample_weight</strong> – (ArrayLike): Default is <code class="docutils literal notranslate"><span class="pre">np.array([1.0])</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> – Get passed to the tuner’s search method.</p></li>
+</ul>
 </dd>
-<dt>objective (Literal[“loss”, “val_loss”], optional): Objective for search.</dt><dd><p>Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;val_loss&quot;</span></code>.</p>
-</dd>
-</dl>
-<p>max_trials (int): Default is 5.
-executions_per_trial (int): Default is 1.
-sample_weight:(ArrayLike): Default is <code class="docutils literal notranslate"><span class="pre">np.array([1.0])</span></code>.
-<a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: Get passed to the tuner’s search method.</p>
-</dd>
-<dt>Returns:</dt><dd><p>tf.Module: The model compiled with the best hyperparameters.
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The model compiled with the best hyperparameters.
 keras_tuner.Tuner: The tuner.</p>
 </dd>
-<dt>Raises:</dt><dd><p>ValueError: If <cite>train_data</cite> or <cite>val_data</cite> is not a tuple of two tensors.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tf.Module</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If <cite>train_data</cite> or <cite>val_data</cite> is not a tuple of two tensors.</p>
 </dd>
 </dl>
 </dd></dl>

@@ -8,7 +8,6 @@ as then an np.float64 or similar is returned. Not sure how to fix this.
 """
 
 import math
-import os
 import pathlib
 import subprocess
 from typing import Literal
@@ -345,13 +344,13 @@ def hydrostatic_gas(
         P = P_0 * e^((-m * g * h) / (R^* * T)),
 
     where
-    :math:`P`is the pressure,
-    :math:`P_0` is the reference pressure,
-    :math:`m`is the molecular mass of the gas,
-    :math:`g`is the acceleration due to gravity,
-    :math:`h`is the height,
-    :math:`R^*`is the universal gas constant, and
-    :math:`T`is the temperature.
+    :math:`P is the pressure,`
+    :math:`P_0 is the reference pressure,`
+    :math:`m is the molecular mass of the gas,`
+    :math:`g is the acceleration due to gravity,`
+    :math:`h is the height,`
+    :math:`R^* is the universal gas constant, and`
+    :math:`T is the temperature.`
 
     Args:
         reference_pressure (ArrayLike): Reference pressure at height 0. Unit [Pa].
@@ -359,7 +358,7 @@ def hydrostatic_gas(
         temperature (ArrayLike): Temperature. Unit [K].
         molecule_mass (ArrayLike): Molecular mass of the gas. Unit [kg/mol].
         gravity (ArrayLike, optional): Acceleration due to gravity. Unit [m/s^2].
-        Defaults to ``units.GRAVITATIONAL_ACCELERATION``, i.e., :math:`\approx 9.8`.
+        Defaults to ``units.GRAVITATIONAL_ACCELERATION``, i.e., ca. 9.8`.
 
     Returns:
         ArrayLike: Hydrostatic pressure at the given height. Unit [Pa].

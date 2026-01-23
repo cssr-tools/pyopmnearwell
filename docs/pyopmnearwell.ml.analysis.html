@@ -8,15 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyopmnearwell.ml.analysis module &mdash; pyopmnearwell  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -93,26 +92,26 @@
 <dt class="sig sig-object py" id="pyopmnearwell.ml.analysis.plot_analysis">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.analysis.</span></span><span class="sig-name descname"><span class="pre">plot_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">main_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.analysis.plot_analysis" title="Link to this definition"></a></dt>
 <dd><p>Plot the analysis of the model outputs against inputs.</p>
-<dl>
-<dt>Args:</dt><dd><p>outputs (np.ndarray): The model outputs.
-inputs (np.ndarray): The model inputs. Shape is <code class="docutils literal notranslate"><span class="pre">(num_inputs,</span> <span class="pre">resolution_1,</span>
-<span class="pre">resolution_2)</span></code>.
-savepath (str | pathlib.Path): The path to save the plot.
-feature_names (Optional[list[str]]): The names of the input features. If None,
-default names (<span class="math notranslate nohighlight">\(x_1,x_2,\dots\)</span>) will be used. Default is None.
-main_plot (Optional[tuple[np.ndarray, np.ndarray]]): Add output and input for a</p>
-<blockquote>
-<div><p>main plot that is specifically highlighted. Default is None.</p>
-</div></blockquote>
-<dl class="simple">
-<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs:</dt><dd><ul class="simple">
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> (<em>np.ndarray</em>) – The model outputs.</p></li>
+<li><p><strong>inputs</strong> (<em>np.ndarray</em>) – The model inputs. Shape is
+<code class="docutils literal notranslate"><span class="pre">(num_inputs,</span> <span class="pre">resolution_1,</span> <span class="pre">resolution_2)</span></code>.</p></li>
+<li><p><strong>savepath</strong> (<em>str</em><em> | </em><em>pathlib.Path</em>) – The path to save the plot.</p></li>
+<li><p><strong>feature_names</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em>) – The names of the input features. If None,</p></li>
+<li><p><strong>names</strong> (<em>default</em>)</p></li>
+<li><p><strong>main_plot</strong> (<em>Optional</em><em>[</em><em>tuple</em><em>[</em><em>np.ndarray</em><em>, </em><em>np.ndarray</em><em>]</em><em>]</em>) – Add output and input for a
+main plot that is specifically highlighted. Default is None.</p></li>
+<li><p><strong>**kwargs</strong> – <ul>
 <li><p>legend (bool): Whether to plot a legend. Default
 is True.</p></li>
 </ul>
+</p></li>
+</ul>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><p>None</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -124,28 +123,31 @@ is True.</p></li>
 <p>For each input variable, vary from a min to a max value and measure how the output
 of the network changes. The other input variables are kept constant meanwhile.</p>
 <p>Note: It is assumed that the network has a single output.</p>
-<dl>
-<dt>Args:</dt><dd><p>model (keras.Model): Neural network.
-resolution_1 (int): Number of different values that the fixed inputs take.</p>
-<blockquote>
-<div><p>Equals the number of plotted lines in <code class="docutils literal notranslate"><span class="pre">plot_analysis</span></code>.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>resolution_2 (int): Number of different values the variable input takes. Equals</dt><dd><p>the number of datapoints along the x-axis <code class="docutils literal notranslate"><span class="pre">plot_analysis</span></code>.</p>
-</dd>
-<dt>mode (Literal[“homogeneous”, “random_uniform”, “random_normal”] | float): Sets</dt><dd><p>the sampling mode for the fixed inputs.
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>keras.Model</em>) – Neural network.</p></li>
+<li><p><strong>resolution_1</strong> (<em>int</em>) – Number of different values that the fixed inputs take.
+Equals the number of plotted lines in <code class="docutils literal notranslate"><span class="pre">plot_analysis</span></code>.</p></li>
+<li><p><strong>resolution_2</strong> (<em>int</em>) – Number of different values the variable input takes. Equals
+the number of datapoints along the x-axis <code class="docutils literal notranslate"><span class="pre">plot_analysis</span></code>.</p></li>
+<li><p><strong>mode</strong> (<em>Literal</em><em>[</em><em>&quot;homogeneous&quot;</em><em>, </em><em>&quot;random_uniform&quot;</em><em>, </em><em>&quot;random_normal&quot;</em><em>] </em><em>| </em><em>float</em>) – Sets
+the sampling mode for the fixed inputs.
 - “homogeneous”:
 - “random_uniform”:
 - “random_normal”
 - float: All fixed inputs are set to this value.
-Default is “homogeneous”.</p>
+Default is “homogeneous”.</p></li>
+</ul>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><p>tuple[np.ndarray, np.ndarray]: Output and inputs from the sensitivity analysis.
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output and inputs from the sensitivity analysis.
 First axis is the input variable that is varying, second axis is the variation,
 third axis is the variation for the fixed variables. The input array contains an
 additional axis in case of input dimension &gt; 1.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[np.ndarray, np.ndarray]</p>
 </dd>
 </dl>
 </dd></dl>

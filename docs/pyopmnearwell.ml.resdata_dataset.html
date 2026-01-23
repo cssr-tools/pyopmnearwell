@@ -8,14 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyopmnearwell.ml.resdata_dataset module &mdash; pyopmnearwell  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -94,11 +94,11 @@ different from the default one. The lines that need to be changed are marked wit
 an ensemble of pyopmnearwell decks AND extract data afterwards.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.resdata_dataset.ResDataSet">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.resdata_dataset.</span></span><span class="sig-name descname"><span class="pre">ResDataSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_kws</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_kws</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'resdata'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'opm'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'resdata'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">tf.float32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle_on_epoch_end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_data_on_init</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.resdata_dataset.ResDataSet" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.resdata_dataset.</span></span><span class="sig-name descname"><span class="pre">ResDataSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_kws</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_kws</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'resdata'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'opm'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'resdata'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">tf.float32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle_on_epoch_end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_data_on_init</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.resdata_dataset.ResDataSet" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Generate samples for a <code class="docutils literal notranslate"><span class="pre">tf.data.Dataset</span></code> from a folder of <code class="docutils literal notranslate"><span class="pre">.UNRST</span></code> files.</p>
-<dl>
-<dt>Example:</dt><dd><p>After instantiation of the class, it can be passed to
+<p class="rubric">Example</p>
+<p>After instantiation of the class, it can be passed to
 <code class="docutils literal notranslate"><span class="pre">tf.data.Dataset.from_generator()</span></code>, to create a dataset that <code class="docutils literal notranslate"><span class="pre">tensorflow</span></code>
 can work with.
 &gt;&gt;&gt; data = ResDataSet(path, input_kws, target_kws)
@@ -110,51 +110,37 @@ can work with.
 <p>To save the dataset, use
 &gt;&gt;&gt; ds.save(path)
 Afterwards, the <code class="docutils literal notranslate"><span class="pre">.UNRST</span></code> files used to generated the dataset can be deleted.</p>
-</dd>
-</dl>
-<p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyopmnearwell.ml.resdata_dataset.ResDataSet.ResdataFile_to_datapoint" title="pyopmnearwell.ml.resdata_dataset.ResDataSet.ResdataFile_to_datapoint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ResdataFile_to_datapoint</span></code></a>(resdata_file)</p></td>
-<td><p>Extract values from an <code class="docutils literal notranslate"><span class="pre">ResdataFile</span></code> object to form an (input, target) tuple of tensors.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>()</p></td>
-<td><p>Call self as a function.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyopmnearwell.ml.resdata_dataset.ResDataSet.on_epoch_end" title="pyopmnearwell.ml.resdata_dataset.ResDataSet.on_epoch_end"><code class="xref py py-obj docutils literal notranslate"><span class="pre">on_epoch_end</span></code></a>()</p></td>
-<td><p>Shuffle the dataset at the end of each epoch.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyopmnearwell.ml.resdata_dataset.ResDataSet.read_data" title="pyopmnearwell.ml.resdata_dataset.ResDataSet.read_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_data</span></code></a>()</p></td>
-<td><p>Create a <code class="docutils literal notranslate"><span class="pre">tensorflow</span></code> dataset from a folder of <code class="docutils literal notranslate"><span class="pre">resdata</span></code> or <code class="docutils literal notranslate"><span class="pre">opm</span></code> files.</p></td>
-</tr>
-</tbody>
-</table>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.resdata_dataset.ResDataSet.ResdataFile_to_datapoint">
 <span class="sig-name descname"><span class="pre">ResdataFile_to_datapoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resdata_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ResdataFile</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyopmnearwell.ml.resdata_dataset.ResDataSet.ResdataFile_to_datapoint" title="Link to this definition"></a></dt>
 <dd><p>Extract values from an <code class="docutils literal notranslate"><span class="pre">ResdataFile</span></code> object to form an (input, target)
 tuple of tensors.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>ecl_file (EclFile): _description_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ecl_file</strong> (<em>EclFile</em>) – _description_</p>
 </dd>
-<dt>Raises:</dt><dd><dl class="simple">
-<dt>KeyError: If <code class="docutils literal notranslate"><span class="pre">resdata_file</span></code> does not have either of the keywords in</dt><dd><p><code class="docutils literal notranslate"><span class="pre">self.input_kws</span></code> or <code class="docutils literal notranslate"><span class="pre">self.target_kws</span></code></p>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>KeyError</strong> – If <code class="docutils literal notranslate"><span class="pre">resdata_file</span></code> does not have either of the keywords in
+    <code class="docutils literal notranslate"><span class="pre">self.input_kws</span></code> or <code class="docutils literal notranslate"><span class="pre">self.target_kws</span></code></p>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>tuple[tf.Tensor, tf.Tensor]: A tuple containing the input and target tensor.</dt><dd><p>The former has shape <code class="docutils literal notranslate"><span class="pre">(resdata_file.num_report_steps(),</span> <span class="pre">num_cells,</span>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>A tuple containing the input and target tensor.</dt><dd><p>The former has shape <code class="docutils literal notranslate"><span class="pre">(resdata_file.num_report_steps(),</span> <span class="pre">num_cells,</span>
 <span class="pre">len(input_kws))</span></code>, while the latter has shape
 <code class="docutils literal notranslate"><span class="pre">(resdata_file.num_report_steps(),</span> <span class="pre">num_cells,</span> <span class="pre">len(target_kws))</span></code>.</p>
 </dd>
 </dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[tf.Tensor, tf.Tensor]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.resdata_dataset.ResDataSet.features">
-<span class="sig-name descname"><span class="pre">features</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tensor</span></em><a class="headerlink" href="#pyopmnearwell.ml.resdata_dataset.ResDataSet.features" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">features</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tensor</span></span><a class="headerlink" href="#pyopmnearwell.ml.resdata_dataset.ResDataSet.features" title="Link to this definition"></a></dt>
 <dd><p>Stores all inputs of the dataset.</p>
 <p><code class="docutils literal notranslate"><span class="pre">shape=(num_files,</span> <span class="pre">num_report_steps,</span> <span class="pre">num_cells,</span> <span class="pre">len(input_kws))</span></code></p>
 </dd></dl>
@@ -163,10 +149,10 @@ tuple of tensors.</p>
 <dt class="sig sig-object py" id="pyopmnearwell.ml.resdata_dataset.ResDataSet.on_epoch_end">
 <span class="sig-name descname"><span class="pre">on_epoch_end</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.ml.resdata_dataset.ResDataSet.on_epoch_end" title="Link to this definition"></a></dt>
 <dd><p>Shuffle the dataset at the end of each epoch.</p>
-<dl class="simple">
-<dt>Warning:</dt><dd><p>Using this method might give an error atm.</p>
-</dd>
-</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Using this method might give an error atm.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -177,7 +163,7 @@ tuple of tensors.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyopmnearwell.ml.resdata_dataset.ResDataSet.targets">
-<span class="sig-name descname"><span class="pre">targets</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tensor</span></em><a class="headerlink" href="#pyopmnearwell.ml.resdata_dataset.ResDataSet.targets" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">targets</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tensor</span></span><a class="headerlink" href="#pyopmnearwell.ml.resdata_dataset.ResDataSet.targets" title="Link to this definition"></a></dt>
 <dd><p>Stores all targets of the dataset.</p>
 <p><code class="docutils literal notranslate"><span class="pre">shape=(num_files,</span> <span class="pre">num_report_steps,</span> <span class="pre">num_cells,</span> <span class="pre">len(target_kws))</span></code></p>
 </dd></dl>

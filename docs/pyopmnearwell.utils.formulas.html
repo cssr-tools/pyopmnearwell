@@ -8,15 +8,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyopmnearwell.utils.formulas module &mdash; pyopmnearwell  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -95,15 +95,25 @@ as then an np.float64 or similar is returned. Not sure how to fix this.</p>
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.formulas.</span></span><span class="sig-name descname"><span class="pre">area_squaredcircle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArrayLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sidelength</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArrayLike</span></span></span><a class="headerlink" href="#pyopmnearwell.utils.formulas.area_squaredcircle" title="Link to this definition"></a></dt>
 <dd><p>Calculate the area that lies both inside a circle and inside a square centered at
 the origin.</p>
-<dl>
-<dt>Args:</dt><dd><p>radius (ArrayLike): The radius of the circle.
-sidelength (ArrayLike): The sidelength of the square.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>radius</strong> (<em>ArrayLike</em>) – The radius of the circle.</p></li>
+<li><p><strong>sidelength</strong> (<em>ArrayLike</em>) – The sidelength of the square.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>ArrayLike: The calculated area.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The calculated area.</p>
 </dd>
-<dt>Raises:</dt><dd><p>ValueError: If <code class="docutils literal notranslate"><span class="pre">radius</span></code> or <code class="docutils literal notranslate"><span class="pre">sidelength</span></code> contain a negative value.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ArrayLike</p>
 </dd>
-<dt>Examples:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">area_squaredcircle</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">radius</span></code> or <code class="docutils literal notranslate"><span class="pre">sidelength</span></code> contain a negative value.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">area_squaredcircle</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
 <span class="go">9.0  # Area of a sqare with sidelength 3.0</span>
 </pre></div>
 </div>
@@ -115,18 +125,21 @@ sidelength (ArrayLike): The sidelength of the square.</p>
 <span class="go">6.283185307179586  # Area inside a  2.0</span>
 </pre></div>
 </div>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyopmnearwell.utils.formulas.cell_size">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.formulas.</span></span><span class="sig-name descname"><span class="pre">cell_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radii</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ArrayLike</span></span></span><a class="headerlink" href="#pyopmnearwell.utils.formulas.cell_size" title="Link to this definition"></a></dt>
 <dd><p>Calculate the size of a quadratic cell for a given equivalent well block radius.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>delta_x (ArrayLike): _description_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>delta_x</strong> (<em>ArrayLike</em>) – _description_</p>
 </dd>
-<dt>Returns:</dt><dd><p>(ArrayLike): _description_</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>_description_</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(ArrayLike)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -135,14 +148,21 @@ sidelength (ArrayLike): The sidelength of the square.</p>
 <dt class="sig sig-object py" id="pyopmnearwell.utils.formulas.co2brinepvt">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.formulas.</span></span><span class="sig-name descname"><span class="pre">co2brinepvt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pressure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_property</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'density'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'viscosity'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'CO2'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'water'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">OPM</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#pyopmnearwell.utils.formulas.co2brinepvt" title="Link to this definition"></a></dt>
 <dd><p>Call OPM’s <code class="docutils literal notranslate"><span class="pre">co2brinepvt</span></code> to calculate density/viscosity.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>pressure (float): Unit: [Pa].
-temperature (float): Unit: [K].
-property (Literal[“density”, “viscosity”]): Phase property to return.
-phase (Literal[“CO2”, “water”]): Phase of interest.
-OPM: (str | pathlib.Path): Path to OPM installation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pressure</strong> (<em>float</em>) – Unit: [Pa].</p></li>
+<li><p><strong>temperature</strong> (<em>float</em>) – Unit: [K].</p></li>
+<li><p><strong>property</strong> (<em>Literal</em><em>[</em><em>&quot;density&quot;</em><em>, </em><em>&quot;viscosity&quot;</em><em>]</em>) – Phase property to return.</p></li>
+<li><p><strong>phase</strong> (<em>Literal</em><em>[</em><em>&quot;CO2&quot;</em><em>, </em><em>&quot;water&quot;</em><em>]</em>) – Phase of interest.</p></li>
+<li><p><strong>OPM</strong> – (str | pathlib.Path): Path to OPM installation.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>quantity (float): Density (unit: [kg/m^3]) or viscosity (unit: [Pa*s])</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Density (unit: [kg/m^3]) or viscosity (unit: [Pa*s])</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>quantity (float)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -153,19 +173,25 @@ OPM: (str | pathlib.Path): Path to OPM installation.</p>
 <dd><p>Compute the well productivity index from given data.</p>
 <div class="math notranslate nohighlight">
 \[WI = \frac{q}{p_w - p_{gb}\]</div>
-<dl class="simple">
-<dt>Args:</dt><dd><p>q (ArrayLike): Injection rate. Unit: [m^3/s].
-p_w (ArrayLike): Bottom hole pressure. Unit: [Pa].
-p_gb (ArrayLike): Grid block pressure. Unit: [Pa].
-well_type (Literal[“injector”, “producer], optional): Calculate WI for injector
-or producer. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;injector&quot;</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>q</strong> (<em>ArrayLike</em>) – Injection rate. Unit: [m^3/s].</p></li>
+<li><p><strong>p_w</strong> (<em>ArrayLike</em>) – Bottom hole pressure. Unit: [Pa].</p></li>
+<li><p><strong>p_gb</strong> (<em>ArrayLike</em>) – Grid block pressure. Unit: [Pa].</p></li>
+<li><p><strong>well_type</strong> (<em>Literal</em><em>[</em><em>&quot;injector&quot;</em><em>, </em><em>&quot;producer</em><em>]</em><em>, </em><em>optional</em>) – Calculate WI for injector</p></li>
+<li><p><strong>&quot;injector&quot;.</strong> (<em>or producer. Defaults to</em>)</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>WI (ArrayLike): <span class="math notranslate nohighlight">\(WI\)</span>. Unit: [m^4*s/kg].</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(WI\)</span>. Unit: [m^4*s/kg].</p>
 </dd>
-<dt>Raises:</dt><dd><dl class="simple">
-<dt>ValueError: If bottom hole pressure and grid block pressure are equal for any</dt><dd><p>point.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>WI (ArrayLike)</p>
 </dd>
-</dl>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If bottom hole pressure and grid block pressure are equal for any
+    point.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -174,10 +200,15 @@ or producer. Defaults to <code class="docutils literal notranslate"><span class=
 <dt class="sig sig-object py" id="pyopmnearwell.utils.formulas.equivalent_well_radius">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.formulas.</span></span><span class="sig-name descname"><span class="pre">equivalent_well_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delta_x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#pyopmnearwell.utils.formulas.equivalent_well_radius" title="Link to this definition"></a></dt>
 <dd><p>Calculate the equivalent well block radius for a given quadratic cell size.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>delta_x (ArrayLike): _description_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>delta_x</strong> (<em>ArrayLike</em>) – _description_</p>
 </dd>
-<dt>Returns:</dt><dd><p>(ArrayLike): _description_</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>_description_</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(ArrayLike)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -195,22 +226,27 @@ or producer. Defaults to <code class="docutils literal notranslate"><span class=
 <span class="math notranslate nohighlight">\(rho\)</span> is the fluid density,
 <span class="math notranslate nohighlight">\(g\)</span> is the acceleration due to gravity, and
 <span class="math notranslate nohighlight">\(h\)</span> is the height.</p>
-<dl>
-<dt>Args:</dt><dd><p>rho (ArrayLike): Fluid density. Unit [kg/m^3].
-height (ArrayLike): Height of the fluid column. Unit [m].
-gravity (ArrayLike, optional): Acceleration due to gravity. Unit [m/s^2].</p>
-<blockquote>
-<div><p>Defaults to <code class="docutils literal notranslate"><span class="pre">units.GRAVITATIONAL_ACCELERATION</span></code>, i.e., <span class="math notranslate nohighlight">\(\approx 9.8\)</span>.</p>
-</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rho</strong> (<em>ArrayLike</em>) – Fluid density. Unit [kg/m^3].</p></li>
+<li><p><strong>height</strong> (<em>ArrayLike</em>) – Height of the fluid column. Unit [m].</p></li>
+<li><p><strong>gravity</strong> (<em>ArrayLike</em><em>, </em><em>optional</em>) – Acceleration due to gravity. Unit [m/s^2].
+Defaults to <code class="docutils literal notranslate"><span class="pre">units.GRAVITATIONAL_ACCELERATION</span></code>, i.e., <span class="math notranslate nohighlight">\(\approx 9.8\)</span>.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>ArrayLike: Hydrostatic pressure at the given height. Unit [Pa].</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Hydrostatic pressure at the given height. Unit [Pa].</p>
 </dd>
-<dt>Examples:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hydrostatic_fluid</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ArrayLike</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hydrostatic_fluid</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 <span class="go">98067.0</span>
 </pre></div>
 </div>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -224,29 +260,38 @@ using the ideal gas law and the hydrostatic equilibrium formula. The formula is:
 </pre></div>
 </div>
 <p>where
-<span class="math notranslate nohighlight">\(P`is the pressure,
-:math:`P_0\)</span> is the reference pressure,
-:math:<a href="#id1"><span class="problematic" id="id2">`</span></a>m`is the molecular mass of the gas,
-:math:<a href="#id3"><span class="problematic" id="id4">`</span></a>g`is the acceleration due to gravity,
-:math:<a href="#id5"><span class="problematic" id="id6">`</span></a>h`is the height,
-:math:<a href="#id7"><span class="problematic" id="id8">`</span></a>R^*`is the universal gas constant, and
-:math:<a href="#id9"><span class="problematic" id="id10">`</span></a>T`is the temperature.</p>
-<dl>
-<dt>Args:</dt><dd><p>reference_pressure (ArrayLike): Reference pressure at height 0. Unit [Pa].
-height (ArrayLike): Height of the gas column. Unit [m].
-temperature (ArrayLike): Temperature. Unit [K].
-molecule_mass (ArrayLike): Molecular mass of the gas. Unit [kg/mol].
-gravity (ArrayLike, optional): Acceleration due to gravity. Unit [m/s^2].
-Defaults to <code class="docutils literal notranslate"><span class="pre">units.GRAVITATIONAL_ACCELERATION</span></code>, i.e., <span class="math notranslate nohighlight">\(\approx 9.8\)</span>.</p>
+<span class="math notranslate nohighlight">\(P is the pressure,\)</span>
+<span class="math notranslate nohighlight">\(P_0 is the reference pressure,\)</span>
+<span class="math notranslate nohighlight">\(m is the molecular mass of the gas,\)</span>
+<span class="math notranslate nohighlight">\(g is the acceleration due to gravity,\)</span>
+<span class="math notranslate nohighlight">\(h is the height,\)</span>
+<span class="math notranslate nohighlight">\(R^* is the universal gas constant, and\)</span>
+<span class="math notranslate nohighlight">\(T is the temperature.\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reference_pressure</strong> (<em>ArrayLike</em>) – Reference pressure at height 0. Unit [Pa].</p></li>
+<li><p><strong>height</strong> (<em>ArrayLike</em>) – Height of the gas column. Unit [m].</p></li>
+<li><p><strong>temperature</strong> (<em>ArrayLike</em>) – Temperature. Unit [K].</p></li>
+<li><p><strong>molecule_mass</strong> (<em>ArrayLike</em>) – Molecular mass of the gas. Unit [kg/mol].</p></li>
+<li><p><strong>gravity</strong> (<em>ArrayLike</em><em>, </em><em>optional</em>) – Acceleration due to gravity. Unit [m/s^2].</p></li>
+<li><p><strong>units.GRAVITATIONAL_ACCELERATION</strong> (<em>Defaults to</em>)</p></li>
+<li><p><strong>i.e.</strong></p></li>
+<li><p><strong>9.8`.</strong> (<em>ca.</em>)</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>ArrayLike: Hydrostatic pressure at the given height. Unit [Pa].</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Hydrostatic pressure at the given height. Unit [Pa].</p>
 </dd>
-<dt>Examples:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hydrostatic_gas</span><span class="p">(</span><span class="mi">101325</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mf">0.029</span><span class="p">,</span> <span class="mf">9.81</span><span class="p">)</span>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ArrayLike</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hydrostatic_gas</span><span class="p">(</span><span class="mi">101325</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mf">0.029</span><span class="p">,</span> <span class="mf">9.81</span><span class="p">)</span>
 <span class="go">75819.90376642203</span>
 </pre></div>
 </div>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -256,17 +301,22 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">units.G
 from the Peaceman well model.</p>
 <div class="math notranslate nohighlight">
 \[WI = \frac{2 \pi h \mathbf{k} \frac{\mu}{\rho}}{\ln(r_e/r_w)}\]</div>
-<dl>
-<dt>Args:</dt><dd><p>k_h (ArrayLike): Permeability times the cell thickness. Unit: [m^3].
-r_e (ArrayLike): Equivalent well-block radius. Needs to have the same unit as</p>
-<blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">r_w</span></code>.</p>
-</div></blockquote>
-<p>r_w (ArrayLike): Wellbore radius. Needs to have the same unit as <code class="docutils literal notranslate"><span class="pre">r_e</span></code>.
-rho (ArrayLike): Density. Unit: [kg/m^3].
-mu (ArrayLike): Viscosity. Unit: [Pa*s].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k_h</strong> (<em>ArrayLike</em>) – Permeability times the cell thickness. Unit: [m^3].</p></li>
+<li><p><strong>r_e</strong> (<em>ArrayLike</em>) – Equivalent well-block radius. Needs to have the same unit as
+<code class="docutils literal notranslate"><span class="pre">r_w</span></code>.</p></li>
+<li><p><strong>r_w</strong> (<em>ArrayLike</em>) – Wellbore radius. Needs to have the same unit as <code class="docutils literal notranslate"><span class="pre">r_e</span></code>.</p></li>
+<li><p><strong>rho</strong> (<em>ArrayLike</em>) – Density. Unit: [kg/m^3].</p></li>
+<li><p><strong>mu</strong> (<em>ArrayLike</em>) – Viscosity. Unit: [Pa*s].</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>WI (ArrayLike): <span class="math notranslate nohighlight">\(WI\)</span>. Unit: [m*s].</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(WI\)</span>. Unit: [m*s].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>WI (ArrayLike)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -280,18 +330,26 @@ mu (ArrayLike): Viscosity. Unit: [Pa*s].</p>
 </dl>
 <div class="math notranslate nohighlight">
 \[WI = \frac{2 \pi h \mathbf{k}}{\ln(r_e/r_w)}\]</div>
-<dl>
-<dt>Args:</dt><dd><p>k_h (ArrayLike): Permeability times the cell thickness. Unit: [m^3].
-r_e (ArrayLike): Equivalent well-block radius. Needs to have the same unit as</p>
-<blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">r_w</span></code>.</p>
-</div></blockquote>
-<p>r_w (ArrayLike): Wellbore radius. Needs to have the same unit as <code class="docutils literal notranslate"><span class="pre">r_e</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k_h</strong> (<em>ArrayLike</em>) – Permeability times the cell thickness. Unit: [m^3].</p></li>
+<li><p><strong>r_e</strong> (<em>ArrayLike</em>) – Equivalent well-block radius. Needs to have the same unit as
+<code class="docutils literal notranslate"><span class="pre">r_w</span></code>.</p></li>
+<li><p><strong>r_w</strong> (<em>ArrayLike</em>) – Wellbore radius. Needs to have the same unit as <code class="docutils literal notranslate"><span class="pre">r_e</span></code>.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>WI (ArrayLike): <span class="math notranslate nohighlight">\(WI\)</span>. Unit: [m^3].</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(WI\)</span>. Unit: [m^3].</p>
 </dd>
-<dt>Raises:</dt><dd><p>ValueError: If r_w is zero for any point.
-ValueError: If either r_e or r_w contains a negative value</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>WI (ArrayLike)</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If r_w is zero for any point.</p></li>
+<li><p><strong>ValueError</strong> – If either r_e or r_w contains a negative value</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -309,13 +367,16 @@ radial solution can be recovered. This function calculates the ratio</p>
 <p>where <span class="math notranslate nohighlight">\(x_{triangle_grid}\)</span> is the altitude of the triangle, s.t. the solution
 on the triangle grid is equal to the solution on a radial grid with the given cell
 radii.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>angle (ArrayLike): Angle between both sides of the triangle grid. Default is</dt><dd><p><span class="math notranslate nohighlight">\(\pi/3\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>angle</strong> (<em>ArrayLike</em>) – Angle between both sides of the triangle grid. Default is
+<span class="math notranslate nohighlight">\(\pi/3\)</span>.</p>
 </dd>
-</dl>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(r_{radial_grid} / x_{triangle_grid}\)</span></p>
 </dd>
-<dt>Returns:</dt><dd><p>ArrayLike: <span class="math notranslate nohighlight">\(r_{radial_grid} / x_{triangle_grid}\)</span></p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ArrayLike</p>
 </dd>
 </dl>
 </dd></dl>
@@ -332,23 +393,30 @@ doi: 10.1016/j.geothermics.2022.102516.]</p>
 <div class="math notranslate nohighlight">
 \[WI = \frac{2 \pi h \mathbf{k}}{\ln(r_e/r_w)} \left(\frac{k_{r,1}}{\mu_1} +
 \frac{k_{r,2}}{\mu_2})\right)\]</div>
-<dl>
-<dt>Note:</dt><dd><p>The result is only accurate for fine grid sizes.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The result is only accurate for fine grid sizes.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k_h</strong> (<em>ArrayLike</em>) – Permeability times the cell thickness. Unit: [m^3].</p></li>
+<li><p><strong>r_e</strong> (<em>ArrayLike</em>) – Equivalent well-block radius. Needs to have the same unit as
+<code class="docutils literal notranslate"><span class="pre">r_w</span></code>.</p></li>
+<li><p><strong>r_w</strong> (<em>ArrayLike</em>) – Wellbore radius. Needs to have the same unit as <code class="docutils literal notranslate"><span class="pre">r_e</span></code>.</p></li>
+<li><p><strong>rho_1</strong> (<em>ArrayLike</em>) – Density of phase 1. Unit: [kg/m^3].</p></li>
+<li><p><strong>mu_1</strong> (<em>ArrayLike</em>) – Viscosity of phase 1. Unit: [Pa*s].</p></li>
+<li><p><strong>k_r1</strong> (<em>ArrayLike</em>) – Relative permeability of phase 1.</p></li>
+<li><p><strong>rho_2</strong> (<em>ArrayLike</em>) – Density of phase 2. Unit: [kg/m^3].</p></li>
+<li><p><strong>mu_2</strong> (<em>ArrayLike</em>) – Viscosity of phase 2. Unit: [Pa*s].</p></li>
+<li><p><strong>k_r2</strong> (<em>ArrayLike</em>) – Relative permeability of phase 2.</p></li>
+</ul>
 </dd>
-<dt>Args:</dt><dd><p>k_h (ArrayLike): Permeability times the cell thickness. Unit: [m^3].
-r_e (ArrayLike): Equivalent well-block radius. Needs to have the same unit as</p>
-<blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">r_w</span></code>.</p>
-</div></blockquote>
-<p>r_w (ArrayLike): Wellbore radius. Needs to have the same unit as <code class="docutils literal notranslate"><span class="pre">r_e</span></code>.
-rho_1 (ArrayLike): Density of phase 1. Unit: [kg/m^3].
-mu_1 (ArrayLike): Viscosity of phase 1. Unit: [Pa*s].
-k_r1 (ArrayLike): Relative permeability of phase 1.
-rho_2 (ArrayLike): Density of phase 2. Unit: [kg/m^3].
-mu_2 (ArrayLike): Viscosity of phase 2. Unit: [Pa*s].
-k_r2 (ArrayLike): Relative permeability of phase 2.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(WI\)</span>. Unit: [m*s].</p>
 </dd>
-<dt>Returns:</dt><dd><p>WI (ArrayLike): <span class="math notranslate nohighlight">\(WI\)</span>. Unit: [m*s].</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>WI (ArrayLike)</p>
 </dd>
 </dl>
 </dd></dl>
