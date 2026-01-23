@@ -43,7 +43,7 @@ def recompile_flow(
 
     Note: Once scaling layers are implemented directly into OPM, this might be
     deprecated. However, it might still be needed to deal with different stencils and
-        features per cell.
+    features per cell.
 
     Args:
         scalingsfile (pathlib.Path): Path to the csv file containing the input and

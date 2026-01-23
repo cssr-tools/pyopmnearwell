@@ -8,15 +8,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyopmnearwell.ml.ensemble module &mdash; pyopmnearwell  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -97,31 +97,40 @@ arguments.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">WI</span> <span class="o">=</span> \<span class="n">frac</span><span class="p">{</span><span class="n">q</span><span class="p">}{{</span><span class="n">p_w</span> <span class="o">-</span> <span class="n">p_</span><span class="p">{</span><span class="n">gb</span><span class="p">}}}</span>
 </pre></div>
 </div>
-<dl class="simple">
-<dt>Note:</dt><dd><ul class="simple">
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
 <li><p>The unit of <code class="docutils literal notranslate"><span class="pre">WI_array</span></code> will depend on the units of <code class="docutils literal notranslate"><span class="pre">pressures</span></code> and
 <code class="docutils literal notranslate"><span class="pre">injection_rates</span></code>.</p></li>
 <li><p>In 3D this might fail. The user is responsible to fix the array shapes before
 passing to this function.</p></li>
 </ul>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pressures</strong> (<em>np.ndarray</em>) – First axis are the ensemble members. Last axis is
+assumed to be the x-axis. Must contain the well cells (i.e., well pressures
+values) at <code class="docutils literal notranslate"><span class="pre">pressures[...,0]</span></code>.</p></li>
+<li><p><strong>injection_rates</strong> (<em>float</em><em> | </em><em>np.ndarray</em>) – Injection rate. If an <code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code>, it
+must have shape broadcastable to <code class="docutils literal notranslate"><span class="pre">pressures.shape</span></code>.</p></li>
+</ul>
 </dd>
-<dt>Args:</dt><dd><dl class="simple">
-<dt>pressures (np.ndarray): First axis are the ensemble members. Last axis is</dt><dd><p>assumed to be the x-axis. Must contain the well cells (i.e., well pressures
-values) at <code class="docutils literal notranslate"><span class="pre">pressures[...,0]</span></code>.</p>
-</dd>
-<dt>injection_rates (float | np.ndarray): Injection rate. If an <code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code>, it</dt><dd><p>must have shape broadcastable to <code class="docutils literal notranslate"><span class="pre">pressures.shape</span></code>.</p>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>WI_array (numpy.ndarray): <code class="docutils literal notranslate"><span class="pre">shape=(...,num_x_cells</span> <span class="pre">-</span> <span class="pre">1)</span></code></dt><dd><p>An array of well index values for each data point in the dataset.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">shape=(...,num_x_cells</span> <span class="pre">-</span> <span class="pre">1)</span></code></dt><dd><p>An array of well index values for each data point in the dataset.</p>
 </dd>
 <dt>failed_indices (list[int]): Indices for the ensemble members where WI could not</dt><dd><p>be computed. E.g., if the simmulation went wrong and the pressure difference
 is zero.</p>
 </dd>
 </dl>
+</p>
 </dd>
-<dt>Raises:</dt><dd><p>ValueError: If no data is found for the ‘pressure’ keyword in the dataset.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>WI_array (numpy.ndarray)</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If no data is found for the ‘pressure’ keyword in the dataset.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -130,33 +139,36 @@ is zero.</p>
 <dt class="sig sig-object py" id="pyopmnearwell.ml.ensemble.calculate_radii">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.ensemble.</span></span><span class="sig-name descname"><span class="pre">calculate_radii</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gridfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cells</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_outer_inner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">triangle_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0471975511965976</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyopmnearwell.ml.ensemble.calculate_radii" title="Link to this definition"></a></dt>
 <dd><p>Calculates the radii of the cells in a grid grom a given .</p>
-<dl>
-<dt>Args:</dt><dd><p>gridfile (str | pathlib.Path): Path to the file containing the grid.
-num_cells (int, optional): Number of cells in the grid. Defaults to 400.
-num_dims (int, optional): Number of dimensions of the grid. Defaults to 1.
-return_outer_inner (bool, optional): Whether to return the inner and outer radii</p>
-<blockquote>
-<div><p>in addition to the average radii. Defaults to False.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>triangle_grid (bool, optional): Whether the grid is a triangle grid. If</dt><dd><p>True, transform altitudes of the triangle grid to radii of a raidal grid
-with equal solution. Defaults to False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gridfile</strong> (<em>str</em><em> | </em><em>pathlib.Path</em>) – Path to the file containing the grid.</p></li>
+<li><p><strong>num_cells</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of cells in the grid. Defaults to 400.</p></li>
+<li><p><strong>num_dims</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of dimensions of the grid. Defaults to 1.</p></li>
+<li><p><strong>return_outer_inner</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to return the inner and outer radii
+in addition to the average radii. Defaults to False.</p></li>
+<li><p><strong>triangle_grid</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether the grid is a triangle grid. If
+True, transform altitudes of the triangle grid to radii of a raidal grid
+with equal solution. Defaults to False.</p></li>
+<li><p><strong>angle</strong> (<em>float</em><em>, </em><em>optional</em>) – Angle between both sides of the triangle grid. Defaults
+to <code class="docutils literal notranslate"><span class="pre">math.pi/3</span></code>.</p></li>
+</ul>
 </dd>
-<dt>angle (float, optional): Angle between both sides of the triangle grid. Defaults</dt><dd><p>to <code class="docutils literal notranslate"><span class="pre">math.pi/3</span></code>.</p>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl>
-<dt>np.ndarray | tuple[np.ndarray, np.ndarray, np.ndarray]: If return_outer_inner is</dt><dd><p>False, returns an array of the average radii of the cells.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl>
+<dt>If return_outer_inner is</dt><dd><p>False, returns an array of the average radii of the cells.</p>
 <p>If return_outer_inner is True, returns a tuple containing the array of
 average radii, the array of inner radii, and the array of outer radii.</p>
 </dd>
 </dl>
+</p>
 </dd>
-<dt>Raises:</dt><dd><dl class="simple">
-<dt>AssertionError: If the number of lines in the grid file is not equal to</dt><dd><p>num_cells + 1.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray | tuple[np.ndarray, np.ndarray, np.ndarray]</p>
 </dd>
-</dl>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AssertionError</strong> – If the number of lines in the grid file is not equal to
+    num_cells + 1.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -165,8 +177,9 @@ average radii, the array of inner radii, and the array of outer radii.</p>
 <dt class="sig sig-object py" id="pyopmnearwell.ml.ensemble.create_ensemble">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.ensemble.</span></span><span class="sig-name descname"><span class="pre">create_ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">runspecs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">efficient_sampling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyopmnearwell.ml.ensemble.create_ensemble" title="Link to this definition"></a></dt>
 <dd><p>Create an ensemble.</p>
-<dl class="simple">
-<dt>Note:</dt><dd><ul class="simple">
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
 <li><p>It is assumed that the user provides the variables in the correct units for
 pyopmnearwell.</p></li>
 <li><p>If the variable name starts with <code class="docutils literal notranslate"><span class="pre">&quot;PERM&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;LOG&quot;</span></code>, the distribution for
@@ -175,45 +188,56 @@ random sampling is log uniform.</p></li>
 sampling is uniform on integers.</p></li>
 <li><p>Else, the distribution for random sampling is uniformly distributed.</p></li>
 </ul>
-</dd>
-<dt>Args:</dt><dd><dl class="simple">
-<dt>runspecs (dict[str, Any]): Dictionary with at least the following keys:</dt><dd><ul class="simple">
-<li><p>“npoints”: Maximum number of ensemble members.</p></li>
-<li><p>“variables”: <code class="docutils literal notranslate"><span class="pre">dict</span></code> containing the run Args vary within the
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>runspecs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – <p>Dictionary with at least the following keys:</p>
+<ul>
+<li><p>”npoints”: Maximum number of ensemble members.</p></li>
+<li><p>”variables”: <code class="docutils literal notranslate"><span class="pre">dict</span></code> containing the run Args vary within the
 ensemble. The key specifies the variable name (needs to be identical to
 the variable name in the <code class="docutils literal notranslate"><span class="pre">*.mako</span></code> file that is passed to
 <code class="docutils literal notranslate"><span class="pre">setup_ensemble</span></code>) and the value is a tuple <code class="docutils literal notranslate"><span class="pre">(min,</span> <span class="pre">max,</span> <span class="pre">npoints)</span></code> with
 the min. and max. values for the variable and the number of samples
 generated for this variable. The samples are taken from a uniform
 distribution in the interval <span class="math notranslate nohighlight">\([min, max]\)</span>.</p></li>
-<li><p>“constants”: <code class="docutils literal notranslate"><span class="pre">dict</span></code> containing the run Args that are constant for
+<li><p>”constants”: <code class="docutils literal notranslate"><span class="pre">dict</span></code> containing the run Args that are constant for
 all ensemble members.</p></li>
 </ul>
-</dd>
-<dt>efficient_sampling (Optional[list[str]], optional): List containing the names of</dt><dd><p>variables that should be sampled instead of fully meshed and then sampled.
+</p></li>
+<li><p><strong>efficient_sampling</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – List containing the names of
+variables that should be sampled instead of fully meshed and then sampled.
 This is faster and avoids memory overload for higher dimensional
 combinations of variables. E.g., when creating an ensemble with varying
 vertical permeabilities. Only 10 layers with 10 samples generate a grid of
 10^10 values. By sampling directly instead of generating the grid first, it
-is possible to deal with the complexity.</p>
-</dd>
-<dt>seed: (Optional[int]): Seed for the <code class="docutils literal notranslate"><span class="pre">np.random.Generator</span></code>. Is passed to</dt><dd><p><code class="docutils literal notranslate"><span class="pre">memory_efficient_sample</span></code> as well. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+is possible to deal with the complexity.</p></li>
+<li><p><strong>seed</strong> – (Optional[int]): Seed for the <code class="docutils literal notranslate"><span class="pre">np.random.Generator</span></code>. Is passed to
+<code class="docutils literal notranslate"><span class="pre">memory_efficient_sample</span></code> as well. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+</ul>
 </dd>
 </dl>
-</dd>
+<dl class="simple">
 <dt>Note: The ensemble is generated as the cartesian product of all variable ranges. The</dt><dd><p>total number of ensemble members is thus the product of all individual
 <code class="docutils literal notranslate"><span class="pre">npoints</span></code>. If <code class="docutils literal notranslate"><span class="pre">runspecs[&quot;npoints&quot;]</span></code> is lower than the product, a random
 sample of size <code class="docutils literal notranslate"><span class="pre">runspecs[&quot;npoints&quot;]</span></code> of the full ensemble is returned.</p>
 </dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>ensemble (list[dict[str, Any]]): List containing a dict with the specified</dt><dd><p>variable values for each ensemble member.</p>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>List containing a dict with the specified</dt><dd><p>variable values for each ensemble member.</p>
 </dd>
 </dl>
+</p>
 </dd>
-<dt>Raises:</dt><dd><dl class="simple">
-<dt>ValueError: If <code class="docutils literal notranslate"><span class="pre">runspecs[&quot;npoints&quot;]</span></code> is larger than the number of generated</dt><dd><p>ensemble members.</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>ensemble (list[dict[str, Any]])</p>
 </dd>
-</dl>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">runspecs[&quot;npoints&quot;]</span></code> is larger than the number of generated
+    ensemble members.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -231,18 +255,27 @@ Some units for common quantities:
 - Temperate: [°C]
 - Saturation: [unitless]
 - Time: []</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>data (dict[str, Any]): Data generated by <code class="docutils literal notranslate"><span class="pre">run_ensemble</span></code>.
-keywords (list[str]): Keywords to extract. The features will be in the order of
-the keywords.
-keyword_scalings (Optional[dict[str, float]]): Scalings for the features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Data generated by <code class="docutils literal notranslate"><span class="pre">run_ensemble</span></code>.</p></li>
+<li><p><strong>keywords</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Keywords to extract. The features will be in the order of</p></li>
+<li><p><strong>keywords.</strong> (<em>the</em>)</p></li>
+<li><p><strong>keyword_scalings</strong> (<em>Optional</em><em>[</em><em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em>) – Scalings for the features.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>feature_array: (numpy.ndarray): <code class="docutils literal notranslate"><span class="pre">shape=(ensemble_size,</span> <span class="pre">num_report_steps,</span> <span class="pre">num_cells,</span> <span class="pre">num_features)</span></code></dt><dd><p>An array of input features for each data point in the dataset.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>(numpy.ndarray): <code class="docutils literal notranslate"><span class="pre">shape=(ensemble_size,</span> <span class="pre">num_report_steps,</span> <span class="pre">num_cells,</span> <span class="pre">num_features)</span></code></dt><dd><p>An array of input features for each data point in the dataset.</p>
 </dd>
 </dl>
+</p>
 </dd>
-<dt>Raises:</dt><dd><p>ValueError: If no data is found for one of the keywords.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>feature_array</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If no data is found for one of the keywords.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -251,10 +284,15 @@ keyword_scalings (Optional[dict[str, float]]): Scalings for the features.</p>
 <dt class="sig sig-object py" id="pyopmnearwell.ml.ensemble.get_flags">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.ensemble.</span></span><span class="sig-name descname"><span class="pre">get_flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">makofile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.ensemble.get_flags" title="Link to this definition"></a></dt>
 <dd><p>Extract OPM Flow run flags from a makofile.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>makofile (str | pathlib.Path): Path to the makofile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>makofile</strong> (<em>str</em><em> | </em><em>pathlib.Path</em>) – Path to the makofile.</p>
 </dd>
-<dt>Returns:</dt><dd><p>str: All flags that are passed to OPM Flow.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>All flags that are passed to OPM Flow.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -266,22 +304,28 @@ keyword_scalings (Optional[dict[str, float]]): Scalings for the features.</p>
 block.</p>
 <p>This function correctly takes only fractions of the integrated values for radial
 cells that are only partially inside the square block.</p>
-<dl>
-<dt>Args:</dt><dd><p>radial_values (np.ndarray): Cell values for the radial cells.
-radii (np.ndarray): Array of radii for inner and outer radius of the radial
-cells. Has to be ordered from low to high.
-block_sidelengths (float | np.ndarray): The sidelengths of the square grid</p>
-<blockquote>
-<div><p>blocks. The length of this array determines the new length of the integrated
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>radial_values</strong> (<em>np.ndarray</em>) – Cell values for the radial cells.</p></li>
+<li><p><strong>radii</strong> (<em>np.ndarray</em>) – Array of radii for inner and outer radius of the radial</p></li>
+<li><p><strong>high.</strong> (<em>cells. Has to be ordered from low to</em>)</p></li>
+<li><p><strong>block_sidelengths</strong> (<em>float</em><em> | </em><em>np.ndarray</em>) – The sidelengths of the square grid
+blocks. The length of this array determines the new length of the integrated
 axis.
 # TODO: Update the tests for this new functionality, i.e., that
-block_sidelengths determins the return shape.</p>
-</div></blockquote>
-<p>axis (int): Axis to integrate along.</p>
+block_sidelengths determins the return shape.</p></li>
+<li><p><strong>axis</strong> (<em>int</em>) – Axis to integrate along.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>float: The integrated value of fine-scale data.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The integrated value of fine-scale data.</p>
 </dd>
-<dt>Raise:</dt><dd><p>ValueError: If the radial cells do not cover the square grid block.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the radial cells do not cover the square grid block.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -291,15 +335,17 @@ block_sidelengths determins the return shape.</p>
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.ensemble.</span></span><span class="sig-name descname"><span class="pre">memory_efficient_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_members</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.ensemble.memory_efficient_sample" title="Link to this definition"></a></dt>
 <dd><p>Sample all variables individually.</p>
 <p>Note: Requires that all variables arrays have the same length.</p>
-<dl>
-<dt>Args:</dt><dd><p>variables (np.ndarray), (<code class="docutils literal notranslate"><span class="pre">shape=(num_variables,</span> <span class="pre">len_variables)</span></code>): _description_
-num_members (int): _description_
-seed: (Optional[int]): Seed for the <code class="docutils literal notranslate"><span class="pre">np.random.Generator</span></code>. Default is</p>
-<blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
-</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variables</strong> (np.ndarray), (<code class="docutils literal notranslate"><span class="pre">shape=(num_variables,</span> <span class="pre">len_variables)</span></code>) – _description_</p></li>
+<li><p><strong>num_members</strong> (<em>int</em>) – _description_</p></li>
+<li><p><strong>seed</strong> – (Optional[int]): Seed for the <code class="docutils literal notranslate"><span class="pre">np.random.Generator</span></code>. Default is
+<code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>np.ndarray (<code class="docutils literal notranslate"><span class="pre">shape=()</span></code>):</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray (<code class="docutils literal notranslate"><span class="pre">shape=()</span></code>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -309,31 +355,35 @@ seed: (Optional[int]): Seed for the <code class="docutils literal notranslate"><
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.ensemble.</span></span><span class="sig-name descname"><span class="pre">run_ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensemble_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">runspecs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ecl_keywords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_keywords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">summary_keywords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_report_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_result_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyopmnearwell.ml.ensemble.run_ensemble" title="Link to this definition"></a></dt>
 <dd><p>Run OPM Flow for each ensemble member and store data.</p>
 <p>Note: The initial time step (i.e., t=0) is always disregarded.</p>
-<dl>
-<dt>Args:</dt><dd><p>flow_path (str | pathlib.Path): _description_
-ensemble_path (str | pathlib.Path): _description_
-runspecs (dict[str, Any]): _description_
-ecl_keywords (list[str]): _description_
-init_keywords (list[str]): _description_
-summary_keywords (list[str]): _description_
-num_report_steps (Optional[int], optional): Disregard an ensemble simulation if</p>
-<blockquote>
-<div><p>it did not run to the last report step. Defaults to None.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>keep_result_files (bool): Keep result files of all ensemble members, not</dt><dd><p>only the first one. Defaults to False.</p>
-</dd>
-<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: Possible parameters are:</dt><dd><ul class="simple">
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flow_path</strong> (<em>str</em><em> | </em><em>pathlib.Path</em>) – _description_</p></li>
+<li><p><strong>ensemble_path</strong> (<em>str</em><em> | </em><em>pathlib.Path</em>) – _description_</p></li>
+<li><p><strong>runspecs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – _description_</p></li>
+<li><p><strong>ecl_keywords</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – _description_</p></li>
+<li><p><strong>init_keywords</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – _description_</p></li>
+<li><p><strong>summary_keywords</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – _description_</p></li>
+<li><p><strong>num_report_steps</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Disregard an ensemble simulation if
+it did not run to the last report step. Defaults to None.</p></li>
+<li><p><strong>keep_result_files</strong> (<em>bool</em>) – Keep result files of all ensemble members, not
+only the first one. Defaults to False.</p></li>
+<li><p><strong>**kwargs</strong> – <p>Possible parameters are:</p>
+<ul>
 <li><p>step_size_time (int): Save data only for every <code class="docutils literal notranslate"><span class="pre">step_size_time</span></code> report
 step. Default is 1.</p></li>
 <li><p>step_size_cell (int): Save data only for every <code class="docutils literal notranslate"><span class="pre">step_size_cell</span></code> grid
 cell. Default is 1.</p></li>
 <li><p>flags (str): Flags to run OPM Flow with.</p></li>
 </ul>
+</p></li>
+</ul>
 </dd>
-</dl>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>_description_</p>
 </dd>
-<dt>Returns:</dt><dd><p>dict[str, Any]: _description_</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, Any]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -342,17 +392,17 @@ cell. Default is 1.</p></li>
 <dt class="sig sig-object py" id="pyopmnearwell.ml.ensemble.setup_ensemble">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.ensemble.</span></span><span class="sig-name descname"><span class="pre">setup_ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensemble</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">makofile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.ensemble.setup_ensemble" title="Link to this definition"></a></dt>
 <dd><p>Create a deck file for each ensemble member.</p>
-<dl>
-<dt>Args:</dt><dd><p>ensemble_path (str | pathlib.Path): The path to the ensemble directory.
-ensemble (list[dict[str, Any]]): A list of dictionaries containing the</p>
-<blockquote>
-<div><p>parameters for each ensemble member. Usually generated by
-<code class="docutils literal notranslate"><span class="pre">create_ensemble</span></code>.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>makofile (str | pathlib.Path): The path to the Mako template file for the</dt><dd><p>pyopmnearwell deck for ensemble members.</p>
-</dd>
-<dt><a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: kwargs are passed to <code class="docutils literal notranslate"><span class="pre">reservoir_files</span></code>. Possible kwargs are:</dt><dd><ul class="simple">
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ensemble_path</strong> (<em>str</em><em> | </em><em>pathlib.Path</em>) – The path to the ensemble directory.</p></li>
+<li><p><strong>ensemble</strong> (<em>list</em><em>[</em><em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – A list of dictionaries containing the
+parameters for each ensemble member. Usually generated by
+<code class="docutils literal notranslate"><span class="pre">create_ensemble</span></code>.</p></li>
+<li><p><strong>makofile</strong> (<em>str</em><em> | </em><em>pathlib.Path</em>) – The path to the Mako template file for the
+pyopmnearwell deck for ensemble members.</p></li>
+<li><p><strong>**kwargs</strong> – <p>kwargs are passed to <code class="docutils literal notranslate"><span class="pre">reservoir_files</span></code>. Possible kwargs are:</p>
+<ul>
 <li><dl class="simple">
 <dt>recalc_grid (bool, optional): Whether to recalculate <code class="docutils literal notranslate"><span class="pre">GRID.INC</span></code> for each</dt><dd><p>ensemble member. Defaults to False.</p>
 </dd>
@@ -369,12 +419,14 @@ ensemble (list[dict[str, Any]]): A list of dictionaries containing the</p>
 </dl>
 </li>
 </ul>
+</p></li>
+</ul>
 </dd>
-</dl>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If there is an error rendering the Mako template.</p>
 </dd>
-<dt>Raises:</dt><dd><p>Exception: If there is an error rendering the Mako template.</p>
-</dd>
-<dt>Returns:</dt><dd><p>None</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -383,12 +435,19 @@ ensemble (list[dict[str, Any]]): A list of dictionaries containing the</p>
 <dt class="sig sig-object py" id="pyopmnearwell.ml.ensemble.store_dataset">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.ensemble.</span></span><span class="sig-name descname"><span class="pre">store_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.ensemble.store_dataset" title="Link to this definition"></a></dt>
 <dd><p>Store a TensorFlow dataset given by to tensors.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>features (np.ndarray): Features of the dataset.
-targets (np.ndarray): Targets of the dataset.
-savepath (str | pathlib.Path): Folder where the dataset should be saved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>np.ndarray</em>) – Features of the dataset.</p></li>
+<li><p><strong>targets</strong> (<em>np.ndarray</em>) – Targets of the dataset.</p></li>
+<li><p><strong>savepath</strong> (<em>str</em><em> | </em><em>pathlib.Path</em>) – Folder where the dataset should be saved.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>pathlib.Path: Savepath of the dataset</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Savepath of the dataset</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pathlib.Path</p>
 </dd>
 </dl>
 </dd></dl>

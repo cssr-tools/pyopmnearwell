@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0
 
 """Main script"""
+
 import argparse
 import os
 import pathlib

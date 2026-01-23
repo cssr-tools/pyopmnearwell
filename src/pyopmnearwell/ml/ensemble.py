@@ -2,6 +2,7 @@
 """Run high-fidelity nearwell simulations in OPM-Flow for an ensemble of varying input
 arguments.
 """
+
 from __future__ import annotations
 
 import copy
@@ -60,6 +61,7 @@ def create_ensemble(
 
     Args:
         runspecs (dict[str, Any]): Dictionary with at least the following keys:
+
             - "npoints": Maximum number of ensemble members.
             - "variables": ``dict`` containing the run Args vary within the
               ensemble. The key specifies the variable name (needs to be identical to
@@ -236,6 +238,7 @@ def setup_ensemble(
         makofile (str | pathlib.Path): The path to the Mako template file for the
             pyopmnearwell deck for ensemble members.
         **kwargs: kwargs are passed to ``reservoir_files``. Possible kwargs are:
+
             - recalc_grid (bool, optional): Whether to recalculate ``GRID.INC`` for each
                 ensemble member. Defaults to False.
             - recalc_tables (bool, optional): Whether to recalculate ``TABLES.INC`` for
@@ -360,6 +363,7 @@ def run_ensemble(
         keep_result_files (bool): Keep result files of all ensemble members, not
             only the first one. Defaults to False.
         **kwargs: Possible parameters are:
+
             - step_size_time (int): Save data only for every ``step_size_time`` report
               step. Default is 1.
             - step_size_cell (int): Save data only for every ``step_size_cell`` grid
@@ -548,11 +552,12 @@ def calculate_WI(
     pressures: np.ndarray,
     injection_rates: float | np.ndarray,
 ) -> tuple[np.ndarray, list[int]]:
-    r"""Calculate the well index (WI) for a given dataset.
-
+    r"""
+    Calculate the well index (WI) for a given dataset.
 
     The well index (WI) is calculated using the following formula:
     .. math::
+
         WI = \frac{q}{{p_w - p_{gb}}}
 
     Note:
@@ -567,7 +572,6 @@ def calculate_WI(
             values) at ``pressures[...,0]``.
         injection_rates (float | np.ndarray): Injection rate. If an ``np.ndarray``, it
             must have shape broadcastable to ``pressures.shape``.
-
 
     Returns:
         WI_array (numpy.ndarray): ``shape=(...,num_x_cells - 1)``

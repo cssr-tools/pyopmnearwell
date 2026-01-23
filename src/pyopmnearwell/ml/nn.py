@@ -1,5 +1,6 @@
 # pylint: skip-file
 """Transform ensemble data into datasets and train neural networks."""
+
 from __future__ import annotations
 
 import csv
@@ -250,10 +251,13 @@ def scale_and_prepare_dataset(
         test_split (float, optional): Test split. Defaults to None.
         shuffle (Literal["first", "last", "false"], optional): Options for shuffling the
             dataset:
+
             - "first": The dataset gets shuffled before the split.
             - "last": The dataset gets shuffled after the split.
             - "false": The dataset does not get shuffled.
+
             Defaults to "first".
+
         feature_range (tuple[float, float], optional): Target range of feature scaling.
             Defaults to (-1, 1).
         target_range (tuple[float, float], optional): Target range of target scaling.
@@ -262,10 +266,10 @@ def scale_and_prepare_dataset(
 
     Returns:
         tuple[tuple[np.ndarray, np.ndarray], tuple[np.ndarray, np.ndarray]]
-        | tuple[
-            tuple[np.ndarray, np.ndarray],
-            tuple[np.ndarray, np.ndarray],
-            tuple[np.ndarray, np.ndarray],
+            | tuple[
+                tuple[np.ndarray, np.ndarray],
+                tuple[np.ndarray, np.ndarray],
+                tuple[np.ndarray, np.ndarray],
         ]: Tuple of scaled and split dataset. Includes test set only if
             ``test_split > 0``.
 
@@ -501,8 +505,8 @@ def train(
             decay. Defaults to 10.
         kerasify (bool, optional): Export the best model with kerasify after training.
             Defaults to True.
-        loss_func (Literal["mse", "MeanAbsolutePercentageError",
-            "MeanSquaredLogarithmicError"], optional): Loss function. Defaults to "mse".
+        loss_func (Literal["mse", "MeanAbsolutePercentageError", "MeanSquaredLogarithmicError"], optional):
+            Loss function. Defaults to "mse".
         recompile_model (bool, optional): Whether to recompile the model before
             training. Can e.g., be set to false, if the model is built and compiled by a
             different function. Defaults to True.

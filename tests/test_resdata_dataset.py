@@ -1,7 +1,6 @@
 # pylint: disable=missing-function-docstring, invalid-name
 """Test the ``resdata_dataset`` module."""
 
-
 import pathlib
 
 import numpy as np

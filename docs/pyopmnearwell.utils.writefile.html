@@ -8,14 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyopmnearwell.utils.writefile module &mdash; pyopmnearwell  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -90,10 +90,15 @@
 <dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.compact_format">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">compact_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.compact_format" title="Link to this definition"></a></dt>
 <dd><p>Use the ‘n*x’ notation to write repited values to save storage</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>values (list): List with the variable values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>values</strong> (<em>list</em>) – List with the variable values</p>
 </dd>
-<dt>Returns:</dt><dd><p>values (list): List with the compacted variable values</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List with the compacted variable values</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>values (list)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -102,10 +107,15 @@
 <dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.create_3dgrid">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">create_3dgrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.create_3dgrid" title="Link to this definition"></a></dt>
 <dd><p>Function to handle the first part of the 3d grids</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p>
 </dd>
-<dt>Returns:</dt><dd><p>dic (dict): Global dictionary with new added parameters</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Global dictionary with new added parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dic (dict)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -114,11 +124,18 @@
 <dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.d3_grids">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">d3_grids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dxarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.d3_grids" title="Link to this definition"></a></dt>
 <dd><p>Function to handle the second part of the 3d grids</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters
-dxarray (list): String with the size of the grid cells</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p></li>
+<li><p><strong>dxarray</strong> (<em>list</em>) – String with the size of the grid cells</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>dic (dict): Global dictionary with new added parameters</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Global dictionary with new added parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dic (dict)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -127,10 +144,15 @@ dxarray (list): String with the size of the grid cells</p>
 <dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.get_2dgrid">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">get_2dgrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.get_2dgrid" title="Link to this definition"></a></dt>
 <dd><p>Function to create the 2D corner-point grid</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p>
 </dd>
-<dt>Returns:</dt><dd><p>dic (dict): Global dictionary with new added parameters</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Global dictionary with new added parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dic (dict)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -139,8 +161,9 @@ dxarray (list): String with the size of the grid cells</p>
 <dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.get_spaces">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">get_spaces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.get_spaces" title="Link to this definition"></a></dt>
 <dd><p>Improve the format of the files by aligning the values</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p>
 </dd>
 </dl>
 </dd></dl>
@@ -149,10 +172,15 @@ dxarray (list): String with the size of the grid cells</p>
 <dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.handle_core">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">handle_core</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.handle_core" title="Link to this definition"></a></dt>
 <dd><p>Function to handle the core geometry</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p>
 </dd>
-<dt>Returns:</dt><dd><p>dic (dict): Global dictionary with new added parameters</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Global dictionary with new added parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dic (dict)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -161,10 +189,15 @@ dxarray (list): String with the size of the grid cells</p>
 <dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.manage_grid">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">manage_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.manage_grid" title="Link to this definition"></a></dt>
 <dd><p>Function to handle the grid</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p>
 </dd>
-<dt>Returns:</dt><dd><p>dic (dict): Global dictionary with new added parameters</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Global dictionary with new added parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dic (dict)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -173,8 +206,9 @@ dxarray (list): String with the size of the grid cells</p>
 <dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.manage_sections">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">manage_sections</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.manage_sections" title="Link to this definition"></a></dt>
 <dd><p>Function to write the include files in the input deck</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p>
 </dd>
 </dl>
 </dd></dl>
@@ -183,8 +217,9 @@ dxarray (list): String with the size of the grid cells</p>
 <dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.manage_tables">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">manage_tables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.manage_tables" title="Link to this definition"></a></dt>
 <dd><p>Function to write the saturation function tables</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p>
 </dd>
 </dl>
 </dd></dl>
@@ -198,44 +233,42 @@ dxarray (list): String with the size of the grid cells</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyopmnearwell.utils.writefile.reservoir_files">
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.utils.writefile.</span></span><span class="sig-name descname"><span class="pre">reservoir_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyopmnearwell.utils.writefile.reservoir_files" title="Link to this definition"></a></dt>
-<dd><p>Function to write opm-related files by running mako templates</p>
-<dl>
-<dt>Args:</dt><dd><p>dic (dict): Global dictionary with required parameters
-<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: Possible kwargs are:</p>
-<blockquote>
-<div><ul class="simple">
-<li><dl class="simple">
-<dt>recalc_grid (bool): Whether to recalculate the <a href="#id3"><span class="problematic" id="id4">``</span></a>GRID.INC``file. Intended</dt><dd><p>for ensemble runs, where the saturation functions/geography/etc. do not
-need to be recalculated for each ensemble member. Defaults to True.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>recalc_tables (bool): Whether to recalculate the <a href="#id5"><span class="problematic" id="id6">``</span></a>TABLES.INC``file.</dt><dd><p>Defaults to True.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>recalc_sections (bool): Whether to recalculate the <code class="docutils literal notranslate"><span class="pre">GEOLOGY.INC</span></code> and</dt><dd><p><code class="docutils literal notranslate"><span class="pre">FLUXNUM.INC</span></code> files. Defaults to True.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>inc_folder (pathlib.Path): If any of the mentioned files is not</dt><dd><p>recalculated, they are taken from this folder. Defaults to
-<code class="docutils literal notranslate"><span class="pre">pathlib.Path(&quot;&quot;)</span></code>.</p>
-</dd>
-</dl>
-</li>
+<dd><p>Write OPM-related files by running Mako templates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dic</strong> (<em>dict</em>) – Global dictionary with required parameters</p></li>
+<li><p><strong>**kwargs</strong> – <p>Possible kwargs are:</p>
+<ul>
+<li><p>recalc_grid (bool): Whether to recalculate the <code class="docutils literal notranslate"><span class="pre">GRID.INC</span></code> file. Intended
+for ensemble runs, where the saturation functions/geography/etc. do not
+need to be recalculated for each ensemble member. Defaults to True.</p></li>
+<li><p>recalc_tables (bool): Whether to recalculate the <code class="docutils literal notranslate"><span class="pre">TABLES.INC</span></code> file.
+Defaults to True.</p></li>
+<li><p>recalc_sections (bool): Whether to recalculate the <code class="docutils literal notranslate"><span class="pre">GEOLOGY.INC</span></code> and
+<code class="docutils literal notranslate"><span class="pre">FLUXNUM.INC</span></code> files. Defaults to True.</p></li>
+<li><p>inc_folder (pathlib.Path): If any of the mentioned files is not
+recalculated, they are taken from this folder. Defaults to
+<code class="docutils literal notranslate"><span class="pre">pathlib.Path(&quot;&quot;)</span></code>.</p></li>
 </ul>
-</div></blockquote>
-</dd>
-<dt>Note:</dt><dd><ul class="simple">
-<li><p>All of the <code class="docutils literal notranslate"><span class="pre">recalc_*</span></code> options only work for</p></li>
+</p></li>
 </ul>
-<p><code class="docutils literal notranslate"><span class="pre">co2store</span> <span class="pre">no_disgas_no_diffusion</span></code> on a <code class="docutils literal notranslate"><span class="pre">cake</span></code> grid so far.
-- For other models or grids there will be errors.</p>
 </dd>
-<dt>Returns:</dt><dd><p>dic (dict): Global dictionary with new added parameters</p>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>All of the <code class="docutils literal notranslate"><span class="pre">recalc_*</span></code> options only work for
+<code class="docutils literal notranslate"><span class="pre">co2store</span> <span class="pre">no_disgas_no_diffusion</span></code> on a <code class="docutils literal notranslate"><span class="pre">cake</span></code> grid so far.</p></li>
+<li><p>For other models or grids there will be errors.</p></li>
+</ul>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Global dictionary with new added parameters</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dic (dict)</p>
 </dd>
 </dl>
 </dd></dl>

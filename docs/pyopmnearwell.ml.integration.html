@@ -8,14 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyopmnearwell.ml.integration module &mdash; pyopmnearwell  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -96,33 +96,28 @@ before recompiling.</p>
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.integration.</span></span><span class="sig-name descname"><span class="pre">recompile_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scalingsfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opm_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">StandardWell_impl_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">StandardWell_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stencil_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_feature_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.integration.recompile_flow" title="Link to this definition"></a></dt>
 <dd><p>Fill <code class="docutils literal notranslate"><span class="pre">StandardWell_impl</span></code> and recompile <code class="docutils literal notranslate"><span class="pre">flow_gaswater_dissolution_diffuse</span></code>.</p>
 <p>Note: Once scaling layers are implemented directly into OPM, this might be
-deprecated. However, it might still be needed to deal with different stencils and</p>
-<blockquote>
-<div><p>features per cell.</p>
-</div></blockquote>
-<dl>
-<dt>Args:</dt><dd><dl class="simple">
-<dt>scalingsfile (pathlib.Path): Path to the csv file containing the input and</dt><dd><p>output scalings for the model.</p>
+deprecated. However, it might still be needed to deal with different stencils and
+features per cell.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scalingsfile</strong> (<em>pathlib.Path</em>) – Path to the csv file containing the input and
+output scalings for the model.</p></li>
+<li><p><strong>opm_path</strong> (<em>pathlib.Path</em>) – Path to a OPM installation with ml functionality.</p></li>
+<li><p><strong>StandardWell_impl_template</strong> (<em>pathlib.Path</em>) – Template for
+<code class="docutils literal notranslate"><span class="pre">StandardWell_impl.hpp</span></code>. Decides the neural network architecture.</p></li>
+<li><p><strong>StandardWell_template</strong> (<em>pathlib.Path</em>) – Template for <code class="docutils literal notranslate"><span class="pre">StandardWell.hpp</span></code>.</p></li>
+<li><p><strong>stencil_size</strong> (<em>int</em><em>, </em><em>optional</em>) – The size of the vertical stencil of the model.
+Defaults to 3.</p></li>
+<li><p><strong>local_feature_names</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – List of local feature names
+that are input to the model. Defaults to Optional.</p></li>
+</ul>
 </dd>
-</dl>
-<p>opm_path (pathlib.Path): Path to a OPM installation with ml functionality.
-StandardWell_impl_template (pathlib.Path): Template for</p>
-<blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">StandardWell_impl.hpp</span></code>. Decides the neural network architecture.</p>
-</div></blockquote>
-<p>StandardWell_template (pathlib.Path): Template for <code class="docutils literal notranslate"><span class="pre">StandardWell.hpp</span></code>.
-stencil_size (int, optional): The size of the vertical stencil of the model.</p>
-<blockquote>
-<div><p>Defaults to 3.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>local_feature_names (Optional[list[str]], optional): List of local feature names</dt><dd><p>that are input to the model. Defaults to Optional.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><p>None</p>
-</dd>
-<dt>Raises:</dt><dd><p>ValueError: If <code class="docutils literal notranslate"><span class="pre">scalingsfile</span></code> contains an invalid row.</p>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">scalingsfile</span></code> contains an invalid row.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -132,18 +127,20 @@ stencil_size (int, optional): The size of the vertical stencil of the model.</p>
 <span class="sig-prename descclassname"><span class="pre">pyopmnearwell.ml.integration.</span></span><span class="sig-name descname"><span class="pre">run_integration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">runspecs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">makofile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyopmnearwell.ml.integration.run_integration" title="Link to this definition"></a></dt>
 <dd><p>Runs <code class="docutils literal notranslate"><span class="pre">pyopmnearwell</span></code> simulations for the specified runspecs.</p>
 <p>Note: All “variables” in runspecs need to have the same number of values.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="simple">
-<dt>runspecs (dict[str, Any]): Contains at least two keys “variables” and</dt><dd><p>“constants”. The values of both keys are dictionaries and their union has to
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>runspecs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Contains at least two keys “variables” and
+“constants”. The values of both keys are dictionaries and their union has to
 contain all parameters to fill the simulation template. Each key in the
 “variables”  dictionary is a list and this function loops through all lists
-in parallel and runs a simulation for each.</p>
+in parallel and runs a simulation for each.</p></li>
+<li><p><strong>savepath</strong> (<em>str</em>) – Path to save the output files.</p></li>
+<li><p><strong>makofile</strong> (<em>str</em>) – Path to the <code class="docutils literal notranslate"><span class="pre">pyopmnearwell</span></code> deck template for the simulations.</p></li>
+</ul>
 </dd>
-</dl>
-<p>savepath (str): Path to save the output files.
-makofile (str): Path to the <code class="docutils literal notranslate"><span class="pre">pyopmnearwell</span></code> deck template for the simulations.</p>
-</dd>
-<dt>Returns:</dt><dd><p>None</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>

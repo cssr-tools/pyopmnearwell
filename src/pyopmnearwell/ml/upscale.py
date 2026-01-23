@@ -34,11 +34,13 @@ class Upscaler(Protocol):
 
     This class is used for typing of abstract attributes of ``BaseUpscaler``. MyPy will
     check if subclasses of ``BaseUpscaler`` implement the following instance attributes:
+
     - ``num_timesteps``
     - ``num_layers``
     - ``num_zcells``
     - ``num_xcells``
     - ``single_feature_shape``
+
     However, in comparison to missing abstract functions, no runtime error will be
     raised if they are missing.
 
@@ -149,8 +151,8 @@ class BaseUpscaler(ABC):
             disregard_first_xcell (bool): __description__. Default is True.
 
         Returns:
-            np.ndarray (``shape = (num_ensemble_runs, num_timesteps, num_layers,
-                num_xcells)``):
+            np.ndarray:
+                ``shape = (num_ensemble_runs, num_timesteps, num_layers, num_xcells)``
 
         """
         # Innermost cells (well cells) get disregarded.
@@ -194,8 +196,7 @@ class BaseUpscaler(ABC):
         """_summary_
 
         Returns:
-            np.ndarray (``shape = (num_timesteps,) ``): Unit: [d].
-
+            np.ndarray: Array with ``shape = (num_timesteps,) and Unit [d]``.
         """
         timesteps: np.ndarray = np.linspace(0, simulation_length, self.num_timesteps)
         assert timesteps.shape == self.num_timesteps
@@ -213,6 +214,7 @@ class BaseUpscaler(ABC):
         cartesian block area.
 
         Note:
+
             - Before integrating, the feature is averaged vertically inside each layer.
             - As the feature is averaged and not summed, the integration takes place in
               2D with vertically averaged values. Hence it suffices to divide by area
@@ -226,8 +228,8 @@ class BaseUpscaler(ABC):
             disregard_first_xcell (bool): __description__. Default is True.
 
         Returns:
-            np.ndarray (``shape = (num_ensemble_runs, num_timesteps, num_layers,
-                num_xcells)``): Features values average for each cell.
+            np.ndarray (``shape = (num_ensemble_runs, num_timesteps, num_layers, num_xcells)``):
+                Features values average for each cell.
 
         """
         # Average along vertical cells in a layer.
@@ -273,8 +275,7 @@ class BaseUpscaler(ABC):
             disregard_first_xcell (bool): __description__. Default is True.
 
         Returns:
-            np.ndarray (``shape = (num_ensemble_runs, num_timesteps, num_layers,
-                num_xcells)``):
+            np.ndarray (``shape = (num_ensemble_runs, num_timesteps, num_layers, num_xcells)``)
 
         """
         # Innermost cells (well cells) get disregarded.
