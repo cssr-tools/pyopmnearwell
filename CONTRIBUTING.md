@@ -14,7 +14,7 @@ Contributions are more than welcome using the fork and pull request approach ðŸ™
 1. In the main repo execute:
     1. **pip install -r dev-requirements.txt** (this installs the [_dev-requirements.txt_](https://github.com/cssr-tools/pyopmnearwell/blob/main/dev-requirements.txt))
     1. **pip install tensorflow** (this install [_tensorflow_](https://www.tensorflow.org) for the machine learning near well funcitonality; tensorflow is not yet available for Python 3.14, then Python 3.12 or Python 3.13 are currently needed to run the tests)
-    1. **black src/ tests/** (this formats the code)
+    1. **black --target-version py312 src/ tests/** (this formats the code)
     1. **pylint src/ tests/** (this analyses the code, and might rise issues that need to be fixed before the pull request)
     1. **mypy --ignore-missing-imports src/ tests/** (this is a static checker, and might rise issues that need to be fixed before the pull request)
     1. **pytest --cov=pyopmnearwell --cov-report term-missing tests/** (this runs locally the tests, and might rise issues that need to be fixed before the pull request; to save the files, add the flag **--basetemp=test_outputs**)
