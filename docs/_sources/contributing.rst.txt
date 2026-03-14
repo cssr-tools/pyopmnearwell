@@ -23,7 +23,7 @@ Contribute to the software
 
     #. **pip install -r dev-requirements.txt** (this installs the `dev-requirements.txt <https://github.com/cssr-tools/pyopmnearwell/blob/main/dev-requirements.txt>`_)
     #. **pip install tensorflow**  (this installs `tensorflow <https://www.tensorflow.org>`_ for the machine learning near well funcitonality); tensorflow is not yet available for Python 3.14, then Python 3.12 or Python 3.13 are currently needed to run the tests
-    #. **black src/ tests/** (this formats the code)
+    #. **black --target-version py312 src/ tests/** (this formats the code)
     #. **pylint src/ tests/** (this analyses the code, and might rise issues that need to be fixed before the pull request)
     #. **mypy -\-ignore-missing-imports src/ tests/** (this is a static checker, and might rise issues that need to be fixed before the pull request)
     #. **pytest -\-cov=pyopmnearwell -\-cov-report term-missing tests/** (this runs locally the tests, and might rise issues that need to be fixed before the pull request; to save the files, add the flag **-\-basetemp=test_outputs**)
