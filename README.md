@@ -60,3 +60,7 @@ The pyopmnearwell package is being funded by the [_HPC Simulation Software for t
 [project no. 331841].
 This is work in progress.
 Contributions are more than welcome using the fork and pull request approach.
+
+## AI disclosure
+
+Generative AI (GitHub Copilot in VS Code with GPT-5.3-Codex) was used to write the ``save_intermediate_data`` functionality in ``ml.ensemble.run_ensemble`` and ``ml.ensemble.extract_features``.

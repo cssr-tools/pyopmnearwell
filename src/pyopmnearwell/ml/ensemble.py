@@ -1,8 +1,9 @@
 # pylint: skip-file
-""""Run high-fidelity nearwell simulations in OPM-Flow for an ensemble of varying input
+"""Run high-fidelity nearwell simulations in OPM-Flow for an ensemble of varying input
 arguments.
 
 """
+
 from __future__ import annotations
 
 import copy
@@ -365,6 +366,11 @@ def run_ensemble(
             - step_size_cell (int): Save data only for every ``step_size_cell`` grid
               cell. Default is 1.
             - flags (str): Flags to run OPM Flow with.
+            - save_intermediate_data (bool): If ``True``, store batch data as
+                ``.npy`` chunks on disk instead of keeping all members in memory.
+            - intermediate_data_dir (str | pathlib.Path): Path to store intermediate
+                ``.npy`` chunks. Defaults to
+                ``ensemble_path / "intermediate_data"``.
 
     Returns:
         dict[str, Any]: _description_
@@ -373,9 +379,20 @@ def run_ensemble(
     # Ensure ``ensemble_path`` is a ``Path`` object.
     ensemble_path = pathlib.Path(ensemble_path)
 
-    data: dict = {
-        keyword: [] for keyword in ecl_keywords + init_keywords + summary_keywords
-    }
+    all_keywords: list[str] = ecl_keywords + init_keywords + summary_keywords
+    data: dict[str, Any] = {keyword: [] for keyword in all_keywords}
+    save_intermediate_data: bool = kwargs.get("save_intermediate_data", False)
+    intermediate_data_dir: pathlib.Path = pathlib.Path(
+        kwargs.get("intermediate_data_dir", ensemble_path / "intermediate_data")
+    )
+
+    if save_intermediate_data:
+        # Create folders for each keyword. Inside each folder, files for each batch will
+        # be created.
+        intermediate_data_dir.mkdir(parents=True, exist_ok=True)
+        for keyword in all_keywords:
+            (intermediate_data_dir / keyword).mkdir(parents=True, exist_ok=True)
+
     num_disregarded_runs: int = 0
 
     # Get **kwargs that determine how many report steps and cells shall be skipped when
@@ -384,6 +401,9 @@ def run_ensemble(
     step_size_cell: int = kwargs.get("step_size_cell", 1)
 
     for i in range(round(runspecs["npoints"] / runspecs["npruns"])):
+        batch_data: dict[str, list[np.ndarray]] = {
+            keyword: [] for keyword in all_keywords
+        }
         command = " ".join(
             [
                 f"{flow_path}"
@@ -433,7 +453,7 @@ def run_ensemble(
             # Only append data if the simulation finished.
             if simulation_finished:
                 for keyword in ecl_keywords:
-                    data[keyword].append(member_data[keyword])
+                    batch_data[keyword].append(member_data[keyword])
 
                 # Get additional data from init and summary file.
                 if len(init_keywords) > 0:
@@ -446,7 +466,7 @@ def run_ensemble(
                         # cells.
                         # NOTE: The array has shape ``[1, num_cells]``, hence no axis
                         # needs to be added.
-                        data[keyword].append(
+                        batch_data[keyword].append(
                             np.array(init_file.iget_kw(keyword))[::step_size_cell]
                         )
 
@@ -461,7 +481,7 @@ def run_ensemble(
                         # steps (not for all time steps). The ``*.SMSPEC`` file does not
                         # include the zeroth report step. Add a dimension to make the array
                         # broadcastable to data from the ``*.UNRST`` and ``*.INIT`` files.
-                        data[keyword].append(
+                        batch_data[keyword].append(
                             np.array(
                                 summary_file.get_values(keyword, report_only=True)
                             )[::step_size_time, None]
@@ -479,7 +499,29 @@ def run_ensemble(
             if not keep_result_files and j > 0:
                 shutil.rmtree(ensemble_path / f"results_{j}")
                 shutil.rmtree(ensemble_path / f"runfiles_{j}")
+
+        # Store batch data to file or append to dictionary.
+        if save_intermediate_data:
+            for keyword, values in batch_data.items():
+                if len(values) > 0:
+                    np.save(
+                        intermediate_data_dir / keyword / f"chunk_{i:06d}.npy",
+                        np.array(values),
+                    )
+        else:
+            for keyword, values in batch_data.items():
+                data[keyword].extend(values)
+
         logger.info(f"Disregarded {num_disregarded_runs} of {runspecs['npoints']} runs")
+
+    # Add metadata for intermediate data.
+    if save_intermediate_data:
+        data = {
+            "__saved_chunks_dir__": str(intermediate_data_dir),
+            "__saved_chunks__": True,
+        }
+    else:
+        data["__saved_chunks__"] = False
 
     return data
 
@@ -587,7 +629,7 @@ def calculate_WI(
     if isinstance(injection_rates, float):
         injection_rates = np.full((pressures.shape[0],), injection_rates)
 
-    for i, (member_pressure, member_injection_rate) in enumerate(
+    for i, (member_pressure, member_injection_rate) in enumerate(  # type: ignore
         zip(pressures, injection_rates)  # type: ignore
     ):
         p_w = member_pressure[
@@ -644,10 +686,27 @@ def extract_features(
     if keyword_scalings is None:
         keyword_scalings = {}
     features: list[np.ndarray] = []
+
+    save_chunks_on_disk: bool = data["__saved_chunks__"]
+    saved_chunks_dir = pathlib.Path(data.get("__saved_chunks_dir__", ""))
+
     for keyword in keywords:
-        feature: np.ndarray = np.array(
-            data[keyword]
-        )  # ``shape=(ensemble_size, num_report_steps, num_cells)``
+        if save_chunks_on_disk:
+            # Load batched data and concatenate into a full array.
+            chunk_paths: list[pathlib.Path] = sorted(
+                (saved_chunks_dir / keyword).glob("chunk_*.npy")
+            )
+            if len(chunk_paths) == 0:
+                raise ValueError(f"No saved chunks found for keyword '{keyword}'.")
+            feature = np.concatenate(
+                [np.load(chunk_path) for chunk_path in chunk_paths]
+            )  # ``shape=(ensemble_size, num_report_steps, num_cells)``
+        else:
+            # Load array at once.
+            feature = np.array(
+                data[keyword]
+            )  # ``shape=(ensemble_size, num_report_steps, num_cells)``
+
         if keyword == "TEMPERATURE":
             feature += keyword_scalings.get(keyword, 0.0)
         else:
@@ -656,7 +715,9 @@ def extract_features(
 
     # Broadcast all features to the same shape
     broadcasted_shape = np.broadcast_shapes(*[feature.shape for feature in features])
-    features = [np.broadcast_to(feature, broadcasted_shape) for feature in features]
+    features = [
+        np.broadcast_to(feature, shape=broadcasted_shape) for feature in features
+    ]
 
     return np.stack(
         features, axis=-1
@@ -713,9 +774,12 @@ def integrate_fine_scale_value(
     # case. This can be removed, once the typing in ``formulas.py`` is more strict.
     # For some reason Pylance thinks that ``block_sidelengths`` is ``int``. Ignore this.
     for block_sidelength in block_sidelengths:  # type: ignore
-        cell_areas: np.ndarray = area_squaredcircle(  # type: ignore
-            radii[1::], block_sidelength
-        ) - area_squaredcircle(radii[:-1:], block_sidelength)
+        cell_areas: np.ndarray = (
+            area_squaredcircle(  # type: ignore
+                radii[1::], block_sidelength
+            )
+            - area_squaredcircle(radii[:-1:], block_sidelength)
+        )
         integrated_values_lst.append(np.sum(radial_values * cell_areas, axis=axis))
     return np.stack(integrated_values_lst, axis=axis)
 
