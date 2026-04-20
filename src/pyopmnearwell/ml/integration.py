@@ -17,9 +17,9 @@ from __future__ import annotations
 
 import csv
 import logging
-import os
 import pathlib
 import shutil
+import subprocess
 from typing import Any, Optional
 
 from mako import exceptions
@@ -31,13 +31,72 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+def _find_opm_well_path(opm_path: pathlib.Path) -> pathlib.Path:
+    """Find the OPM wells source directory for known source layouts."""
+    candidates = [
+        opm_path / "opm-simulators" / "opm" / "simulators" / "wells",
+        opm_path / "opm" / "simulators" / "wells",
+    ]
+    for candidate in candidates:
+        if candidate.is_dir():
+            return candidate
+    raise FileNotFoundError(
+        f"Could not find OPM wells source directory under '{opm_path}'."
+    )
+
+
+def _find_opm_build_path(opm_path: pathlib.Path) -> pathlib.Path:
+    """Find the OPM build directory for known build layouts."""
+    candidates = [
+        opm_path / "opm-simulators" / "build",
+        opm_path / "build" / "opm-simulators",
+        opm_path / "build",
+    ]
+    for candidate in candidates:
+        if candidate.is_dir():
+            return candidate
+    raise FileNotFoundError(f"Could not find OPM build directory under '{opm_path}'.")
+
+
+def _backup_default_standardwell_files(opm_well_path: pathlib.Path) -> None:
+    """Store pristine StandardWell files once so they can be restored later."""
+    default_header = opm_well_path / "StandardWell.default.hpp"
+    default_impl = opm_well_path / "StandardWell_impl.default.hpp"
+    header = opm_well_path / "StandardWell.hpp"
+    impl = opm_well_path / "StandardWell_impl.hpp"
+
+    if not default_header.exists():
+        shutil.copyfile(header, default_header)
+    if not default_impl.exists():
+        shutil.copyfile(impl, default_impl)
+
+
+def _restore_default_standardwell_files(opm_well_path: pathlib.Path) -> None:
+    """Restore pristine StandardWell files previously saved by backup."""
+    default_header = opm_well_path / "StandardWell.default.hpp"
+    default_impl = opm_well_path / "StandardWell_impl.default.hpp"
+    header = opm_well_path / "StandardWell.hpp"
+    impl = opm_well_path / "StandardWell_impl.hpp"
+
+    if not default_header.exists() or not default_impl.exists():
+        raise FileNotFoundError(
+            "Default StandardWell files were not found. Run recompile_flow once "
+            "without reset to create backups first."
+        )
+
+    shutil.copyfile(default_header, header)
+    shutil.copyfile(default_impl, impl)
+
+
 def recompile_flow(
     scalingsfile: pathlib.Path,
     opm_path: pathlib.Path,
-    StandardWell_impl_template: pathlib.Path,
-    StandardWell_template: pathlib.Path,
+    StandardWell_impl_template: pathlib.Path | None = None,
+    StandardWell_template: pathlib.Path | None = None,
     stencil_size: int = 3,
     local_feature_names: Optional[list[str]] = None,
+    ml_model_path: Optional[pathlib.Path] = None,
+    reset: bool = False,
 ) -> None:
     """Fill ``StandardWell_impl`` and recompile ``flow_gaswater_dissolution_diffuse``.
 
@@ -64,12 +123,36 @@ def recompile_flow(
         ValueError: If ``scalingsfile`` contains an invalid row.
 
     """
+    if (
+        StandardWell_impl_template is None
+        or StandardWell_template is None
+        or ml_model_path is None
+    ) and not reset:
+        raise ValueError(
+            "Please provide templates for StandardWell_impl and StandardWell and a"
+            " ml_model_path, or set reset to True."
+        )
+
     # Ensure ``scalingsfile`` and ``opm_path`` are ``Path`` objects.
     scalingsfile = pathlib.Path(scalingsfile)
     opm_path = pathlib.Path(opm_path)
 
     if local_feature_names is None:
         local_feature_names = []
+
+    opm_well_path = _find_opm_well_path(opm_path)
+    opm_build_path = _find_opm_build_path(opm_path)
+
+    # Save defaults once and support restoring them for cleanup runs.
+    _backup_default_standardwell_files(opm_well_path)
+    if reset:
+        _restore_default_standardwell_files(opm_well_path)
+        subprocess.run(
+            ["make", "-j5", "flow_gaswater_dissolution_diffuse"],
+            cwd=opm_build_path,
+            check=True,
+        )
+        return None
 
     opm_well_path: pathlib.Path = (
         opm_path / "opm-simulators" / "opm" / "simulators" / "wells"
@@ -113,6 +196,7 @@ def recompile_flow(
         "y_range_max": target_range[1],
         "stencil_size": stencil_size,
         "cell_feature_names": local_feature_names,
+        "ml_model_path": ml_model_path,
     }
 
     # Fill templates and copy into OPM installation.
@@ -123,8 +207,11 @@ def recompile_flow(
     shutil.copyfile(StandardWell_template, opm_well_path / "StandardWell.hpp")
 
     # Recompile flow.
-    os.chdir(opm_path / "build" / "opm-simulators")
-    os.system("make -j5 flow_gaswater_dissolution_diffuse")
+    subprocess.run(
+        ["make", "-j5", "flow_gaswater_dissolution_diffuse"],
+        cwd=opm_build_path,
+        check=True,
+    )
 
 
 def run_integration(
@@ -178,5 +265,8 @@ def run_integration(
         # Use our pyopmnearwell friend to run the 3D simulations and compare the
         # results.
         logger.info(f"Run {i}th integration run")
-        os.chdir(savepath)
-        os.system(f"pyopmnearwell -i run_{i}.txt -o run_{i} -p off")
+        subprocess.run(
+            ["pyopmnearwell", "-i", f"run_{i}.txt", "-o", f"run_{i}", "-p", "off"],
+            cwd=savepath,
+            check=True,
+        )
