@@ -15,17 +15,14 @@ before recompiling.
 
 from __future__ import annotations
 
-import csv
 import logging
 import pathlib
 import shutil
 import subprocess
-from typing import Any, Optional
+from typing import Any
 
 from mako import exceptions
 from mako.template import Template
-
-from pyopmnearwell.utils.mako import fill_template
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -45,6 +42,20 @@ def _find_opm_well_path(opm_path: pathlib.Path) -> pathlib.Path:
     )
 
 
+def _find_opm_flow_path(opm_path: pathlib.Path) -> pathlib.Path:
+    """Find the OPM flow source directory for known source layouts."""
+    candidates = [
+        opm_path / "opm-simulators" / "opm" / "simulators" / "flow",
+        opm_path / "opm" / "simulators" / "flow",
+    ]
+    for candidate in candidates:
+        if candidate.is_dir():
+            return candidate
+    raise FileNotFoundError(
+        f"Could not find OPM flow source directory under '{opm_path}'."
+    )
+
+
 def _find_opm_build_path(opm_path: pathlib.Path) -> pathlib.Path:
     """Find the OPM build directory for known build layouts."""
     candidates = [
@@ -58,155 +69,147 @@ def _find_opm_build_path(opm_path: pathlib.Path) -> pathlib.Path:
     raise FileNotFoundError(f"Could not find OPM build directory under '{opm_path}'.")
 
 
-def _backup_default_standardwell_files(opm_well_path: pathlib.Path) -> None:
-    """Store pristine StandardWell files once so they can be restored later."""
-    default_header = opm_well_path / "StandardWell.default.hpp"
-    default_impl = opm_well_path / "StandardWell_impl.default.hpp"
-    header = opm_well_path / "StandardWell.hpp"
-    impl = opm_well_path / "StandardWell_impl.hpp"
+def _backup_default_standardwell_files(
+    opm_path: pathlib.Path,
+    opm_well_path: pathlib.Path,
+    opm_flow_path: pathlib.Path,
+) -> None:
+    """Store pristine files once so they can be restored later."""
+    files_to_backup = [
+        opm_well_path / "StandardWell.hpp",
+        opm_well_path / "StandardWell_impl.hpp",
+        opm_well_path / "MLNearWellConfig.hpp",
+        opm_well_path / "MLNearWellConfig.cpp",
+        opm_flow_path / "FlowProblemParameters.cpp",
+        opm_flow_path / "FlowProblemParameters.hpp",
+        opm_path / "CMakeLists_files.cmake",
+    ]
 
-    if not default_header.exists():
-        shutil.copyfile(header, default_header)
-    if not default_impl.exists():
-        shutil.copyfile(impl, default_impl)
+    for source_file in files_to_backup:
+        default_file = pathlib.Path(source_file.stem + ".default" + source_file.suffix)
+        if source_file.exists() and not default_file.exists():
+            shutil.copyfile(source_file, default_file)
 
 
-def _restore_default_standardwell_files(opm_well_path: pathlib.Path) -> None:
-    """Restore pristine StandardWell files previously saved by backup."""
-    default_header = opm_well_path / "StandardWell.default.hpp"
-    default_impl = opm_well_path / "StandardWell_impl.default.hpp"
-    header = opm_well_path / "StandardWell.hpp"
-    impl = opm_well_path / "StandardWell_impl.hpp"
+def _restore_default_standardwell_files(
+    opm_path: pathlib.Path,
+    opm_well_path: pathlib.Path,
+    opm_flow_path: pathlib.Path,
+) -> None:
+    """Restore pristine files previously saved by backup."""
+    files_to_restore = [
+        opm_well_path / "StandardWell.hpp",
+        opm_well_path / "StandardWell_impl.hpp",
+        opm_flow_path / "FlowProblemParameters.cpp",
+        opm_flow_path / "FlowProblemParameters.hpp",
+        opm_path / "CMakeLists_files.cmake",
+    ]
 
-    if not default_header.exists() or not default_impl.exists():
+    missing_backups: list[pathlib.Path] = []
+    for target_file in files_to_restore:
+        default_file = pathlib.Path(target_file.stem + ".default" + target_file.suffix)
+        if default_file.exists():
+            shutil.copyfile(default_file, target_file)
+        elif target_file.exists():
+            # Remove files that were introduced by ML patching and had no default.
+            target_file.unlink()
+        else:
+            missing_backups.append(default_file)
+
+    if missing_backups:
+        missing = ", ".join(str(path) for path in missing_backups)
         raise FileNotFoundError(
-            "Default StandardWell files were not found. Run recompile_flow once "
-            "without reset to create backups first."
+            "Default files were not found. Run recompile_flow once without reset "
+            f"to create backups first. Missing backup files: {missing}"
         )
-
-    shutil.copyfile(default_header, header)
-    shutil.copyfile(default_impl, impl)
 
 
 def recompile_flow(
-    scalingsfile: pathlib.Path,
     opm_path: pathlib.Path,
-    StandardWell_impl_template: pathlib.Path | None = None,
-    StandardWell_template: pathlib.Path | None = None,
-    stencil_size: int = 3,
-    local_feature_names: Optional[list[str]] = None,
-    ml_model_path: Optional[pathlib.Path] = None,
+    new_files_path: pathlib.Path | None = None,
     reset: bool = False,
 ) -> None:
-    """Fill ``StandardWell_impl`` and recompile ``flow_gaswater_dissolution_diffuse``.
+    """Copy updated and recompile ``flow_gaswater_dissolution_diffuse``.
 
-    Note: Once scaling layers are implemented directly into OPM, this might be
-    deprecated. However, it might still be needed to deal with different stencils and
-        features per cell.
 
     Args:
-        scalingsfile (pathlib.Path): Path to the csv file containing the input and
-            output scalings for the model.
         opm_path (pathlib.Path): Path to a OPM installation with ml functionality.
-        StandardWell_impl_template (pathlib.Path): Template for
-            ``StandardWell_impl.hpp``. Decides the neural network architecture.
-        StandardWell_template (pathlib.Path): Template for ``StandardWell.hpp``.
-        stencil_size (int, optional): The size of the vertical stencil of the model.
-            Defaults to 3.
-        local_feature_names (Optional[list[str]], optional): List of local feature names
-            that are input to the model. Defaults to Optional.
+        new_files_path (pathlib.Path | None): Path to a directory containing updated
+            OPM files.
+        reset (bool): If True, restore default OPM files and recompile.
 
     Returns:
         None
 
     Raises:
-        ValueError: If ``scalingsfile`` contains an invalid row.
+        ValueError: If ``replacement_dir_path`` is not provided when ``reset`` is False.
+        FileNotFoundError: If the expected OPM file source directory or build directory
+            cannot be found, or if the replacement files do not exist.
 
     """
-    if (
-        StandardWell_impl_template is None
-        or StandardWell_template is None
-        or ml_model_path is None
-    ) and not reset:
+    if (new_files_path is None) and not reset:
         raise ValueError(
-            "Please provide templates for StandardWell_impl and StandardWell and a"
-            " ml_model_path, or set reset to True."
+            "Please provide a well files directory path or set reset to True."
         )
 
-    # Ensure ``scalingsfile`` and ``opm_path`` are ``Path`` objects.
-    scalingsfile = pathlib.Path(scalingsfile)
+    # Ensure ``opm_path`` and ``well_files_path`` are ``Path`` objects.
     opm_path = pathlib.Path(opm_path)
-
-    if local_feature_names is None:
-        local_feature_names = []
+    if new_files_path is not None:
+        new_files_path = pathlib.Path(new_files_path)
 
     opm_well_path = _find_opm_well_path(opm_path)
     opm_build_path = _find_opm_build_path(opm_path)
+    opm_flow_path = _find_opm_flow_path(opm_path)
 
-    # Save defaults once and support restoring them for cleanup runs.
-    _backup_default_standardwell_files(opm_well_path)
+    # Copy the new files or the default files to the OPM wells source directory
+    # depending on the value of reset.
+
     if reset:
-        _restore_default_standardwell_files(opm_well_path)
-        subprocess.run(
-            ["make", "-j5", "flow_gaswater_dissolution_diffuse"],
-            cwd=opm_build_path,
-            check=True,
+        _restore_default_standardwell_files(
+            opm_path,
+            opm_well_path,
+            opm_flow_path,
         )
-        return None
 
-    opm_well_path: pathlib.Path = (
-        opm_path / "opm-simulators" / "opm" / "simulators" / "wells"
+    else:
+        _backup_default_standardwell_files(
+            opm_path,
+            opm_well_path,
+            opm_flow_path,
+        )
+        for filename in [
+            "StandardWell.hpp",
+            "StandardWell_impl.hpp",
+            "MLNearWellConfig.hpp",
+            "MLNearWellConfig.cpp",
+        ]:
+            # Ignore MyPy. well_files_path is checked to be not None above.
+            source_file = new_files_path / filename  # type: ignore
+            if not source_file.exists():
+                raise FileNotFoundError(
+                    f"Replacement file '{source_file}' does not exist."
+                )
+            shutil.copyfile(source_file, opm_well_path / filename)  # type: ignore
+
+        for filename in ["FlowProblemParameters.cpp", "FlowProblemParameters.hpp"]:
+            # Ignore MyPy. well_files_path is checked to be not None above.
+            source_file = new_files_path / filename  # type: ignore
+            if not source_file.exists():
+                raise FileNotFoundError(
+                    f"Replacement file '{source_file}' does not exist."
+                )
+            shutil.copyfile(source_file, opm_flow_path / filename)  # type: ignore
+
+        source_file = new_files_path / "CMakeLists_files.cmake"  # type: ignore
+        if not source_file.exists():
+            raise FileNotFoundError(f"Replacement file '{source_file}' does not exist.")
+        shutil.copyfile(source_file, opm_path / "CMakeLists_files.cmake")  # type: ignore
+
+    logger.info(
+        f"Copied files to {opm_path}. Recompiling flow_gaswater_dissolution_diffuse..."
     )
 
-    # Get the scaling and write it to the C++ mako that integrates nn into OPM.
-    feature_min: list[float] = []
-    feature_max: list[float] = []
-    feature_range: list[float] = [-1.0, 1.0]
-    target_range: list[float] = [-1.0, 1.0]
-    with scalingsfile.open("r", encoding="utf-8") as csvfile:
-        reader = csv.DictReader(csvfile, fieldnames=["variable", "min", "max"])
-
-        # Skip the header
-        next(reader)
-
-        for row in reader:
-            if row["variable"].startswith("output"):
-                target_min: float = float(row["min"])
-                target_max: float = float(row["max"])
-            elif row["variable"].startswith("input"):
-                feature_min.append(float(row["min"]))
-                feature_max.append(float(row["max"]))
-            elif row["variable"] == "feature_range":
-                feature_range[0] = float(row["min"])
-                feature_range[1] = float(row["max"])
-            elif row["variable"] == "target_range":
-                target_range[0] = float(row["min"])
-                target_range[1] = float(row["max"])
-            else:
-                raise ValueError("Name of scaling variable is invalid.")
-
-    var: dict[str, Any] = {
-        "xmin": feature_min,
-        "xmax": feature_max,
-        "ymin": target_min,
-        "ymax": target_max,
-        "x_range_min": feature_range[0],
-        "x_range_max": feature_range[1],
-        "y_range_min": target_range[0],
-        "y_range_max": target_range[1],
-        "stencil_size": stencil_size,
-        "cell_feature_names": local_feature_names,
-        "ml_model_path": ml_model_path,
-    }
-
-    # Fill templates and copy into OPM installation.
-    filledtemplate: str = fill_template(var, filename=str(StandardWell_impl_template))
-    with (opm_well_path / "StandardWell_impl.hpp").open("w", encoding="utf-8") as file:
-        file.write(filledtemplate)
-
-    shutil.copyfile(StandardWell_template, opm_well_path / "StandardWell.hpp")
-
-    # Recompile flow.
+    # Recompile flow with the copied files.
     subprocess.run(
         ["make", "-j5", "flow_gaswater_dissolution_diffuse"],
         cwd=opm_build_path,
