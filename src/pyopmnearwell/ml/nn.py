@@ -1,8 +1,9 @@
 # pylint: skip-file
 """Transform ensemble data into datasets and train neural networks."""
+
 from __future__ import annotations
 
-import csv
+import json
 import logging
 import math
 import pathlib
@@ -13,9 +14,10 @@ import keras_tuner
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from pyopmnearwell.ml.kerasify import export_model
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow import keras
+
+from pyopmnearwell.ml.kerasify import export_model
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -313,6 +315,14 @@ def scale_and_prepare_dataset(
     logger.info(f"Train/val/test split is {train_split}/{val_split}/{test_split}")
 
     logger.info("Adapting MinMaxScalers")
+
+    # NOTE The scaling function in HybridNewtonConfig.cpp (in OPM Flow) supports only
+    # scaling to (0, 1).
+    if feature_range[0] != 0.0 and feature_range[1] != 1.0:
+        raise ValueError("Feature range other than (0, 1) is currently not supported.")
+    if target_range[0] != 0.0 and target_range[1] != 1.0:
+        raise ValueError("Target range other than (0, 1) is currently not supported.")
+
     feature_scaler = MinMaxScaler(feature_range)
     target_scaler = MinMaxScaler(target_range)
 
@@ -340,41 +350,31 @@ def scale_and_prepare_dataset(
             )
         )
 
-    with (savepath / "scalings.csv").open("w", newline="", encoding="utf-8") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=["variable", "min", "max"])
-        writer.writeheader()
-        for feature_name, feature_min, feature_max in zip(
-            feature_names, feature_scaler.data_min_, feature_scaler.data_max_
-        ):
-            writer.writerow(
-                {
-                    "variable": f"input_{feature_name}",
-                    "min": feature_min,
-                    "max": feature_max,
-                }
-            )
-        writer.writerow(
-            {
-                "variable": "output_WI",
-                "min": target_scaler.data_min_[0],
-                "max": target_scaler.data_max_[0],
-            }
-        )
-        writer.writerow(
-            {
-                "variable": "feature_range",
-                "min": feature_range[0],
-                "max": feature_range[1],
-            }
-        )
-        writer.writerow(
-            {
-                "variable": "target_range",
-                "min": target_range[0],
-                "max": target_range[1],
-            }
-        )
-    logger.info(f"Saved scalings to {savepath / 'scalings.csv'}")
+    input_block = {}
+    output_block = {}
+
+    for feature_name, feature_min, feature_max in zip(
+        feature_names, feature_scaler.data_min_, feature_scaler.data_max_
+    ):
+        input_block[feature_name] = {
+            "scaling_params": {"min": feature_min, "max": feature_max}
+        }
+
+    output_block["WI"] = {
+        "scaling_params": {
+            "min": target_scaler.data_min_[0],
+            "max": target_scaler.data_max_[0],
+        }
+    }
+
+    with (savepath / "MLNearWellConfig.json").open(
+        "w", newline="", encoding="utf-8"
+    ) as f:
+        config = json.load(f)
+        config["features"] = {"inputs": input_block, "outputs": output_block}
+        json.dump(config, f, indent=4)
+
+    logger.info(f"Saved scalings to {savepath / 'MLNearWellConfig.json'}")
 
     # Reload the dataset and shuffle once before splitting.
     ds = tf.data.Dataset.load(str(dsfile))
@@ -421,8 +421,9 @@ def scale_and_prepare_dataset(
             iter(val_ds.batch(batch_size=len(val_ds)).as_numpy_iterator())
         )
     else:
-        val_features, val_targets = np.zeros((1, train_features.shape[-1])), np.zeros(
-            (1, train_targets.shape[-1])
+        val_features, val_targets = (
+            np.zeros((1, train_features.shape[-1])),
+            np.zeros((1, train_targets.shape[-1])),
         )
 
     # Reshape to one-dimensional data.
@@ -578,8 +579,20 @@ def train(
     # Load the best model and save to OPM format.
     model.load_weights(savepath / "bestmodel")
     model.save(savepath / "bestmodel.keras")
+
     if kerasify:
+        # Save model and write filename to model config
         export_model(model, savepath / "WI.model")
+        with (savepath / "MLNearWellConfig.json").open(
+            "r", newline="", encoding="utf-8"
+        ) as f:
+            config = json.load(f)
+            config["model_path"] = str(savepath / "WI.model")
+            json.dump(
+                config,
+                (savepath / "MLNearWellConfig.json").open("w", encoding="utf-8"),
+                indent=4,
+            )
 
 
 def build_model(
@@ -728,58 +741,50 @@ def save_tune_results(tuner: keras_tuner.Tuner, savepath: str | pathlib.Path) ->
 def scale_and_evaluate(
     model: keras.Model,
     model_input: ArrayLike,
-    scalingsfile: str | pathlib.Path,
+    configfile: str | pathlib.Path,
 ) -> tf.Tensor:
     """Scale the input, evaluate with the model and scale the output.
 
     Args:
         model (tf.keras.Model): A Keras model to evaluate the input with.
         model_input (ArrayLike): Input tensor. Can be a batch.
-        scalingsfile (str | pathlib.Path): The path to the CSV file containing the
-            scaling parameters for MinMaxScaling.
+        configfile (str | pathlib.Path): The path to the JSON file containing the
+            model configuration, including the scaling parameters.
 
     Returns:
         tf.Tensor: The model's output, scaled back to the original range.
 
     Raises:
-        FileNotFoundError: If ``scalingsfile`` does not exist.
-        ValueError: If ``scalingsfile`` contains an invalid row.
+        FileNotFoundError: If ``configfile`` does not exist.
 
     """
     # Ensure ``ensemble_path`` is a ``Path`` object.
-    scalingsfile = pathlib.Path(scalingsfile)
+    configfile = pathlib.Path(configfile)
 
     # Get the feature and target scaling.
     feature_min: list[float] = []
     feature_max: list[float] = []
     target_min: list[float] = []
     target_max: list[float] = []
-    feature_range: list[float] = [-1.0, 1.0]
-    target_range: list[float] = [-1.0, 1.0]
-    with scalingsfile.open("r", encoding="utf-8") as csvfile:
-        reader = csv.DictReader(csvfile, fieldnames=["variable", "min", "max"])
+    feature_range: list[float] = [0.0, 1.0]
+    target_range: list[float] = [0.0, 1.0]
 
-        # Skip the header
-        next(reader)
+    with configfile.open("r", encoding="utf-8") as f:
+        config = json.load(f)
 
-        for row in reader:
-            if row["variable"].startswith("output"):
-                target_min.append(float(row["min"]))
-                target_max.append(float(row["max"]))
-            elif row["variable"].startswith("input"):
-                feature_min.append(float(row["min"]))
-                feature_max.append(float(row["max"]))
-            elif row["variable"] == "feature_range":
-                feature_range[0] = float(row["min"])
-                feature_range[1] = float(row["max"])
-            elif row["variable"] == "target_range":
-                target_range[0] = float(row["min"])
-                target_range[1] = float(row["max"])
-            else:
-                raise ValueError("Name of scaling variable is invalid.")
+    for feature in config["features"]["inputs"].values():
+        feature_min.append(float(feature["scaling_params"]["min"]))
+        feature_max.append(float(feature["scaling_params"]["max"]))
+
+    target_min.append(
+        float(config["features"]["outputs"]["WI"]["scaling_params"]["min"])
+    )
+    target_max.append(
+        float(config["features"]["outputs"]["WI"]["scaling_params"]["max"])
+    )
 
     # Create MinMaxScalers and manually set the parameters.
-    feature_scaler: MinMaxScaler = MinMaxScaler(feature_range)
+    feature_scaler: MinMaxScaler = MinMaxScaler(feature_range=feature_range)
     feature_scaler.data_min_ = np.array(feature_min)
     feature_scaler.data_max_ = np.array(feature_max)
     feature_scaler.scale_ = (
@@ -788,7 +793,7 @@ def scale_and_evaluate(
     feature_scaler.min_ = (
         feature_range[0] - feature_scaler.data_min_ * feature_scaler.scale_
     )
-    target_scaler: MinMaxScaler = MinMaxScaler(target_range)
+    target_scaler: MinMaxScaler = MinMaxScaler(feature_range=target_range)
     target_scaler.data_min_ = np.array(target_min)
     target_scaler.data_max_ = np.array(target_max)
     target_scaler.scale_ = (target_range[1] - target_range[0]) / handle_zeros_in_scale(
