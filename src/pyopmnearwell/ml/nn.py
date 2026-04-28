@@ -375,7 +375,7 @@ def scale_and_prepare_dataset(
         with config_file.open("r", encoding="utf-8") as f:
             config = json.load(f)
 
-    with (savepath / "MLNearWellConfig.json").open("w", encoding="utf-8") as f:
+    with config_file.open("w", encoding="utf-8") as f:
         config["features"] = {"inputs": input_block, "outputs": output_block}
         json.dump(config, f, indent=4)
 
