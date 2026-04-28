@@ -367,10 +367,15 @@ def scale_and_prepare_dataset(
         }
     }
 
-    with (savepath / "MLNearWellConfig.json").open(
-        "w", newline="", encoding="utf-8"
-    ) as f:
-        config = json.load(f)
+    # Write input and output features to config file for later use in OPM.
+    config_file = savepath / "MLNearWellConfig.json"
+    if not config_file.exists() or config_file.stat().st_size == 0:
+        config = {}
+    else:
+        with config_file.open("r", encoding="utf-8") as f:
+            config = json.load(f)
+
+    with (savepath / "MLNearWellConfig.json").open("w", encoding="utf-8") as f:
         config["features"] = {"inputs": input_block, "outputs": output_block}
         json.dump(config, f, indent=4)
 
