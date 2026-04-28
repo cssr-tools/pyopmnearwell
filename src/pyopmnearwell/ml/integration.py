@@ -211,6 +211,16 @@ def recompile_flow(
 
     # Recompile flow with the copied files.
     subprocess.run(
+        [
+            "cmake",
+            "-DWITH_NDEBUG=1",
+            "-DCMAKE_BUILD_TYPE=Release",
+            str(opm_path / "opm-simulators"),
+        ],
+        cwd=opm_build_path,
+        check=True,
+    )
+    subprocess.run(
         ["make", "-j5", "flow_gaswater_dissolution_diffuse"],
         cwd=opm_build_path,
         check=True,
