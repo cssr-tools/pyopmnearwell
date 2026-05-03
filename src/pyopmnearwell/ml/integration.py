@@ -69,10 +69,25 @@ def _find_opm_build_path(opm_path: pathlib.Path) -> pathlib.Path:
     raise FileNotFoundError(f"Could not find OPM build directory under '{opm_path}'.")
 
 
+def _find_opm_cmake_lists_path(opm_path: pathlib.Path) -> pathlib.Path:
+    """Find the CMakeLists_files.cmake used by the active OPM source tree."""
+    candidates = [
+        opm_path / "opm-simulators" / "CMakeLists_files.cmake",
+        opm_path / "CMakeLists_files.cmake",
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    raise FileNotFoundError(
+        f"Could not find CMakeLists_files.cmake under '{opm_path}'."
+    )
+
+
 def _backup_default_standardwell_files(
     opm_path: pathlib.Path,
     opm_well_path: pathlib.Path,
     opm_flow_path: pathlib.Path,
+    opm_cmake_lists_path: pathlib.Path,
 ) -> None:
     """Store pristine files once so they can be restored later."""
     files_to_backup = [
@@ -82,7 +97,7 @@ def _backup_default_standardwell_files(
         opm_well_path / "MLNearWellConfig.cpp",
         opm_flow_path / "FlowProblemParameters.cpp",
         opm_flow_path / "FlowProblemParameters.hpp",
-        opm_path / "CMakeLists_files.cmake",
+        opm_cmake_lists_path,
     ]
 
     for source_file in files_to_backup:
@@ -95,6 +110,7 @@ def _restore_default_standardwell_files(
     opm_path: pathlib.Path,
     opm_well_path: pathlib.Path,
     opm_flow_path: pathlib.Path,
+    opm_cmake_lists_path: pathlib.Path,
 ) -> None:
     """Restore pristine files previously saved by backup."""
     files_to_restore = [
@@ -102,7 +118,7 @@ def _restore_default_standardwell_files(
         opm_well_path / "StandardWell_impl.hpp",
         opm_flow_path / "FlowProblemParameters.cpp",
         opm_flow_path / "FlowProblemParameters.hpp",
-        opm_path / "CMakeLists_files.cmake",
+        opm_cmake_lists_path,
     ]
 
     missing_backups: list[pathlib.Path] = []
@@ -110,9 +126,6 @@ def _restore_default_standardwell_files(
         default_file = pathlib.Path(target_file.stem + ".default" + target_file.suffix)
         if default_file.exists():
             shutil.copyfile(default_file, target_file)
-        elif target_file.exists():
-            # Remove files that were introduced by ML patching and had no default.
-            target_file.unlink()
         else:
             missing_backups.append(default_file)
 
@@ -160,6 +173,7 @@ def recompile_flow(
     opm_well_path = _find_opm_well_path(opm_path)
     opm_build_path = _find_opm_build_path(opm_path)
     opm_flow_path = _find_opm_flow_path(opm_path)
+    opm_cmake_lists_path = _find_opm_cmake_lists_path(opm_path)
 
     # Copy the new files or the default files to the OPM wells source directory
     # depending on the value of reset.
@@ -169,6 +183,7 @@ def recompile_flow(
             opm_path,
             opm_well_path,
             opm_flow_path,
+            opm_cmake_lists_path,
         )
 
     else:
@@ -176,6 +191,7 @@ def recompile_flow(
             opm_path,
             opm_well_path,
             opm_flow_path,
+            opm_cmake_lists_path,
         )
         for filename in [
             "StandardWell.hpp",
@@ -200,16 +216,47 @@ def recompile_flow(
                 )
             shutil.copyfile(source_file, opm_flow_path / filename)  # type: ignore
 
+        # Ignore MyPy. well_files_path is checked to be not None above.
         source_file = new_files_path / "CMakeLists_files.cmake"  # type: ignore
         if not source_file.exists():
             raise FileNotFoundError(f"Replacement file '{source_file}' does not exist.")
-        shutil.copyfile(source_file, opm_path / "CMakeLists_files.cmake")  # type: ignore
+        shutil.copyfile(source_file, opm_cmake_lists_path)  # type: ignore
 
     logger.info(
         f"Copied files to {opm_path}. Recompiling flow_gaswater_dissolution_diffuse..."
     )
 
     # Recompile flow with the copied files.
+    # subprocess.run(
+    #     [
+    #         "cmake",
+    #         "-DWITH_NDEBUG=1",
+    #         "-DCMAKE_BUILD_TYPE=Release",
+    #         str(opm_path / "opm-common"),
+    #     ],
+    #     cwd=opm_build_path,
+    #     check=True,
+    # )
+    # subprocess.run(
+    #     ["make", "-j5"],
+    #     cwd=opm_build_path,
+    #     check=True,
+    # )
+    # subprocess.run(
+    #     [
+    #         "cmake",
+    #         "-DWITH_NDEBUG=1",
+    #         "-DCMAKE_BUILD_TYPE=Release",
+    #         str(opm_path / "opm-grid"),
+    #     ],
+    #     cwd=opm_build_path,
+    #     check=True,
+    # )
+    # subprocess.run(
+    #     ["make", "-j5"],
+    #     cwd=opm_build_path,
+    #     check=True,
+    # )
     subprocess.run(
         [
             "cmake",
