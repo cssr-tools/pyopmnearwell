@@ -1,18 +1,40 @@
 """Transform keras models to an OPM format. Copied from
-https://github.com/fractalmanifold/opm-common/blob/cemracs/opm/material/fluidmatrixinteractions/ml_tools/kerasify.py."""
+https://github.com/OPM/opm-common/blob/release/2025.10/python/opm/ml/ml_tools/kerasify.py
+
+#   Copyright (c) 2016 Robert W. Rose
+#   Copyright (c) 2018 Paul Maevskikh
+#   Copyright (c) 2024 NORCE
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+# Note: This file is based on kerasify/kerasify.py
+
+"""
 
 import struct
 
 import numpy as np
 
-LAYER_DENSE = 1
-LAYER_CONVOLUTION2D = 2
-LAYER_FLATTEN = 3
-LAYER_ELU = 4
-LAYER_ACTIVATION = 5
-LAYER_MAXPOOLING2D = 6
-LAYER_LSTM = 7
-LAYER_EMBEDDING = 8
+LAYER_SCALING = 1
+LAYER_UNSCALING = 2
+LAYER_DENSE = 3
+LAYER_ACTIVATION = 4
 
 ACTIVATION_LINEAR = 1
 ACTIVATION_RELU = 2
@@ -22,102 +44,35 @@ ACTIVATION_TANH = 5
 ACTIVATION_HARD_SIGMOID = 6
 
 
-def write_dense(file, layer, write_activation):
+def write_scaling(f):
+    f.write(struct.pack("I", LAYER_SCALING))
+
+
+def write_unscaling(f):
+    f.write(struct.pack("I", LAYER_UNSCALING))
+
+
+def write_tensor(f, data, dims=1):
     """
-    Process the dense layer.
+    Writes tensor as flat array of floats to file in 1024 chunks,
+    prevents memory explosion writing very large arrays to disk
+    when calling struct.pack().
     """
-    weights = layer.get_weights()[0]
-    biases = layer.get_weights()[1]
-    activation = layer.get_config()["activation"]
+    f.write(struct.pack("I", dims))
 
-    file.write(struct.pack("I", LAYER_DENSE))
-    file.write(struct.pack("I", weights.shape[0]))
-    file.write(struct.pack("I", weights.shape[1]))
-    file.write(struct.pack("I", biases.shape[0]))
+    for stride in data.shape[:dims]:
+        f.write(struct.pack("I", stride))
 
-    weights = weights.flatten()
-    biases = biases.flatten()
+    data = data.ravel()
+    step = 1024
+    written = 0
 
-    write_floats(file, weights)
-    write_floats(file, biases)
+    for i in np.arange(0, len(data), step):
+        remaining = min(len(data) - i, step)
+        written += remaining
+        f.write(struct.pack(f"={remaining}f", *data[i : i + remaining]))
 
-    write_activation(activation)
-
-
-def write_convolution2d(file, layer, write_activation):
-    """
-    Process the Convolution2D layer.
-    """
-    weights = layer.get_weights()[0]
-    biases = layer.get_weights()[1]
-    activation = layer.get_config()["activation"]
-
-    # The kernel is accessed in reverse order. To simplify the C side we'll
-    # flip the weight matrix for each kernel.
-    weights = weights[:, :, ::-1, ::-1]
-
-    file.write(struct.pack("I", LAYER_CONVOLUTION2D))
-    file.write(struct.pack("I", weights.shape[0]))
-    file.write(struct.pack("I", weights.shape[1]))
-    file.write(struct.pack("I", weights.shape[2]))
-    file.write(struct.pack("I", weights.shape[3]))
-    file.write(struct.pack("I", biases.shape[0]))
-
-    weights = weights.flatten()
-    biases = biases.flatten()
-
-    write_floats(file, weights)
-    write_floats(file, biases)
-
-    write_activation(activation)
-
-
-def write_lstm(file, layer, write_activation):
-    """
-    Process the LSTM layer.
-    """
-    inner_activation = layer.get_config()["inner_activation"]
-    activation = layer.get_config()["activation"]
-    return_sequences = int(layer.get_config()["return_sequences"])
-
-    weights = layer.get_weights()
-    dic = {}
-    dic["w_i"], dic["u_i"], dic["b_i"] = weights[0], weights[1], weights[2]
-    dic["w_c"], dic["u_c"], dic["b_c"] = weights[3], weights[4], weights[5]
-    dic["w_f"], dic["u_f"], dic["b_f"] = weights[6], weights[7], weights[8]
-    dic["w_o"], dic["u_o"], dic["b_o"] = weights[9], weights[10], weights[11]
-
-    file.write(struct.pack("I", LAYER_LSTM))
-    file.write(struct.pack("I", dic["w_i"].shape[0]))
-    file.write(struct.pack("I", dic["w_i"].shape[1]))
-    file.write(struct.pack("I", dic["u_i"].shape[0]))
-    file.write(struct.pack("I", dic["u_i"].shape[1]))
-    file.write(struct.pack("I", dic["b_i"].shape[0]))
-
-    file.write(struct.pack("I", dic["w_f"].shape[0]))
-    file.write(struct.pack("I", dic["w_f"].shape[1]))
-    file.write(struct.pack("I", dic["u_f"].shape[0]))
-    file.write(struct.pack("I", dic["u_f"].shape[1]))
-    file.write(struct.pack("I", dic["b_f"].shape[0]))
-
-    file.write(struct.pack("I", dic["w_c"].shape[0]))
-    file.write(struct.pack("I", dic["w_c"].shape[1]))
-    file.write(struct.pack("I", dic["u_c"].shape[0]))
-    file.write(struct.pack("I", dic["u_c"].shape[1]))
-    file.write(struct.pack("I", dic["b_c"].shape[0]))
-
-    file.write(struct.pack("I", dic["w_o"].shape[0]))
-    file.write(struct.pack("I", dic["w_o"].shape[1]))
-    file.write(struct.pack("I", dic["u_o"].shape[0]))
-    file.write(struct.pack("I", dic["u_o"].shape[1]))
-    file.write(struct.pack("I", dic["b_o"].shape[0]))
-
-    for weight in dic:
-        write_floats(file, weight.flatten())
-
-    write_activation(inner_activation)
-    write_activation(activation)
-    file.write(struct.pack("I", return_sequences))
+    assert written == len(data)
 
 
 def write_floats(file, floats):
@@ -131,85 +86,79 @@ def write_floats(file, floats):
     for i in np.arange(0, len(floats), step):
         remaining = min(len(floats) - i, step)
         written += remaining
-        file.write(struct.pack(f"={remaining}f", *floats[i : i + remaining]))
+        file.write(struct.pack("=%sf" % remaining, *floats[i : i + remaining]))
 
     assert written == len(floats)
 
 
 def export_model(model, filename):
-    """
-    Main routine.
-    """
-    with open(filename, "wb") as file:
+    with open(filename, "wb") as f:
 
         def write_activation(activation):
             if activation == "linear":
-                file.write(struct.pack("I", ACTIVATION_LINEAR))
+                f.write(struct.pack("I", ACTIVATION_LINEAR))
             elif activation == "relu":
-                file.write(struct.pack("I", ACTIVATION_RELU))
+                f.write(struct.pack("I", ACTIVATION_RELU))
             elif activation == "softplus":
-                file.write(struct.pack("I", ACTIVATION_SOFTPLUS))
+                f.write(struct.pack("I", ACTIVATION_SOFTPLUS))
             elif activation == "tanh":
-                file.write(struct.pack("I", ACTIVATION_TANH))
+                f.write(struct.pack("I", ACTIVATION_TANH))
             elif activation == "sigmoid":
-                file.write(struct.pack("I", ACTIVATION_SIGMOID))
+                f.write(struct.pack("I", ACTIVATION_SIGMOID))
             elif activation == "hard_sigmoid":
-                file.write(struct.pack("I", ACTIVATION_HARD_SIGMOID))
+                f.write(struct.pack("I", ACTIVATION_HARD_SIGMOID))
             else:
-                assert False, f"Unsupported activation type: {activation}"
+                assert False, f"Unsupported activation type:{activation}"
 
-        model_layers = [l for l in model.layers if type(l).__name__ not in ["Dropout"]]
-        file.write(struct.pack("I", len(model_layers)))
+        model_layers = [l for l in model.layers]
+
+        num_layers = len(model_layers)
+        f.write(struct.pack("I", num_layers))
 
         for layer in model_layers:
             layer_type = type(layer).__name__
 
-            if layer_type == "Dense":
-                write_dense(file, layer, write_activation)
+            if layer_type == "MinMaxScalerLayer":
+                write_scaling(f)
+                feat_inf = layer.get_weights()[0]
+                feat_sup = layer.get_weights()[1]
+                f.write(struct.pack("f", layer.data_min))
+                f.write(struct.pack("f", layer.data_max))
+                f.write(struct.pack("f", feat_inf))
+                f.write(struct.pack("f", feat_sup))
 
-            elif layer_type == "Convolution2D":
-                assert (
-                    layer.border_mode == "valid"
-                ), "Only border_mode=valid is implemented"
-                write_convolution2d(file, layer, write_activation)
+            elif layer_type == "MinMaxUnScalerLayer":
+                write_unscaling(f)
+                feat_inf = layer.get_weights()[0]
+                feat_sup = layer.get_weights()[1]
+                f.write(struct.pack("f", layer.data_min))
+                f.write(struct.pack("f", layer.data_max))
+                f.write(struct.pack("f", feat_inf))
+                f.write(struct.pack("f", feat_sup))
 
-            elif layer_type == "Flatten":
-                file.write(struct.pack("I", LAYER_FLATTEN))
+            elif layer_type == "Dense":
+                weights = layer.get_weights()[0]
+                biases = layer.get_weights()[1]
+                activation = layer.get_config()["activation"]
 
-            elif layer_type == "ELU":
-                file.write(struct.pack("I", LAYER_ELU))
-                file.write(struct.pack("f", layer.alpha))
+                f.write(struct.pack("I", LAYER_DENSE))
+                f.write(struct.pack("I", weights.shape[0]))
+                f.write(struct.pack("I", weights.shape[1]))
+                f.write(struct.pack("I", biases.shape[0]))
+
+                weights = weights.flatten()
+                biases = biases.flatten()
+
+                write_floats(f, weights)
+                write_floats(f, biases)
+
+                write_activation(activation)
 
             elif layer_type == "Activation":
                 activation = layer.get_config()["activation"]
 
-                file.write(struct.pack("I", LAYER_ACTIVATION))
+                f.write(struct.pack("I", LAYER_ACTIVATION))
                 write_activation(activation)
 
-            elif layer_type == "MaxPooling2D":
-                assert (
-                    layer.border_mode == "valid"
-                ), "Only border_mode=valid is implemented"
-
-                pool_size = layer.get_config()["pool_size"]
-
-                file.write(struct.pack("I", LAYER_MAXPOOLING2D))
-                file.write(struct.pack("I", pool_size[0]))
-                file.write(struct.pack("I", pool_size[1]))
-
-            elif layer_type == "LSTM":
-                write_lstm(file, layer, write_activation)
-
-            elif layer_type == "Embedding":
-                weights = layer.get_weights()[0]
-
-                file.write(struct.pack("I", LAYER_EMBEDDING))
-                file.write(struct.pack("I", weights.shape[0]))
-                file.write(struct.pack("I", weights.shape[1]))
-
-                weights = weights.flatten()
-
-                write_floats(file, weights)
-
             else:
-                assert False, f"Unsupported layer type: {layer_type}"
+                assert False, f"Unsupported layer type:{layer_type}"
