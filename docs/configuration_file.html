@@ -115,7 +115,7 @@ if this is supported in your machine (e.g., flow = “mpirun -np 8 /Users/dmar/G
 <span class="linenos">16</span><span class="n">pvmult</span> <span class="o">=</span> <span class="mf">1e10</span> <span class="c1">#Pore volume multiplier on the boundary [-] (-1 to ignore; 0 to use well producers instead)</span>
 <span class="linenos">17</span><span class="n">perforations</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span> <span class="c1">#Activate perforations [-], number of well perforations [-], and length [m]</span>
 <span class="linenos">18</span><span class="n">hysteresis</span> <span class="o">=</span> <span class="s2">&quot;Killough&quot;</span> <span class="c1">#Add hysteresis (Killough or Carlson, 0 by default, i.e., no hysteresis)</span>
-<span class="linenos">19</span><span class="n">zxy</span> <span class="o">=</span> <span class="s2">&quot;2-2*mt.cos((2*mt.pi*x/50)) + 10*(x/100)**2&quot;</span> <span class="c1">#The function for the reservoir surface</span>
+<span class="linenos">19</span><span class="n">zxy</span> <span class="o">=</span> <span class="s2">&quot;2-2*np.cos((2*np.pi*x/50)) + 10*(x/100)**2&quot;</span> <span class="c1">#The function for the reservoir surface</span>
 </pre></div>
 </div>
 <p>Here we first select the physical model and the corresponding template. To add additional models (e.g., blackoil), one could look at the

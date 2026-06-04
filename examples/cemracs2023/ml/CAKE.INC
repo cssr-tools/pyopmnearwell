@@ -1,6 +1,6 @@
 
 
--- Copyright (C) 2023-2025, NORCE Research AS
+-- Copyright (C) 2023-2026, NORCE Research AS
 
 SPECGRID
 100 1 50 1 F

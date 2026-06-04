@@ -189,11 +189,11 @@ PRO4 G1 ${dic['nocells'][0]} ${dic['nocells'][0]} 1* WATER /
 /
 COMPDAT
 % if dic["confact"]==0:
-INJ0 ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${mt.floor(np.sum(dic["layers"]<2)+1)} ${dic['nocells'][2]} OPEN 2* ${dic['diameter']} /
+INJ0 ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${mt.floor(np.sum(dic["layers"]<2))} ${dic['nocells'][2]} OPEN 2* ${dic['diameter']} /
 % else:
-INJ0 ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${mt.floor(np.sum(dic["layers"]<2)+1)} ${dic['nocells'][2]} OPEN 1* ${dic["confact"]} /
+INJ0 ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${mt.floor(np.sum(dic["layers"]<2))} ${dic['nocells'][2]} OPEN 1* ${dic["confact"]} /
 % endif
-PRO0 ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${mt.floor(np.sum(dic["layers"]<2)+1)} ${mt.floor(np.sum(dic["layers"]<2)+1)} OPEN 2* ${dic['diameter']} /
+PRO0 ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${mt.floor(np.sum(dic["layers"]<2))} ${mt.floor(np.sum(dic["layers"]<2))} OPEN 2* ${dic['diameter']} /
 % if dic["pvmult"]==0:
 % if dic['grid'] != 'cartesian':
 PRO1 ${dic['nocells'][0]} 1 1 ${0*dic['nocells'][2]+1} OPEN 2* ${dic['diameter']} /

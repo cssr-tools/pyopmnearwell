@@ -8,6 +8,9 @@ on:
    
 jobs:
   run-pyopmnearwell-local:
+    permissions:
+      contents: read
+      pull-requests: write
     timeout-minutes: 60
     runs-on: ubuntu-latest
 
@@ -42,13 +45,14 @@ jobs:
         
     - name: Check code style and linting 
       run: |
-        black --target-version py312 --check src/ tests/
+        black --target-version py312 src/ tests/ --check
         pylint src/ tests/
+        ruff check src/ tests/
         mypy --ignore-missing-imports src/ tests/
       
     - name: Run the tests
       run: |
-        pytest --cov=pyopmnearwell --exitfirst --cov-report term-missing tests/
+        pytest --cov=pyopmnearwell --cov-report term-missing --basetemp=test_outputs tests/ --exitfirst
 
     - name: Build documentation
       run: |

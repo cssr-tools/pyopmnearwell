@@ -34,7 +34,7 @@ CO2 cyclic injection
 
 In this example we consider the configuration file described in the
 :doc:`configuration file<./configuration_file>` section, which is available in the 
-examples folder as `'co2.toml' <https://github.com/cssr-tools/pyopmnearwell/blob/main/examples/co2.toml>`_.
+examples folder as `co2.toml <https://github.com/cssr-tools/pyopmnearwell/blob/main/examples/co2.toml>`_.
 
 If the generated files are to be saved in a folder called 'co2', then this is achieved by the following command:
 
@@ -42,11 +42,21 @@ If the generated files are to be saved in a folder called 'co2', then this is ac
 
     pyopmnearwell -i co2.toml -o co2
 
-The execution time was c.a. 20 seconds and the following is an animation using ResInsight to visualize the gas saturation:
+The execution time was c.a. 20 seconds and the following is an animation using `ResInsight <https://resinsight.org>`_ to visualize the gas saturation:
 
 .. figure:: figs/saturation.gif
 
-    Simulation results of the gas saturation.
+    Visualization of the gas saturation using ResInsight.
+
+To generate a gif using plopm, this can be achieved by executing:
+
+.. code-block:: bash
+
+    plopm -i CO2 -v sgas -m gif -dpi 1000 -interval 50 -loop 1 -d 10,5 -yformat .0f -f 20 -cnum 6 -t "Cyclic injection"
+
+.. figure:: figs/co2_sgas.gif
+
+    Visualization of the gas saturation using plopm.
 
 CCUS (machine learning)
 -----------------------

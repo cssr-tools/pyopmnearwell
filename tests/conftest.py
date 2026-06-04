@@ -13,6 +13,24 @@ from pyopmnearwell.utils.inputvalues import process_input
 dirname: pathlib.Path = pathlib.Path(__file__).parent
 
 
+def pytest_addoption(parser):
+    """To set for local tests since the reference data is taylored for actions"""
+    parser.addoption("--rel_tol", action="store", default=1e-8, type=float)
+    parser.addoption("--abs_tol", action="store", default=1e-6, type=float)
+
+
+@pytest.fixture(scope="session")
+def rel_tol(request):
+    """Relative tolerance"""
+    return request.config.option.rel_tol
+
+
+@pytest.fixture(scope="session")
+def abs_tol(request):
+    """Absolute tolerance"""
+    return request.config.option.abs_tol
+
+
 @pytest.fixture(name="input_dict")
 def fixture_input_dict(tmp_path: pathlib.Path) -> dict[str, Any]:
     """Manually do what ``pyopmnearwell.py`` does.

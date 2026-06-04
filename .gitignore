@@ -143,6 +143,9 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
+# ruff
+.ruff_cache/
+
 # Pyre type checker
 .pyre/
 
@@ -187,3 +190,5 @@ playground/
 project/
 .vscode/
 test_outputs/
+tests/data/geometries_data_updated.txt
+tests/data/models_data_updated.txt
