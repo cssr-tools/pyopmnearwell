@@ -4,7 +4,6 @@ import math as mt
 import os
 import subprocess
 import matplotlib
-from matplotlib.lines import Line2D
 
 FLOW = "flow"
 QRATE = 400000. / 6 # Injection/production rate (as in the comparison paper, divided by 6 since the angle in the cake is 60 degrees)
