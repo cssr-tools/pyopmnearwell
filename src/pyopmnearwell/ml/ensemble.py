@@ -306,7 +306,7 @@ def setup_ensemble(
     try:
         shutil.rmtree(ensemble_path / "preprocessing")
     except FileNotFoundError:
-        pass
+        pass  # No preprocessing folder
     logger.info(f"Filled templates for {len(ensemble)} members")
 
 

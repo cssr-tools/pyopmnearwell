@@ -1012,7 +1012,6 @@ def d3_grids(dic, dxarray):
     if grid_name == "cpg3d":
         grid = []
         xcorc = dic["xcorc"]
-        nocells = dic["nocells"]
         grid.append("COORD\n")
         xx, yy = np.meshgrid(xcorc, xcorc, indexing="xy")
         grid += compact_format(

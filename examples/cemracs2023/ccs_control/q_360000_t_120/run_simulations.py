@@ -10,7 +10,6 @@ import math as mt
 import numpy as np
 import pandas as pd
 import itertools
-from resdata.grid import Grid
 from resdata.resfile import ResdataFile
 from resdata.summary import Summary
 from mako.template import Template
@@ -82,7 +81,6 @@ for i in range(mt.floor(nsimulations / NPRUNS)):
         smspec = Summary(f"./co2_{NPRUNS*i+j}/output/CO2_{NPRUNS*i+j}.SMSPEC")
         unrst = ResdataFile(f"./co2_{NPRUNS*i+j}/output/CO2_{NPRUNS*i+j}.UNRST")
         init = ResdataFile(f"./co2_{NPRUNS*i+j}/output/CO2_{NPRUNS*i+j}.INIT")
-        grid = Grid(f"./co2_{NPRUNS*i+j}/output/CO2_{NPRUNS*i+j}.EGRID")
         phiv = np.array(init.iget_kw("PORV")[0][:])
         sgas = np.array(unrst.iget_kw("SGAS")[-1][:])
         r_s = np.array(unrst.iget_kw("RSW")[-1][:])
@@ -118,7 +116,6 @@ for j in range(remaining):
     smspec = Summary(f"./co2_{finished+j}/output/CO2_{finished+j}.SMSPEC")
     unrst = ResdataFile(f"./co2_{finished+j}/output/CO2_{finished+j}.UNRST")
     init = ResdataFile(f"./co2_{finished+j}/output/CO2_{finished+j}.INIT")
-    grid = Grid(f"./co2_{finished+j}/output/CO2_{finished+j}.EGRID")
     phiv = np.array(init.iget_kw("PORV")[0][:])
     sgas = np.array(unrst.iget_kw("SGAS")[-1][:])
     r_s = np.array(unrst.iget_kw("RSW")[-1][:])

@@ -55,22 +55,28 @@ class Upscaler(Protocol):
     """
 
     @property
-    def num_timesteps(self) -> int: ...
+    def num_timesteps(self) -> int:
+        pass
 
     @property
-    def num_layers(self) -> int: ...
+    def num_layers(self) -> int:
+        pass
 
     @property
-    def num_zcells(self) -> int: ...
+    def num_zcells(self) -> int:
+        pass
 
     @property
-    def num_xcells(self) -> int: ...
+    def num_xcells(self) -> int:
+        pass
 
     @property
-    def single_feature_shape(self) -> tuple: ...
+    def single_feature_shape(self) -> tuple:
+        pass
 
     @property
-    def angle(self) -> float: ...
+    def angle(self) -> float:
+        pass
 
     """Angle of the cake radial grid. Default is 60°."""
 

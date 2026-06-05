@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import math as mt
 import os
 import subprocess
 import matplotlib
@@ -31,7 +30,6 @@ for j,(quantity, description) in enumerate(zip(quantities,descriptions)):
     fig, axis = plt.subplots()
     for i, folder in enumerate(folders):
         schedules = np.load(f'{folder}/schedules.npy')
-        #names = np.load(f'{folder}/names.npy')
         data = np.load(f'{folder}/{quantity}.npy')
         axis.plot(
             range(len(schedules)),
@@ -42,14 +40,8 @@ for j,(quantity, description) in enumerate(zip(quantities,descriptions)):
             markersize=7,
             label=folder,
         )
-    #if len(schedules) <= 27:
-    #axis.set_xticks(np.round(np.linspace(0, len(schedules)-1, len(schedules)), 2))
-    #axis.set_xticklabels([name[0:6]+'...' for name in names], rotation=270)
     axis.set_xticks(np.round(np.linspace(0, len(schedules)-1, len(schedules)), 2))
     axis.set_xticklabels([f'Seq{name}' for name in range(len(schedules))])
-    #else:
-        #axis.set_xticks(np.round(np.linspace(0, len(schedules)-1, 4), 2))
-        #axis.set_xticklabels([names[0],names[mt.floor(len(schedules)/4)][0:6]+'...',names[mt.floor(3*len(schedules)/4)][0:6]+'...',names[-1][0:6]+'...'], rotation=270)
     ylabel = description + f"[{units[j]}]"
     axis.set_ylabel(f"{ylabel}", fontsize=12)
     axis.set_xlabel(r"Sequence in the schedule [-]", fontsize=12)

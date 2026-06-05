@@ -34,10 +34,7 @@ for i, rate in enumerate(GRATES):
 for i in range(mt.floor(len(GRATES) / NPRUNS)):
     command = ""
     for j in range(NPRUNS):
-        if DELETE == 1:
-            command += f"pyopmnearwell -i co2eor_{NPRUNS*i+j}.toml -o co2eor_{NPRUNS*i+j} -m single -v 0 & "
-        else:
-            command += f"pyopmnearwell -i co2eor_{NPRUNS*i+j}.toml -o co2eor_{NPRUNS*i+j} -m single & "
+        command += f"pyopmnearwell -i co2eor_{NPRUNS*i+j}.toml -o co2eor_{NPRUNS*i+j} -m single {'-v 0' if DELETE == 1 else ''} & "
     command += "wait"
     os.system(command)
     for j in range(NPRUNS):
@@ -49,10 +46,7 @@ finished = NPRUNS * mt.floor(len(GRATES) / NPRUNS)
 remaining = len(GRATES) - finished
 command = ""
 for i in range(remaining):
-    if DELETE == 1:
-        command += f"pyopmnearwell -i co2eor_{finished+i}.toml -o co2eor_{finished+i} -m single -v 0 & "
-    else:
-        command += f"pyopmnearwell -i co2eor_{finished+i}.toml -o co2eor_{finished+i} -m single & "
+    command += f"pyopmnearwell -i co2eor_{finished+i}.toml -o co2eor_{finished+i} -m single {'-v 0' if DELETE == 1 else ''} & "
 command += "wait"
 os.system(command)
 for i in range(remaining):

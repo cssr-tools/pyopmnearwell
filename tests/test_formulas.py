@@ -72,7 +72,7 @@ def test_peaceman_matrix_WI(
 ):
     if expected is ValueError:
         with pytest.raises(ValueError):
-            result = peaceman_matrix_WI(k_h, r_e, r_w)
+            peaceman_matrix_WI(k_h, r_e, r_w)
     else:
         result = peaceman_matrix_WI(k_h, r_e, r_w)
         assert np.allclose(result, expected, rtol=1e-7)  # type: ignore

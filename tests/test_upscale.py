@@ -21,6 +21,8 @@ dirname: pathlib.Path = pathlib.Path(__file__).parent
 # pylint: disable-next=missing-class-docstring
 class MockUpscaler(BaseUpscaler):
     def __init__(self) -> None:
+        super().__init__()
+
         self.num_timesteps = 10
         self.num_layers = 10
         self.num_zcells = 10

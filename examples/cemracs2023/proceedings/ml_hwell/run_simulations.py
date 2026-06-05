@@ -54,8 +54,6 @@ for n in range(mt.floor(NSEASON*len(times) / NPRUNS)-1, mt.floor(NSEASON*len(tim
     for j in range(NPRUNS):
         smspec = Summary(f"./h2_{NPRUNS*n+j}/output/H2_{NPRUNS*n+j}.SMSPEC")
         rst = ResdataFile(f"./h2_{NPRUNS*n+j}/output/H2_{NPRUNS*n+j}.UNRST")
-        smsp_report_step = smspec.report_step
-        report_time = rst.dates
         smsp_seconds = [(smspec.numpy_dates[i + 1] - smspec.numpy_dates[i]) / np.timedelta64(1, "s") for i in range(len(smspec.numpy_dates) - 1)]
         for i in range(len(smsp_seconds) - 1):
             smsp_seconds[i + 1] += smsp_seconds[i]
