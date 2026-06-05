@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2023-2026, NORCE Research AS
 # SPDX-License-Identifier: GPL-3.0
 
-""""
+"""
 Script to run Flow for a random input variable
 """
 
@@ -10,7 +10,6 @@ import math as mt
 import numpy as np
 import pandas as pd
 from resdata.summary import Summary
-from resdata.resfile import ResdataFile
 from mako.template import Template
 import matplotlib.pyplot as plt
 
@@ -53,7 +52,6 @@ for n in range(mt.floor(NSEASON*len(times) / NPRUNS)-1, mt.floor(NSEASON*len(tim
     os.system(command)
     for j in range(NPRUNS):
         smspec = Summary(f"./h2_{NPRUNS*n+j}/output/H2_{NPRUNS*n+j}.SMSPEC")
-        rst = ResdataFile(f"./h2_{NPRUNS*n+j}/output/H2_{NPRUNS*n+j}.UNRST")
         smsp_seconds = [(smspec.numpy_dates[i + 1] - smspec.numpy_dates[i]) / np.timedelta64(1, "s") for i in range(len(smspec.numpy_dates) - 1)]
         for i in range(len(smsp_seconds) - 1):
             smsp_seconds[i + 1] += smsp_seconds[i]

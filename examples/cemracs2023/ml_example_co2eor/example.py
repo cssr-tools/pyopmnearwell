@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2023-2026, NORCE Research AS
 # SPDX-License-Identifier: GPL-3.0
 
-""""
+"""
 Script to run Flow for a random input variable
 """
 
