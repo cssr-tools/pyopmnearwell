@@ -205,7 +205,7 @@ INJ0 ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${max(1, 1+mt.floor(dic['nocells
 % if dic['grid']=='core':
 INJ0 1 ${1+mt.floor(dic['nocells'][2]/2)} ${1+mt.floor(dic['nocells'][2]/2)} ${1+mt.floor(dic['nocells'][2]/2)} OPEN 1* ${dic["confact"]} /
 % else:
-INJ0 ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${max(1, 1+mt.floor(dic['nocells'][1]/2))} 1 ${dic['nocells'][2]} OPEN 1* ${dic["confact"]*2*mt.pi*dic['rock'][0][0]*dic['dims'][2]/dic['nocells'][2]} /
+INJ0 ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${max(1, 1+mt.floor(dic['nocells'][1]/2))} 1 ${dic['nocells'][2]} OPEN 1* ${dic["confact"]*2*np.pi*dic['rock'][0][0]*dic['dims'][2]/dic['nocells'][2]} /
 % endif
 % endif
 % if dic["pvmult"]==0 or dic['grid']=='core':

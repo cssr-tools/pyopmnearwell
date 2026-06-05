@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2025, NORCE Research AS
+# SPDX-FileCopyrightText: 2023-2026, NORCE Research AS
 # SPDX-License-Identifier: GPL-3.0
 # pylint: disable=missing-function-docstring
 """Test the main framework."""
@@ -8,3 +8,8 @@ import pathlib
 
 def test_main(run_main: pathlib.Path) -> None:
     assert (run_main / "output" / "output" / "INPUT.UNRST").exists()
+    name = run_main / "output" / "preprocessing" / "INPUT.DATA"
+    with open(name, "r", encoding="utf8") as f:
+        lines = f.readlines()
+    content = "".join(lines)
+    assert "TUNING" in content

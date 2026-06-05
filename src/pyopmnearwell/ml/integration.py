@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2025, NORCE Research AS
+# SPDX-FileCopyrightText: 2023-2026, NORCE Research AS
 # SPDX-FileCopyrightText: 2023 UiB
 # SPDX-License-Identifier: GPL-3.0
 # pylint: skip-file
@@ -20,7 +20,7 @@ import logging
 import os
 import pathlib
 import shutil
-from typing import Any, Literal, Optional
+from typing import Any, Optional
 
 from mako import exceptions
 from mako.template import Template

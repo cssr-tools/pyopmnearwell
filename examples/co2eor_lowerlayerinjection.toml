@@ -11,7 +11,7 @@ diameter = 0.5 #Well diameter [ft]
 pressure = 4000 #Pressure [Psia] on the top
 injbhp = 9000 #Injector max BHP [Psia]
 probhp = 1500 #Producer min BHP [Psia]
-zxy = "8325 + (20-20*mt.cos((2*mt.pi*(x+y)/3000)))" #The function for the reservoir surface
+zxy = "8325 + (20-20*np.cos((2*np.pi*(x+y)/3000)))" #The function for the reservoir surface
 
 #Properties rock: 1) Kxy [mD], 2) Kz [mD], 3) phi [-], 4) thickness [ft], and 5) no cells in the z dir [-] (entry per layer)
 rock = [[500,50,0.3,20,10],[50,50,0.3,30,6],[200,25,0.3,50,5]]

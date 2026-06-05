@@ -159,7 +159,7 @@ def export_model(model, filename):
             else:
                 assert False, f"Unsupported activation type: {activation}"
 
-        model_layers = [l for l in model.layers if type(l).__name__ not in ["Dropout"]]
+        model_layers = [o for o in model.layers if type(o).__name__ not in ["Dropout"]]
         file.write(struct.pack("I", len(model_layers)))
 
         for layer in model_layers:

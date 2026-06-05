@@ -1,30 +1,17 @@
-# SPDX-FileCopyrightText: 2023-2025, NORCE Research AS
+# SPDX-FileCopyrightText: 2023-2026, NORCE Research AS
 # SPDX-License-Identifier: GPL-3.0
 
-"""
-Utiliy functions to set the requiried input values by pynearwell.
-"""
+"""Utiliy functions to set the requiried input values"""
 
-import tomllib
 import sys
+import tomllib
 import numpy as np
 
 
 def process_input(dic, in_file):
-    """
-    Function to process the input file
-
-    Args:
-        dic (dict): Global dictionary with required parameters\n
-        in_file (str): Name of the input toml file
-
-    Returns:
-        dic (dict): Global dictionary with new added parameters
-
-    """
+    """Process the input file"""
     for name in [
         "hysteresis",
-        "zxy",
         "rockcomp",
         "xflow",
         "confact",
@@ -35,6 +22,7 @@ def process_input(dic, in_file):
         "salinity",
     ]:
         dic[name] = 0
+    dic["zxy"] = "0*x"
     dic["adim"] = 1
     dic["perforations"] = [0, 0, 0]
     dic["ycn"] = [1]
@@ -42,55 +30,32 @@ def process_input(dic, in_file):
         dic.update(tomllib.load(file))
     dic["satnum"] = len(dic["rock"]) - dic["perforations"][0]
     dic["fluxnum"] = len(dic["rock"]) > 1
-    if dic["hysteresis"] != 0:
-        dic["imbnum"] = 2
-    else:
-        dic["imbnum"] = 1
+    dic["imbnum"] = 2 if dic["hysteresis"] != 0 else 1
     zdim, znc, dic["homo"], tmp = 0.0, 0, True, dic["rock"][0][3]
-    for i, rock in enumerate(dic["rock"]):
+    for index, rock in enumerate(dic["rock"]):
         if len(rock) > 3:
             zdim += rock[3]
             znc += rock[4]
-            if i > 0:
-                if tmp != rock[3] and dic["homo"]:
-                    dic["homo"] = False
-                tmp = rock[3]
+            if index > 0 and tmp != rock[3] and dic["homo"]:
+                dic["homo"] = False
+            tmp = rock[3]
     dic["zcn"] = [znc]
-    if dic["grid"] == "coord2d" or dic["grid"] == "coord3d":
-        dic["nocells"] = [
-            len(dic["xcn"]) - 1,
-            1,
-            np.sum(dic["zcn"]),
-        ]
+    if dic["grid"] in ["coord2d", "coord3d"]:
+        dic["nocells"] = [len(dic["xcn"]) - 1, 1, np.sum(dic["zcn"])]
     else:
-        dic["nocells"] = [
-            np.sum(dic["xcn"]),
-            1,
-            np.sum(dic["zcn"]),
-        ]
+        dic["nocells"] = [np.sum(dic["xcn"]), 1, np.sum(dic["zcn"])]
     dic["dims"] = [dic["xdim"], dic["adim"], zdim]
     process_tuning(dic)
     return dic
 
 
 def process_tuning(dic):
-    """
-    Preprocess tuning
-
-    Args:
-        dic (dict): Global dictionary with required parameters
-
-    Returns:
-        dic (dict): Global dictionary with new added parameters
-
-    """
-    dic["tuning"] = False
-    for value in dic["flow"].split():
-        if "--enable-tuning" in value:
-            if value[16:] in ["true", "True", "1"]:
-                dic["tuning"] = True
-                break
-    for i, inj in enumerate(dic["inj"]):
+    """Preprocess tuning"""
+    dic["tuning"] = any(
+        "--enable-tuning" in value and value[16:] in ["true", "True", "1"]
+        for value in dic["flow"].split()
+    )
+    for index, inj in enumerate(dic["inj"]):
         size = 6 if dic["model"] == "h2store" and inj[3] < 0 else 5
         if len(inj) == size:
             if not isinstance(inj[-1], str):
@@ -104,7 +69,6 @@ def process_tuning(dic):
                 )
                 sys.exit()
             tmp = inj[-1].split("/")
-            dic["inj"][i][-1] = tmp[0].strip()
+            dic["inj"][index][-1] = tmp[0].strip()
             if len(tmp) > 1:
-                for val in tmp[1:]:
-                    dic["inj"][i].append(val.strip())
+                dic["inj"][index].extend(val.strip() for val in tmp[1:])

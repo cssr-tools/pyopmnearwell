@@ -297,7 +297,7 @@ def test_hydrostatic_gas(
 def test_area_squaredcircle(
     radius: ArrayLike, sidelength: ArrayLike, expected: ArrayLike | ValueError
 ):
-    if np.any(np.asarray(expected) == ValueError):
+    if np.any([x is ValueError for x in np.asarray(expected, dtype=object).ravel()]):
         with pytest.raises(ValueError):
             area_squaredcircle(radius, sidelength)
     else:

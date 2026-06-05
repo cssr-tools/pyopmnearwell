@@ -115,16 +115,26 @@ examples folder, where the co2store model is used and only water is injected in 
 <h2>CO2 cyclic injection<a class="headerlink" href="#co2-cyclic-injection" title="Link to this heading"></a></h2>
 <p>In this example we consider the configuration file described in the
 <a class="reference internal" href="configuration_file.html"><span class="doc">configuration file</span></a> section, which is available in the
-examples folder as <a class="reference external" href="https://github.com/cssr-tools/pyopmnearwell/blob/main/examples/co2.toml">‘co2.toml’</a>.</p>
+examples folder as <a class="reference external" href="https://github.com/cssr-tools/pyopmnearwell/blob/main/examples/co2.toml">co2.toml</a>.</p>
 <p>If the generated files are to be saved in a folder called ‘co2’, then this is achieved by the following command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pyopmnearwell<span class="w"> </span>-i<span class="w"> </span>co2.toml<span class="w"> </span>-o<span class="w"> </span>co2
 </pre></div>
 </div>
-<p>The execution time was c.a. 20 seconds and the following is an animation using ResInsight to visualize the gas saturation:</p>
+<p>The execution time was c.a. 20 seconds and the following is an animation using <a class="reference external" href="https://resinsight.org">ResInsight</a> to visualize the gas saturation:</p>
 <figure class="align-default" id="id1">
 <img alt="_images/saturation.gif" src="_images/saturation.gif" />
 <figcaption>
-<p><span class="caption-text">Simulation results of the gas saturation.</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+<p><span class="caption-text">Visualization of the gas saturation using ResInsight.</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>To generate a gif using plopm, this can be achieved by executing:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>plopm<span class="w"> </span>-i<span class="w"> </span>CO2<span class="w"> </span>-v<span class="w"> </span>sgas<span class="w"> </span>-m<span class="w"> </span>gif<span class="w"> </span>-dpi<span class="w"> </span><span class="m">1000</span><span class="w"> </span>-interval<span class="w"> </span><span class="m">50</span><span class="w"> </span>-loop<span class="w"> </span><span class="m">1</span><span class="w"> </span>-d<span class="w"> </span><span class="m">10</span>,5<span class="w"> </span>-yformat<span class="w"> </span>.0f<span class="w"> </span>-f<span class="w"> </span><span class="m">20</span><span class="w"> </span>-cnum<span class="w"> </span><span class="m">6</span><span class="w"> </span>-t<span class="w"> </span><span class="s2">&quot;Cyclic injection&quot;</span>
+</pre></div>
+</div>
+<figure class="align-default" id="id2">
+<img alt="_images/co2_sgas.gif" src="_images/co2_sgas.gif" />
+<figcaption>
+<p><span class="caption-text">Visualization of the gas saturation using plopm.</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 </section>

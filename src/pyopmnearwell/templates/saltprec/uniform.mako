@@ -208,7 +208,7 @@ INJ${i} ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${max(1, 1+mt.floor(dic['noce
 INJ0 1 ${1+mt.floor(dic['nocells'][2]/2)} ${1+mt.floor(dic['nocells'][2]/2)} ${1+mt.floor(dic['nocells'][2]/2)} OPEN 1* ${dic["confact"]} /
 % else:
 % for i in range(dic['nocells'][2]):
-INJ${i} ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${i+1} ${i+1} OPEN 1* ${dic["confact"]*2*mt.pi*dic['rock'][int(dic["layers"][i])][0]*dic['dims'][2]/dic['nocells'][2]} /
+INJ${i} ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${max(1, 1+mt.floor(dic['nocells'][1]/2))} ${i+1} ${i+1} OPEN 1* ${dic["confact"]*2*np.pi*dic['rock'][int(dic["layers"][i])][0]*dic['dims'][2]/dic['nocells'][2]} /
 % endfor
 % endif
 % endif

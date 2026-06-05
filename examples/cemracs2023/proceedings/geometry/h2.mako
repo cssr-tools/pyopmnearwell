@@ -16,7 +16,7 @@ pressure = 40 #Pressure [Bar] on the top
 temperature = [50,50] #Top and bottom temperatures [C]
 initialphase = 0 #Initial phase in the reservoir (0 wetting, 1 non-wetting)
 pvmult = 1e7 #Pore volume multiplier on the boundary [-] (-1 to ignore; 0 to use well producers instead)
-zxy = "100-100*mt.cos((2*mt.pi*x/625)) + 250*(x/2500)**2" #The function for the reservoir surface
+zxy = "100-100*np.cos((2*np.pi*x/625)) + 250*(x/2500)**2" #The function for the reservoir surface
 
 #Set the saturation functions
 krw = "krw * ((sw - swi) / (1.0 - sni -swi)) ** nkrw"        #Wetting rel perm saturation function [-]

@@ -15,7 +15,7 @@ temperature = [40,40] #Top and bottom temperatures [C]
 initialphase = 0 #Initial phase in the reservoir (0 wetting, 1 non-wetting)
 pvmult = 1e5 #Pore volume multiplier on the boundary [-] (-1 to ignore; 0 to use well producers instead)
 hysteresis = "Killough" #Add hysteresis (Killough or Carlson, 0 by default, i.e., no hysteresis)
-zxy = "20-20*mt.cos((2*mt.pi*x/250)) + 200*(x/1000)**2" #The function for the reservoir surface
+zxy = "20-20*np.cos((2*np.pi*x/250)) + 200*(x/1000)**2" #The function for the reservoir surface
 
 #Set the saturation functions
 krw = "krw * ((sw - swi) / (1.0 - sni -swi)) ** nkrw"        #Wetting rel perm saturation function [-]
@@ -40,4 +40,4 @@ rock = [[101.324,10.1324,0.2,15,8],[202.650,20.2650,0.2,15,8],[506.625,50.6625,0
 #Define the injection values (entry per change in the schedule): 
 #1) injection time [d], 2) time step size to write results [d], 3) fluid (0 wetting, 1 non-wetting), 4) injection rates [kg/day].
 #If --enable-tuning=1, then 5) for TUNING values as described in the OPM manual.
-inj = [[1,1,1,0]]
+inj = [[1,1,1,57611.52]]

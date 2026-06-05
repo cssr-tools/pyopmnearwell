@@ -1,5 +1,5 @@
 #Set mpirun, the full path to the flow executable, and simulator flags (except --output-dir)
-flow = "flow --linear-solver-reduction=1e-5 --relaxed-max-pv-fraction=0 --enable-drift-compensation=0 --newton-max-iterations=50 --newton-min-iterations=5 --tolerance-wells=1e-5 --relaxed-well-flow-tol=1e-5 --use-multisegment-well=false --enable-opm-rst-file=true --enable-well-operability-check=false --min-time-step-before-shutting-problematic-wells-in-days=1e-99"
+flow = "flow --enable-tuning=1 --linear-solver-reduction=1e-5 --relaxed-max-pv-fraction=0 --enable-drift-compensation=0 --newton-max-iterations=50 --newton-min-iterations=5 --tolerance-wells=1e-5 --relaxed-well-flow-tol=1e-5 --use-multisegment-well=false --enable-opm-rst-file=true --enable-well-operability-check=false --min-time-step-before-shutting-problematic-wells-in-days=1e-99"
 
 #Set the model parameters
 model = "co2store" #Model: co2store, co2eor, foam, h2store, or saltprec
@@ -31,4 +31,4 @@ rock = [[1013.25,101.325,0.25,1,1]]
 #Define the injection values (entry per change in the schedule): 
 #1) injection time [d], 2) time step size to write results [d], 3) fluid (0 wetting, 1 non-wetting), 4) injection rates [kg/day].
 #If --enable-tuning=1, then 5) for TUNING values as described in the OPM manual.
-inj = [[2,1,0,100000]]
+inj = [[2,1,0,100000,"1e-2 1 1e-12 / 2* / 4*"]]

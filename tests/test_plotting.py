@@ -2,11 +2,8 @@
 from __future__ import annotations
 
 import pathlib
-import pickle
 
 import matplotlib.pyplot as plt
-import pytest
-from matplotlib.figure import Figure
 
 from pyopmnearwell.utils.plotting import save_fig_and_data
 

@@ -12,7 +12,7 @@ Simplified and flexible testing framework for near-well simulations via a config
 
 ## Installation
 You will first need to install
-* OPM Flow (https://opm-project.org, Release 2025.10 or current master branches)
+* OPM Flow (https://opm-project.org, Release 2026.04 or current master branches)
 
 To install the _pyopmnearwell_ executable from the development version: 
 
@@ -20,15 +20,15 @@ To install the _pyopmnearwell_ executable from the development version:
 pip install git+https://github.com/cssr-tools/pyopmnearwell.git
 ```
 
-If you are interested in a specific version (e.g., v2025.10) or in modifying the source code, then you can clone the repository and install the Python requirements in a virtual environment with the following commands:
+If you are interested in a specific version (e.g., v2026.04) or in modifying the source code, then you can clone the repository and install the Python requirements in a virtual environment with the following commands:
 
 ```bash
 # Clone the repo
 git clone https://github.com/cssr-tools/pyopmnearwell.git
 # Get inside the folder
 cd pyopmnearwell
-# For a specific version (e.g., v2025.10), or skip this step (i.e., edge version)
-git checkout v2025.10
+# For a specific version (e.g., v2026.04), or skip this step (i.e., edge version)
+git checkout v2026.04
 # Create virtual environment
 python3 -m venv vpyopmnearwell
 # Activate virtual environment
@@ -64,11 +64,13 @@ The following is a list of manuscripts in which _pyopmnearwell_ is used:
 
 1. Landa-Marbán, D., Zamani, N., Sandve, T.H., Gasda, S.E., 2024. Impact of Intermittency on Salt Precipitation During CO2 Injection, presented at SPE Norway Subsurface Conference, Bergen, Norway, April 2024. https://doi.org/10.2118/218477-MS. 
 1. von Schultzendorff, P., Sandve, T.H., Kane, B., Landa-Marbán, D., Both, J.W., Nordbotten, J.M., 2024. A Machine-Learned Near-Well Model in OPM Flow, presented at ECMOR 2024, European Association of Geoscientists & Engineers, Sep. 2024, pp. 1–23. https://doi.org/10.3997/2214-4609.202437033.
-1. Lliguizaca, J.R., Landa-Marbán, D., Gasda, S.E., Sandve, T.H., Alcorn, Z.P., 2024. Data-Driven Predictions of CO2 EOR Numerical Studies Using Machine Learning in an Open-Source Framework, presented at SPE Norway Subsurface Conference, Bergen, Norway, April 2024. https://doi.org/10.2118/218441-MS.
+1. Lligüizaca, J.R., Landa-Marbán, D., Gasda, S.E., Sandve, T.H., Alcorn, Z.P., 2024. Data-Driven Predictions of CO2 EOR Numerical Studies Using Machine Learning in an Open-Source Framework, presented at SPE Norway Subsurface Conference, Bergen, Norway, April 2024. https://doi.org/10.2118/218441-MS.
 1. Mushabe, R., Minougou, J.D., Landa-Marbán, D., Kane, B., Sandve, T.H., 2025. Predicting Ultimate Hydrogen Production and Residual Volume during Cyclic Underground Hydrogen Storage in Porous Media using Machine Learning. ESAIM: Proceedings and Surveys, 81, pp. 145-167. https://doi.org/10.1051/proc/202581145.
+1. Lligüizaca-Dávila, J.R., Carrión-Maldonado, F.P., Landa-Marbán, D., Mendoza Sanz, J.S., Alcorn, Z.P., Cobos,
+J.E., 2026. CO2 WAG and SAG machine learning data-driven models in an open-source framework – A theoretical study. Petroleum. https://doi.org/10.1016/j.petlm.2026.02.003.
 
 ## About pyopmnearwell
-The pyopmnearwell package is being funded by the [_HPC Simulation Software for the Gigatonne Storage Challenge project_](https://www.norceresearch.no/en/projects/hpc-simulation-software-for-the-gigatonne-storage-challenge) [project number 622059] and [_Center for Sustainable Subsurface Resources (CSSR)_](https://cssr.no) 
+The _pyopmnearwell_ tool is being funded by the [_HPC Simulation Software for the Gigatonne Storage Challenge project_](https://www.norceresearch.no/en/projects/hpc-simulation-software-for-the-gigatonne-storage-challenge) [project number 622059] and [_Center for Sustainable Subsurface Resources (CSSR)_](https://cssr.no) 
 [project no. 331841].
 Contributions are more than welcome using the fork and pull request approach. 
 For a new feature, please request this by raising an issue.

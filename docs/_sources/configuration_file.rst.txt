@@ -41,7 +41,7 @@ The following input lines are:
     pvmult = 1e10 #Pore volume multiplier on the boundary [-] (-1 to ignore; 0 to use well producers instead)
     perforations = [1,5,6] #Activate perforations [-], number of well perforations [-], and length [m]
     hysteresis = "Killough" #Add hysteresis (Killough or Carlson, 0 by default, i.e., no hysteresis)
-    zxy = "2-2*mt.cos((2*mt.pi*x/50)) + 10*(x/100)**2" #The function for the reservoir surface
+    zxy = "2-2*np.cos((2*np.pi*x/50)) + 10*(x/100)**2" #The function for the reservoir surface
 
 Here we first select the physical model and the corresponding template. To add additional models (e.g., blackoil), one could look at the 
 `opm-tests <https://github.com/OPM/opm-tests>`_ decks, convert the necessary input decks and files to mako
