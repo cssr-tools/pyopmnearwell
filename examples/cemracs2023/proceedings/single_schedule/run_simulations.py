@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2023-2026, NORCE Research AS
 # SPDX-License-Identifier: GPL-3.0
 
-""""
+"""
 Script to run Flow for a random input variable
 """
 
@@ -51,7 +51,6 @@ for i in range(mt.floor(NSEASON*len(times) / NPRUNS)-1, mt.floor(NSEASON*len(tim
         times = smspec.dates
         fgit = smspec["FGIT"].values
         fgpt = smspec["FGPT"].values
-        fgit_fgpt = smspec["FGIT"].values - smspec["FGPT"].values
         rfac = 100.*smspec["FGPT"].values/smspec["FGIT"].values
         #os.system(f"rm -rf h2_{NPRUNS*i+j} h2_{NPRUNS*i+j}.toml")
 
